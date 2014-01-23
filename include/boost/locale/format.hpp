@@ -270,7 +270,11 @@ namespace boost {
 
             }
                         
-            
+#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
+#ifndef BOOST_NO_DEFAULTED_FUNCTIONS
+            basic_format(basic_format&&) = default;
+#endif
+#endif
         private:
 
             class format_guard {
