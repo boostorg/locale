@@ -50,7 +50,7 @@ namespace boost {
                     return icu::TimeZone::createDefault();
                 }
                 else {
-                    return icu::TimeZone::createTimeZone(time_zone.c_str());
+                    return icu::TimeZone::createTimeZone(icu::UnicodeString(time_zone.c_str(), static_cast<int32_t>(time_zone.length())));
                 }
             }
 
@@ -211,7 +211,7 @@ namespace boost {
             {
 
                 if(!time_zone.empty()) {
-                    return icu::TimeZone::createTimeZone(time_zone.c_str());
+                    return icu::TimeZone::createTimeZone(icu::UnicodeString(time_zone.c_str(), static_cast<int32_t>(time_zone.length())));
                 }
                 std::auto_ptr<icu::TimeZone> tz(icu::TimeZone::createDefault());
                 icu::UnicodeString id;
@@ -226,7 +226,7 @@ namespace boost {
                     // if we failed fallback to ICU's time zone
                     return tz.release();
                 }
-                return icu::TimeZone::createTimeZone(real_id.c_str());
+                return icu::TimeZone::createTimeZone(icu::UnicodeString(real_id.c_str(), static_cast<int32_t>(real_id.length())));
             }
             #endif // bug workaround
 
