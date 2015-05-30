@@ -22,10 +22,9 @@
 
 #ifdef BOOST_LOCALE_UNORDERED_CATALOG
 #include <boost/unordered_map.hpp>
-#else
-#include <map>
 #endif
 
+#include <map>
 #include <iostream>
 
 
