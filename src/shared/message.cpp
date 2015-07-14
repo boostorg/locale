@@ -6,10 +6,12 @@
 //  http://www.boost.org/LICENSE_1_0.txt)
 //
 #define BOOST_LOCALE_SOURCE
+#include <boost/version.hpp>
 #include <boost/config.hpp>
 #include <boost/locale/message.hpp>
 #include <boost/locale/gnu_gettext.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/cstdint.hpp>
 #include <boost/locale/encoding.hpp>
 #ifdef BOOST_MSVC
 #  pragma warning(disable : 4996)
@@ -22,16 +24,22 @@
 
 #ifdef BOOST_LOCALE_UNORDERED_CATALOG
 #include <boost/unordered_map.hpp>
-#else
-#include <map>
 #endif
 
+#include <map>
+#include <vector>
+#include <string>
+#include <memory>
+#include <utility>
 #include <iostream>
+#include <stdexcept>
+#include <algorithm>
 
 
 #include "mo_hash.hpp"
 #include "mo_lambda.hpp"
 
+#include <stddef.h>
 #include <stdio.h>
 
 #include <string.h>
@@ -436,8 +444,8 @@ namespace boost {
                         while(*e)
                             e++;
                         state = pj_winberger_hash::update_state(state,
-                                    static_cast<char const *>(p),
-                                    static_cast<char const *>(e));
+                                    reinterpret_cast<char const *>(p),
+                                    reinterpret_cast<char const *>(e));
                         state = pj_winberger_hash::update_state(state,'\4');
                     }
                     p = msg.key();
@@ -445,8 +453,8 @@ namespace boost {
                     while(*e)
                         e++;
                     state = pj_winberger_hash::update_state(state,
-                                static_cast<char const *>(p),
-                                static_cast<char const *>(e));
+                                reinterpret_cast<char const *>(p),
+                                reinterpret_cast<char const *>(e));
                     return state;
                 }
             };
