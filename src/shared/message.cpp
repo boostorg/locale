@@ -6,6 +6,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt)
 //
 #define BOOST_LOCALE_SOURCE
+#include <boost/version.hpp>
 #include <boost/config.hpp>
 #include <boost/locale/message.hpp>
 #include <boost/locale/gnu_gettext.hpp>
