@@ -10,6 +10,7 @@
 #include <boost/locale/message.hpp>
 #include <boost/locale/gnu_gettext.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/cstdint.hpp>
 #include <boost/locale/encoding.hpp>
 #ifdef BOOST_MSVC
 #  pragma warning(disable : 4996)
@@ -25,12 +26,19 @@
 #endif
 
 #include <map>
+#include <vector>
+#include <string>
+#include <memory>
+#include <utility>
 #include <iostream>
+#include <stdexcept>
+#include <algorithm>
 
 
 #include "mo_hash.hpp"
 #include "mo_lambda.hpp"
 
+#include <stddef.h>
 #include <stdio.h>
 
 #include <string.h>
