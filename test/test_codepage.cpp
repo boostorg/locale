@@ -162,11 +162,11 @@ void test_wide_io()
     std::cout << "  wchar_t" << std::endl;
     test_for_char<wchar_t>();
     
-    #if defined BOOST_HAS_CHAR16_T && !defined(BOOST_NO_CHAR16_T_CODECVT)
+    #if !defined(BOOST_NO_CXX11_CHAR16_T) && !defined(BOOST_NO_CHAR16_T_CODECVT)
     std::cout << "  char16_t" << std::endl;
     test_for_char<char16_t>();
     #endif
-    #if defined BOOST_HAS_CHAR32_T && !defined(BOOST_NO_CHAR32_T_CODECVT)
+    #if !defined(BOOST_NO_CXX11_CHAR32_T) && !defined(BOOST_NO_CHAR32_T_CODECVT)
     std::cout << "  char32_t" << std::endl;
     test_for_char<char32_t>();
     #endif

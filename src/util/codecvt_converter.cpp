@@ -649,11 +649,11 @@ namespace util {
             return std::locale(in,new code_converter<char>(cvt));
         case wchar_t_facet:
             return std::locale(in,new code_converter<wchar_t>(cvt));
-        #if defined(BOOST_HAS_CHAR16_T) && !defined(BOOST_NO_CHAR16_T_CODECVT)
+        #if !defined(BOOST_NO_CXX11_CHAR16_T) && !defined(BOOST_NO_CHAR16_T_CODECVT)
         case char16_t_facet:
             return std::locale(in,new code_converter<char16_t>(cvt));
         #endif
-        #if defined(BOOST_HAS_CHAR32_T) && !defined(BOOST_NO_CHAR32_T_CODECVT)
+        #if !defined(BOOST_NO_CXX11_CHAR32_T) && !defined(BOOST_NO_CHAR32_T_CODECVT)
         case char32_t_facet:
             return std::locale(in,new code_converter<char32_t>(cvt));
         #endif
