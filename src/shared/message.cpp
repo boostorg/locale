@@ -436,8 +436,8 @@ namespace boost {
                         while(*e)
                             e++;
                         state = pj_winberger_hash::update_state(state,
-                                    static_cast<char const *>(p),
-                                    static_cast<char const *>(e));
+                                    reinterpret_cast<char const *>(p),
+                                    reinterpret_cast<char const *>(e));
                         state = pj_winberger_hash::update_state(state,'\4');
                     }
                     p = msg.key();
@@ -445,8 +445,8 @@ namespace boost {
                     while(*e)
                         e++;
                     state = pj_winberger_hash::update_state(state,
-                                static_cast<char const *>(p),
-                                static_cast<char const *>(e));
+                                reinterpret_cast<char const *>(p),
+                                reinterpret_cast<char const *>(e));
                     return state;
                 }
             };
