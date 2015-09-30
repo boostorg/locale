@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+//  Copyright (c) 2009-2015 Artyom Beilis (Tonkikh)
 //
 //  Distributed under the Boost Software License, Version 1.0. (See
 //  accompanying file LICENSE_1_0.txt or copy at
@@ -7,6 +7,7 @@
 //
 #define BOOST_LOCALE_SOURCE
 #include <boost/config.hpp>
+#include <boost/version.hpp>
 #include <boost/locale/message.hpp>
 #include <boost/locale/gnu_gettext.hpp>
 #include <boost/shared_ptr.hpp>
@@ -436,8 +437,8 @@ namespace boost {
                         while(*e)
                             e++;
                         state = pj_winberger_hash::update_state(state,
-                                    static_cast<char const *>(p),
-                                    static_cast<char const *>(e));
+                                    reinterpret_cast<char const *>(p),
+                                    reinterpret_cast<char const *>(e));
                         state = pj_winberger_hash::update_state(state,'\4');
                     }
                     p = msg.key();
@@ -445,8 +446,8 @@ namespace boost {
                     while(*e)
                         e++;
                     state = pj_winberger_hash::update_state(state,
-                                static_cast<char const *>(p),
-                                static_cast<char const *>(e));
+                                reinterpret_cast<char const *>(p),
+                                reinterpret_cast<char const *>(e));
                     return state;
                 }
             };
