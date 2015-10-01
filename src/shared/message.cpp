@@ -6,6 +6,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt)
 //
 #define BOOST_LOCALE_SOURCE
+#define BOOST_DETAIL_NO_CONTAINER_FWD
 #include <boost/config.hpp>
 #include <boost/version.hpp>
 #include <boost/locale/message.hpp>
