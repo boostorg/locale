@@ -6,6 +6,9 @@
 //  http://www.boost.org/LICENSE_1_0.txt)
 //
 #define BOOST_LOCALE_SOURCE
+#if defined(__FreeBSD__)
+#include <xlocale.h>
+#endif
 #include <boost/locale/localization_backend.hpp>
 #include <boost/locale/gnu_gettext.hpp>
 #include <boost/locale/info.hpp>
