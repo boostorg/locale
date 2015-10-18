@@ -26,9 +26,9 @@ var appendix =
     [ "Tested Compilers and Platforms", "tested_compilers_and_paltforms.html", [
       [ "Known Issues", "tested_compilers_and_paltforms.html#tested_compilers_and_paltforms_issues", null ]
     ] ],
-    [ "Status of C++0x char16_t/char32_t support", "status_of_cpp0x_characters_support.html", [
-      [ "GNU GCC 4.5/C++0x Status", "status_of_cpp0x_characters_support.html#status_of_cpp0x_characters_support_gnu", null ],
-      [ "Visual Studio 2010 (MSVC10)/C++0x Status", "status_of_cpp0x_characters_support.html#status_of_cpp0x_characters_support_msvc", null ]
+    [ "Status of C++11 char16_t/char32_t support", "status_of_cpp0x_characters_support.html", [
+      [ "GNU GCC 4.5/C++11 Status", "status_of_cpp0x_characters_support.html#status_of_cpp0x_characters_support_gnu", null ],
+      [ "Visual Studio 2010 (MSVC10)/C++11 Status", "status_of_cpp0x_characters_support.html#status_of_cpp0x_characters_support_msvc", null ]
     ] ],
     [ "Special Thanks", "special_thanks.html", null ]
 ];

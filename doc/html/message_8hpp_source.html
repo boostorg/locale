@@ -426,10 +426,10 @@ $(document).ready(function(){initNavTree('message_8hpp_source.html','');});
 <div class="line"><a name="l00490"></a><span class="lineno">  490</span>&#160;</div>
 <div class="line"><a name="l00494"></a><span class="lineno"><a class="line" href="group__message.html#ga556e3e7696302902b2242a7a94516dee">  494</a></span>&#160;        <span class="keyword">typedef</span> <a class="code" href="classboost_1_1locale_1_1basic__message.html">basic_message&lt;char&gt;</a> <a class="code" href="group__message.html#ga556e3e7696302902b2242a7a94516dee">message</a>;</div>
 <div class="line"><a name="l00498"></a><span class="lineno"><a class="line" href="group__message.html#gafea131aa123d666905076f34b77326a9">  498</a></span>&#160;        <span class="keyword">typedef</span> <a class="code" href="classboost_1_1locale_1_1basic__message.html">basic_message&lt;wchar_t&gt;</a> <a class="code" href="group__message.html#gafea131aa123d666905076f34b77326a9">wmessage</a>;</div>
-<div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;<span class="preprocessor">        #ifdef BOOST_HAS_CHAR16_T</span></div>
+<div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;<span class="preprocessor">        #ifdef BOOST_LOCALE_ENABLE_CHAR16_T</span></div>
 <div class="line"><a name="l00500"></a><span class="lineno">  500</span>&#160;<span class="preprocessor"></span>        <span class="keyword">typedef</span> <a class="code" href="classboost_1_1locale_1_1basic__message.html">basic_message&lt;char16_t&gt;</a> <a class="code" href="group__message.html#ga43ddf342eec2ab9145d04727f8161e1c">u16message</a>;</div>
 <div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160;<span class="preprocessor">        #endif</span></div>
-<div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;<span class="preprocessor"></span><span class="preprocessor">        #ifdef BOOST_HAS_CHAR32_T</span></div>
+<div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;<span class="preprocessor"></span><span class="preprocessor">        #ifdef BOOST_LOCALE_ENABLE_CHAR32_T</span></div>
 <div class="line"><a name="l00506"></a><span class="lineno">  506</span>&#160;<span class="preprocessor"></span>        <span class="keyword">typedef</span> <a class="code" href="classboost_1_1locale_1_1basic__message.html">basic_message&lt;char32_t&gt;</a> <a class="code" href="group__message.html#ga6c0b40121a07c13de9e712845b43468f">u32message</a>;</div>
 <div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;<span class="preprocessor">        #endif</span></div>
 <div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;<span class="preprocessor"></span></div>
@@ -585,7 +585,7 @@ $(document).ready(function(){initNavTree('message_8hpp_source.html','');});
 <div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160;            <span class="keyword">static</span> std::locale::id id;</div>
 <div class="line"><a name="l00723"></a><span class="lineno">  723</span>&#160;        };</div>
 <div class="line"><a name="l00724"></a><span class="lineno">  724</span>&#160;        </div>
-<div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;<span class="preprocessor">        #ifdef BOOST_HAS_CHAR16_T</span></div>
+<div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;<span class="preprocessor">        #ifdef BOOST_LOCALE_ENABLE_CHAR16_T</span></div>
 <div class="line"><a name="l00726"></a><span class="lineno">  726</span>&#160;<span class="preprocessor"></span></div>
 <div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;        <span class="keyword">template</span>&lt;&gt;</div>
 <div class="line"><a name="l00728"></a><span class="lineno">  728</span>&#160;        <span class="keyword">struct </span>BOOST_LOCALE_DECL base_message_format&lt;char16_t&gt; : <span class="keyword">public</span> std::locale::facet </div>
@@ -598,7 +598,7 @@ $(document).ready(function(){initNavTree('message_8hpp_source.html','');});
 <div class="line"><a name="l00735"></a><span class="lineno">  735</span>&#160;</div>
 <div class="line"><a name="l00736"></a><span class="lineno">  736</span>&#160;<span class="preprocessor">        #endif</span></div>
 <div class="line"><a name="l00737"></a><span class="lineno">  737</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00738"></a><span class="lineno">  738</span>&#160;<span class="preprocessor">        #ifdef BOOST_HAS_CHAR32_T</span></div>
+<div class="line"><a name="l00738"></a><span class="lineno">  738</span>&#160;<span class="preprocessor">        #ifdef BOOST_LOCALE_ENABLE_CHAR32_T</span></div>
 <div class="line"><a name="l00739"></a><span class="lineno">  739</span>&#160;<span class="preprocessor"></span></div>
 <div class="line"><a name="l00740"></a><span class="lineno">  740</span>&#160;        <span class="keyword">template</span>&lt;&gt;</div>
 <div class="line"><a name="l00741"></a><span class="lineno">  741</span>&#160;        <span class="keyword">struct </span>BOOST_LOCALE_DECL base_message_format&lt;char32_t&gt; : <span class="keyword">public</span> std::locale::facet </div>

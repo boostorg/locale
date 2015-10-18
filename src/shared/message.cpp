@@ -757,7 +757,7 @@ namespace boost {
                 return new mo_message<wchar_t>(info);
             }
             
-            #ifdef BOOST_HAS_CHAR16_T
+            #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
 
             template<>
             message_format<char16_t> *create_messages_facet(messages_info const &info)
@@ -766,7 +766,7 @@ namespace boost {
             }
             #endif
             
-            #ifdef BOOST_HAS_CHAR32_T
+            #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
 
             template<>
             message_format<char32_t> *create_messages_facet(messages_info const &info)

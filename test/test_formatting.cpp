@@ -39,8 +39,8 @@ using namespace boost::locale;
 #endif
 
 #ifdef TEST_DEBUG
-#undef BOOST_HAS_CHAR16_T
-#undef BOOST_HAS_CHAR32_T
+#undef BOOST_LOCALE_ENABLE_CHAR16_T
+#undef BOOST_LOCALE_ENABLE_CHAR32_T
 template<typename T>
 void print_diff(T const &,T const &,int)
 {
@@ -530,13 +530,13 @@ int main()
         test_manip<wchar_t>();
         test_format<wchar_t>();
 
-        #ifdef BOOST_HAS_CHAR16_T
+        #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
         std::cout << "Testing char16_t" << std::endl;
         test_manip<char16_t>();
         test_format<char16_t>();
         #endif
 
-        #ifdef BOOST_HAS_CHAR32_T
+        #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
         std::cout << "Testing char32_t" << std::endl;
         test_manip<char32_t>();
         test_format<char32_t>();

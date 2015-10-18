@@ -234,11 +234,11 @@ int main()
                 std::cout << "Wide UTF-" << sizeof(wchar_t) * 8 << std::endl;
                 test_by_char<wchar_t,wchar_t>(l1,l2);
 
-                #ifdef BOOST_HAS_CHAR16_T
+                #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
                 std::cout << "char16 UTF-16" << std::endl;
                 test_by_char<char16_t,char16_t>(l1,l2);
                 #endif
-                #ifdef BOOST_HAS_CHAR32_T
+                #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
                 std::cout << "char32 UTF-32" << std::endl;
                 test_by_char<char32_t,char32_t>(l1,l2);
                 #endif
@@ -257,11 +257,11 @@ int main()
                 std::cout << "Wide UTF-" << sizeof(wchar_t) * 8 << std::endl;
                 test_by_char<wchar_t,wchar_t>(l1,l2);
 
-                #ifdef BOOST_HAS_CHAR16_T
+                #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
                 std::cout << "char16 UTF-16" << std::endl;
                 test_by_char<char16_t,char16_t>(l1,l2);
                 #endif
-                #ifdef BOOST_HAS_CHAR32_T
+                #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
                 std::cout << "char32 UTF-32" << std::endl;
                 test_by_char<char32_t,char32_t>(l1,l2);
                 #endif
@@ -285,11 +285,11 @@ int main()
                 std::cout << "Wide UTF-" << sizeof(wchar_t) * 8 << std::endl;
                 test_by_char<wchar_t,wchar_t>(l1,l2);
 
-                #ifdef BOOST_HAS_CHAR16_T
+                #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
                 std::cout << "char16 UTF-16" << std::endl;
                 test_by_char<char16_t,char16_t>(l1,l2);
                 #endif
-                #ifdef BOOST_HAS_CHAR32_T
+                #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
                 std::cout << "char32 UTF-32" << std::endl;
                 test_by_char<char32_t,char32_t>(l1,l2);
                 #endif
@@ -308,11 +308,11 @@ int main()
                 std::cout << "Wide UTF-" << sizeof(wchar_t) * 8 << std::endl;
                 test_by_char<wchar_t,wchar_t>(l1,l2);
 
-                #ifdef BOOST_HAS_CHAR16_T
+                #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
                 std::cout << "char16 UTF-16" << std::endl;
                 test_by_char<char16_t,char16_t>(l1,l2);
                 #endif
-                #ifdef BOOST_HAS_CHAR32_T
+                #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
                 std::cout << "char32 UTF-32" << std::endl;
                 test_by_char<char32_t,char32_t>(l1,l2);
                 #endif

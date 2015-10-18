@@ -150,7 +150,7 @@ $(document).ready(function(){initNavTree('conversion_8hpp_source.html','');});
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="preprocessor"></span>        };</div>
 <div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="preprocessor">        #ifdef BOOST_HAS_CHAR16_T</span></div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="preprocessor">        #ifdef BOOST_LOCALE_ENABLE_CHAR16_T</span></div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="preprocessor"></span>        <span class="keyword">template</span>&lt;&gt;</div>
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        <span class="keyword">class </span>BOOST_LOCALE_DECL converter&lt;char16_t&gt; : <span class="keyword">public</span> converter_base, <span class="keyword">public</span> std::locale::facet {</div>
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        <span class="keyword">public</span>:</div>
@@ -165,7 +165,7 @@ $(document).ready(function(){initNavTree('conversion_8hpp_source.html','');});
 <div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="preprocessor"></span>        };</div>
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="preprocessor">        #endif</span></div>
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="preprocessor">        #ifdef BOOST_HAS_CHAR32_T</span></div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="preprocessor">        #ifdef BOOST_LOCALE_ENABLE_CHAR32_T</span></div>
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="preprocessor"></span>        <span class="keyword">template</span>&lt;&gt;</div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;        <span class="keyword">class </span>BOOST_LOCALE_DECL converter&lt;char32_t&gt; : <span class="keyword">public</span> converter_base, <span class="keyword">public</span> std::locale::facet {</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;        <span class="keyword">public</span>:</div>
