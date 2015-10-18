@@ -28,7 +28,7 @@ namespace impl_std {
                                 utf8_support utf) 
     {
         if(utf == utf8_from_wide) {
-            return util::create_codecvt(in,util::create_utf8_converter(),type);
+            return util::create_utf8_codecvt(in,type);
         }
         switch(type) {
         case char_facet:
