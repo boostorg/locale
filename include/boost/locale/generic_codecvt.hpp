@@ -23,8 +23,8 @@ namespace locale {
 BOOST_STATIC_ASSERT(sizeof(std::mbstate_t)>=2);
 #endif
 
-#ifdef _MSC_VER
-// MSVC do_length is non-standard it counts wide characters instead of narrow and does not change mbstate
+#if defined(_MSC_VER) && _MSC_VER < 1700
+// up to MSVC 11 (2012) do_length is non-standard it counts wide characters instead of narrow and does not change mbstate
 #define BOOST_LOCALE_DO_LENGTH_MBSTATE_CONST
 #endif
 
