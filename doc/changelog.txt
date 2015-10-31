@@ -17,6 +17,7 @@
     - Some warning cleanup 
     - Fixed tests for latest ICU versions
     - Added workaround for `libc++` issues
+    - Added new defines `BOOST_LOCALE_ENABLE_CHAR16_T` and `BOOST_LOCALE_ENABLE_CHAR32_T` to enable C++11 `char16_t` and `char32_t` instead of deprecated ones
 - 1.53.0 - Bug fixes: 7743, 7386, 7734, 7701, 7368, 7762:
     -  7743 - security related bug fix, some invalid UTF-8 sequences where accepted as valid 
     -  7386 - invalid Windows codepage names used
