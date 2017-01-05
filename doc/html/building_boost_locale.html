@@ -121,6 +121,7 @@ Building Process</h2>
  then you need to provide an option <code>-sICU_PATH=c:\icu46</code> <pre class="fragment">    .\bjam --with-locale -sICU_PATH=c:\icu46  stage</pre></li>
 </ul>
 <dl class="section note"><dt>Note</dt><dd>Don't forget to put both debug and release versions of ICU libraries in this path when using Microsoft Visual Studio so Boost.Build will link correctly debug and release versions of boost_locale library.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If ICU libraries are located at some other (sub)directory you can provide this location by additionally using <code>-sICU_LIBPATH</code> option.</dd></dl>
 <h1><a class="anchor" id="bb_build_opts"></a>
 Build Options</h1>
 <p>Boost.Locale supports following options with values <code>off</code> or <code>on</code> </p>
@@ -134,6 +135,7 @@ Build Options</h1>
 <p>Also Boost.Locale supports following options</p>
 <ul>
 <li><code>-sICU_PATH=/path/to/location/of/icu</code> - the location of custom ICU library</li>
+<li><code>-sICU_LIBPATH=/path/to/location/of/icu/libraries</code> - the location of custom ICU library libs</li>
 <li><code>-sICONV_PATH=/path/to/location/of/iconv</code> - the location of custom iconv library</li>
 </ul>
 <p>For example:</p>
