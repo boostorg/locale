@@ -56,7 +56,7 @@ do {                                                                            
         }                                                               \
         std::cout <<" "<< std::fixed << std::setprecision(1)            \
                 << std::setw(5) << 100.0 * passed / test_counter <<     \
-                "% of tests completed sucsessefully" << std::endl;      \
+                "% of tests completed successfully" << std::endl;      \
         return error_counter == 0 ? EXIT_SUCCESS : EXIT_FAILURE ;       \
     }while(0)
 
