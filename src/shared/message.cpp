@@ -688,9 +688,9 @@ namespace boost {
                         return false;
                     if(!mo.has_hash())
                         return false;
-                    if(compare_encodings(mo_encoding.c_str(),locale_encoding_.c_str())!=0)
+                    if(compare_encodings(mo_encoding,locale_encoding_)!=0)
                         return false;
-                    if(compare_encodings(mo_encoding.c_str(),key_encoding_.c_str())==0) {
+                    if(compare_encodings(mo_encoding,key_encoding_)==0) {
                         return true;
                     }
                     for(unsigned i=0;i<mo.size();i++) {
