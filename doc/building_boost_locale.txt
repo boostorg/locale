@@ -90,6 +90,9 @@ For example:
 when using Microsoft Visual Studio  so Boost.Build will link correctly debug and release
 versions of boost_locale library.
 
+\note If ICU libraries are located at some other (sub)directory you can provide this
+location by additionally using \c -sICU_LIBPATH option.
+
 \section bb_build_opts Build Options
 
 Boost.Locale supports following options with values \c off or \c on
@@ -106,6 +109,7 @@ Boost.Locale supports following options with values \c off or \c on
 Also Boost.Locale supports following options
 
 - \c -sICU_PATH=/path/to/location/of/icu - the location of custom ICU library
+- \c -sICU_LIBPATH=/path/to/location/of/icu/libraries - the location of custom ICU library libs
 - \c -sICONV_PATH=/path/to/location/of/iconv - the location of custom iconv library
 
 

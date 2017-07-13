@@ -60,8 +60,9 @@ explicit has_xlocale ;
 #end xlocale
 
 
-ICU_PATH =  [ modules.peek : ICU_PATH ] ;
-ICU_LINK =  [ modules.peek : ICU_LINK ] ;
+ICU_PATH    =  [ modules.peek : ICU_PATH ] ;
+ICU_LIBPATH =  [ modules.peek : ICU_LIBPATH ] ;
+ICU_LINK    =  [ modules.peek : ICU_LINK ] ;
 
 if $(ICU_LINK)
 {
@@ -71,25 +72,25 @@ if $(ICU_LINK)
 else
 {
     searched-lib icuuc : :  <name>icuuc
-                            <search>$(ICU_PATH)/lib 
+                            <search>$(ICU_LIBPATH)&&$(ICU_PATH)/lib
                             <link>shared 
                             <runtime-link>shared ;
 
     searched-lib icuuc : :  <toolset>msvc
                             <variant>debug
                             <name>icuucd
-                            <search>$(ICU_PATH)/lib
+                            <search>$(ICU_LIBPATH)&&$(ICU_PATH)/lib
                             <link>shared
                             <runtime-link>shared ;
 
     searched-lib icuuc : :  <name>this_is_an_invalid_library_name ;
 
-    searched-lib icudt : :  <search>$(ICU_PATH)/lib
+    searched-lib icudt : :  <search>$(ICU_LIBPATH)&&$(ICU_PATH)/lib
                             <name>icudata
                             <link>shared
                             <runtime-link>shared ;
 
-    searched-lib icudt : :  <search>$(ICU_PATH)/lib
+    searched-lib icudt : :  <search>$(ICU_LIBPATH)&&$(ICU_PATH)/lib
                             <name>icudt
                             <toolset>msvc
                             <link>shared
@@ -97,7 +98,7 @@ else
 
     searched-lib icudt : :  <name>this_is_an_invalid_library_name ;
 
-    searched-lib icuin : :  <search>$(ICU_PATH)/lib
+    searched-lib icuin : :  <search>$(ICU_LIBPATH)&&$(ICU_PATH)/lib
                             <name>icui18n
                             <link>shared
                             <runtime-link>shared ;
@@ -105,14 +106,14 @@ else
     searched-lib icuin : :  <toolset>msvc
                             <variant>debug
                             <name>icuind
-                            <search>$(ICU_PATH)/lib
+                            <search>$(ICU_LIBPATH)&&$(ICU_PATH)/lib
                             <link>shared
                             <runtime-link>shared ;
 
     searched-lib icuin : :  <toolset>msvc
                             <variant>release
                             <name>icuin
-                            <search>$(ICU_PATH)/lib
+                            <search>$(ICU_LIBPATH)&&$(ICU_PATH)/lib
                             <link>shared
                             <runtime-link>shared ;
 
@@ -130,25 +131,25 @@ else
 
 
     searched-lib icuuc_64 : :   <name>icuuc
-                                <search>$(ICU_PATH)/lib64 
+                                <search>$(ICU_LIBPATH)&&$(ICU_PATH)/lib64
                                 <link>shared 
                                 <runtime-link>shared ;
 
     searched-lib icuuc_64 : :   <toolset>msvc
                                 <variant>debug
                                 <name>icuucd
-                                <search>$(ICU_PATH)/lib64
+                                <search>$(ICU_LIBPATH)&&$(ICU_PATH)/lib64
                                 <link>shared
                                 <runtime-link>shared ;
 
     searched-lib icuuc_64 : :   <name>this_is_an_invalid_library_name ;
 
-    searched-lib icudt_64 : :   <search>$(ICU_PATH)/lib64
+    searched-lib icudt_64 : :   <search>$(ICU_LIBPATH)&&$(ICU_PATH)/lib64
                                 <name>icudata
                                 <link>shared
                                 <runtime-link>shared ;
 
-    searched-lib icudt_64 : :   <search>$(ICU_PATH)/lib64
+    searched-lib icudt_64 : :   <search>$(ICU_LIBPATH)&&$(ICU_PATH)/lib64
                                 <name>icudt
                                 <toolset>msvc
                                 <link>shared
@@ -156,7 +157,7 @@ else
 
     searched-lib icudt_64 : :   <name>this_is_an_invalid_library_name ;
 
-    searched-lib icuin_64 : :   <search>$(ICU_PATH)/lib64
+    searched-lib icuin_64 : :   <search>$(ICU_LIBPATH)&&$(ICU_PATH)/lib64
                                 <name>icui18n
                                 <link>shared
                                 <runtime-link>shared ;
@@ -164,14 +165,14 @@ else
     searched-lib icuin_64 : :   <toolset>msvc
                                 <variant>debug
                                 <name>icuind
-                                <search>$(ICU_PATH)/lib64
+                                <search>$(ICU_LIBPATH)&&$(ICU_PATH)/lib64
                                 <link>shared
                                 <runtime-link>shared ;
 
     searched-lib icuin_64 : :   <toolset>msvc
                                 <variant>release
                                 <name>icuin
-                                <search>$(ICU_PATH)/lib64
+                                <search>$(ICU_LIBPATH)&&$(ICU_PATH)/lib64
                                 <link>shared
                                 <runtime-link>shared ;
 
