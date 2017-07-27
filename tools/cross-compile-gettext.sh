@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 #  Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
 #
