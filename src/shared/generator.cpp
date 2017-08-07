@@ -126,7 +126,7 @@ namespace boost {
                     return p->second;
                 }
             }
-            shared_ptr<localization_backend> backend(d->backend_manager.get());
+            shared_ptr<localization_backend> backend(d->backend_manager.create());
             set_all_options(backend,id);
 
             std::locale result = base;
