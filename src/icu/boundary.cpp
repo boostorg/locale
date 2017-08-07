@@ -134,8 +134,9 @@ template<typename CharType>
 index_type do_map(boundary_type t,CharType const *begin,CharType const *end,icu::Locale const &loc,std::string const &encoding)
 {
     index_type indx;
-    std::auto_ptr<icu::BreakIterator> bi(get_iterator(t,loc));
-   
+
+    std::auto_ptr<icu::BreakIterator> bi = get_iterator(t,loc);
+
 #if U_ICU_VERSION_MAJOR_NUM*100 + U_ICU_VERSION_MINOR_NUM >= 306
     UErrorCode err=U_ZERO_ERROR;
     if(sizeof(CharType) == 2 || (sizeof(CharType)==1 && encoding=="UTF-8"))
