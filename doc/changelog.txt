@@ -8,6 +8,9 @@
 /*!
 \page changelog Changelog
 
+- Unreleased
+    - Breaking changes
+        - `get_system_locale` and dependents will now correctly favor `$LC_ALL` over `LC_CTYPE` as defined by POSIX
 - 1.81.0
     - Breaking changes
         - Require C++11 or higher

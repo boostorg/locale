@@ -32,14 +32,14 @@ void test_get_system_locale()
             TEST_EQ(enc, ".UTF-8");
     }
 #endif
-    // LC_CTYPE, LC_ALL and LANG variables used in this order
+    // LC_ALL, LC_CTYPE and LANG variables used in this order
     using boost::locale::test::setenv;
     setenv("LANG", "mylang.foo");
     TEST_EQ(get_system_locale(true), "mylang.foo");
-    setenv("LC_ALL", "barlang.bar");
-    TEST_EQ(get_system_locale(true), "barlang.bar");
     setenv("LC_CTYPE", "this.lang");
     TEST_EQ(get_system_locale(true), "this.lang");
+    setenv("LC_ALL", "barlang.bar");
+    TEST_EQ(get_system_locale(true), "barlang.bar");
 }
 
 void test_main(int /*argc*/, char** /*argv*/)

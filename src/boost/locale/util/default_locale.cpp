@@ -17,24 +17,24 @@
 #endif
 
 namespace boost { namespace locale { namespace util {
-    std::string get_system_locale(bool use_utf8)
+    std::string get_system_locale(bool use_utf8_on_windows)
     {
         const char* lang = 0;
         if(!lang || !*lang)
-            lang = getenv("LC_CTYPE");
-        if(!lang || !*lang)
             lang = getenv("LC_ALL");
+        if(!lang || !*lang)
+            lang = getenv("LC_CTYPE");
         if(!lang || !*lang)
             lang = getenv("LANG");
 #ifndef BOOST_LOCALE_USE_WIN32_API
-        (void)use_utf8; // not relevant for non-windows
+        (void)use_utf8_on_windows; // not relevant for non-windows
         if(!lang || !*lang)
             lang = "C";
         return lang;
 #else
-        if(lang && *lang) {
+        if(lang && *lang)
             return lang;
-        }
+
         char buf[10];
         if(GetLocaleInfoA(LOCALE_USER_DEFAULT, LOCALE_SISO639LANGNAME, buf, sizeof(buf)) == 0)
             return "C";
@@ -43,7 +43,9 @@ namespace boost { namespace locale { namespace util {
             lc_name += "_";
             lc_name += buf;
         }
-        if(!use_utf8) {
+        if(use_utf8_on_windows)
+            lc_name += ".UTF-8";
+        else {
             if(GetLocaleInfoA(LOCALE_USER_DEFAULT, LOCALE_IDEFAULTANSICODEPAGE, buf, sizeof(buf)) != 0) {
                 if(atoi(buf) == 0)
                     lc_name += ".UTF-8";
@@ -51,11 +53,8 @@ namespace boost { namespace locale { namespace util {
                     lc_name += ".windows-";
                     lc_name += buf;
                 }
-            } else {
-                lc_name += "UTF-8";
-            }
-        } else {
-            lc_name += ".UTF-8";
+            } else
+                lc_name += ".UTF-8";
         }
         return lc_name;
 
