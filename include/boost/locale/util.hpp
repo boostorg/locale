@@ -26,7 +26,7 @@ namespace util {
     ///
     /// \brief Return default system locale name in POSIX format.
     ///
-    /// This function tries to detect the locale using, LC_CTYPE, LC_ALL and LANG environment
+    /// This function tries to detect the locale using, LC_ALL, LC_CTYPE and LANG environment
     /// variables in this order and if all of them unset, in POSIX platforms it returns "C"
     /// 
     /// On Windows additionally to check the above environment variables, this function

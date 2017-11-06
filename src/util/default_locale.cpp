@@ -30,9 +30,9 @@ namespace boost {
             {
                 char const *lang = 0;
                 if(!lang || !*lang)
-                    lang = getenv("LC_CTYPE");
-                if(!lang || !*lang)
                     lang = getenv("LC_ALL");
+                if(!lang || !*lang)
+                    lang = getenv("LC_CTYPE");
                 if(!lang || !*lang)
                     lang = getenv("LANG");
                 #ifndef BOOST_LOCALE_USE_WIN32_API
