@@ -10,6 +10,9 @@
 /*!
 \page changelog Changelog
 
+- 1.66.0 
+    - Fixed Year of week instead of year ICU backend formatting
+    - Fixed formatting test for ICU 56.1 and above
 - 1.60.0 
     - Implemented generic codecvt facet and add general purpose utf8_codecvt facet
     - Added posix locale support for FreeBSD 10.0 and above
