@@ -15,10 +15,6 @@
 #include <unicode/uchar.h>
 #include <unicode/coll.h>
 
-#if defined(_MSC_VER) && !defined(_DLL)
-#error "Mixing ICU with a static runtime doesn't work"
-#endif
-
 int main()
 {
    icu::Locale loc;
