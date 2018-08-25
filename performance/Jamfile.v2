@@ -1,0 +1,23 @@
+#
+# Copyright 2011 Artyom Beilis 
+# Copyright 2018 James E. King III
+#
+# Distributed under the Boost Software License, Version 1.0. 
+# (See accompanying file LICENSE_1_0.txt or copy at 
+# http://www.boost.org/LICENSE_1_0.txt.
+
+
+project 
+    :   requirements 
+            <library>/boost/locale//boost_locale
+            <use>../build//build_flags 
+				# Make sure we get all defines we need
+				# Otherwise we would have problem knowing
+				# what backends are actually in use
+			<link>shared
+			<define>BOOST_LOCALE_DYN_LINK=1
+    ;
+
+exe perf_collate : perf_collate.cpp ;
+exe perf_convert : perf_convert.cpp ;
+exe perf_format : perf_format.cpp ;
