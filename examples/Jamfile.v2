@@ -1,0 +1,32 @@
+#  Boost.Locale Library example Jamfile
+#
+#  Copyright 2011 Artyom Beilis
+#  Copyright (c) 2018 James E. King III
+#
+#  Distributed under the Boost Software License, Version 1.0. (See accompany-
+#  ing file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+project
+    :   requirements
+            <library>/boost/locale//boost_locale
+            <use>../build//build_flags
+                                # Make sure we get all defines we need
+                                # Otherwise we would have problem knowing
+                                # what backends are actually in use
+                        <link>shared
+                        <define>BOOST_LOCALE_DYN_LINK=1
+    ;
+
+import testing ;
+
+test-suite "locale-examples"
+   :    [ run boundary.cpp ]
+        [ run calendar.cpp ]
+        [ run collate.cpp ]
+        [ run conversions.cpp ]
+        [ run hello.cpp ]
+        [ run wboundary.cpp ]
+        [ run wconversions.cpp ]
+        [ run whello.cpp ]
+   ;
+
