@@ -20,6 +20,7 @@
 #include <windows.h>
 
 #include <boost/thread/mutex.hpp>
+#include <boost/thread/locks.hpp>
 
 namespace boost {
 namespace locale {
