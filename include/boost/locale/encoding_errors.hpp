@@ -26,7 +26,7 @@ namespace boost {
             /// @{
 
             ///
-            /// \brief The excepton that is thrown in case of conversion error
+            /// \brief The exception that is thrown in case of conversion error
             ///
             class BOOST_SYMBOL_VISIBLE conversion_error : public std::runtime_error {
             public:

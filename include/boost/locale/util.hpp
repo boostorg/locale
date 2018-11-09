@@ -18,7 +18,7 @@
 namespace boost {
 namespace locale {
 ///
-/// \brief This namespace provides various utility function useful for Boost.Locale backends
+/// \brief This namespace provides various utility function useful for Boost.Locale's backends
 /// implementations
 ///
 namespace util {
@@ -274,7 +274,7 @@ namespace util {
     /// This function installs codecvt that can be used for conversion between single byte
     /// character encodings like ISO-8859-1, koi8-r, windows-1255 and Unicode code points,
     /// 
-    /// Throws boost::locale::conv::invalid_charset_error if the chacater set is not supported or isn't single byte character
+    /// Throws boost::locale::conv::invalid_charset_error if the character set is not supported or isn't single byte character
     /// set
     BOOST_LOCALE_DECL
     std::locale create_simple_codecvt(std::locale const &in,std::string const &encoding,character_facet_type type);

@@ -39,7 +39,7 @@ namespace boost {
             ///
             /// \defgroup boundary Boundary Analysis
             ///
-            /// This module contains all operations required for %boundary analysis of text: character, word, like and sentence boundaries
+            /// This module contains all operations required for %boundary analysis of text: character, word, line, and sentence boundaries
             ///
             /// @{
             ///
@@ -86,7 +86,7 @@ namespace boost {
                         //
                         // Optimize for most common cases
                         //
-                        // C++0x requires that string is continious in memory and all known
+                        // C++0x requires that string is continuous in memory and all known
                         // string implementations
                         // do this because of c_str() support. 
                         //
@@ -637,7 +637,7 @@ namespace boost {
                 /// and used default rule (all possible segments)
                 ///
                 /// This operation is very cheap, so if you use boundary_point_index and segment_index on same text
-                /// range it is much better to create one from another rather then indexing the same
+                /// range it is much better to create another one rather then indexing the same
                 /// range twice.
                 ///
                 /// \note \ref rule() flags are not copied

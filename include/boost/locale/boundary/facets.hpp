@@ -25,7 +25,7 @@ namespace boost {
     namespace locale {
         
         ///
-        /// \brief This namespae contains all operations required for boundary analysis of text
+        /// \brief This namespace contains all operations required for boundary analysis of text
         ///
         namespace boundary {
             ///
@@ -36,13 +36,13 @@ namespace boost {
 
             
             ///
-            /// \brief This structure is used for representing boundary point
-            /// that follows the offset.
+            /// \brief This structure is used for representing boundary points
+            /// that follow an offset.
             ///
             struct break_info {
 
                 ///
-                /// Create empty break point at beginning
+                /// Create an empty break point at beginning
                 ///
                 break_info() : 
                     offset(0),
@@ -60,7 +60,7 @@ namespace boost {
                 }
 
                 ///
-                /// Offset from the beggining of the text where a break occurs.
+                /// Offset from the beginning of the text where a break occurs.
                 ///
                 size_t offset;
                 ///

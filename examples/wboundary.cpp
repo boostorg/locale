@@ -46,9 +46,8 @@ int main()
     locale::global(loc); 
     wcout.imbue(loc);
     
-    // This is needed to prevent C library to
-    // convert strings to narrow 
-    // instead of C++ on some platforms
+    // This is needed to prevent the C stdio library from
+    // converting strings to narrow on some platforms
     std::ios_base::sync_with_stdio(false);
 
 
