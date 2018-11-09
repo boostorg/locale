@@ -25,7 +25,7 @@ var hierarchy =
     ] ],
     [ "boost::locale::comparator< CharType, default_level >", "structboost_1_1locale_1_1comparator.html", null ],
     [ "boost::locale::converter_base", "classboost_1_1locale_1_1converter__base.html", [
-      [ "boost::locale::converter< CharType >", "classboost_1_1locale_1_1converter.html", null ]
+      [ "boost::locale::converter< Char >", "classboost_1_1locale_1_1converter.html", null ]
     ] ],
     [ "boost::locale::date_time", "classboost_1_1locale_1_1date__time.html", null ],
     [ "boost::locale::date_time_duration", "classboost_1_1locale_1_1date__time__duration.html", null ],
@@ -33,9 +33,9 @@ var hierarchy =
     [ "boost::locale::date_time_period_set", "classboost_1_1locale_1_1date__time__period__set.html", null ],
     [ "boost::locale::gnu_gettext::messages_info::domain", "structboost_1_1locale_1_1gnu__gettext_1_1messages__info_1_1domain.html", null ],
     [ "facet", null, [
-      [ "boost::locale::boundary::boundary_indexing< CharType >", "classboost_1_1locale_1_1boundary_1_1boundary__indexing.html", null ],
+      [ "boost::locale::boundary::boundary_indexing< Char >", "classboost_1_1locale_1_1boundary_1_1boundary__indexing.html", null ],
       [ "boost::locale::calendar_facet", "classboost_1_1locale_1_1calendar__facet.html", null ],
-      [ "boost::locale::converter< CharType >", "classboost_1_1locale_1_1converter.html", null ],
+      [ "boost::locale::converter< Char >", "classboost_1_1locale_1_1converter.html", null ],
       [ "boost::locale::info", "classboost_1_1locale_1_1info.html", null ]
     ] ],
     [ "boost::locale::generator", "classboost_1_1locale_1_1generator.html", null ],
@@ -50,6 +50,8 @@ var hierarchy =
     ] ],
     [ "boost::locale::hold_ptr< T >", "classboost_1_1locale_1_1hold__ptr.html", null ],
     [ "boost::locale::hold_ptr< boost::locale::abstract_calendar >", "classboost_1_1locale_1_1hold__ptr.html", null ],
+    [ "boost::locale::hold_ptr< data >", "classboost_1_1locale_1_1hold__ptr.html", null ],
+    [ "boost::locale::hold_ptr< impl >", "classboost_1_1locale_1_1hold__ptr.html", null ],
     [ "boost::locale::ios_info", "classboost_1_1locale_1_1ios__info.html", null ],
     [ "boost::locale::localization_backend", "classboost_1_1locale_1_1localization__backend.html", null ],
     [ "boost::locale::localization_backend_manager", "classboost_1_1locale_1_1localization__backend__manager.html", null ],
