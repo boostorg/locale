@@ -17,7 +17,7 @@
 
 namespace boost { namespace locale {
 
-    /// \brief This namespase contains all operations required for boundary analysis of text
+    /// \brief This namespace contains all operations required for boundary analysis of text
     namespace boundary {
         /// \defgroup boundary Boundary Analysis
         ///

@@ -18,7 +18,7 @@ int main()
     std::locale::global(gen(""));
     /// Set global locale to requested
 
-    /// Create a set that includes all strings sorted according to ABC order
+    /// Create a set that includes all strings sorted in alphabetical order
     /// std::locale can be used as object for comparison
     typedef std::set<std::string, std::locale> set_type;
     set_type all_strings;

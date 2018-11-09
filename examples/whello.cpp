@@ -18,9 +18,8 @@ int main()
     std::locale::global(loc);
     std::wcout.imbue(loc);
 
-    // This is needed to prevent C library to
-    // convert strings to narrow
-    // instead of C++ on some platforms
+    // This is needed to prevent the C stdio library from
+    // converting strings to narrow on some platforms
     std::ios_base::sync_with_stdio(false);
 
     std::wcout << wformat(L"Today {1,date} at {1,time} we had run our first localization example") % time(0)
