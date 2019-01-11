@@ -25,6 +25,7 @@
 #endif
 #include <windows.h>
 
+#include <boost/config.hpp>
 #include <boost/locale/conversion.hpp>
 #include <boost/locale/collator.hpp>
 
@@ -134,10 +135,10 @@ namespace impl_win {
         }
         if(!inf_group) {
             if(std::numeric_limits<char>::is_signed) {
-                res.grouping+=std::numeric_limits<char>::min();
+                res.grouping+=std::numeric_limits<char>::min BOOST_PREVENT_MACRO_SUBSTITUTION();
             }
             else {
-                res.grouping+=std::numeric_limits<char>::max();
+                res.grouping+=std::numeric_limits<char>::max BOOST_PREVENT_MACRO_SUBSTITUTION();
             }
         }
         return res;
