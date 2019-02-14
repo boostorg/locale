@@ -148,6 +148,11 @@ date_time::date_time(date_time const &other)
     impl_.reset(other.impl_->clone());
 }
 
+date_time::date_time(date_time &&other)
+{
+    impl_.reset(other.impl_.release());
+}
+
 date_time::date_time(date_time const &other,date_time_period_set const &s)
 {
     impl_.reset(other.impl_->clone());
@@ -162,6 +167,14 @@ date_time const &date_time::operator = (date_time const &other)
     if(this != &other) {
         date_time tmp(other);
         swap(tmp);
+    }
+    return *this;
+}
+
+date_time const &date_time::operator = (date_time &&other)
+{
+    if(this != &other) {
+        impl_.reset(other.impl_.release());
     }
     return *this;
 }

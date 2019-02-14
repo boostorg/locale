@@ -601,6 +601,10 @@ namespace boost {
             ///
             date_time(date_time const &other);
             ///
+            /// move date_time
+            ///
+            date_time(date_time &&other);
+            ///
             /// copy date_time and change some fields according to the \a set
             ///
             date_time(date_time const &other,date_time_period_set const &set);
@@ -608,6 +612,10 @@ namespace boost {
             /// assign the date_time
             ///
             date_time const &operator=(date_time const &other);
+            ///
+            /// move assign the date_time
+            ///
+            date_time const &operator=(date_time &&other);
             ~date_time();
 
             ///
