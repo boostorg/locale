@@ -503,6 +503,7 @@ namespace util {
                             return val;
                         }
                     }
+                    break;
                 case week_of_month:              ///< The week number withing current month
                     switch(v) {
                     case absolute_minimum:
@@ -527,7 +528,7 @@ namespace util {
                             return val;
                         }
                     }
-
+                    break;
                 case day_of_week_in_month:       ///< Original number of the day of the week in month.
                     switch(v) {
                     case absolute_minimum:
