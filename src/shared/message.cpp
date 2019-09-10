@@ -29,6 +29,7 @@
 #include <map>
 #endif
 
+#include <algorithm>
 #include <iostream>
 
 
