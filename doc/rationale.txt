@@ -21,9 +21,9 @@
 - \ref why_abstract_api
 - \ref why_no_special_character_type
 
-\section rationale_why Why is it needed?
+\section rationale_why Why do I need Boost.Locale?
 
-Why do we need a localization library, when standard C++ facets (should) provide most of the required functionality:
+Why do we need a localization library, when standard C++ facets (should) provide most of the required functionality?
 
 - Case conversion is done using the \c std::ctype facet
 - Collation is supported by \c std::collate and has nice integration with \c std::locale
@@ -31,11 +31,11 @@ Why do we need a localization library, when standard C++ facets (should) provide
     time, and currency formatting and parsing.
 - There is a \c std::messages class that supports localized message formatting.
 
-So why do we need such library if we have all the functionality within the standard library?
+So why do we need such a library if we have all the functionality within the standard library?
 
 Almost every(!) facet has design flaws:
 
--  \c std::collate supports only one level of collation, not allowing you to choose whether case- or accent-sensitive comparisons
+-  \c std::collate supports only one level of collation; it does not allow you to choose whether case- or accent-sensitive comparisons
     should be performed.
 
 -  \c std::ctype, which is responsible for case conversion, assumes that all conversions can be done on a per-character basis. This is
@@ -179,13 +179,13 @@ to provide all the required information.
 - ICU fully understands POSIX locales and knows how to treat them correctly.
 - They are native locale names for most operating system APIs (with the exception of Windows)
 
-\section why_linear_chunks Why most parts of Boost.Locale work only on linear/contiguous chunks of text
+\section why_linear_chunks Why do most parts of Boost.Locale work only on linear/contiguous chunks of text?
 
 There are two reasons:
 
 - Boost.Locale relies heavily on the third-party APIs like ICU, POSIX or Win32 API, all of them
   work only on linear chunks of text, so providing non-linear API would just hide the
-  real situation and would not bring real performance advantage.
+  real situation and would hurt performance.
 - In fact, all known libraries that work with Unicode: ICU, Qt, Glib, Win32 API, POSIX API 
   and others accept an input as single linear chunk of text and there is a good reason for this:
   \n
@@ -204,7 +204,7 @@ However:
    on large chunks of text, will provide an interface for non-linear text handling.
 
 
-\section why_abstract_api Why all Boost.Locale implementation is hidden behind abstract interfaces and does not use template metaprogramming?
+\section why_abstract_api Why is all Boost.Locale implementation hidden behind abstract interfaces instead of using template metaprogramming?
 
 There are several major reasons:
 
@@ -215,7 +215,7 @@ There are several major reasons:
 - This approach reduces compilation times significantly. This is very important for library that may be
   used in almost every part of specific program.
 
-\section why_no_special_character_type Why Boost.Locale does not provide char16_t/char32_t for non-C++0x platforms.
+\section why_no_special_character_type Why doesn't Boost.Locale provide char16_t/char32_t for non-C++0x platforms?
 
 There are several reasons:
 
@@ -229,7 +229,7 @@ There are several reasons:
 These are exactly the reasons why Boost.Locale fails with current limited C++0x characters support on GCC-4.5 (the second reason)
 and MSVC-2010 (the first reason)
 
-So basically it is impossible to use non-C++ characters with the C++'s locales framework.
+Basically it is impossible to use non-C++ characters with the C++'s locales framework.
 
 The best and the most portable solution is to use the C++'s \c char type and UTF-8 encodings.
 

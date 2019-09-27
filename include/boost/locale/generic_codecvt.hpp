@@ -43,9 +43,9 @@ public:
 };
 
 ///
-/// \brief Geneneric generic codecvt facet, various stateless encodings to UTF-16 and UTF-32 using wchar_t, char32_t and char16_t
+/// \brief Generic  generic codecvt facet, various stateless encodings to UTF-16 and UTF-32 using wchar_t, char32_t and char16_t
 ///
-/// Implementations should dervide from this class defining itself as CodecvtImpl and provide following members
+/// Implementations should derive from this class defining itself as CodecvtImpl and provide following members
 ///
 /// - `state_type` - a type of special object that allows to store intermediate cached data, for example `iconv_t` descriptor 
 /// - `state_type initial_state(generic_codecvt_base::initial_convertion_state direction) const` - member function that creates initial state
@@ -54,7 +54,7 @@ public:
 /// - `utf::code_point from_unicode(state_type &state,utf::code_point u,char *begin,char const *end)` - convert a unicode code point `u` into a character seqnece at [begin,end). Return the length of the sequence in case of success, utf::incomplete in case of not enough room to encode the code point of utf::illegal in case conversion can not be performed
 ///
 ///
-/// For example implementaion of codecvt for latin1/ISO-8859-1 character set
+/// For example implementation of codecvt for latin1/ISO-8859-1 character set
 ///
 /// \code
 ///
@@ -250,7 +250,7 @@ protected:
         // mbstate_t is POD type and should be initialized to 0 (i.a. state = stateT())
         // according to standard. We use it to keep a flag 0/1 for surrogate pair writing
         //
-        // if 0 no code above >0xFFFF observed, of 1 a code above 0xFFFF observerd
+        // if 0 no code above >0xFFFF observed, of 1 a code above 0xFFFF observed
         // and first pair is written, but no input consumed
         boost::uint16_t &state = *reinterpret_cast<boost::uint16_t *>(&std_state);
         typedef typename CodecvtImpl::state_type state_type;
@@ -283,7 +283,7 @@ protected:
             else {
                 // for  other codepoints we do following
                 //
-                // 1. We can't consume our input as we may find ourselfs
+                // 1. We can't consume our input as we may find ourselves
                 //    in state where all input consumed but not all output written,i.e. only
                 //    1st pair is written
                 // 2. We only write first pair and mark this in the state, we also revert back
@@ -344,9 +344,9 @@ protected:
         std::codecvt_base::result r=std::codecvt_base::ok;
         // mbstate_t is POD type and should be initialized to 0 (i.a. state = stateT())
         // according to standard. We assume that sizeof(mbstate_t) >=2 in order
-        // to be able to store first observerd surrogate pair
+        // to be able to store first observed surrogate pair
         //
-        // State: state!=0 - a first surrogate pair was observerd (state = first pair),
+        // State: state!=0 - a first surrogate pair was observed (state = first pair),
         // we expect the second one to come and then zero the state
         ///
         boost::uint16_t &state = *reinterpret_cast<boost::uint16_t *>(&std_state);
@@ -361,7 +361,7 @@ protected:
 #endif            
             boost::uint32_t ch=0;
             if(state != 0) {
-                // if the state idecates that 1st surrogate pair was written
+                // if the state indicates that 1st surrogate pair was written
                 // we should make sure that the second one that comes is actually
                 // second surrogate
                 boost::uint16_t w1 = state;

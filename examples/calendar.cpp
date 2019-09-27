@@ -34,7 +34,7 @@ int main()
     std::cout << format("{1,ftime='%Y'}") % now << std::endl;
 
     //
-    // Run forward untill current year is the date
+    // Run forward until current year is the date
     //
     for(now=start; period::year(now) == current_year;) {
 
@@ -48,7 +48,7 @@ int main()
 
         int first = calendar().first_day_of_week();
 
-        // Print weeks days
+        // Print week days
         for(int i=0;i<7;i++) {
             date_time tmp(now,period::day_of_week() * (first + i));
             std::cout << format("{1,w=8,ftime='%a'} ") % tmp;

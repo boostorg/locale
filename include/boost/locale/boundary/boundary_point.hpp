@@ -24,18 +24,18 @@ namespace boundary {
     /// It represents a pair - an iterator and a rule that defines this 
     /// point.
     ///
-    /// This type of object is dereference by the iterators of boundary_point_index. Using a rule()
+    /// This type of object is dereferenced by the iterators of boundary_point_index. Using a rule()
     /// member function you can get the reason why this specific boundary point was selected. 
     ///
-    /// For example, When you use a sentence boundary analysis, the (rule() & \ref sentence_term) != 0 means
+    /// For example, when you use sentence boundary analysis, the (rule() & \ref sentence_term) != 0 means
     /// that this boundary point was selected because a sentence terminator (like .?!) was spotted
     /// and the (rule() & \ref sentence_sep)!=0 means that a separator like line feed or carriage
     /// return was observed.
     ///
     /// \note
     ///
-    /// -   The beginning of analyzed range is always considered a boundary point and its rule is always 0.
-    /// -   when using a word boundary analysis the returned rule relates to a chunk of text preceding
+    /// -   The beginning of the analyzed range is always considered a boundary point and its rule is always 0.
+    /// -   When using word boundary analysis, the returned rule relates to a chunk of text preceding
     ///     this point.
     ///
     /// \see

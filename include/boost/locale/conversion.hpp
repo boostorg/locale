@@ -162,7 +162,7 @@ namespace boost {
         }
 
         ///
-        /// Normalize NUL terminated Unicode string \a str according to \ref norm_type "normalization form" \a n
+        /// Normalize NULL terminated Unicode string \a str according to \ref norm_type "normalization form" \a n
         ///
         /// Note: This function receives only Unicode strings, i.e.: UTF-8, UTF-16 or UTF-32. It does not take
         /// in account the locale encoding, because Unicode decomposition and composition are meaningless outside 
@@ -212,7 +212,7 @@ namespace boost {
         }
         
         ///
-        /// Convert a NUL terminated string \a str to upper case according to locale \a loc
+        /// Convert a NULL terminated string \a str to upper case according to locale \a loc
         ///
         /// \note throws std::bad_cast if loc does not have \ref converter facet installed
         /// 
@@ -251,7 +251,7 @@ namespace boost {
         }
         
         ///
-        /// Convert a NUL terminated string \a str to lower case according to locale \a loc
+        /// Convert a NULL terminated string \a str to lower case according to locale \a loc
         ///
         /// \note throws std::bad_cast if loc does not have \ref converter facet installed
         /// 
@@ -289,7 +289,7 @@ namespace boost {
         }
         
         ///
-        /// Convert a NUL terminated string \a str to title case according to locale \a loc
+        /// Convert a NULL terminated string \a str to title case according to locale \a loc
         ///
         /// \note throws std::bad_cast if loc does not have \ref converter facet installed
         /// 
@@ -328,7 +328,7 @@ namespace boost {
         }
         
         ///
-        /// Fold case of a NUL terminated string \a str according to locale \a loc
+        /// Fold case of a NULL terminated string \a str according to locale \a loc
         ///
         /// \note throws std::bad_cast if loc does not have \ref converter facet installed
         /// 
