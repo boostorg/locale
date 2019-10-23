@@ -16,12 +16,10 @@
 #include <string>
 #include <locale>
 #include <memory>
+#include <boost/shared_ptr.hpp>
 #include <boost/locale/hold_ptr.hpp>
 
 namespace boost {
-
-    template<typename Type>
-    class shared_ptr;
 
     ///
     /// \brief This is the main namespace that encloses all localization classes 
