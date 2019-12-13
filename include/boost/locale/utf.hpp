@@ -9,6 +9,7 @@
 #define BOOST_LOCALE_UTF_HPP_INCLUDED
 
 #include <boost/cstdint.hpp>
+#include <boost/config.hpp>
 
 namespace boost {
 namespace locale {
@@ -27,6 +28,20 @@ namespace utf {
     #   define BOOST_LOCALE_UNLIKELY(x) (x)
     #endif
     /// \endcond
+
+    ///
+    /// \brief Format of the UTF encoding used by utf_traits class
+    ///
+    /// Can be used like a scoped enum (e.g. format::UTF8) but is an int for
+    /// backwards compatibility. The values correspond to the size of 1 unit.
+    ///
+    struct format {
+        enum {
+            UTF8 = 1,
+            UTF16 = 2,
+            UTF32 = 4
+        };
+    };
 
     ///
     /// \brief The integral type that can hold a Unicode code point
@@ -55,11 +70,24 @@ namespace utf {
         return true;
     }
 
+    ///
+    /// \brief Trait to return the encoding of a char type
+    ///
+    template<typename CharType>
+    struct encoding {
+        ///
+        /// \brief Encoding of CharType - Member of \ref format enum
+        ///
+        /// The default is the size of the type which is usually OK
+        /// due to the definition of \ref format values.
+        BOOST_STATIC_CONSTEXPR int value = sizeof(CharType);
+    };
+
     #ifdef BOOST_LOCALE_DOXYGEN
     ///
     /// \brief UTF Traits class - functions to convert UTF sequences to and from Unicode code points
     ///
-    template<typename CharType,int size=sizeof(CharType)>
+    template<typename CharType, int Encoding = encoding<CharType>::value>
     struct utf_traits {
         ///
         /// The type of the character
@@ -136,11 +164,11 @@ namespace utf {
     
     #else
 
-    template<typename CharType,int size=sizeof(CharType)>
+    template<typename CharType, int Encoding = encoding<CharType>::value>
     struct utf_traits;
 
     template<typename CharType>
-    struct utf_traits<CharType,1> {
+    struct utf_traits<CharType, format::UTF8> {
 
         typedef CharType char_type;
         
@@ -309,7 +337,7 @@ namespace utf {
     }; // utf8
 
     template<typename CharType>
-    struct utf_traits<CharType,2> {
+    struct utf_traits<CharType, format::UTF16> {
         typedef CharType char_type;
 
         // See RFC 2781
@@ -399,7 +427,7 @@ namespace utf {
 
         
     template<typename CharType>
-    struct utf_traits<CharType,4> {
+    struct utf_traits<CharType, format::UTF32> {
         typedef CharType char_type;
         static int trail_length(char_type c)
         {
@@ -448,6 +476,18 @@ namespace utf {
 
     #endif
 
+#ifndef BOOST_NO_CXX11_CHAR16_T
+    template<>
+    struct encoding<char16_t>{
+        BOOST_STATIC_CONSTEXPR int value = format::UTF16;
+    };
+#endif
+#ifndef BOOST_NO_CXX11_CHAR32_T
+    template<>
+    struct encoding<char32_t>{
+        BOOST_STATIC_CONSTEXPR int value = format::UTF32;
+    };
+#endif
 
 } // utf
 } // locale
