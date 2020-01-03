@@ -19,7 +19,7 @@
 //
 
 #if U_ICU_VERSION_MAJOR_NUM == 4 && (U_ICU_VERSION_MINOR_NUM * 100 + U_ICU_VERSION_PATCHLEVEL_NUM) <= 402
-# if defined(__linux) || defined(__FreeBSD__) || defined(__APPLE__)
+# if defined(__linux__) || defined(__FreeBSD__) || defined(__APPLE__)
 #   define BOOST_LOCALE_WORKAROUND_ICU_BUG
 # endif
 #endif
