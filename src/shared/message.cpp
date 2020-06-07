@@ -67,7 +67,7 @@ namespace boost {
                     }
                 }
 
-                #if defined(BOOST_WINDOWS)
+                #if defined(BOOST_WINDOWS) && !(defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR) && defined(__STRICT_ANSI__))
 
                 bool open(std::string const &file_name,std::string const &encoding)
                 {
