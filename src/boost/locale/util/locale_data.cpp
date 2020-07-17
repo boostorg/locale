@@ -93,6 +93,8 @@ namespace boost { namespace locale { namespace util {
         for(char& c : tmp) {
             if(util::is_lower_ascii(c))
                 c += 'A' - 'a';
+            else if('0' <= tmp[i] && tmp[i] <= '9')
+                continue;
             else if(!util::is_upper_ascii(c))
                 return false;
         }
