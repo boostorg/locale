@@ -62,14 +62,6 @@ option(BOOST_LOCALE_ENABLE_POSIX "Boost.Locale: enable POSIX newlocale backend" 
 option(BOOST_LOCALE_ENABLE_STD "Boost.Locale: enable std::locale backend" ON)
 option(BOOST_LOCALE_ENABLE_WINAPI "Boost.Locale: enable Windows API backend" ${WIN32})
 
-message(STATUS "Boost.Locale: "
-  "iconv ${BOOST_LOCALE_ENABLE_ICONV}, "
-  "ICU ${BOOST_LOCALE_ENABLE_ICU}, "
-  "POSIX ${BOOST_LOCALE_ENABLE_POSIX}, "
-  "std ${BOOST_LOCALE_ENABLE_STD}, "
-  "winapi ${BOOST_LOCALE_ENABLE_WINAPI}"
-)
-
 if(BOOST_LOCALE_ENABLE_ICONV)
 
   find_package(Iconv REQUIRED)
@@ -162,6 +154,14 @@ if(BOOST_LOCALE_ENABLE_WINAPI OR BOOST_LOCALE_ENABLE_STD OR BOOST_LOCALE_ENABLE_
   )
 
 endif()
+
+message(STATUS "Boost.Locale: "
+  "iconv ${BOOST_LOCALE_ENABLE_ICONV}, "
+  "ICU ${BOOST_LOCALE_ENABLE_ICU}, "
+  "POSIX ${BOOST_LOCALE_ENABLE_POSIX}, "
+  "std ${BOOST_LOCALE_ENABLE_STD}, "
+  "winapi ${BOOST_LOCALE_ENABLE_WINAPI}"
+)
 
 # Testing
 
