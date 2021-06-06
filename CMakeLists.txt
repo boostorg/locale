@@ -56,11 +56,19 @@ endif()
 find_package(Iconv QUIET) # requires CMake 3.11
 find_package(ICU COMPONENTS data i18n uc QUIET)
 
+set(_default_posix OFF)
+
+if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin")
+  set(_default_posix ON)
+endif()
+
 option(BOOST_LOCALE_ENABLE_ICONV "Boost.Locale: enable iconv backend" ${ICONV_FOUND})
 option(BOOST_LOCALE_ENABLE_ICU "Boost.Locale: enable ICU backend" ${ICU_FOUND})
-option(BOOST_LOCALE_ENABLE_POSIX "Boost.Locale: enable POSIX newlocale backend" OFF)
+option(BOOST_LOCALE_ENABLE_POSIX "Boost.Locale: enable POSIX backend" ${_default_posix})
 option(BOOST_LOCALE_ENABLE_STD "Boost.Locale: enable std::locale backend" ON)
 option(BOOST_LOCALE_ENABLE_WINAPI "Boost.Locale: enable Windows API backend" ${WIN32})
+
+unset(_default_posix)
 
 if(BOOST_LOCALE_ENABLE_ICONV)
 
