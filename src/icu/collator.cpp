@@ -93,7 +93,7 @@ namespace boost {
                     std::vector<uint8_t> tmp;
                     tmp.resize(str.length());
                     icu::Collator *collate = get_collator(level);
-                    int len = collate->getSortKey(str,&tmp[0],tmp.size());
+                    int len = collate->getSortKey(str,tmp.empty()?NULL:&tmp[0],tmp.size());
                     if(len > int(tmp.size())) {
                         tmp.resize(len);
                         collate->getSortKey(str,&tmp[0],tmp.size());
