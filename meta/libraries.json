@@ -10,5 +10,6 @@
     ],
     "maintainers": [
         "Artyom Beilis <artyomtnk -at- yahoo.com>"
-    ]
+    ],
+    "cxxstd": "03"
 }
