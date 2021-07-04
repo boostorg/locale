@@ -9,6 +9,7 @@
 #define BOOST_LOCALE_UTF_HPP_INCLUDED
 
 #include <boost/cstdint.hpp>
+#include <boost/config.hpp>
 
 namespace boost {
 namespace locale {
@@ -222,6 +223,7 @@ namespace utf {
                 if (!is_trail(tmp))
                     return illegal;
                 c = (c << 6) | ( tmp & 0x3F);
+                BOOST_FALLTHROUGH;
             case 2:
                 if(BOOST_LOCALE_UNLIKELY(p==e))
                     return incomplete;
@@ -229,6 +231,7 @@ namespace utf {
                 if (!is_trail(tmp))
                     return illegal;
                 c = (c << 6) | ( tmp & 0x3F);
+                BOOST_FALLTHROUGH;
             case 1:
                 if(BOOST_LOCALE_UNLIKELY(p==e))
                     return incomplete;
@@ -272,8 +275,10 @@ namespace utf {
             switch(trail_size) {
             case 3:
                 c = (c << 6) | ( static_cast<unsigned char>(*p++) & 0x3F);
+                BOOST_FALLTHROUGH;
             case 2:
                 c = (c << 6) | ( static_cast<unsigned char>(*p++) & 0x3F);
+                BOOST_FALLTHROUGH;
             case 1:
                 c = (c << 6) | ( static_cast<unsigned char>(*p++) & 0x3F);
             }
