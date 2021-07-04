@@ -65,6 +65,25 @@ boost::uint16_t const *u16_seq(boost::uint16_t a,boost::uint16_t b)
     return buf;
 }
 
+#ifndef BOOST_NO_CXX11_CHAR16_T
+char16_t const *c16_seq(boost::uint16_t a)
+{
+    static char16_t buf[2];
+    buf[0]=static_cast<char16_t>(a);
+    buf[1]=0;
+    return buf;
+}
+#endif
+#ifndef BOOST_NO_CXX11_CHAR32_T
+char32_t const *c32_seq(boost::uint32_t a)
+{
+    static char32_t buf[2];
+    buf[0]=static_cast<char32_t>(a);
+    buf[1]=0;
+    return buf;
+}
+#endif
+
 template<typename CharType>
 void test_to(CharType const *s,unsigned codepoint)
 {
@@ -250,10 +269,10 @@ int main()
 
         std::cout << "-- Test correct" << std::endl;
 
-        test_to(u16_seq(0x10),0x10);
-        test_to(u16_seq(0xffff),0xffff);
-        test_to(u16_seq(0xD800,0xDC00),0x10000);
-        test_to(u16_seq(0xDBFF,0xDFFF),0x10FFFF);
+        test_from(u16_seq(0x10),0x10);
+        test_from(u16_seq(0xffff),0xffff);
+        test_from(u16_seq(0xD800,0xDC00),0x10000);
+        test_from(u16_seq(0xDBFF,0xDFFF),0x10FFFF);
 
 
         std::cout << "Test UTF-32" << std::endl;
@@ -285,12 +304,41 @@ int main()
 
         std::cout << "-- Test correct" << std::endl;
 
-        test_to(u32_seq(0x10),0x10);
-        test_to(u32_seq(0xffff),0xffff);
-        test_to(u32_seq(0x10ffff),0x10ffff);
+        test_from(u32_seq(0x10),0x10);
+        test_from(u32_seq(0xffff),0xffff);
+        test_from(u32_seq(0x10ffff),0x10ffff);
 
+#ifndef BOOST_NO_CXX11_CHAR16_T
+        std::cout << "-- Test char16_t" << std::endl;
+        test_to(u"\u0010",0x10);
+        test_to(u"\uffff",0xffff);
+        test_to(u"\U00010000",0x10000);
+        test_to(u"\U0010FFFF",0x10FFFF);
+        test_to(c16_seq(0xDFFF),illegal);
+        test_to(c16_seq(0xDC00),illegal);
 
+        test_from(u"\u0010",0x10);
+        test_from(u"\uffff",0xffff);
+        test_from(u"\U00010000",0x10000);
+        test_from(u"\U0010FFFF",0x10FFFF);
+#endif
+#ifndef BOOST_NO_CXX11_CHAR32_T
+        std::cout << "-- Test char32_t" << std::endl;
+        test_to(U"\U00000010",0x10);
+        test_to(U"\U0000ffff",0xffff);
+        test_to(U"\U00010000",0x10000);
+        test_to(U"\U0010ffff",0x10ffff);
+        test_to(c32_seq(0xD800),illegal);
+        test_to(c32_seq(0xDBFF),illegal);
+        test_to(c32_seq(0xDFFF),illegal);
+        test_to(c32_seq(0xDC00),illegal);
+        test_to(c32_seq(0x110000),illegal);
 
+        test_from(U"\U00000010",0x10);
+        test_from(U"\U0000ffff",0xffff);
+        test_from(U"\U00010000",0x10000);
+        test_from(U"\U0010ffff",0x10ffff);
+#endif
     }
     catch(std::exception const &e) {
         std::cerr << "Failed " << e.what() << std::endl;
