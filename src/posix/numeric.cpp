@@ -29,7 +29,7 @@
 #include "all_generator.hpp"
 
 
-#if defined(__linux) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__)
 #define BOOST_LOCALE_HAVE_WCSFTIME_L
 #endif
 
