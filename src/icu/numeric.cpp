@@ -13,10 +13,12 @@
 #include "formatter.hpp"
 #include <boost/locale/formatting.hpp>
 #include <boost/locale/hold_ptr.hpp>
+#include <boost/locale/numpunct.hpp>
 #include "all_generator.hpp"
 #include "cdata.hpp"
 #include <algorithm>
 #include "predefined_formatters.hpp"
+#include "uconv.hpp"
 
 namespace boost {
 namespace locale {
@@ -354,6 +356,46 @@ private:
 
 };
 
+template<typename CharType>
+struct icu_numpunct : public numpunct<CharType> {
+    typedef std::basic_string<CharType> string_type;
+public:
+    icu_numpunct(icu::Locale const &loc)
+    {
+        UErrorCode err = U_ZERO_ERROR;
+        icu::NumberFormat *fmt = icu::NumberFormat::createInstance(loc, UNUM_DECIMAL, err);
+        if (icu::DecimalFormat *dec = dynamic_cast<icu::DecimalFormat *>(fmt)) {
+            boost::locale::impl_icu::icu_std_converter<CharType> cnv("UTF-8");
+            const icu::DecimalFormatSymbols *syms = dec->getDecimalFormatSymbols();
+            decimal_point_ = cnv.std(syms->getSymbol(icu::DecimalFormatSymbols::kDecimalSeparatorSymbol));
+            thousands_sep_ = cnv.std(syms->getSymbol(icu::DecimalFormatSymbols::kGroupingSeparatorSymbol));
+            if (dec->isGroupingUsed()) {
+                int32_t grouping_size = dec->getGroupingSize();
+                grouping_ = std::string(reinterpret_cast<char*>(&grouping_size), 1);
+                int32_t grouping_size_2 = dec->getSecondaryGroupingSize();
+                if (grouping_size_2 > 0 && grouping_size_2 != grouping_size) {
+                    grouping_ += static_cast<char>(grouping_size_2);
+                }
+            }
+        }
+    }
+protected:
+    virtual string_type do_decimal_point_full() const {
+        return decimal_point_;
+    }
+    virtual string_type do_thousands_sep_full() const {
+        return thousands_sep_;
+    }
+    virtual std::string do_grouping() const {
+        return grouping_;
+    }
+
+private:
+    string_type decimal_point_;
+    string_type thousands_sep_;
+    std::string grouping_;
+};
+
 
 template<typename CharType>
 std::locale install_formatting_facets(std::locale const &in,cdata const &cd)
@@ -362,6 +404,7 @@ std::locale install_formatting_facets(std::locale const &in,cdata const &cd)
     if(!std::has_facet<icu_formatters_cache>(in)) {
         tmp=std::locale(tmp,new icu_formatters_cache(cd.locale)); 
     }
+    tmp=std::locale(tmp, new icu_numpunct<CharType>(cd.locale));
     return tmp;
 }
 
