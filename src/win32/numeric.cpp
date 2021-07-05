@@ -12,6 +12,7 @@
 #include <boost/locale/formatting.hpp>
 #include <boost/locale/generator.hpp>
 #include <boost/locale/encoding.hpp>
+#include <boost/locale/numpunct.hpp>
 #include <boost/shared_ptr.hpp>
 #include <sstream>
 #include <stdlib.h>
@@ -119,11 +120,11 @@ private:
 
 
 template<typename CharType>
-class num_punct_win : public std::numpunct<CharType> {
+class num_punct_win : public numpunct<CharType> {
 public:
     typedef std::basic_string<CharType> string_type;
     num_punct_win(winlocale const &lc,size_t refs = 0) : 
-        std::numpunct<CharType>(refs)
+        numpunct<CharType>(refs)
     {
         numeric_info np = wcsnumformat_l(lc) ;
         if(sizeof(CharType) == 1 && np.thousands_sep == L"\xA0")
@@ -132,10 +133,6 @@ public:
         to_str(np.thousands_sep,thousands_sep_);
         to_str(np.decimal_point,decimal_point_);
         grouping_ = np.grouping;
-        if(thousands_sep_.size() > 1)
-            grouping_ = std::string();
-        if(decimal_point_.size() > 1)
-            decimal_point_ = CharType('.');
     }
     
     void to_str(std::wstring &s1,std::wstring &s2)
@@ -147,27 +144,17 @@ public:
     {
         s2=conv::from_utf(s1,"UTF-8");
     }
-    virtual CharType do_decimal_point() const
+    virtual string_type do_decimal_point_full() const
     {
-        return *decimal_point_.c_str();
+        return decimal_point_;
     }
-    virtual CharType do_thousands_sep() const
+    virtual string_type do_thousands_sep_full() const
     {
-        return *thousands_sep_.c_str();
+        return thousands_sep_;
     }
     virtual std::string do_grouping() const
     {
         return grouping_;
-    }
-    virtual string_type do_truename() const
-    {
-        static const char t[]="true";
-        return string_type(t,t+sizeof(t)-1);
-    }
-    virtual string_type do_falsename() const
-    {
-        static const char t[]="false";
-        return string_type(t,t+sizeof(t)-1);
     }
 private:
     string_type decimal_point_;
@@ -179,7 +166,7 @@ template<typename CharType>
 std::locale create_formatting_impl(std::locale const &in,winlocale const &lc)
 {
     if(lc.is_c()) {
-        std::locale tmp(in,new std::numpunct_byname<CharType>("C"));
+        std::locale tmp(in, new numpunct<CharType>());
         tmp=std::locale(tmp,new std::time_put_byname<CharType>("C"));
         tmp = std::locale(tmp,new num_format<CharType>(lc));
         return tmp;
@@ -193,14 +180,12 @@ std::locale create_formatting_impl(std::locale const &in,winlocale const &lc)
 }
 
 template<typename CharType>
-std::locale create_parsing_impl(std::locale const &in,winlocale const &lc)
+std::locale create_parsing_impl(std::locale tmp,winlocale const &lc)
 {
-    std::numpunct<CharType> *np = 0;
     if(lc.is_c())
-        np = new std::numpunct_byname<CharType>("C");
+        tmp = std::locale(tmp, new numpunct<CharType>());
     else
-        np = new num_punct_win<CharType>(lc);
-    std::locale tmp(in,np);
+        tmp = std::locale(tmp, new num_punct_win<CharType>(lc));
     tmp = std::locale(tmp,new util::base_num_parse<CharType>());
     return tmp;
 }
