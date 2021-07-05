@@ -8,6 +8,7 @@
 #include <boost/locale/encoding.hpp>
 #include <boost/locale/formatting.hpp>
 #include <boost/locale/generator.hpp>
+#include <boost/locale/numpunct.hpp>
 #include "boost/locale/win32/all_generator.hpp"
 #include "boost/locale/win32/api.hpp"
 #include <algorithm>
@@ -96,10 +97,10 @@ namespace boost { namespace locale { namespace impl_win {
     };
 
     template<typename CharType>
-    class num_punct_win : public std::numpunct<CharType> {
+    class num_punct_win : public numpunct<CharType> {
     public:
         typedef std::basic_string<CharType> string_type;
-        num_punct_win(const winlocale& lc, size_t refs = 0) : std::numpunct<CharType>(refs)
+        num_punct_win(const winlocale& lc, size_t refs = 0) : numpunct<CharType>(refs)
         {
             numeric_info np = wcsnumformat_l(lc);
 
@@ -111,28 +112,14 @@ namespace boost { namespace locale { namespace impl_win {
             to_str(np.thousands_sep, thousands_sep_);
             to_str(np.decimal_point, decimal_point_);
             grouping_ = np.grouping;
-            if(thousands_sep_.size() > 1)
-                grouping_ = std::string();
-            if(decimal_point_.size() > 1)
-                decimal_point_ = CharType('.');
         }
 
         void to_str(std::wstring& s1, std::wstring& s2) { s2.swap(s1); }
 
         void to_str(std::wstring& s1, std::string& s2) { s2 = conv::utf_to_utf<char>(s1); }
-        CharType do_decimal_point() const override { return *decimal_point_.c_str(); }
-        CharType do_thousands_sep() const override { return *thousands_sep_.c_str(); }
+        string_type do_decimal_point_str() const BOOST_OVERRIDE { return decimal_point_; }
+        string_type do_thousands_sep_str() const BOOST_OVERRIDE { return thousands_sep_; }
         std::string do_grouping() const override { return grouping_; }
-        string_type do_truename() const override
-        {
-            static const char t[] = "true";
-            return string_type(t, t + sizeof(t) - 1);
-        }
-        string_type do_falsename() const override
-        {
-            static const char t[] = "false";
-            return string_type(t, t + sizeof(t) - 1);
-        }
 
     private:
         string_type decimal_point_;
@@ -144,7 +131,7 @@ namespace boost { namespace locale { namespace impl_win {
     std::locale create_formatting_impl(const std::locale& in, const winlocale& lc)
     {
         if(lc.is_c()) {
-            std::locale tmp(in, new std::numpunct_byname<CharType>("C"));
+            std::locale tmp(in, new numpunct<CharType>());
             tmp = std::locale(tmp, new std::time_put_byname<CharType>("C"));
             tmp = std::locale(tmp, new num_format<CharType>(lc));
             return tmp;
@@ -157,14 +144,12 @@ namespace boost { namespace locale { namespace impl_win {
     }
 
     template<typename CharType>
-    std::locale create_parsing_impl(const std::locale& in, const winlocale& lc)
+    std::locale create_parsing_impl(std::locale tmp, const winlocale& lc)
     {
-        std::numpunct<CharType>* np = 0;
         if(lc.is_c())
-            np = new std::numpunct_byname<CharType>("C");
+            tmp = std::locale(tmp, new numpunct<CharType>());
         else
-            np = new num_punct_win<CharType>(lc);
-        std::locale tmp(in, np);
+            tmp = std::locale(tmp, new num_punct_win<CharType>(lc));
         tmp = std::locale(tmp, new util::base_num_parse<CharType>());
         return tmp;
     }

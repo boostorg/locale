@@ -5,10 +5,12 @@
 // https://www.boost.org/LICENSE_1_0.txt
 
 #include <boost/locale/formatting.hpp>
+#include <boost/locale/numpunct.hpp>
 #include "boost/locale/icu/all_generator.hpp"
 #include "boost/locale/icu/cdata.hpp"
 #include "boost/locale/icu/formatter.hpp"
 #include "boost/locale/icu/formatters_cache.hpp"
+#include "uconv.hpp"
 #include <algorithm>
 #include <ios>
 #include <limits>
@@ -305,11 +307,48 @@ namespace boost { namespace locale { namespace impl_icu {
     };
 
     template<typename CharType>
+    struct icu_numpunct : public numpunct<CharType> {
+        typedef std::basic_string<CharType> string_type;
+
+    public:
+        icu_numpunct(const cdata& d)
+        {
+            UErrorCode err = U_ZERO_ERROR;
+            icu::NumberFormat* fmt = icu::NumberFormat::createInstance(d.locale, UNUM_DECIMAL, err);
+            if(icu::DecimalFormat* dec = dynamic_cast<icu::DecimalFormat*>(fmt)) {
+                boost::locale::impl_icu::icu_std_converter<CharType> cnv(d.encoding);
+                const icu::DecimalFormatSymbols* syms = dec->getDecimalFormatSymbols();
+                decimal_point_ = cnv.std(syms->getSymbol(icu::DecimalFormatSymbols::kDecimalSeparatorSymbol));
+                thousands_sep_ = cnv.std(syms->getSymbol(icu::DecimalFormatSymbols::kGroupingSeparatorSymbol));
+                if(dec->isGroupingUsed()) {
+                    int32_t grouping_size = dec->getGroupingSize();
+                    grouping_ = std::string(reinterpret_cast<char*>(&grouping_size), 1);
+                    int32_t grouping_size_2 = dec->getSecondaryGroupingSize();
+                    if(grouping_size_2 > 0 && grouping_size_2 != grouping_size) {
+                        grouping_ += static_cast<char>(grouping_size_2);
+                    }
+                }
+            }
+        }
+
+    protected:
+        string_type do_decimal_point_str() const BOOST_OVERRIDE { return decimal_point_; }
+        string_type do_thousands_sep_str() const BOOST_OVERRIDE { return thousands_sep_; }
+        std::string do_grouping() const BOOST_OVERRIDE { return grouping_; }
+
+    private:
+        string_type decimal_point_;
+        string_type thousands_sep_;
+        std::string grouping_;
+    };
+
+    template<typename CharType>
     std::locale install_formatting_facets(const std::locale& in, const cdata& cd)
     {
         std::locale tmp = std::locale(in, new num_format<CharType>(cd));
         if(!std::has_facet<formatters_cache>(in))
             tmp = std::locale(tmp, new formatters_cache(cd.locale()));
+        tmp = std::locale(tmp, new icu_numpunct<CharType>(cd));
         return tmp;
     }
 
