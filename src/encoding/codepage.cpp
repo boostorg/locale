@@ -24,6 +24,7 @@
 
 #include <boost/locale/encoding.hpp>
 #include <boost/locale/hold_ptr.hpp>
+#include "conv.hpp"
 
 #include <string>
 #include <cstring>
