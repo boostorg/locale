@@ -360,12 +360,12 @@ template<typename CharType>
 struct icu_numpunct : public numpunct<CharType> {
     typedef std::basic_string<CharType> string_type;
 public:
-    icu_numpunct(icu::Locale const &loc)
+    icu_numpunct(cdata const &d)
     {
         UErrorCode err = U_ZERO_ERROR;
-        icu::NumberFormat *fmt = icu::NumberFormat::createInstance(loc, UNUM_DECIMAL, err);
+        icu::NumberFormat *fmt = icu::NumberFormat::createInstance(d.locale, UNUM_DECIMAL, err);
         if (icu::DecimalFormat *dec = dynamic_cast<icu::DecimalFormat *>(fmt)) {
-            boost::locale::impl_icu::icu_std_converter<CharType> cnv("UTF-8");
+            boost::locale::impl_icu::icu_std_converter<CharType> cnv(d.encoding);
             const icu::DecimalFormatSymbols *syms = dec->getDecimalFormatSymbols();
             decimal_point_ = cnv.std(syms->getSymbol(icu::DecimalFormatSymbols::kDecimalSeparatorSymbol));
             thousands_sep_ = cnv.std(syms->getSymbol(icu::DecimalFormatSymbols::kGroupingSeparatorSymbol));
@@ -404,7 +404,7 @@ std::locale install_formatting_facets(std::locale const &in,cdata const &cd)
     if(!std::has_facet<icu_formatters_cache>(in)) {
         tmp=std::locale(tmp,new icu_formatters_cache(cd.locale)); 
     }
-    tmp=std::locale(tmp, new icu_numpunct<CharType>(cd.locale));
+    tmp=std::locale(tmp, new icu_numpunct<CharType>(cd));
     return tmp;
 }
 
