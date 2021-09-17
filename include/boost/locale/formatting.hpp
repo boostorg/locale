@@ -258,9 +258,6 @@ namespace boost {
             std::string time_zone_;
             string_set datetime_;
 
-            struct data;
-            data *d;
-
         };
 
 

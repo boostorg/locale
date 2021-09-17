@@ -56,12 +56,9 @@ namespace boost {
             return *this;
         }
 
-        struct ios_info::data {};
-
         ios_info::ios_info() : 
             flags_(0),
-            domain_id_(0),
-            d(0)
+            domain_id_(0)
         {
             time_zone_ = time_zone::global();
         }
