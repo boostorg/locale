@@ -9,7 +9,7 @@
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 filetype=cpp.doxygen
 
 /*!
-\page tested_compilers_and_paltforms Tested Compilers and Platforms
+\page tested_compilers_and_platforms Tested Compilers and Platforms
 
 Following compilers are tested and known to work with Boost.Locale
 
@@ -30,7 +30,7 @@ Following operating systems are tested with Boost.Locale
 - Cygwin
 - AIX
 
-\section tested_compilers_and_paltforms_issues Known Issues
+\section tested_compilers_and_platforms_issues Known Issues
 
 -   Path Scale and MSVC 9 with STLPort has some test faults
     regarding invalid UTF-8 sequences in wide file I/O.
