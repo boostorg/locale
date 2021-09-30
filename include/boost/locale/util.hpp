@@ -172,7 +172,7 @@ namespace util {
         }
     };
 
-    #if !defined(BOOST_LOCALE_HIDE_AUTO_PTR) && !defined(BOOST_NO_AUTO_PTR)
+    #if BOOST_LOCALE_USE_AUTO_PTR
     ///
     /// This function creates a \a base_converter that can be used for conversion between UTF-8 and
     /// unicode code points

@@ -269,7 +269,7 @@ namespace util {
         return 0;
     }
     
-    #if !defined(BOOST_LOCALE_HIDE_AUTO_PTR) && !defined(BOOST_NO_AUTO_PTR)
+    #if BOOST_LOCALE_USE_AUTO_PTR
     std::auto_ptr<base_converter> create_utf8_converter()
     {
         std::auto_ptr<base_converter> res(create_utf8_converter_new_ptr());
