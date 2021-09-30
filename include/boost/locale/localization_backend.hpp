@@ -102,7 +102,7 @@ namespace boost {
             ///
             ~localization_backend_manager();
 
-            #if !defined(BOOST_LOCALE_HIDE_AUTO_PTR) && !defined(BOOST_NO_AUTO_PTR)
+            #if BOOST_LOCALE_USE_AUTO_PTR
             ///
             /// Create new localization backend according to current settings.
             ///

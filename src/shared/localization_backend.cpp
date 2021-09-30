@@ -181,7 +181,7 @@ namespace boost {
         }
 
 
-        #if !defined(BOOST_LOCALE_HIDE_AUTO_PTR) && !defined(BOOST_NO_AUTO_PTR)
+        #if BOOST_LOCALE_USE_AUTO_PTR
         std::auto_ptr<localization_backend> localization_backend_manager::get() const
         {
             std::auto_ptr<localization_backend> r(pimpl_->create());
