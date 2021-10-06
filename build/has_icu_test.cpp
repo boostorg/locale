@@ -16,7 +16,7 @@
 #include <unicode/coll.h>
 
 #if defined(_MSC_VER) && !defined(_DLL)
-#error "Mixing ICU with a static runtime doesn't work"
+//#error "Mixing ICU with a static runtime doesn't work"
 #endif
 
 int main()

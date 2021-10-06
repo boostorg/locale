@@ -14,6 +14,7 @@ import os ;
 import toolset ;
 import project ;
 import feature ;
+import errors ;
 # Features
 
 feature.feature boost.locale.iconv : on off : optional propagated ;
@@ -65,8 +66,37 @@ ICU_LINK =  [ modules.peek : ICU_LINK ] ;
 
 if $(ICU_LINK)
 {
-    ICU_OPTS = <include>$(ICU_PATH)/include <linkflags>$(ICU_LINK) <dll-path>$(ICU_PATH)/bin <runtime-link>shared ;
-    ICU64_OPTS = <include>$(ICU_PATH)/include <linkflags>$(ICU_LINK) <dll-path>$(ICU_PATH)/bin64 <runtime-link>shared ;
+    errors.user-error : "The ICU_LINK option is no longer supported by the Boost.Locale build - please refer to the documentation for equivalent options" ;
+}
+
+if [ modules.peek : ICU_ICUUC_NAME ]
+{
+   ICU_ICUUC_NAME =  [ modules.peek : ICU_ICUUC_NAME ] ;
+}
+if [ modules.peek : ICU_ICUDT_NAME ]
+{
+   ICU_ICUDT_NAME =  [ modules.peek : ICU_ICUDT_NAME ] ;
+}
+if [ modules.peek : ICU_ICUIN_NAME ]
+{
+   ICU_ICUIN_NAME =  [ modules.peek : ICU_ICUIN_NAME ] ;
+}
+if [ modules.peek : ICU_ICUUC_NAME64 ]
+{
+   ICU_ICUUC_NAME64 =  [ modules.peek : ICU_ICUUC_NAME64 ] ;
+}
+if [ modules.peek : ICU_ICUDT_NAME64 ]
+{
+   ICU_ICUDT_NAME64 =  [ modules.peek : ICU_ICUDT_NAME64 ] ;
+}
+if [ modules.peek : ICU_ICUIN_NAME64 ]
+{
+   ICU_ICUIN_NAME64 =  [ modules.peek : ICU_ICUIN_NAME64 ] ;
+}
+
+if $(ICU_ICUUC_NAME)
+{
+    lib icuuc : : <name>$(ICU_ICUUC_NAME) ;
 }
 else
 {
@@ -83,7 +113,15 @@ else
                             <runtime-link>shared ;
 
     searched-lib icuuc : :  <name>this_is_an_invalid_library_name ;
+}
 
+
+if $(ICU_ICUDT_NAME)
+{
+  lib icudt : : <name>$(ICU_ICUDT_NAME) ;
+}
+else
+{
     searched-lib icudt : :  <search>$(ICU_PATH)/lib
                             <name>icudata
                             <link>shared
@@ -96,7 +134,14 @@ else
                             <runtime-link>shared ;
 
     searched-lib icudt : :  <name>this_is_an_invalid_library_name ;
+}
 
+if $(ICU_ICUIN_NAME)
+{
+  lib icuin : : <name>$(ICU_ICUIN_NAME) ;
+}
+else
+{
     searched-lib icuin : :  <search>$(ICU_PATH)/lib
                             <name>icui18n
                             <link>shared
@@ -117,77 +162,108 @@ else
                             <runtime-link>shared ;
 
     searched-lib icuin : :  <name>this_is_an_invalid_library_name ;
-
-    explicit icuuc icudt icuin ;
-
-    ICU_OPTS =   <include>$(ICU_PATH)/include
-      <library>icuuc/<link>shared/<runtime-link>shared
-      <library>icudt/<link>shared/<runtime-link>shared
-      <library>icuin/<link>shared/<runtime-link>shared
-      <dll-path>$(ICU_PATH)/bin
-        <runtime-link>shared ;
-
-
-
-    searched-lib icuuc_64 : :   <name>icuuc
-                                <search>$(ICU_PATH)/lib64
-                                <link>shared
-                                <runtime-link>shared ;
-
-    searched-lib icuuc_64 : :   <toolset>msvc
-                                <variant>debug
-                                <name>icuucd
-                                <search>$(ICU_PATH)/lib64
-                                <link>shared
-                                <runtime-link>shared ;
-
-    searched-lib icuuc_64 : :   <name>this_is_an_invalid_library_name ;
-
-    searched-lib icudt_64 : :   <search>$(ICU_PATH)/lib64
-                                <name>icudata
-                                <link>shared
-                                <runtime-link>shared ;
-
-    searched-lib icudt_64 : :   <search>$(ICU_PATH)/lib64
-                                <name>icudt
-                                <toolset>msvc
-                                <link>shared
-                                <runtime-link>shared ;
-
-    searched-lib icudt_64 : :   <name>this_is_an_invalid_library_name ;
-
-    searched-lib icuin_64 : :   <search>$(ICU_PATH)/lib64
-                                <name>icui18n
-                                <link>shared
-                                <runtime-link>shared ;
-
-    searched-lib icuin_64 : :   <toolset>msvc
-                                <variant>debug
-                                <name>icuind
-                                <search>$(ICU_PATH)/lib64
-                                <link>shared
-                                <runtime-link>shared ;
-
-    searched-lib icuin_64 : :   <toolset>msvc
-                                <variant>release
-                                <name>icuin
-                                <search>$(ICU_PATH)/lib64
-                                <link>shared
-                                <runtime-link>shared ;
-
-    searched-lib icuin_64 : :   <name>this_is_an_invalid_library_name ;
-
-    explicit icuuc_64 icudt_64 icuin_64 ;
-
-    ICU64_OPTS =   <include>$(ICU_PATH)/include
-      <library>icuuc_64/<link>shared/<runtime-link>shared
-      <library>icudt_64/<link>shared/<runtime-link>shared
-      <library>icuin_64/<link>shared/<runtime-link>shared
-      <dll-path>$(ICU_PATH)/bin64
-        <runtime-link>shared ;
-
-
 }
+explicit icuuc icudt icuin ;
+
+ICU_OPTS =
+  <include>$(ICU_PATH)/include
+  <runtime-link>shared:<library>icuuc/<link>shared
+  <runtime-link>shared:<library>icudt/<link>shared
+  <runtime-link>shared:<library>icuin/<link>shared
+  <runtime-link>static:<library>icuuc
+  <runtime-link>static:<library>icudt
+  <runtime-link>static:<library>icuin
+  <dll-path>$(ICU_PATH)/bin
+  <define>BOOST_HAS_ICU=1
+  <runtime-link>static:<define>U_STATIC_IMPLEMENTATION=1
+  <toolset>msvc:<find-static-library>advapi32
+  ;
+
+
+if $(ICU_ICUUC_NAME64)
+{
+    lib icuuc_64 : : <name>$(ICU_ICUUC_NAME64) ;
+}
+else
+{
+	searched-lib icuuc_64 : :   <name>icuuc
+								<search>$(ICU_PATH)/lib64
+								<link>shared
+								<runtime-link>shared ;
+
+	searched-lib icuuc_64 : :   <toolset>msvc
+								<variant>debug
+								<name>icuucd
+								<search>$(ICU_PATH)/lib64
+								<link>shared
+								<runtime-link>shared ;
+
+	searched-lib icuuc_64 : :   <name>this_is_an_invalid_library_name ;
+}
+
+if $(ICU_ICUDT_NAME64)
+{
+  lib icudt_64 : : <name>$(ICU_ICUDT_NAME64) ;
+}
+else
+{
+	searched-lib icudt_64 : :   <search>$(ICU_PATH)/lib64
+								<name>icudata
+								<link>shared
+								<runtime-link>shared ;
+
+	searched-lib icudt_64 : :   <search>$(ICU_PATH)/lib64
+								<name>icudt
+								<toolset>msvc
+								<link>shared
+								<runtime-link>shared ;
+
+	searched-lib icudt_64 : :   <name>this_is_an_invalid_library_name ;
+}
+
+if $(ICU_ICUIN_NAME64)
+{
+  lib icuin_64 : : <name>$(ICU_ICUIN_NAME64) ;
+}
+else
+{
+	searched-lib icuin_64 : :   <search>$(ICU_PATH)/lib64
+								<name>icui18n
+								<link>shared
+								<runtime-link>shared ;
+
+	searched-lib icuin_64 : :   <toolset>msvc
+								<variant>debug
+								<name>icuind
+								<search>$(ICU_PATH)/lib64
+								<link>shared
+								<runtime-link>shared ;
+
+	searched-lib icuin_64 : :   <toolset>msvc
+								<variant>release
+								<name>icuin
+								<search>$(ICU_PATH)/lib64
+								<link>shared
+								<runtime-link>shared ;
+
+	searched-lib icuin_64 : :   <name>this_is_an_invalid_library_name ;
+}
+explicit icuuc_64 icudt_64 icuin_64 ;
+
+ICU64_OPTS =
+  <include>$(ICU_PATH)/include
+  <runtime-link>shared:<library>icuuc_64/<link>shared
+  <runtime-link>shared:<library>icudt_64/<link>shared
+  <runtime-link>shared:<library>icuin_64/<link>shared
+  <runtime-link>static:<library>icuuc_64
+  <runtime-link>static:<library>icudt_64
+  <runtime-link>static:<library>icuin_64
+  <dll-path>$(ICU_PATH)/bin64
+  <define>BOOST_HAS_ICU=1
+  <runtime-link>static:<define>U_STATIC_IMPLEMENTATION=1
+  <toolset>msvc:<find-static-library>advapi32
+  ;
+
 
 obj has_icu_obj     : ../build/has_icu_test.cpp : $(ICU_OPTS)   ;
 obj has_icu64_obj   : ../build/has_icu_test.cpp : $(ICU64_OPTS) ;
