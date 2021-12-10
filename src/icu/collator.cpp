@@ -91,9 +91,9 @@ namespace boost {
                 {
                     icu::UnicodeString str=cvt_.icu(b,e);
                     std::vector<uint8_t> tmp;
-                    tmp.resize(str.length());
+                    tmp.resize(str.length() + 1u);
                     icu::Collator *collate = get_collator(level);
-                    int len = collate->getSortKey(str,&tmp[0],tmp.size());
+                    const int len = collate->getSortKey(str,&tmp[0],tmp.size());
                     if(len > int(tmp.size())) {
                         tmp.resize(len);
                         collate->getSortKey(str,&tmp[0],tmp.size());
