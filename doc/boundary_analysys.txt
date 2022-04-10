@@ -297,7 +297,7 @@ For example: For \ref boost::locale::boundary::word "word" boundary analysis wit
 
 - "t|o be or ", would point to "to" - the iterator in the middle of segment "to".
 - "to |be or ", would point to "be" - the iterator at the beginning of the segment "be"
-- "to| be or ", would point to "be" - the iterator does is not point to segment with required rule so next valid segment is selected "be".
+- "to| be or ", would point to "be" - the iterator does not point to segment with required rule so next valid segment is selected "be".
 - "to be or| ", would point to end as not valid segment found.
 
 
@@ -306,7 +306,7 @@ For example: For \ref boost::locale::boundary::word "word" boundary analysis wit
 
 The \ref boost::locale::boundary::boundary_point_index "boundary_point_index" is similar  to 
 \ref boost::locale::boundary::segment_index "segment_index" in its interface but as a different role.
-Instead of returning text chunks (\ref boost::locale::boundary::segment "segment"s, it returns
+Instead of returning text chunks (\ref boost::locale::boundary::segment "segment"s), it returns
 \ref boost::locale::boundary::boundary_point "boundary_point" object that
 represents a position in text - a base iterator used that is used for 
 iteration of the source text C++ characters. 
