@@ -216,11 +216,11 @@ jobs:
       - name: Run tests with ICU
         if: '!matrix.coverity'
         run: ci/build.sh
-        env: {B2_FLAGS: -a boost.locale.icu=on  boost.locale.iconv=off}
+        env: {B2_FLAGS: -a boost.locale.icu=on  boost.locale.iconv=off testing.execute=off}
       - name: Run tests with ICU/iconv
         if: '!matrix.coverity'
         run: ci/build.sh
-        env: {B2_FLAGS: -a boost.locale.icu=on  boost.locale.iconv=on}
+        env: {B2_FLAGS: -a boost.locale.icu=on  boost.locale.iconv=on testing.execute=off}
 
       - name: Upload coverage
         if: matrix.coverage
