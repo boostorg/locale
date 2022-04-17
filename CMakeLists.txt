@@ -53,8 +53,7 @@ target_link_libraries(boost_locale
 
 target_compile_definitions(boost_locale
   PUBLIC BOOST_LOCALE_NO_LIB
-  # Source files already define BOOST_LOCALE_SOURCE
-  # PRIVATE BOOST_LOCALE_SOURCE
+  PRIVATE _CRT_SECURE_NO_WARNINGS
 )
 
 if(BUILD_SHARED_LIBS)

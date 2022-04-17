@@ -34,9 +34,6 @@ int main()
 using namespace boost::locale;
 
 //#define TEST_DEBUG
-#ifdef BOOST_MSVC
-#define _CRT_SECURE_NO_WARNINGS
-#endif
 
 #ifdef TEST_DEBUG
 #undef BOOST_LOCALE_ENABLE_CHAR16_T
