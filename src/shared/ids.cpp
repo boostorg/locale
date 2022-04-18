@@ -13,6 +13,8 @@
 #include <boost/locale/info.hpp>
 #include <boost/locale/message.hpp>
 
+#include <boost/core/ignore_unused.hpp>
+
 namespace boost {
     namespace locale {
 
@@ -65,31 +67,38 @@ namespace boost {
         }
 
         namespace {
-            struct install_all {
-                install_all()
+            // Initialize each facet once to avoid issues where doing so
+            // in a multithreaded environment could cause problems (races)
+            struct init_all {
+                init_all()
                 {
-                    std::locale l = std::locale::classic();
-                    install_by<char>();
-                    install_by<wchar_t>();
+                    const std::locale& l = std::locale::classic();
+                    init_by<char>(l);
+                    init_by<wchar_t>(l);
                     #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-                    install_by<char16_t>();
+                    init_by<char16_t>(l);
                     #endif
                     #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-                    install_by<char32_t>();
+                    init_by<char32_t>(l);
                     #endif
 
-                    std::has_facet<info>(l);
-                    std::has_facet<calendar_facet>(l);
+                    init_facet<info>(l);
+                    init_facet<calendar_facet>(l);
                 }
                 template<typename Char>
-                void install_by()
+                void init_by(const std::locale& l)
                 {
-                    std::locale l = std::locale::classic();
-                    std::has_facet<boundary::boundary_indexing<Char> >(l);
-                    std::has_facet<converter<Char> >(l);
-                    std::has_facet<message_format<Char> >(l);
+                    init_facet<boundary::boundary_indexing<Char> >(l);
+                    init_facet<converter<Char> >(l);
+                    init_facet<message_format<Char> >(l);
                 }
-            } installer;
+                template<typename Facet>
+                void init_facet(const std::locale& l)
+                {
+                    // Use the facet to initialize e.g. their std::locale::id
+                    ignore_unused(std::has_facet<Facet>(l));
+                }
+            } facet_initializer;
         }
 
     }
