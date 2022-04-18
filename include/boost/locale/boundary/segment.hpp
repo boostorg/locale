@@ -220,13 +220,13 @@ namespace boundary {
         // make sure we override std::pair's operator==
 
         /// Compare two segments
-        bool operator==(segment const &other)
+        bool operator==(segment const &other) const
         {
             return details::compare_text(*this,other) == 0;
         }
 
         /// Compare two segments
-        bool operator!=(segment const &other)
+        bool operator!=(segment const &other) const
         {
             return details::compare_text(*this,other) != 0;
         }
