@@ -91,7 +91,6 @@ template<typename CharType>
 void test_by_char(std::locale const &l,std::string name,int lcid)
 {
     typedef std::basic_stringstream<CharType> ss_type;
-    typedef std::basic_string<CharType> string_type;
 
     using namespace boost::locale;
 
