@@ -6,23 +6,21 @@
 //  http://www.boost.org/LICENSE_1_0.txt)
 //
 #define BOOST_LOCALE_SOURCE
-#include <locale>
-#include <string>
-#include <ios>
-#include <boost/locale/formatting.hpp>
-#include <boost/locale/generator.hpp>
-#include <boost/locale/encoding.hpp>
-#include <boost/shared_ptr.hpp>
-#include <sstream>
-#include <stdlib.h>
-#include <time.h>
-#include <string.h>
-#include <wctype.h>
-#include <ctype.h>
-
 #include "all_generator.hpp"
 #include "api.hpp"
 #include "../util/numeric.hpp"
+#include <boost/locale/encoding.hpp>
+#include <boost/locale/formatting.hpp>
+#include <boost/locale/generator.hpp>
+#include <ctype.h>
+#include <ios>
+#include <locale>
+#include <sstream>
+#include <stdlib.h>
+#include <string.h>
+#include <string>
+#include <time.h>
+#include <wctype.h>
 
 namespace boost {
 namespace locale {
