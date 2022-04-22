@@ -7,6 +7,16 @@
 //
 #define BOOST_LOCALE_SOURCE
 #define BOOST_DETAIL_NO_CONTAINER_FWD
+
+// Need _wfopen which is an extension on MinGW but not on MinGW-w64
+// So remove the strict-mode define on (only) MinGW before including anything
+#if defined(__MINGW32__) && defined(__STRICT_ANSI__)
+#include <_mingw.h>
+#ifndef __MINGW64_VERSION_MAJOR
+#undef __STRICT_ANSI__
+#endif
+#endif
+
 #include <boost/config.hpp>
 #include <boost/version.hpp>
 #include <boost/locale/message.hpp>
