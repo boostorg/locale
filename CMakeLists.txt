@@ -6,8 +6,15 @@ cmake_minimum_required(VERSION 3.5...3.20)
 
 project(boost_locale VERSION "${BOOST_SUPERPROJECT_VERSION}" LANGUAGES CXX)
 
+# Using glob here is ok as it is only for headers
+file(GLOB_RECURSE headers include/*.hpp)
+
 add_library(boost_locale
   src/encoding/codepage.cpp
+  src/encoding/conv.hpp
+  src/encoding/iconv_codepage.ipp
+  src/encoding/uconv_codepage.ipp
+  src/encoding/wconv_codepage.ipp
   src/shared/date_time.cpp
   src/shared/format.cpp
   src/shared/formatting.cpp
@@ -20,6 +27,10 @@ add_library(boost_locale
   src/util/default_locale.cpp
   src/util/info.cpp
   src/util/locale_data.cpp
+  src/util/locale_data.hpp
+  src/util/numeric.hpp
+  src/util/timezone.hpp
+  ${headers}
 )
 
 add_library(Boost::locale ALIAS boost_locale)
@@ -78,6 +89,9 @@ if(BOOST_LOCALE_ENABLE_ICONV)
   target_compile_definitions(boost_locale PRIVATE BOOST_LOCALE_WITH_ICONV=1)
   target_link_libraries(boost_locale PRIVATE Iconv::Iconv)
 
+  target_sources(boost_locale PRIVATE
+    src/util/iconv.hpp
+  )
 endif()
 
 if(BOOST_LOCALE_ENABLE_ICU)
@@ -88,15 +102,24 @@ if(BOOST_LOCALE_ENABLE_ICU)
   target_link_libraries(boost_locale PRIVATE ICU::data ICU::i18n ICU::uc)
 
   target_sources(boost_locale PRIVATE
+    src/icu/all_generator.hpp
     src/icu/boundary.cpp
+    src/icu/cdata.hpp
     src/icu/codecvt.cpp
+    src/icu/codecvt.hpp
     src/icu/collator.cpp
     src/icu/conversion.cpp
     src/icu/date_time.cpp
     src/icu/formatter.cpp
+    src/icu/formatter.hpp
     src/icu/icu_backend.cpp
+    src/icu/icu_backend.hpp
+    src/icu/icu_util.hpp
     src/icu/numeric.cpp
+    src/icu/predefined_formatters.hpp
     src/icu/time_zone.cpp
+    src/icu/time_zone.hpp
+    src/icu/uconv.hpp
   )
 
 endif()
@@ -104,11 +127,13 @@ endif()
 if(BOOST_LOCALE_ENABLE_STD)
 
   target_sources(boost_locale PRIVATE
+    src/std/all_generator.hpp
     src/std/codecvt.cpp
     src/std/collate.cpp
     src/std/converter.cpp
     src/std/numeric.cpp
     src/std/std_backend.cpp
+    src/std/std_backend.hpp
   )
 
 else()
@@ -120,10 +145,13 @@ endif()
 if(BOOST_LOCALE_ENABLE_WINAPI)
 
   target_sources(boost_locale PRIVATE
+    src/win32/all_generator.hpp
+    src/win32/api.hpp
     src/win32/collate.cpp
     src/win32/converter.cpp
     src/win32/numeric.cpp
     src/win32/win_backend.cpp
+    src/win32/win_backend.hpp
   )
 
 else()
@@ -136,6 +164,7 @@ if(BOOST_LOCALE_ENABLE_WINAPI OR (BOOST_LOCALE_ENABLE_STD AND WIN32))
 
   target_sources(boost_locale PRIVATE
     src/win32/lcid.cpp
+    src/win32/lcid.hpp
   )
 
 endif()
@@ -143,11 +172,14 @@ endif()
 if(BOOST_LOCALE_ENABLE_POSIX)
 
   target_sources(boost_locale PRIVATE
+    src/posix/all_generator.hpp
+    src/posix/codecvt.cpp
+    src/posix/codecvt.hpp
     src/posix/collate.cpp
     src/posix/converter.cpp
     src/posix/numeric.cpp
-    src/posix/codecvt.cpp
     src/posix/posix_backend.cpp
+    src/posix/posix_backend.hpp
   )
 
 else()
@@ -160,6 +192,7 @@ if(BOOST_LOCALE_ENABLE_WINAPI OR BOOST_LOCALE_ENABLE_STD OR BOOST_LOCALE_ENABLE_
 
   target_sources(boost_locale PRIVATE
     src/util/gregorian.cpp
+    src/util/gregorian.hpp
   )
 
 endif()
