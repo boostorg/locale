@@ -70,9 +70,9 @@ namespace boost {
                     return do_ustring_compare(level,b1,e1,b2,e2,status);
                 }
 
-                virtual int do_compare( level_type level,
-                                        CharType const *b1,CharType const *e1,
-                                        CharType const *b2,CharType const *e2) const
+                int do_compare(level_type level,
+                               CharType const *b1,CharType const *e1,
+                               CharType const *b2,CharType const *e2) const BOOST_OVERRIDE
                 {
                     UErrorCode status=U_ZERO_ERROR;
                     

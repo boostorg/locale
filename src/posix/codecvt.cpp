@@ -96,26 +96,25 @@ namespace impl_posix {
         {
         }
         
-        virtual ~mb2_iconv_converter()
+        ~mb2_iconv_converter()
         {
             if(to_utf_ != (iconv_t)(-1))
                 iconv_close(to_utf_);
             if(from_utf_ != (iconv_t)(-1))
                 iconv_close(from_utf_);
-
         }
 
-        virtual bool is_thread_safe() const
+        bool is_thread_safe() const BOOST_OVERRIDE
         {
             return false;
         }
 
-        virtual mb2_iconv_converter *clone() const
+        mb2_iconv_converter *clone() const BOOST_OVERRIDE
         {
             return new mb2_iconv_converter(*this);
         }
 
-        uint32_t to_unicode(char const *&begin,char const *end)
+        uint32_t to_unicode(char const *&begin,char const *end) BOOST_OVERRIDE
         {
             if(begin == end)
                 return incomplete;
@@ -149,7 +148,7 @@ namespace impl_posix {
             return illegal;
         }
 
-        uint32_t from_unicode(uint32_t cp,char *begin,char const *end)
+        uint32_t from_unicode(uint32_t cp,char *begin,char const *end) BOOST_OVERRIDE
         {
             if(cp == 0) {
                 if(begin!=end) {
@@ -200,7 +199,7 @@ namespace impl_posix {
                 return "UTF-32BE";
         }
 
-        virtual int max_len() const
+        int max_len() const BOOST_OVERRIDE
         {
             return 2;
         }

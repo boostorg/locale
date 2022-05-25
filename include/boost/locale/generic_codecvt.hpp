@@ -166,7 +166,7 @@ public:
 protected:
 
 
-    virtual std::codecvt_base::result do_unshift(std::mbstate_t &s,char *from,char * /*to*/,char *&next) const
+    std::codecvt_base::result do_unshift(std::mbstate_t &s,char *from,char * /*to*/,char *&next) const BOOST_OVERRIDE
     {
         boost::uint16_t &state = *reinterpret_cast<boost::uint16_t *>(&s);
 #ifdef DEBUG_CODECVT            
@@ -177,20 +177,20 @@ protected:
         next=from;
         return std::codecvt_base::ok;
     }
-    virtual int do_encoding() const throw()
+    int do_encoding() const BOOST_NOEXCEPT_OR_NOTHROW BOOST_OVERRIDE
     {
         return 0;
     }
-    virtual int do_max_length() const throw()
+    int do_max_length() const BOOST_NOEXCEPT_OR_NOTHROW BOOST_OVERRIDE
     {
         return implementation().max_encoding_length();
     }
-    virtual bool do_always_noconv() const throw()
+    bool do_always_noconv() const BOOST_NOEXCEPT_OR_NOTHROW BOOST_OVERRIDE
     {
         return false;
     }
 
-    virtual int
+    int
     do_length(  std::mbstate_t 
     #ifdef BOOST_LOCALE_DO_LENGTH_MBSTATE_CONST
             const   
@@ -198,7 +198,7 @@ protected:
             &std_state,
             char const *from,
             char const *from_end,
-            size_t max) const
+            size_t max) const BOOST_OVERRIDE
     {
         #ifndef BOOST_LOCALE_DO_LENGTH_MBSTATE_CONST
         char const *save_from = from;
@@ -236,14 +236,14 @@ protected:
     }
 
     
-    virtual std::codecvt_base::result 
+    std::codecvt_base::result
     do_in(  std::mbstate_t &std_state,
             char const *from,
             char const *from_end,
             char const *&from_next,
             uchar *to,
             uchar *to_end,
-            uchar *&to_next) const
+            uchar *&to_next) const BOOST_OVERRIDE
     {
         std::codecvt_base::result r=std::codecvt_base::ok;
         
@@ -332,19 +332,19 @@ protected:
         return r;
     }
     
-    virtual std::codecvt_base::result 
+    std::codecvt_base::result
     do_out( std::mbstate_t &std_state,
             uchar const *from,
             uchar const *from_end,
             uchar const *&from_next,
             char *to,
             char *to_end,
-            char *&to_next) const
+            char *&to_next) const BOOST_OVERRIDE
     {
         std::codecvt_base::result r=std::codecvt_base::ok;
         // mbstate_t is POD type and should be initialized to 0 (i.a. state = stateT())
         // according to standard. We assume that sizeof(mbstate_t) >=2 in order
-        // to be able to store first observerd surrogate pair
+        // to be able to store first observed surrogate pair
         //
         // State: state!=0 - a first surrogate pair was observerd (state = first pair),
         // we expect the second one to come and then zero the state
@@ -468,25 +468,25 @@ public:
     
 protected:
 
-    virtual std::codecvt_base::result do_unshift(std::mbstate_t &/*s*/,char *from,char * /*to*/,char *&next) const
+    std::codecvt_base::result do_unshift(std::mbstate_t &/*s*/,char *from,char * /*to*/,char *&next) const BOOST_OVERRIDE
     {
         next=from;
         return std::codecvt_base::ok;
     }
-    virtual int do_encoding() const throw()
+    int do_encoding() const BOOST_NOEXCEPT_OR_NOTHROW BOOST_OVERRIDE
     {
         return 0;
     }
-    virtual int do_max_length() const throw()
+    int do_max_length() const BOOST_NOEXCEPT_OR_NOTHROW BOOST_OVERRIDE
     {
         return implementation().max_encoding_length();
     }
-    virtual bool do_always_noconv() const throw()
+    bool do_always_noconv() const BOOST_NOEXCEPT_OR_NOTHROW BOOST_OVERRIDE
     {
         return false;
     }
 
-    virtual int
+    int
     do_length(  std::mbstate_t 
     #ifdef BOOST_LOCALE_DO_LENGTH_MBSTATE_CONST
             const   
@@ -494,7 +494,7 @@ protected:
             &/*state*/,
             char const *from,
             char const *from_end,
-            size_t max) const
+            size_t max) const BOOST_OVERRIDE
     {
         #ifndef BOOST_LOCALE_DO_LENGTH_MBSTATE_CONST 
         char const *start_from = from;
@@ -520,14 +520,14 @@ protected:
     }
 
     
-    virtual std::codecvt_base::result 
+    std::codecvt_base::result
     do_in(  std::mbstate_t &/*state*/,
             char const *from,
             char const *from_end,
             char const *&from_next,
             uchar *to,
             uchar *to_end,
-            uchar *&to_next) const
+            uchar *&to_next) const BOOST_OVERRIDE
     {
         std::codecvt_base::result r=std::codecvt_base::ok;
         
@@ -587,14 +587,14 @@ protected:
         return r;
     }
     
-    virtual std::codecvt_base::result 
+    std::codecvt_base::result
     do_out( std::mbstate_t &/*std_state*/,
             uchar const *from,
             uchar const *from_end,
             uchar const *&from_next,
             char *to,
             char *to_end,
-            char *&to_next) const
+            char *&to_next) const BOOST_OVERRIDE
     {
         std::codecvt_base::result r=std::codecvt_base::ok;
         typedef typename CodecvtImpl::state_type state_type;

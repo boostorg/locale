@@ -36,7 +36,7 @@ namespace impl_win {
             invalid_(true)
         {
         }
-        virtual winapi_localization_backend *clone() const
+        winapi_localization_backend *clone() const BOOST_OVERRIDE
         {
             return new winapi_localization_backend(*this);
         }
@@ -81,9 +81,9 @@ namespace impl_win {
             }
         }
         
-        virtual std::locale install(std::locale const &base,
+        std::locale install(std::locale const &base,
                                     locale_category_type category,
-                                    character_facet_type type = nochar_facet)
+                                    character_facet_type type = nochar_facet) BOOST_OVERRIDE
         {
             prepare_data();
 

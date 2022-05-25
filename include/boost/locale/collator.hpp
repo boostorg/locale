@@ -152,17 +152,13 @@ namespace locale {
         collator(size_t refs = 0) : std::collate<CharType>(refs) 
         {
         }
-
-        virtual ~collator()
-        {
-        }
         
         ///
         /// This function is used to override default collation function that does not take in account collation level.
         /// Uses primary level
         ///
-        virtual int do_compare( char_type const *b1,char_type const *e1,
-                                char_type const *b2,char_type const *e2) const
+        int do_compare( char_type const *b1,char_type const *e1,
+                        char_type const *b2,char_type const *e2) const BOOST_OVERRIDE
         {
             return do_compare(identical,b1,e1,b2,e2);
         }
@@ -170,7 +166,7 @@ namespace locale {
         /// This function is used to override default collation function that does not take in account collation level.
         /// Uses primary level
         ///
-        virtual string_type do_transform(char_type const *b,char_type const *e) const
+        string_type do_transform(char_type const *b,char_type const *e) const BOOST_OVERRIDE
         {
             return do_transform(identical,b,e);
         }
@@ -178,7 +174,7 @@ namespace locale {
         /// This function is used to override default collation function that does not take in account collation level.
         /// Uses primary level
         ///
-        virtual long do_hash(char_type const *b,char_type const *e) const
+        long do_hash(char_type const *b,char_type const *e) const BOOST_OVERRIDE
         {
             return do_hash(identical,b,e);
         }

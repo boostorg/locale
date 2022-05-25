@@ -69,7 +69,7 @@ namespace impl_icu {
         {
         }
 
-        virtual string_type convert(converter_base::conversion_type how,char_type const *begin,char_type const *end,int flags = 0) const
+        string_type convert(converter_base::conversion_type how, char_type const* begin, char_type const* end, int flags = 0) const BOOST_OVERRIDE
         {
             icu_std_converter<char_type> cvt(encoding_);
             icu::UnicodeString str=cvt.icu(begin,end);
@@ -145,7 +145,7 @@ namespace impl_icu {
         {
         }
 
-        virtual std::string convert(converter_base::conversion_type how,char const *begin,char const *end,int flags = 0) const
+        std::string convert(converter_base::conversion_type how,char const *begin,char const *end,int flags = 0) const BOOST_OVERRIDE
         {
             
             if(how == converter_base::normalization) {

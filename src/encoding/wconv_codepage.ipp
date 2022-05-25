@@ -268,7 +268,7 @@ namespace impl {
                 return false;
             return true;
         }
-        virtual std::string convert(char const *begin,char const *end)
+        std::string convert(char const *begin,char const *end) BOOST_OVERRIDE
         {
             if(to_code_page_ == 65001 && from_code_page_ == 65001)
                 return utf_to_utf<char>(begin,end,how_);
@@ -321,11 +321,11 @@ namespace impl {
     template<>
     class wconv_to_utf<char,1> : public  converter_to_utf<char> , public wconv_between {
     public:
-        virtual bool open(char const *cs,method_type how) 
+        bool open(char const *cs,method_type how) BOOST_OVERRIDE
         {
             return wconv_between::open("UTF-8",cs,how);
         }
-        virtual std::string convert(char const *begin,char const *end)
+        std::string convert(char const *begin,char const *end) BOOST_OVERRIDE
         {
             return wconv_between::convert(begin,end);
         }
@@ -334,11 +334,11 @@ namespace impl {
     template<>
     class wconv_from_utf<char,1> : public  converter_from_utf<char> , public wconv_between {
     public:
-        virtual bool open(char const *cs,method_type how) 
+        bool open(char const *cs,method_type how) BOOST_OVERRIDE
         {
             return wconv_between::open(cs,"UTF-8",how);
         }
-        virtual std::string convert(char const *begin,char const *end)
+        std::string convert(char const *begin,char const *end) BOOST_OVERRIDE
         {
             return wconv_between::convert(begin,end);
         }
@@ -357,14 +357,14 @@ namespace impl {
         {
         }
 
-        virtual bool open(char const *charset,method_type how)
+        bool open(char const *charset,method_type how) BOOST_OVERRIDE
         {
             how_ = how;
             code_page_ = encoding_to_windows_codepage(charset);
             return code_page_ != -1;
         }
 
-        virtual string_type convert(char const *begin,char const *end) 
+        string_type convert(char const *begin,char const *end) BOOST_OVERRIDE
         {
             if(code_page_ == 65001) {
                 return utf_to_utf<char_type>(begin,end,how_);
@@ -395,14 +395,14 @@ namespace impl {
         {
         }
 
-        virtual bool open(char const *charset,method_type how)
+        bool open(char const *charset,method_type how) BOOST_OVERRIDE
         {
             how_ = how;
             code_page_ = encoding_to_windows_codepage(charset);
             return code_page_ != -1;
         }
 
-        virtual std::string convert(CharType const *begin,CharType const *end) 
+        std::string convert(CharType const *begin,CharType const *end) BOOST_OVERRIDE
         {
             if(code_page_ == 65001) {
                 return utf_to_utf<char>(begin,end,how_);
@@ -459,14 +459,14 @@ namespace impl {
         {
         }
 
-        virtual bool open(char const *charset,method_type how)
+        bool open(char const *charset,method_type how) BOOST_OVERRIDE
         {
             how_ = how;
             code_page_ = encoding_to_windows_codepage(charset);
             return code_page_ != -1;
         }
 
-        virtual string_type convert(char const *begin,char const *end) 
+        string_type convert(char const *begin,char const *end) BOOST_OVERRIDE
         {
             if(code_page_ == 65001) {
                 return utf_to_utf<char_type>(begin,end,how_);
@@ -497,14 +497,14 @@ namespace impl {
         {
         }
 
-        virtual bool open(char const *charset,method_type how)
+        bool open(char const *charset,method_type how) BOOST_OVERRIDE
         {
             how_ = how;
             code_page_ = encoding_to_windows_codepage(charset);
             return code_page_ != -1;
         }
 
-        virtual std::string convert(CharType const *begin,CharType const *end) 
+        std::string convert(CharType const *begin,CharType const *end) BOOST_OVERRIDE
         {
             if(code_page_ == 65001) {
                 return utf_to_utf<char>(begin,end,how_);

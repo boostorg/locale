@@ -63,10 +63,8 @@ public:
         lc_(l)
     {
     }
-    virtual ~collator()
-    {
-    }
-    virtual int do_compare(char_type const *lb,char_type const *le,char_type const *rb,char_type const *re) const
+
+    int do_compare(char_type const *lb,char_type const *le,char_type const *rb,char_type const *re) const BOOST_OVERRIDE
     {
         string_type left(lb,le-lb);
         string_type right(rb,re-rb);
@@ -77,14 +75,14 @@ public:
             return 1;
         return 0;
     }
-    virtual long do_hash(char_type const *b,char_type const *e) const
+    long do_hash(char_type const *b,char_type const *e) const BOOST_OVERRIDE
     {
         string_type s(do_transform(b,e));
         char const *begin = reinterpret_cast<char const *>(s.c_str());
         char const *end = begin + s.size() * sizeof(char_type);
         return gnu_gettext::pj_winberger_hash_function(begin,end);
     }
-    virtual string_type do_transform(char_type const *b,char_type const *e) const
+    string_type do_transform(char_type const *b,char_type const *e) const BOOST_OVERRIDE
     {
         string_type s(b,e-b);
         std::vector<char_type> buf((e-b)*2+1);

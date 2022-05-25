@@ -222,10 +222,7 @@ namespace boost {
             ///
             virtual bool same(abstract_calendar const *other) const = 0;
 
-            virtual ~abstract_calendar()
-            {
-            }
-
+            virtual ~abstract_calendar() {}
         };
 
         ///

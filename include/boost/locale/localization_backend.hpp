@@ -46,13 +46,9 @@ namespace boost {
             void operator=(localization_backend const &);
         public:
 
-            localization_backend()
-            {
-            }
+            localization_backend() {}
             
-            virtual ~localization_backend()
-            {
-            }
+            virtual ~localization_backend() {}
 
             ///
             /// Make a polymorphic copy of the backend

@@ -49,17 +49,17 @@ namespace impl_icu {
             max_len_ = ucnv_getMaxCharSize(cvt_);
         }
         
-        virtual ~uconv_converter()
+        ~uconv_converter()
         {
             ucnv_close(cvt_);
         }
 
-        virtual bool is_thread_safe() const
+        bool is_thread_safe() const BOOST_OVERRIDE
         {
             return false;
         }
 
-        virtual uconv_converter *clone() const
+        uconv_converter *clone() const BOOST_OVERRIDE
         {
             return new uconv_converter(encoding_);
         }
@@ -107,7 +107,7 @@ namespace impl_icu {
             return olen;
         }
 
-        virtual int max_len() const
+        int max_len() const BOOST_OVERRIDE
         {
             return max_len_;
         }

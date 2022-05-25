@@ -24,9 +24,7 @@ namespace impl_icu {
 
     class base_formatter {
     public:
-        virtual ~base_formatter()
-        {
-        }
+        virtual ~base_formatter() {}
     };
 
     ///
@@ -88,10 +86,6 @@ namespace impl_icu {
         /// Would create a new spelling formatter only once.
         ///
         static formatter *create(std::ios_base &ios,icu::Locale const &l,std::string const &enc);
-
-        virtual ~formatter()
-        {
-        }
     }; // class formatter
     
     ///

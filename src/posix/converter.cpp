@@ -67,7 +67,7 @@ public:
         lc_(lc)
     {
     }
-    virtual string_type convert(converter_base::conversion_type how,char_type const *begin,char_type const *end,int /*flags*/ = 0) const 
+    string_type convert(converter_base::conversion_type how,char_type const *begin,char_type const *end,int /*flags*/ = 0) const BOOST_OVERRIDE
     {
         switch(how) {
         case converter_base::upper_case:
@@ -104,7 +104,7 @@ public:
         lc_(lc)
     {
     }
-    virtual std::string convert(converter_base::conversion_type how,char const *begin,char const *end,int /*flags*/ = 0) const 
+    std::string convert(converter_base::conversion_type how,char const *begin,char const *end,int /*flags*/ = 0) const BOOST_OVERRIDE
     {
         switch(how) {
         case upper_case:
