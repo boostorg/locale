@@ -87,7 +87,11 @@ int main()
 
     try {
         std::locale loc("");
+#if defined(BOOST_CLANG) && BOOST_CLANG_VERSION < 30800
+        std::cout << "- C++ locale: n/a on Clang < 3.8" << std::endl;
+#else
         std::cout << "- C++ locale: " << loc.name() << std::endl;
+#endif
     }
     catch(std::exception const &) {
         std::cout << "- C++ locale: is not supported" << std::endl;
