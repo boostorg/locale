@@ -83,6 +83,7 @@ namespace boost {
             converter(size_t refs = 0) : std::locale::facet(refs)
             {
             }
+            ~converter();
             virtual std::string convert(conversion_type how,char const *begin,char const *end,int flags = 0) const = 0;
 #if defined (__SUNPRO_CC) && defined (_RWSTD_VER)
             std::locale::id& __get_id (void) const { return id; }
@@ -96,6 +97,7 @@ namespace boost {
             converter(size_t refs = 0) : std::locale::facet(refs)
             {
             }
+            ~converter();
              virtual std::wstring convert(conversion_type how,wchar_t const *begin,wchar_t const *end,int flags = 0) const = 0;
 #if defined (__SUNPRO_CC) && defined (_RWSTD_VER)
             std::locale::id& __get_id (void) const { return id; }
@@ -110,6 +112,7 @@ namespace boost {
             converter(size_t refs = 0) : std::locale::facet(refs)
             {
             }
+            ~converter();
             virtual std::u16string convert(conversion_type how,char16_t const *begin,char16_t const *end,int flags = 0) const = 0; 
 #if defined (__SUNPRO_CC) && defined (_RWSTD_VER)
             std::locale::id& __get_id (void) const { return id; }
@@ -125,6 +128,7 @@ namespace boost {
             converter(size_t refs = 0) : std::locale::facet(refs)
             {
             }
+            ~converter();
             virtual std::u32string convert(conversion_type how,char32_t const *begin,char32_t const *end,int flags = 0) const = 0;
 #if defined (__SUNPRO_CC) && defined (_RWSTD_VER)
             std::locale::id& __get_id (void) const { return id; }

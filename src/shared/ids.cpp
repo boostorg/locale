@@ -17,40 +17,54 @@ namespace boost {
     namespace locale {
 
         std::locale::id info::id;
+        // Make sure we have the VTable here (Export/Import issues)
+        info::~info() {}
         std::locale::id calendar_facet::id;
 
         std::locale::id converter<char>::id;
-        std::locale::id base_message_format<char>::id;
+        converter<char>::~converter() {}
+        template<> std::locale::id message_format<char>::id;
+        template<> message_format<char>::~message_format() {}
 
         std::locale::id converter<wchar_t>::id;
-        std::locale::id base_message_format<wchar_t>::id;
+        converter<wchar_t>::~converter() {}
+        template<> std::locale::id message_format<wchar_t>::id;
+        template<> message_format<wchar_t>::~message_format() {}
 
         #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
 
         std::locale::id converter<char16_t>::id;
-        std::locale::id base_message_format<char16_t>::id;
+        converter<char16_t>::~converter() {}
+        template<> std::locale::id message_format<char16_t>::id;
+        template<> message_format<char16_t>::~message_format() {}
 
         #endif
 
         #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
 
         std::locale::id converter<char32_t>::id;
-        std::locale::id base_message_format<char32_t>::id;
+        converter<char32_t>::~converter() {}
+        template<> std::locale::id message_format<char32_t>::id;
+        template<> message_format<char32_t>::~message_format() {}
 
         #endif
 
         namespace boundary {        
 
             std::locale::id boundary_indexing<char>::id;
+            boundary_indexing<char>::~boundary_indexing() {}
 
             std::locale::id boundary_indexing<wchar_t>::id;
+            boundary_indexing<wchar_t>::~boundary_indexing() {}
 
             #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
             std::locale::id boundary_indexing<char16_t>::id;
+            boundary_indexing<char16_t>::~boundary_indexing() {}
             #endif
 
             #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
             std::locale::id boundary_indexing<char32_t>::id;
+            boundary_indexing<char32_t>::~boundary_indexing() {}
             #endif
         }
 
@@ -77,7 +91,7 @@ namespace boost {
                     std::locale l = std::locale::classic();
                     std::has_facet<boundary::boundary_indexing<Char> >(l);
                     std::has_facet<converter<Char> >(l);
-                    std::has_facet<base_message_format<Char> >(l);
+                    std::has_facet<message_format<Char> >(l);
                 }
             } installer;
         }
