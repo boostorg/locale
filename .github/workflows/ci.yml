@@ -84,7 +84,7 @@ jobs:
               compiler: clang-12,  cxxstd: '03,11,14,17,20', os: ubuntu-20.04, stdlib: libc++, install: 'clang-12 libc++-12-dev libc++abi-12-dev' }
 
           # OSX, clang
-          - { compiler: clang,     cxxstd: '03,11,14,17,2a', os: macos-10.15, sanitize: yes }
+          - { compiler: clang,     cxxstd: '03,11,14,17,2a', os: macos-10.15, ubsan: yes }
 
     timeout-minutes: 120
     runs-on: ${{matrix.os}}
@@ -199,6 +199,7 @@ jobs:
           # B2_DEFINES: ${{matrix.defines}}
           # Variables set here (to non-empty) will override the top-level environment variables, e.g.
           # B2_VARIANT: ${{matrix.variant}}
+          B2_UBSAN: ${{matrix.ubsan}}
         run: source ci/github/install.sh
 
       - name: Setup coverage collection
