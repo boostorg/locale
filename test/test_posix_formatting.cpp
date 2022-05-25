@@ -94,8 +94,8 @@ void test_by_char(std::locale const &l,locale_t lreal)
     {
         std::cout << "- Testing as::currency national " << std::endl;
 
-        char buf[256];
-        strfmon_l(buf,256,lreal,"%n",1043.34);
+        char buf[64];
+        TEST(strfmon_l(buf,sizeof(buf),lreal,"%n",1043.34) > 0);
 
         ss_type ss;
         ss.imbue(l);
@@ -114,8 +114,8 @@ void test_by_char(std::locale const &l,locale_t lreal)
 
     {
         std::cout << "- Testing as::currency iso" << std::endl;
-        char buf[256];
-        strfmon_l(buf,256,lreal,"%i",1043.34);
+        char buf[64];
+        TEST(strfmon_l(buf,sizeof(buf),lreal,"%i",1043.34) > 0);
         ss_type ss;
         ss.imbue(l);
 
@@ -152,8 +152,8 @@ void test_by_char(std::locale const &l,locale_t lreal)
         ss << as::ftime(conv_to_char<CharType>("%M")) << a_datetime << CharType('\n');
 
         std::tm tm=*gmtime(&a_datetime);
-        char buf[256];
-        strftime_l(buf,sizeof(buf),"%x\n%X\n%c\n16\n48\n",&tm,lreal);
+        char buf[64];
+        TEST(strftime_l(buf,sizeof(buf),"%x\n%X\n%c\n16\n48\n",&tm,lreal) > 0);
 
         TEST(equal(ss.str(),buf,lreal));
         #ifdef DEBUG_FMT
