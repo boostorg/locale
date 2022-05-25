@@ -3,17 +3,15 @@
 # (See accompanying file LICENSE_1_0.txt or copy at
 # http://www.boost.org/LICENSE_1_0.txt.
 
-
+import configure ;
+import os ;
+import toolset ;
+import feature ;
 
 project /boost/locale
     : source-location ../src
     ;
 
-import configure ;
-import os ;
-import toolset ;
-import project ;
-import feature ;
 # Features
 
 feature.feature boost.locale.iconv : on off : optional propagated ;
@@ -406,36 +404,29 @@ rule configure-flags ( properties * )
     return $(result) ;
 }
 
-
-alias build_options : : : : <conditional>@configure ;
 alias build_flags : : : : <conditional>@configure-flags ;
 
-lib boost_locale
+boost-lib locale
     :
-        encoding/codepage.cpp
-        shared/date_time.cpp
-        shared/format.cpp
-        shared/formatting.cpp
-        shared/generator.cpp
-        shared/ids.cpp
-        shared/localization_backend.cpp
-        shared/message.cpp
-        shared/mo_lambda.cpp
-        util/codecvt_converter.cpp
-        util/default_locale.cpp
-        util/info.cpp
-        util/locale_data.cpp
+      encoding/codepage.cpp
+      shared/date_time.cpp
+      shared/format.cpp
+      shared/formatting.cpp
+      shared/generator.cpp
+      shared/ids.cpp
+      shared/localization_backend.cpp
+      shared/message.cpp
+      shared/mo_lambda.cpp
+      util/codecvt_converter.cpp
+      util/default_locale.cpp
+      util/info.cpp
+      util/locale_data.cpp
     :
       # Don't link explicitly, not required
       <define>BOOST_THREAD_NO_LIB=1
-      <link>shared:<define>BOOST_LOCALE_DYN_LINK=1
       <threading>multi
       # Meanwhile remove this
       <conditional>@configure
     ;
 
-boost-install boost_locale ;
-
-
 # vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
-
