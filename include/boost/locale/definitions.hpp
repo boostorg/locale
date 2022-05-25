@@ -10,22 +10,15 @@
 
 #include <boost/config.hpp>
 
-// Support older ICU versions
-#ifndef BOOST_SYMBOL_VISIBLE
-# define BOOST_SYMBOL_VISIBLE
-#endif
-
 #if defined(BOOST_ALL_DYN_LINK) || defined(BOOST_LOCALE_DYN_LINK)
 #   ifdef BOOST_LOCALE_SOURCE
 #       define BOOST_LOCALE_DECL BOOST_SYMBOL_EXPORT
 #   else
 #       define BOOST_LOCALE_DECL BOOST_SYMBOL_IMPORT
 #   endif  // BOOST_LOCALE_SOURCE
-#endif  // DYN_LINK
-
-#ifndef BOOST_LOCALE_DECL
+#else
 #   define BOOST_LOCALE_DECL
-#endif
+#endif // BOOST_LOCALE_DYN_LINK
 
 #endif // boost/locale/config.hpp
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
