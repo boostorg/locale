@@ -49,7 +49,7 @@ namespace boost {
         /// \brief This facet provides message formatting abilities
         ///
         template<typename CharType>
-        class BOOST_LOCALE_DECL message_format : public base_message_format<CharType>
+        class BOOST_SYMBOL_VISIBLE message_format : public base_message_format<CharType>
         {
         public:
 
@@ -114,7 +114,7 @@ namespace boost {
             std::locale::id& __get_id (void) const { return id; }
 #endif
         protected:
-            virtual ~message_format();
+            virtual ~message_format() {}
         };
         
         /// \cond INTERNAL
