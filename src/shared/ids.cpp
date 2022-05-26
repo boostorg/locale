@@ -23,19 +23,19 @@ namespace boost {
 
         std::locale::id converter<char>::id;
         converter<char>::~converter() {}
-        template<> std::locale::id message_format<char>::id;
+        std::locale::id base_message_format<char>::id;
         template<> message_format<char>::~message_format() {}
 
         std::locale::id converter<wchar_t>::id;
         converter<wchar_t>::~converter() {}
-        template<> std::locale::id message_format<wchar_t>::id;
+        std::locale::id base_message_format<wchar_t>::id;
         template<> message_format<wchar_t>::~message_format() {}
 
         #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
 
         std::locale::id converter<char16_t>::id;
         converter<char16_t>::~converter() {}
-        template<> std::locale::id message_format<char16_t>::id;
+        std::locale::id base_message_format<char16_t>::id;
         template<> message_format<char16_t>::~message_format() {}
 
         #endif
@@ -44,7 +44,7 @@ namespace boost {
 
         std::locale::id converter<char32_t>::id;
         converter<char32_t>::~converter() {}
-        template<> std::locale::id message_format<char32_t>::id;
+        std::locale::id base_message_format<char32_t>::id;
         template<> message_format<char32_t>::~message_format() {}
 
         #endif
