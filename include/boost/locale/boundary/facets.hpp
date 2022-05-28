@@ -131,6 +131,7 @@ namespace boost {
                 boundary_indexing(size_t refs=0) : std::locale::facet(refs)
                 {
                 }
+                ~boundary_indexing();
                 virtual index_type map(boundary_type t,char const *begin,char const *end) const = 0;
                 static std::locale::id id;
                 #if defined (__SUNPRO_CC) && defined (_RWSTD_VER)
@@ -144,6 +145,7 @@ namespace boost {
                 boundary_indexing(size_t refs=0) : std::locale::facet(refs)
                 {
                 }
+                ~boundary_indexing();
                 virtual index_type map(boundary_type t,wchar_t const *begin,wchar_t const *end) const = 0;
 
                 static std::locale::id id;
@@ -159,6 +161,7 @@ namespace boost {
                 boundary_indexing(size_t refs=0) : std::locale::facet(refs)
                 {
                 }
+                ~boundary_indexing();
                 virtual index_type map(boundary_type t,char16_t const *begin,char16_t const *end) const = 0;
                 static std::locale::id id;
                 #if defined (__SUNPRO_CC) && defined (_RWSTD_VER)
@@ -174,6 +177,7 @@ namespace boost {
                 boundary_indexing(size_t refs=0) : std::locale::facet(refs)
                 {
                 }
+                ~boundary_indexing();
                 virtual index_type map(boundary_type t,char32_t const *begin,char32_t const *end) const = 0;
                 static std::locale::id id;
                 #if defined (__SUNPRO_CC) && defined (_RWSTD_VER)

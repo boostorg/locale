@@ -20,6 +20,7 @@
 namespace boost {
 namespace locale {
 namespace util {
+
     class simple_info : public info {
     public:
         simple_info(std::string const &name,size_t refs = 0) :

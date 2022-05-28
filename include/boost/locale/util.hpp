@@ -74,7 +74,7 @@ namespace util {
     /// decompose them in case composite characters are found. So be very careful when implementing
     /// these converters for certain character set.
     ///
-    class base_converter {
+    class BOOST_LOCALE_DECL base_converter {
     public:
 
         ///
@@ -90,9 +90,7 @@ namespace util {
         ///
         static const uint32_t incomplete=utf::incomplete;
         
-        virtual ~base_converter() 
-        {
-        }
+        virtual ~base_converter();
         ///
         /// Return the maximal length that one Unicode code-point can be converted to, for example
         /// for UTF-8 it is 4, for Shift-JIS it is 2 and ISO-8859-1 is 1
