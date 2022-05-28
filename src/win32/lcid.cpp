@@ -6,20 +6,19 @@
 //  http://www.boost.org/LICENSE_1_0.txt)
 //
 #define BOOST_LOCALE_SOURCE
-#include "lcid.hpp"
-#include <string.h>
-#include <string>
-#include <sstream>
-#include <map>
-
-#include "../util/locale_data.hpp"
-
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif
-#include <windows.h>
 
+#include "lcid.hpp"
+#include "../util/locale_data.hpp"
+#include <boost/thread/locks.hpp>
 #include <boost/thread/mutex.hpp>
+#include <sstream>
+#include <string.h>
+#include <string>
+#include <map>
+#include <windows.h>
 
 namespace boost {
 namespace locale {
