@@ -20,9 +20,6 @@
 
 namespace boost {
 
-    template<typename Type>
-    class shared_ptr;
-
     ///
     /// \brief This is the main namespace that encloses all localization classes 
     ///
@@ -215,7 +212,7 @@ namespace boost {
 
         private:
 
-            void set_all_options(shared_ptr<localization_backend> backend,std::string const &id) const;
+            void set_all_options(localization_backend& backend,std::string const &id) const;
 
             generator(generator const &);
             void operator=(generator const &);
