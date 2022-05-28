@@ -46,12 +46,12 @@ namespace impl_std {
             use_ansi_encoding_(other.use_ansi_encoding_)
         {
         }
-        virtual std_localization_backend *clone() const
+        std_localization_backend *clone() const BOOST_OVERRIDE
         {
             return new std_localization_backend(*this);
         }
 
-        void set_option(std::string const &name,std::string const &value) 
+        void set_option(std::string const &name,std::string const &value) BOOST_OVERRIDE
         {
             invalid_ = true;
             if(name=="locale")
@@ -64,7 +64,7 @@ namespace impl_std {
                 use_ansi_encoding_ = value == "true";
 
         }
-        void clear_options()
+        void clear_options() BOOST_OVERRIDE
         {
             invalid_ = true;
             use_ansi_encoding_ = false;
@@ -157,9 +157,9 @@ namespace impl_std {
             }
         }
         
-        virtual std::locale install(std::locale const &base,
+        std::locale install(std::locale const &base,
                                     locale_category_type category,
-                                    character_facet_type type = nochar_facet)
+                                    character_facet_type type = nochar_facet) BOOST_OVERRIDE
         {
             prepare_data();
 

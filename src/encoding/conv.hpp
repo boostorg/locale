@@ -73,9 +73,7 @@ namespace boost {
                     
                     virtual std::string convert(char const *begin,char const *end) = 0;
                     
-                    virtual ~converter_between()
-                    {
-                    }
+                    virtual ~converter_between() {}
                 };
 
                 template<typename CharType>
@@ -89,9 +87,7 @@ namespace boost {
                     
                     virtual std::string convert(CharType const *begin,CharType const *end) = 0;
                     
-                    virtual ~converter_from_utf()
-                    {
-                    }
+                    virtual ~converter_from_utf() {}
                 };
 
                 template<typename CharType>
@@ -105,9 +101,7 @@ namespace boost {
 
                     virtual string_type convert(char const *begin,char const *end) = 0;
 
-                    virtual ~converter_to_utf()
-                    {
-                    }
+                    virtual ~converter_to_utf() {}
                 };
             }
         }

@@ -37,7 +37,7 @@ namespace impl_icu {
             use_ansi_encoding_(other.use_ansi_encoding_)
         {
         }
-        virtual icu_localization_backend *clone() const
+        icu_localization_backend *clone() const BOOST_OVERRIDE
         {
             return new icu_localization_backend(*this);
         }
@@ -86,9 +86,9 @@ namespace impl_icu {
             variant_ = d.variant;
         }
         
-        virtual std::locale install(std::locale const &base,
-                                    locale_category_type category,
-                                    character_facet_type type = nochar_facet)
+        std::locale install(std::locale const &base,
+                            locale_category_type category,
+                            character_facet_type type = nochar_facet) BOOST_OVERRIDE
         {
             prepare_data();
 

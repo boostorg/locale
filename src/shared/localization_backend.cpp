@@ -116,21 +116,21 @@ namespace boost {
                         backends_[i].reset(backends[i]->clone());
                     }
                 }
-                virtual actual_backend *clone() const 
+                actual_backend *clone() const BOOST_OVERRIDE
                 {
                     return new actual_backend(backends_,index_);
                 }
-                virtual void set_option(std::string const &name,std::string const &value)
+                void set_option(std::string const &name,std::string const &value) BOOST_OVERRIDE
                 {
                     for(unsigned i=0;i<backends_.size();i++)
                         backends_[i]->set_option(name,value);
                 }
-                virtual void clear_options()
+                void clear_options() BOOST_OVERRIDE
                 {
                     for(unsigned i=0;i<backends_.size();i++)
                         backends_[i]->clear_options();
                 }
-                virtual std::locale install(std::locale const &l,locale_category_type category,character_facet_type type = nochar_facet)
+                std::locale install(std::locale const &l,locale_category_type category,character_facet_type type = nochar_facet) BOOST_OVERRIDE
                 {
                     int id;
                     unsigned v;
@@ -181,7 +181,7 @@ namespace boost {
         }
 
 
-        #if !defined(BOOST_LOCALE_HIDE_AUTO_PTR) && !defined(BOOST_NO_AUTO_PTR)
+        #if BOOST_LOCALE_USE_AUTO_PTR
         std::auto_ptr<localization_backend> localization_backend_manager::get() const
         {
             std::auto_ptr<localization_backend> r(pimpl_->create());

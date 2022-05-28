@@ -135,14 +135,14 @@ namespace impl_icu {
             return v;
         }
 
-        virtual void set_time(posix_time const &p)
+        void set_time(posix_time const &p) BOOST_OVERRIDE
         {
             double utime = p.seconds * 1000.0 + p.nanoseconds / 1000000.0;
             UErrorCode code=U_ZERO_ERROR;
             calendar_->setTime(utime,code);
             check_and_throw_dt(code);
         }
-        virtual void normalize()
+        void normalize() BOOST_OVERRIDE
         {
             // Can't call complete() explicitly (protected)
             // calling get wich calls complete
@@ -150,7 +150,7 @@ namespace impl_icu {
             calendar_->get(UCAL_YEAR,code);
             check_and_throw_dt(code);
         }
-        virtual posix_time get_time() const
+        posix_time get_time() const BOOST_OVERRIDE
         {
             
             UErrorCode code=U_ZERO_ERROR;
@@ -169,7 +169,7 @@ namespace impl_icu {
                 res.nanoseconds = 999999999;
             return res;
         }
-        virtual void set_option(calendar_option_type opt,int /*v*/) 
+        void set_option(calendar_option_type opt,int /*v*/) BOOST_OVERRIDE
         {
             switch(opt) {
             case is_gregorian:
@@ -180,7 +180,7 @@ namespace impl_icu {
                 ;
             }
         }
-        virtual int get_option(calendar_option_type opt) const
+        int get_option(calendar_option_type opt) const BOOST_OVERRIDE
         {
             switch(opt) {
             case is_gregorian:
@@ -197,7 +197,7 @@ namespace impl_icu {
                 return 0;
             }
         }
-        virtual void adjust_value(period::marks::period_mark p,update_type u,int difference)
+        void adjust_value(period::marks::period_mark p,update_type u,int difference) BOOST_OVERRIDE
         {
             UErrorCode err=U_ZERO_ERROR;
             switch(u) {
@@ -210,7 +210,7 @@ namespace impl_icu {
             }
             check_and_throw_dt(err);
         }
-        virtual int difference(abstract_calendar const *other_ptr,period::marks::period_mark p) const
+        int difference(abstract_calendar const *other_ptr,period::marks::period_mark p) const BOOST_OVERRIDE
         {
             UErrorCode err=U_ZERO_ERROR;
             double other_time = 0;
@@ -236,18 +236,18 @@ namespace impl_icu {
             check_and_throw_dt(err);
             return diff;
         }
-        virtual void set_timezone(std::string const &tz)
+        void set_timezone(std::string const &tz) BOOST_OVERRIDE
         {
             calendar_->adoptTimeZone(get_time_zone(tz));
         }
-        virtual std::string get_timezone() const 
+        std::string get_timezone() const BOOST_OVERRIDE
         {
             icu::UnicodeString tz;
             calendar_->getTimeZone().getID(tz);
             icu_std_converter<char> cvt(encoding_);
             return cvt.std(tz);
         }
-        virtual bool same(abstract_calendar const *other) const 
+        bool same(abstract_calendar const *other) const BOOST_OVERRIDE
         {
             calendar_impl const *oc=dynamic_cast<calendar_impl const *>(other);
             if(!oc)
@@ -269,7 +269,7 @@ namespace impl_icu {
             data_(d)
         {
         }
-        virtual abstract_calendar *create_calendar() const
+        abstract_calendar *create_calendar() const BOOST_OVERRIDE
         {
             return new calendar_impl(data_);
         }

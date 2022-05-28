@@ -24,19 +24,19 @@ public:
         base_(base)
     {
     }
-    virtual int do_compare(char const *lb,char const *le,char const *rb,char const *re) const
+    int do_compare(char const *lb,char const *le,char const *rb,char const *re) const BOOST_OVERRIDE
     {
         std::wstring l=conv::to_utf<wchar_t>(lb,le,"UTF-8");
         std::wstring r=conv::to_utf<wchar_t>(rb,re,"UTF-8");
         return std::use_facet<wfacet>(base_).compare(   l.c_str(),l.c_str()+l.size(),
                                                         r.c_str(),r.c_str()+r.size());
     }
-    virtual long do_hash(char const *b,char const *e) const
+    long do_hash(char const *b,char const *e) const BOOST_OVERRIDE
     {
         std::wstring tmp=conv::to_utf<wchar_t>(b,e,"UTF-8");
         return std::use_facet<wfacet>(base_).hash(tmp.c_str(),tmp.c_str()+tmp.size());
     }
-    virtual std::string do_transform(char const *b,char const *e) const
+    std::string do_transform(char const *b,char const *e) const BOOST_OVERRIDE
     {
         std::wstring tmp=conv::to_utf<wchar_t>(b,e,"UTF-8");
         std::wstring wkey = 

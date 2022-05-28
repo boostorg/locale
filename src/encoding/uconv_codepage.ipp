@@ -29,7 +29,7 @@ namespace impl {
 
         typedef std::basic_string<char_type> string_type;
 
-        virtual bool open(char const *charset,method_type how)
+        bool open(char const *charset,method_type how) BOOST_OVERRIDE
         {
             close();
             try {
@@ -48,7 +48,7 @@ namespace impl {
             cvt_to_.reset();
         }
 
-        virtual string_type convert(char const *begin,char const *end) 
+        string_type convert(char const *begin,char const *end) BOOST_OVERRIDE
         {
             try {
                 return cvt_to_->std(cvt_from_->icu_checked(begin,end));
@@ -73,7 +73,7 @@ namespace impl {
     class uconv_from_utf : public converter_from_utf<CharType> {
     public:
         typedef CharType char_type;
-        virtual bool open(char const *charset,method_type how)
+        bool open(char const *charset,method_type how) BOOST_OVERRIDE
         {
             close();
             try {
@@ -92,7 +92,7 @@ namespace impl {
             cvt_to_.reset();
         }
 
-        virtual std::string convert(CharType const *begin,CharType const *end) 
+        std::string convert(CharType const *begin,CharType const *end) BOOST_OVERRIDE 
         {
             try {
                 return cvt_to_->std(cvt_from_->icu_checked(begin,end));
@@ -114,7 +114,7 @@ namespace impl {
 
     class uconv_between : public converter_between {
     public:
-        virtual bool open(char const *to_charset,char const *from_charset,method_type how)
+        bool open(char const *to_charset,char const *from_charset,method_type how) BOOST_OVERRIDE
         {
             close();
             try {
@@ -133,7 +133,7 @@ namespace impl {
             cvt_to_.reset();
         }
 
-        virtual std::string convert(char const *begin,char const *end) 
+        std::string convert(char const *begin,char const *end) BOOST_OVERRIDE
         {
             try {
                 return cvt_to_->std(cvt_from_->icu(begin,end));

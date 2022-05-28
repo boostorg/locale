@@ -48,14 +48,14 @@ namespace locale {
             typedef CharType char_type;
             typedef std::basic_string<CharType> string_type;
             
-            virtual string_type format(double value,size_t &code_points) const
+            string_type format(double value,size_t &code_points) const BOOST_OVERRIDE
             {
                 icu::UnicodeString tmp;
                 icu_fmt_->format(value,tmp);
                 code_points=tmp.countChar32();
                 return cvt_.std(tmp);
             }
-            virtual string_type format(int64_t value,size_t &code_points) const
+            string_type format(int64_t value,size_t &code_points) const BOOST_OVERRIDE
             {
                 icu::UnicodeString tmp;
                 icu_fmt_->format(static_cast< ::int64_t>(value),tmp);
@@ -63,7 +63,7 @@ namespace locale {
                 return cvt_.std(tmp);
             }
 
-            virtual string_type format(int32_t value,size_t &code_points) const
+            string_type format(int32_t value,size_t &code_points) const BOOST_OVERRIDE
             {
                 icu::UnicodeString tmp;
                 #ifdef __SUNPRO_CC 
@@ -75,16 +75,16 @@ namespace locale {
                 return cvt_.std(tmp);
             }
 
-            virtual size_t parse(string_type const &str,double &value) const 
+            size_t parse(string_type const &str,double &value) const BOOST_OVERRIDE
             {
                 return do_parse(str,value);
             }
 
-            virtual size_t parse(string_type const &str,int64_t &value) const 
+            size_t parse(string_type const &str,int64_t &value) const BOOST_OVERRIDE
             {
                 return do_parse(str,value);
             }
-            virtual size_t parse(string_type const &str,int32_t &value) const
+            size_t parse(string_type const &str,int32_t &value) const BOOST_OVERRIDE
             {
                 return do_parse(str,value);
             }
@@ -155,29 +155,29 @@ namespace locale {
             typedef CharType char_type;
             typedef std::basic_string<CharType> string_type;
             
-            virtual string_type format(double value,size_t &code_points) const
+            string_type format(double value,size_t &code_points) const BOOST_OVERRIDE
             {
                 return do_format(value,code_points);
             }
-            virtual string_type format(int64_t value,size_t &code_points) const
-            {
-                return do_format(value,code_points);
-            }
-
-            virtual string_type format(int32_t value,size_t &code_points) const
+            string_type format(int64_t value,size_t &code_points) const BOOST_OVERRIDE
             {
                 return do_format(value,code_points);
             }
 
-            virtual size_t parse(string_type const &str,double &value) const 
+            string_type format(int32_t value,size_t &code_points) const BOOST_OVERRIDE
+            {
+                return do_format(value,code_points);
+            }
+
+            size_t parse(string_type const &str,double &value) const BOOST_OVERRIDE
             {
                 return do_parse(str,value);
             }
-            virtual size_t parse(string_type const &str,int64_t &value) const 
+            size_t parse(string_type const &str,int64_t &value) const BOOST_OVERRIDE
             {
                 return do_parse(str,value);
             }
-            virtual size_t parse(string_type const &str,int32_t &value) const
+            size_t parse(string_type const &str,int32_t &value) const BOOST_OVERRIDE
             {
                 return do_parse(str,value);
             }

@@ -37,22 +37,22 @@ namespace util {
     
     class utf8_converter  : public base_converter {
     public:
-        virtual int max_len() const
+        int max_len() const BOOST_OVERRIDE
         {
             return 4;
         }
 
-        virtual utf8_converter *clone() const
+        utf8_converter *clone() const BOOST_OVERRIDE
         {
             return new utf8_converter();
         }
 
-        bool is_thread_safe() const
+        bool is_thread_safe() const BOOST_OVERRIDE
         {
             return true;
         }
 
-        virtual uint32_t to_unicode(char const *&begin,char const *end)
+        uint32_t to_unicode(char const *&begin,char const *end) BOOST_OVERRIDE
         {
             char const *p=begin;
                         
@@ -68,7 +68,7 @@ namespace util {
             return c;
         }
 
-        virtual uint32_t from_unicode(uint32_t u,char *begin,char const *end) 
+        uint32_t from_unicode(uint32_t u,char *begin,char const *end) BOOST_OVERRIDE
         {
             if(!utf::is_valid_codepoint(u))
                 return illegal;
@@ -151,34 +151,30 @@ namespace util {
     class simple_converter : public base_converter {
     public:
 
-        virtual ~simple_converter() 
-        {
-        }
-
         simple_converter(std::string const &encoding) : 
             cvt_(encoding)
         {
         }
 
-        virtual int max_len() const 
+        int max_len() const BOOST_OVERRIDE
         {
             return 1;
         }
 
-        virtual bool is_thread_safe() const 
+        bool is_thread_safe() const BOOST_OVERRIDE
         {
             return true;
         }
-        virtual base_converter *clone() const 
+        base_converter *clone() const BOOST_OVERRIDE
         {
            return new simple_converter(*this); 
         }
 
-        virtual uint32_t to_unicode(char const *&begin,char const *end)
+        uint32_t to_unicode(char const *&begin,char const *end) BOOST_OVERRIDE
         {
             return cvt_.to_unicode(begin,end);
         }
-        virtual uint32_t from_unicode(uint32_t u,char *begin,char const *end)
+        uint32_t from_unicode(uint32_t u,char *begin,char const *end) BOOST_OVERRIDE
         {
             return cvt_.from_unicode(u,begin,end);
         }
@@ -271,7 +267,7 @@ namespace util {
         return 0;
     }
     
-    #if !defined(BOOST_LOCALE_HIDE_AUTO_PTR) && !defined(BOOST_NO_AUTO_PTR)
+    #if BOOST_LOCALE_USE_AUTO_PTR
     std::auto_ptr<base_converter> create_utf8_converter()
     {
         std::auto_ptr<base_converter> res(create_utf8_converter_new_ptr());

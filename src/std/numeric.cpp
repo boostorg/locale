@@ -32,7 +32,7 @@ public:
     }
     typedef typename std::time_put<CharType>::iter_type iter_type;
 
-    virtual iter_type do_put(iter_type out,std::ios_base &/*ios*/,CharType fill,std::tm const *tm,char format,char modifier) const
+    iter_type do_put(iter_type out,std::ios_base &/*ios*/,CharType fill,std::tm const *tm,char format,char modifier) const BOOST_OVERRIDE
     {
         std::basic_stringstream<CharType> ss;
         ss.imbue(base_);
@@ -49,7 +49,7 @@ public:
         base_(base)
     {
     }
-    virtual iter_type do_put(iter_type out,std::ios_base &/*ios*/,char fill,std::tm const *tm,char format,char modifier = 0) const
+    iter_type do_put(iter_type out,std::ios_base &/*ios*/,char fill,std::tm const *tm,char format,char modifier = 0) const BOOST_OVERRIDE
     {
         std::basic_ostringstream<wchar_t> wtmps;
         wtmps.imbue(base_);
@@ -105,23 +105,23 @@ public:
         }
     }
 
-    virtual char do_decimal_point() const
+    char do_decimal_point() const BOOST_OVERRIDE
     {
         return decimal_point_;
     }
-    virtual char do_thousands_sep() const
+    char do_thousands_sep() const BOOST_OVERRIDE
     {
         return thousands_sep_;
     }
-    virtual std::string do_grouping() const
+    std::string do_grouping() const BOOST_OVERRIDE
     {
         return grouping_;
     }
-    virtual std::string do_truename() const
+    std::string do_truename() const BOOST_OVERRIDE
     {
         return truename_;
     }
-    virtual std::string do_falsename() const
+    std::string do_falsename() const BOOST_OVERRIDE
     {
         return falsename_;
     }
@@ -178,45 +178,45 @@ public:
         }
     }
 
-    virtual char do_decimal_point() const
+    char do_decimal_point() const BOOST_OVERRIDE
     {
         return decimal_point_;
     }
 
-    virtual char do_thousands_sep() const
+    char do_thousands_sep() const BOOST_OVERRIDE
     {
         return thousands_sep_;
     }
 
-    virtual std::string do_grouping() const
+    std::string do_grouping() const BOOST_OVERRIDE
     {
         return grouping_;
     }
 
-    virtual std::string do_curr_symbol() const
+    std::string do_curr_symbol() const BOOST_OVERRIDE
     {
         return curr_symbol_;
     }
-    virtual std::string do_positive_sign () const
+    std::string do_positive_sign () const BOOST_OVERRIDE
     {
         return positive_sign_;
     }
-    virtual std::string do_negative_sign() const
+    std::string do_negative_sign() const BOOST_OVERRIDE
     {
         return negative_sign_;
     }
 
-    virtual int do_frac_digits() const
+    int do_frac_digits() const BOOST_OVERRIDE
     {
         return frac_digits_;
     }
 
-    virtual std::money_base::pattern do_pos_format() const
+    std::money_base::pattern do_pos_format() const BOOST_OVERRIDE
     {
         return pos_format_;
     }
 
-    virtual std::money_base::pattern do_neg_format() const
+    std::money_base::pattern do_neg_format() const BOOST_OVERRIDE
     {
         return neg_format_;
     }
@@ -240,7 +240,7 @@ public:
         std::numpunct_byname<char>(name,refs)
     {
     }
-    virtual char do_thousands_sep() const
+    char do_thousands_sep() const BOOST_OVERRIDE
     {
         unsigned char bs = base_type::do_thousands_sep();
         if(bs > 127)
@@ -251,7 +251,7 @@ public:
         else
             return bs;
     }
-    virtual std::string do_grouping() const
+    std::string do_grouping() const BOOST_OVERRIDE
     {
         unsigned char bs = base_type::do_thousands_sep();
         if(bs > 127 && bs != 0xA0)
@@ -268,7 +268,7 @@ public:
         std::moneypunct_byname<char,Intl>(name,refs)
     {
     }
-    virtual char do_thousands_sep() const
+    char do_thousands_sep() const BOOST_OVERRIDE
     {
         unsigned char bs = base_type::do_thousands_sep();
         if(bs > 127)
@@ -279,7 +279,7 @@ public:
         else
             return bs;
     }
-    virtual std::string do_grouping() const
+    std::string do_grouping() const BOOST_OVERRIDE
     {
         unsigned char bs = base_type::do_thousands_sep();
         if(bs > 127 && bs != 0xA0)

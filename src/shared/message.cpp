@@ -500,12 +500,12 @@ namespace boost {
 
                 typedef std::pair<CharType const *,CharType const *> pair_type;
 
-                virtual char_type const *get(int domain_id,char_type const *context,char_type const *id) const
+                char_type const *get(int domain_id,char_type const *context,char_type const *id) const BOOST_OVERRIDE
                 {
                     return get_string(domain_id,context,id).first;
                 }
 
-                virtual char_type const *get(int domain_id,char_type const *context,char_type const *single_id,int n) const
+                char_type const *get(int domain_id,char_type const *context,char_type const *single_id,int n) const BOOST_OVERRIDE
                 {
                     pair_type ptr = get_string(domain_id,context,single_id);
                     if(!ptr.first)
@@ -528,7 +528,7 @@ namespace boost {
                     return p;
                 }
 
-                virtual int domain(std::string const &domain) const
+                int domain(std::string const &domain) const BOOST_OVERRIDE
                 {
                     domains_map_type::const_iterator p=domains_.find(domain);
                     if(p==domains_.end())
@@ -584,13 +584,9 @@ namespace boost {
                     }
                 }
                 
-                char_type const *convert(char_type const *msg,string_type &buffer) const 
+                char_type const *convert(char_type const *msg,string_type &buffer) const BOOST_OVERRIDE
                 {
                     return runtime_conversion<char_type>(msg,buffer,key_conversion_required_,locale_encoding_,key_encoding_);
-                }
-
-                virtual ~mo_message()
-                {
                 }
 
             private:

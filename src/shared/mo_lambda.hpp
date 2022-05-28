@@ -19,9 +19,7 @@ namespace boost {
 
                     virtual int operator()(int n) const = 0;
                     virtual plural *clone() const = 0;
-                    virtual ~plural()
-                    {
-                    }
+                    virtual ~plural() {}
                 };
 
                 typedef boost::shared_ptr<plural> plural_ptr;

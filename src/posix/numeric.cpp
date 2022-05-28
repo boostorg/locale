@@ -52,7 +52,7 @@ public:
     }
 protected: 
 
-    virtual iter_type do_format_currency(bool intl,iter_type out,std::ios_base &/*ios*/,char_type /*fill*/,long double val) const
+    iter_type do_format_currency(bool intl,iter_type out,std::ios_base &/*ios*/,char_type /*fill*/,long double val) const BOOST_OVERRIDE
     {
         char buf[4]={};
         char const *format = intl ? "%i" : "%n";
@@ -154,14 +154,11 @@ public:
         lc_(lc)
     {
     }
-    virtual ~time_put_posix()
-    {
-    }
     typedef typename std::time_put<CharType>::iter_type iter_type;
     typedef CharType char_type;
     typedef std::basic_string<char_type> string_type;
 
-    virtual iter_type do_put(iter_type out,std::ios_base &/*ios*/,CharType /*fill*/,std::tm const *tm,char format,char modifier) const
+    iter_type do_put(iter_type out,std::ios_base &/*ios*/,CharType /*fill*/,std::tm const *tm,char format,char modifier) const BOOST_OVERRIDE
     {
         char_type fmt[4] = { '%' , modifier != 0 ? modifier : format , modifier == 0 ? '\0' : format };
         string_type res = ftime_traits<char_type>::ftime(fmt,tm,*lc_);
@@ -427,24 +424,24 @@ public:
     {
         s2=conv::to_utf<wchar_t>(s1,nl_langinfo_l(CODESET,lc));
     }
-    virtual CharType do_decimal_point() const
+    CharType do_decimal_point() const BOOST_OVERRIDE
     {
         return *decimal_point_.c_str();
     }
-    virtual CharType do_thousands_sep() const
+    CharType do_thousands_sep() const BOOST_OVERRIDE
     {
         return *thousands_sep_.c_str();
     }
-    virtual std::string do_grouping() const
+    std::string do_grouping() const BOOST_OVERRIDE
     {
         return grouping_;
     }
-    virtual string_type do_truename() const
+    string_type do_truename() const BOOST_OVERRIDE
     {
         static const char t[]="true";
         return string_type(t,t+sizeof(t)-1);
     }
-    virtual string_type do_falsename() const
+    string_type do_falsename() const BOOST_OVERRIDE
     {
         static const char t[]="false";
         return string_type(t,t+sizeof(t)-1);

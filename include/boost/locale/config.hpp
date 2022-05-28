@@ -31,6 +31,11 @@
 #include <boost/config/auto_link.hpp>
 #endif  // auto-linking disabled
 
+#if defined(BOOST_LOCALE_HIDE_AUTO_PTR) || defined(BOOST_NO_AUTO_PTR)
+#define BOOST_LOCALE_USE_AUTO_PTR 0
+#else
+#define BOOST_LOCALE_USE_AUTO_PTR 1
+#endif
 
 #endif // boost/locale/config.hpp
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4

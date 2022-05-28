@@ -16,11 +16,11 @@ namespace lambda {
 
 namespace { // anon
     struct identity : public plural {
-        virtual int operator()(int n) const 
+        int operator()(int n) const BOOST_OVERRIDE
         {
             return n;
         };
-        virtual identity *clone() const
+        identity *clone() const BOOST_OVERRIDE
         {
             return new identity();
         }
@@ -54,11 +54,11 @@ namespace { // anon
             val(v)
         {
         }
-        virtual int operator()(int /*n*/) const 
+        int operator()(int /*n*/) const BOOST_OVERRIDE
         {
             return val;
         }
-        virtual number *clone() const
+        number *clone() const BOOST_OVERRIDE
         {
             return new number(val);
         }
@@ -72,11 +72,11 @@ namespace { // anon
         name(plural_ptr op) : unary(op)             \
         {                                           \
         };                                          \
-        virtual int operator()(int n) const         \
+        int operator()(int n) const BOOST_OVERRIDE  \
         {                                           \
             return oper (*op1)(n);                  \
         }                                           \
-        virtual name *clone() const                 \
+        name *clone() const BOOST_OVERRIDE          \
         {                                           \
             plural_ptr op1_copy(op1->clone());      \
             return new name(op1_copy);              \
@@ -91,11 +91,11 @@ namespace { // anon
         {                                           \
         }                                           \
                                                     \
-        virtual int operator()(int n) const         \
+        int operator()(int n) const BOOST_OVERRIDE \
         {                                           \
             return (*op1)(n) oper (*op2)(n);        \
         }                                           \
-        virtual name *clone() const                 \
+        name *clone() const BOOST_OVERRIDE          \
         {                                           \
             plural_ptr op1_copy(op1->clone());      \
             plural_ptr op2_copy(op2->clone());      \
@@ -109,13 +109,13 @@ namespace { // anon
             binary(p1,p2)                           \
         {                                           \
         }                                           \
-        virtual int operator()(int n) const         \
+        int operator()(int n) const BOOST_OVERRIDE  \
         {                                           \
             int v1=(*op1)(n);                       \
             int v2=(*op2)(n);                       \
             return v2==0 ? 0 : v1 oper v2;          \
         }                                           \
-        virtual name *clone() const                 \
+        name *clone() const BOOST_OVERRIDE          \
         {                                           \
             plural_ptr op1_copy(op1->clone());      \
             plural_ptr op2_copy(op2->clone());      \
@@ -174,11 +174,11 @@ namespace { // anon
              op3(p3)
         {
         }
-        virtual int operator()(int n) const
+        int operator()(int n) const BOOST_OVERRIDE
         {
             return (*op1)(n) ? (*op2)(n) : (*op3)(n);
         }
-        virtual conditional *clone() const                 
+        conditional *clone() const BOOST_OVERRIDE
         {                                           
             plural_ptr op1_copy(op1->clone());      
             plural_ptr op2_copy(op2->clone());      
