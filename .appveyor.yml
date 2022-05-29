@@ -83,6 +83,13 @@ environment:
       B2_CXXSTD: 11,14,17
       B2_TOOLSET: clang-win
 
+    - FLAVOR: clang-cl using windows.h
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      B2_ADDRESS_MODEL: 64
+      B2_CXXSTD: 17
+      B2_TOOLSET: clang-win
+      B2_DEFINES: BOOST_USE_WINDOWS_H
+
     - FLAVOR: Visual Studio 2015, 2013
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       B2_TOOLSET: msvc-12.0,msvc-14.0
