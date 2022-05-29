@@ -567,17 +567,17 @@ namespace boost {
                     plural_forms_.resize(domains.size());
 
 
-                    for(unsigned id=0;id<domains.size();id++) {
-                        std::string domain=domains[id].name;
-                        std::string key_encoding = domains[id].encoding;
-                        domains_[domain]=id;
+                    for(unsigned i=0;i<domains.size();i++) {
+                        std::string domain=domains[i].name;
+                        std::string key_encoding = domains[i].encoding;
+                        domains_[domain]=i;
 
 
                         bool found=false; 
                         for(unsigned j=0;!found && j<paths.size();j++) {
-                            for(unsigned i=0;!found && i<search_paths.size();i++) {
-                                std::string full_path = search_paths[i]+"/"+paths[j]+"/" + lc_cat + "/"+domain+".mo";
-                                found = load_file(full_path,encoding,key_encoding,id,inf.callback);
+                            for(unsigned k=0;!found && k<search_paths.size();k++) {
+                                std::string full_path = search_paths[k]+"/"+paths[j]+"/" + lc_cat + "/"+domain+".mo";
+                                found = load_file(full_path,encoding,key_encoding,i,inf.callback);
                             }
                         }
                     }

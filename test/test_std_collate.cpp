@@ -65,12 +65,13 @@ void test_char()
 {
     boost::locale::generator gen;
     
-    std::cout << "- Testing at least C" << std::endl;
+    {
+        std::cout << "- Testing at least C" << std::endl;
+        std::locale l = gen("en_US.UTF-8");
 
-    std::locale l = gen("en_US.UTF-8");
-
-    test_one<CharType>(l,"a","b",-1);
-    test_one<CharType>(l,"a","a",0);
+        test_one<CharType>(l, "a", "b", -1);
+        test_one<CharType>(l, "a", "a", 0);
+    }
 
     std::string name;
 

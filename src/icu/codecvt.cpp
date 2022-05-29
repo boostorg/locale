@@ -63,7 +63,7 @@ namespace impl_icu {
             return new uconv_converter(encoding_);
         }
 
-        uint32_t to_unicode(char const *&begin,char const *end)
+        uint32_t to_unicode(char const *&begin,char const *end) BOOST_OVERRIDE
         {
             UErrorCode err=U_ZERO_ERROR;
             char const *tmp = begin;
@@ -80,7 +80,7 @@ namespace impl_icu {
             return c;
         }
 
-        uint32_t from_unicode(uint32_t u,char *begin,char const *end)
+        uint32_t from_unicode(uint32_t u,char *begin,char const *end) BOOST_OVERRIDE
         {
             UChar code_point[2]={0};
             int len;

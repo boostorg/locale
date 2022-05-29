@@ -60,7 +60,7 @@ bool test_to(boost::locale::util::base_converter &cvt,char const *s,unsigned cod
 
 bool test_from(boost::locale::util::base_converter &cvt,unsigned codepoint,char const *str)
 {
-    char buf[32];
+    char buf[32] = {0};
     unsigned res = cvt.from_unicode(codepoint,buf,buf+sizeof(buf));
     if(res == boost::locale::util::base_converter::illegal) {
         return str == 0;
@@ -72,7 +72,7 @@ bool test_from(boost::locale::util::base_converter &cvt,unsigned codepoint,char 
 
 bool test_incomplete(boost::locale::util::base_converter &cvt,unsigned codepoint,int len)
 {
-    char buf[32];
+    char buf[32] = {0};
     unsigned res = cvt.from_unicode(codepoint,buf,buf+len);
     return res == incomplete;
 }

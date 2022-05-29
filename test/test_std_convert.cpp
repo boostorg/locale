@@ -14,8 +14,6 @@ int main()
 }
 #else
 
-
-
 #include <boost/locale/conversion.hpp>
 #include <boost/locale/localization_backend.hpp>
 #include <boost/locale/generator.hpp>
@@ -38,11 +36,11 @@ void test_char()
 {
     boost::locale::generator gen;
 
-    std::cout << "- Testing at least C" << std::endl;
-
-    std::locale l = gen("en_US.UTF-8");
-
-    test_one<CharType>(l,"Hello World i","hello world i","HELLO WORLD I");
+    {
+        std::cout << "- Testing at least C" << std::endl;
+        std::locale l = gen("en_US.UTF-8");
+        test_one<CharType>(l,"Hello World i","hello world i","HELLO WORLD I");
+    }
 
     std::string name;
 
