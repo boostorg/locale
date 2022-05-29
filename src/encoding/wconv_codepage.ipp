@@ -11,7 +11,9 @@
 
 #include <boost/locale/encoding.hpp>
 #include <algorithm>
+#include <cstddef>
 #include <cstring>
+#include <limits>
 #include <string>
 #include <vector>
 #ifndef NOMINMAX
@@ -124,7 +126,10 @@ namespace impl {
     {
         if(begin==end)
             return;
-        int n = MultiByteToWideChar(codepage,MB_ERR_INVALID_CHARS,begin,end-begin,0,0);
+        const std::ptrdiff_t num_chars = end-begin;
+        if(num_chars > std::numeric_limits<int>::max())
+            throw conversion_error();
+        int n = MultiByteToWideChar(codepage,MB_ERR_INVALID_CHARS,begin,static_cast<int>(num_chars),0,0);
         if(n == 0) {
             if(do_skip) {
                 multibyte_to_wide_one_by_one(codepage,begin,end,buf);
@@ -133,8 +138,8 @@ namespace impl {
             throw conversion_error();
         }
 
-        buf.resize(n,0);
-        if(MultiByteToWideChar(codepage,MB_ERR_INVALID_CHARS,begin,end-begin,&buf.front(),buf.size())==0)
+        buf.resize(n);
+        if(MultiByteToWideChar(codepage,MB_ERR_INVALID_CHARS,begin,static_cast<int>(num_chars),&buf.front(),n)==0)
             throw conversion_error();
     }
 
@@ -147,10 +152,13 @@ namespace impl {
         char subst_char = 0;
         char *subst_char_ptr = codepage == 65001 || codepage == 65000 ? 0 : &subst_char;
         
-        int n = WideCharToMultiByte(codepage,0,begin,end-begin,0,0,subst_char_ptr,substitute_ptr);
+        const std::ptrdiff_t num_chars = end - begin;
+        if(num_chars > std::numeric_limits<int>::max())
+            throw conversion_error();
+        int n = WideCharToMultiByte(codepage,0,begin,static_cast<int>(num_chars),0,0,subst_char_ptr,substitute_ptr);
         buf.resize(n);
         
-        if(WideCharToMultiByte(codepage,0,begin,end-begin,&buf[0],n,subst_char_ptr,substitute_ptr)==0)
+        if(WideCharToMultiByte(codepage,0,begin,static_cast<int>(num_chars),&buf[0],n,subst_char_ptr,substitute_ptr)==0)
             throw conversion_error();
         if(substitute) {
             if(do_skip) 
@@ -212,7 +220,7 @@ namespace impl {
     }
 
     template<typename CharType>
-    bool validate_utf16(CharType const *str,unsigned len)
+    bool validate_utf16(CharType const *str,size_t len)
     {
         CharType const *begin = str;
         CharType const *end = str+len;
@@ -225,10 +233,10 @@ namespace impl {
     }
 
     template<typename CharType,typename OutChar>
-    void clean_invalid_utf16(CharType const *str,unsigned len,std::vector<OutChar> &out)
+    void clean_invalid_utf16(CharType const *str,size_t len,std::vector<OutChar> &out)
     {
         out.reserve(len);
-        for(unsigned i=0;i<len;i++) {
+        for(size_t i=0;i<len;i++) {
             uint16_t c = static_cast<uint16_t>(str[i]);
 
             if(0xD800 <= c && c<= 0xDBFF) {

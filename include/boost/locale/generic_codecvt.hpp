@@ -229,9 +229,9 @@ protected:
             }        
         }
         #ifndef BOOST_LOCALE_DO_LENGTH_MBSTATE_CONST
-        return from - save_from;
+        return static_cast<int>(from - save_from);
         #else
-        return save_max - max;
+        return static_cast<int>(save_max - max);
         #endif
     }
 

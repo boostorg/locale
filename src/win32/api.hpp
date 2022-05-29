@@ -14,6 +14,7 @@
 #include <iomanip>
 #include <limits>
 #include <ctime>
+#include <stdexcept>
 
 #include "lcid.hpp"
 
@@ -146,11 +147,15 @@ namespace impl_win {
     inline std::wstring win_map_string_l(unsigned flags,wchar_t const *begin,wchar_t const *end,winlocale const &l)
     {
         std::wstring res;
-        int len = LCMapStringW(l.lcid,flags,begin,end-begin,0,0);
+        if(end - begin > std::numeric_limits<int>::max())
+            throw std::length_error("String to long for int type");
+        int len = LCMapStringW(l.lcid,flags,begin, static_cast<int>(end-begin),0,0);
         if(len == 0)
             return res;
+        if(len == std::numeric_limits<int>::max())
+            throw std::length_error("String to long for int type");
         std::vector<wchar_t> buf(len+1);
-        int l2 = LCMapStringW(l.lcid,flags,begin,end-begin,&buf.front(),buf.size());
+        int l2 = LCMapStringW(l.lcid,flags,begin,static_cast<int>(end-begin),&buf.front(),static_cast<int>(buf.size()));
         res.assign(&buf.front(),l2);
         return res;
     }
@@ -167,7 +172,9 @@ namespace impl_win {
                             wchar_t const *rb,wchar_t const *re,
                             winlocale const &l)
     {
-        return CompareStringW(l.lcid,collation_level_to_flag(level),lb,le-lb,rb,re-rb) - 2;
+        if(le - lb > std::numeric_limits<int>::max() || re - rb > std::numeric_limits<int>::max())
+            throw std::length_error("String to long for int type");
+        return CompareStringW(l.lcid,collation_level_to_flag(level),lb,static_cast<int>(le-lb),rb,static_cast<int>(re-rb)) - 2;
     }
 
 
@@ -242,11 +249,15 @@ namespace impl_win {
             flags = MAP_PRECOMPOSED;
         }
 
-        int len = FoldStringW(flags,begin,end-begin,0,0);
+        if(end - begin > std::numeric_limits<int>::max())
+            throw std::length_error("String to long for int type");
+        int len = FoldStringW(flags,begin,static_cast<int>(end-begin),0,0);
         if(len == 0)
             return std::wstring();
+        if(len == std::numeric_limits<int>::max())
+            throw std::length_error("String to long for int type");
         std::vector<wchar_t> v(len+1);
-        len = FoldStringW(flags,begin,end-begin,&v.front(),len+1);
+        len = FoldStringW(flags,begin,static_cast<int>(end-begin),&v.front(),len+1);
         return std::wstring(&v.front(),len);
     }
 

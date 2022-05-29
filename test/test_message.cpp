@@ -356,7 +356,7 @@ int main(int argc,char **argv)
                     try {
                         l = g(locales[i]);
                     }
-                    catch(boost::locale::conv::invalid_charset_error const &e) {
+                    catch(boost::locale::conv::invalid_charset_error const &) {
                         std::cout << "Looks like ISO-8859-8 is not supported! skipping" << std::endl;
                         iso_8859_8_not_supported = true;
                         continue;
