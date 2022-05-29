@@ -43,7 +43,13 @@ int main()
     // Create system default locale
     generator gen;
     locale loc=gen("");
-    locale::global(loc); 
+    // We need the boundary facet, currently only available via ICU
+    if(!std::has_facet<boundary::boundary_indexing<wchar_t>>(loc))
+    {
+        cout << "boundary detection not implemented in this environment" << endl;
+        return 0;
+    }
+    locale::global(loc);
     wcout.imbue(loc);
     
     // This is needed to prevent C library to
