@@ -18,20 +18,21 @@
 #endif
 
 
-#include "mo_hash.hpp"
-#include "mo_lambda.hpp"
-#include <boost/config.hpp>
+#include <boost/locale/message.hpp>
 #include <boost/locale/encoding.hpp>
 #include <boost/locale/gnu_gettext.hpp>
 #include <boost/locale/hold_ptr.hpp>
-#include <boost/locale/message.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/version.hpp>
 #include <algorithm>
+#include <cstdio>
+#include <cstring>
 #include <iostream>
-#include <stdio.h>
-#include <string.h>
+#include <vector>
+
+#include "mo_hash.hpp"
+#include "mo_lambda.hpp"
 
 #ifdef BOOST_MSVC
 #  pragma warning(disable : 4996)

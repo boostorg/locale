@@ -7,8 +7,13 @@
 //
 #define BOOST_LOCALE_SOURCE
 #include <boost/locale/config.hpp>
-#include "conv.hpp"
+#include <boost/locale/encoding.hpp>
+#include <boost/locale/hold_ptr.hpp>
+#include <cstring>
+#include <memory>
+#include <string>
 
+#include "conv.hpp"
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 #define BOOST_LOCALE_WITH_WCONV
 #endif
@@ -22,12 +27,6 @@
 #include "wconv_codepage.ipp"
 #endif
 
-#include <boost/locale/encoding.hpp>
-#include <boost/locale/hold_ptr.hpp>
-
-#include <cstring>
-#include <string>
-#include <memory>
 
 namespace boost {
     namespace locale {

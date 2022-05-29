@@ -13,20 +13,20 @@ int main()
 }
 #else
 #include <boost/locale/formatting.hpp>
-#include <boost/locale/localization_backend.hpp>
-#include <boost/locale/generator.hpp>
 #include <boost/locale/encoding.hpp>
+#include <boost/locale/generator.hpp>
 #include <boost/locale/info.hpp>
+#include <boost/locale/localization_backend.hpp>
 #include <iomanip>
+#include <cassert>
+#include <ctime>
+#include <iostream>
+#include <monetary.h>
+#include <langinfo.h>
+
 #include "test_locale.hpp"
 #include "test_locale_tools.hpp"
 #include "test_posix_tools.hpp"
-#include <iostream>
-
-#include <time.h>
-#include <monetary.h>
-#include <assert.h>
-#include <langinfo.h>
 
 //#define DEBUG_FMT
 

@@ -8,20 +8,18 @@
 #ifndef BOOST_LOCALE_DATE_TIME_HPP_INCLUDED
 #define BOOST_LOCALE_DATE_TIME_HPP_INCLUDED
 
-#include <boost/locale/config.hpp>
+#include <boost/locale/date_time_facet.hpp>
+#include <boost/locale/formatting.hpp>
+#include <boost/locale/hold_ptr.hpp>
+#include <boost/locale/time_zone.hpp>
+#include <locale>
+#include <stdexcept>
+#include <vector>
+
 #ifdef BOOST_MSVC
 #  pragma warning(push)
 #  pragma warning(disable : 4275 4251 4231 4660)
 #endif
-
-#include <boost/locale/hold_ptr.hpp>
-#include <boost/locale/date_time_facet.hpp>
-#include <boost/locale/formatting.hpp>
-#include <boost/locale/time_zone.hpp>
-#include <locale>
-#include <vector>
-#include <stdexcept>
-
 
 namespace boost {
     namespace locale {

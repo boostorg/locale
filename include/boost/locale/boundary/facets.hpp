@@ -8,24 +8,21 @@
 #ifndef BOOST_LOCALE_BOUNDARY_FACETS_HPP_INCLUDED
 #define BOOST_LOCALE_BOUNDARY_FACETS_HPP_INCLUDED
 
-#include <boost/locale/config.hpp>
 #include <boost/locale/boundary/types.hpp>
+#include <locale>
+#include <vector>
+
 #ifdef BOOST_MSVC
 #  pragma warning(push)
 #  pragma warning(disable : 4275 4251 4231 4660)
 #endif
-#include <locale>
-#include <vector>
-
-
-
 
 namespace boost {
 
     namespace locale {
         
         ///
-        /// \brief This namespae contains all operations required for boundary analysis of text
+        /// \brief This namespace contains all operations required for boundary analysis of text
         ///
         namespace boundary {
             ///
@@ -60,7 +57,7 @@ namespace boost {
                 }
 
                 ///
-                /// Offset from the beggining of the text where a break occurs.
+                /// Offset from the beginning of the text where a break occurs.
                 ///
                 size_t offset;
                 ///

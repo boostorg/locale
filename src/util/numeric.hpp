@@ -7,15 +7,15 @@
 //
 #ifndef BOOST_LOCALE_IMPL_UTIL_NUMERIC_HPP
 #define BOOST_LOCALE_IMPL_UTIL_NUMERIC_HPP
+#include <boost/locale/info.hpp>
+#include <boost/locale/formatting.hpp>
+#include <ctime>
+#include <cstdlib>
+#include <ios>
 #include <locale>
 #include <string>
-#include <ios>
-#include <boost/locale/formatting.hpp>
-#include <boost/locale/info.hpp>
 #include <sstream>
 #include <vector>
-#include <ctime>
-#include <stdlib.h>
 
 #include "timezone.hpp"
 
@@ -23,7 +23,6 @@
 #ifdef BOOST_MSVC
 #  pragma warning(disable : 4996)
 #endif
-
 
 namespace boost {
 namespace locale {

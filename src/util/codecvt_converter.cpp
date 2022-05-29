@@ -9,24 +9,20 @@
 #include <boost/locale/generator.hpp>
 #include <boost/locale/encoding.hpp>
 #include <boost/locale/utf8_codecvt.hpp>
+#include <boost/locale/util.hpp>
+#include <algorithm>
+#include <cstddef>
+#include <cstring>
 
 #include "../encoding/conv.hpp"
 
-#include <boost/locale/util.hpp>
+//#define DEBUG_CODECVT
+#ifdef DEBUG_CODECVT            
+#include <iostream>
+#endif
 
 #ifdef BOOST_MSVC
 #  pragma warning(disable : 4244 4996) // loose data 
-#endif
-
-#include <cstddef>
-#include <string.h>
-#include <vector>
-#include <algorithm>
-
-//#define DEBUG_CODECVT
-
-#ifdef DEBUG_CODECVT            
-#include <iostream>
 #endif
 
 namespace boost {

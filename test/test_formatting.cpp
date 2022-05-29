@@ -18,18 +18,18 @@ int main()
 // Disable this "security crap"
 #endif
 
-#include <boost/locale/formatting.hpp>
-#include <boost/locale/format.hpp>
 #include <boost/locale/date_time.hpp>
+#include <boost/locale/format.hpp>
+#include <boost/locale/formatting.hpp>
 #include <boost/locale/generator.hpp>
+#include <iomanip>
+#include <iostream>
+#include <limits>
+#include <sstream>
+#include <unicode/uversion.h>
+
 #include "test_locale.hpp"
 #include "test_locale_tools.hpp"
-#include <sstream>
-#include <iostream>
-#include <iomanip>
-#include <limits>
-
-#include <unicode/uversion.h>
 
 using namespace boost::locale;
 

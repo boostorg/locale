@@ -9,12 +9,12 @@
 #define BOOST_LOCALE_COLLATOR_HPP_INCLUDED
 
 #include <boost/locale/config.hpp>
+#include <locale>
+
 #ifdef BOOST_MSVC
 #  pragma warning(push)
 #  pragma warning(disable : 4275 4251 4231 4660)
 #endif
-#include <locale>
-
 
 namespace boost {
 namespace locale {

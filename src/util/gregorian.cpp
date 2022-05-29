@@ -6,24 +6,24 @@
 //  http://www.boost.org/LICENSE_1_0.txt)
 //
 #define BOOST_LOCALE_SOURCE
-#include <boost/config.hpp>
-#ifdef BOOST_MSVC
-#  pragma warning(disable : 4996)
-#endif
-#include <locale>
-#include <string>
-#include <ios>
 #include <boost/locale/date_time_facet.hpp>
 #include <boost/locale/date_time.hpp>
 #include <boost/locale/hold_ptr.hpp>
-#include <stdlib.h>
-#include <ctime>
-#include <memory>
 #include <algorithm>
+#include <cstdlib>
+#include <ctime>
+#include <ios>
 #include <limits>
+#include <locale>
+#include <memory>
+#include <string>
 
-#include "timezone.hpp"
 #include "gregorian.hpp"
+#include "timezone.hpp"
+
+#ifdef BOOST_MSVC
+#  pragma warning(disable : 4996)
+#endif
 
 namespace boost {
 namespace locale {

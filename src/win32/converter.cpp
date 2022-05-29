@@ -7,13 +7,12 @@
 //
 #define BOOST_LOCALE_SOURCE
 
-#include <locale>
-#include <stdexcept>
 #include <boost/locale/generator.hpp>
 #include <boost/locale/conversion.hpp>
 #include <boost/locale/encoding.hpp>
-#include <vector>
-#include <string.h>
+#include <cstring>
+#include <locale>
+#include <stdexcept>
 #include "api.hpp"
 #include "all_generator.hpp"
 

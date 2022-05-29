@@ -7,16 +7,17 @@
 //
 #ifndef BOOST_LOCALE_BOUNDARY_SEGMENT_HPP_INCLUDED
 #define BOOST_LOCALE_BOUNDARY_SEGMENT_HPP_INCLUDED
+
 #include <boost/locale/config.hpp>
+#include <iosfwd>
+#include <iterator>
+#include <locale>
+#include <string>
+
 #ifdef BOOST_MSVC
 #  pragma warning(push)
 #  pragma warning(disable : 4275 4251 4231 4660)
 #endif
-#include <locale>
-#include <string>
-#include <iosfwd>
-#include <iterator>
-
 
 namespace boost {
 namespace locale {

@@ -9,22 +9,24 @@
 #if defined(__FreeBSD__)
 #include <xlocale.h>
 #endif
-#include <locale>
-#include <string>
-#include <ios>
+#include <boost/locale/encoding.hpp>
 #include <boost/locale/formatting.hpp>
 #include <boost/locale/generator.hpp>
-#include <boost/locale/encoding.hpp>
 #include <boost/shared_ptr.hpp>
-#include <sstream>
-#include <stdlib.h>
-#include <time.h>
-#include <string.h>
-#include <wctype.h>
-#include <ctype.h>
+#include <cctype>
+#include <cerrno>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
+#include <ios>
 #include <langinfo.h>
+#include <locale>
 #include <monetary.h>
-#include <errno.h>
+#include <sstream>
+#include <string>
+#include <vector>
+#include <wctype.h>
+
 #include "../util/numeric.hpp"
 #include "all_generator.hpp"
 

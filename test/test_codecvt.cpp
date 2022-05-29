@@ -6,12 +6,12 @@
 //  http://www.boost.org/LICENSE_1_0.txt)
 //
 #include <boost/locale/utf8_codecvt.hpp>
-#include <locale>
-#include <iostream>
+#include <cstring>
 #include <iomanip>
-#include <string.h>
-#include <wchar.h>
+#include <iostream>
+#include <locale>
 #include <memory.h>
+#include <wchar.h>
 #define BOOST_LOCALE_ERROR_LIMIT -1
 #include "test_locale.hpp"
 

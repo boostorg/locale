@@ -10,8 +10,8 @@
 
 #include <boost/locale/generator.hpp>
 #include <boost/shared_ptr.hpp>
-#include <vector>
-#include <locale.h>
+#include <clocale>
+#include <locale>
 
 #ifdef __APPLE__
 #include <xlocale.h>

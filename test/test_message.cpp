@@ -14,6 +14,7 @@
 #include "test_locale.hpp"
 #include "test_locale_tools.hpp"
 #include <fstream>
+#include <vector>
 
 namespace bl = boost::locale;
 

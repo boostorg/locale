@@ -6,14 +6,13 @@
 //  http://www.boost.org/LICENSE_1_0.txt)
 //
 #define BOOST_LOCALE_SOURCE
+#include "std_backend.hpp"
 #include <boost/locale/localization_backend.hpp>
 #include <boost/locale/gnu_gettext.hpp>
-#include "all_generator.hpp"
-#include "../util/locale_data.hpp"
-#include "../util/gregorian.hpp"
 #include <boost/locale/util.hpp>
 #include <algorithm>
 #include <iterator>
+#include <vector>
 
 #if defined(BOOST_WINDOWS)
 #  ifndef NOMINMAX
@@ -23,8 +22,9 @@
 #  include "../encoding/conv.hpp"
 #  include "../win32/lcid.hpp"
 #endif
-
-#include "std_backend.hpp"
+#include "all_generator.hpp"
+#include "../util/locale_data.hpp"
+#include "../util/gregorian.hpp"
 
 namespace boost {
 namespace locale {

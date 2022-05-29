@@ -9,7 +9,8 @@
 #define BOOST_LOCALE_IMPL_STD_ALL_GENERATOR_HPP
 
 #include <boost/locale/generator.hpp>
-#include <vector>
+#include <locale>
+#include <string>
 
 namespace boost {
     namespace locale {

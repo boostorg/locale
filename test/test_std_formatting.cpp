@@ -6,7 +6,6 @@
 //  http://www.boost.org/LICENSE_1_0.txt)
 //
 
-
 #ifdef BOOST_LOCALE_NO_STD_BACKEND
 #include <iostream>
 int main()
@@ -15,23 +14,21 @@ int main()
 }
 #else
 
-
-#include <boost/locale/formatting.hpp>
-#include <boost/locale/localization_backend.hpp>
-#include <boost/locale/generator.hpp>
 #include <boost/locale/encoding.hpp>
+#include <boost/locale/formatting.hpp>
+#include <boost/locale/generator.hpp>
+#include <boost/locale/localization_backend.hpp>
 #include <iomanip>
+#include <iostream>
+
 #include "test_locale.hpp"
 #include "test_locale_tools.hpp"
-#include <iostream>
 
 //#define DEBUG_FMT
 
-#include <boost/config.hpp>
 #ifdef BOOST_MSVC
 #  pragma warning(disable : 4996)
 #endif
-
 
 template<typename C1,typename C2>
 bool equal(std::basic_string<C1> const &s1,std::basic_string<C2> const &s2)

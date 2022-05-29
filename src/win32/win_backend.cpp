@@ -17,6 +17,7 @@
 #include "api.hpp"
 #include <algorithm>
 #include <iterator>
+#include <vector>
 
 namespace boost {
 namespace locale {

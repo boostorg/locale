@@ -6,14 +6,14 @@
 //  http://www.boost.org/LICENSE_1_0.txt)
 //
 #define BOOST_LOCALE_SOURCE
-#include <locale>
-#include <string>
-#include <ios>
+#include <boost/locale/encoding.hpp>
 #include <boost/locale/formatting.hpp>
 #include <boost/locale/generator.hpp>
-#include <boost/locale/encoding.hpp>
+#include <cstdlib>
+#include <ios>
+#include <locale>
 #include <sstream>
-#include <stdlib.h>
+#include <string>
 
 #include "../util/numeric.hpp"
 #include "all_generator.hpp"

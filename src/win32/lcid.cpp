@@ -11,14 +11,14 @@
 #endif
 
 #include "lcid.hpp"
-#include "../util/locale_data.hpp"
 #include <boost/thread/locks.hpp>
 #include <boost/thread/mutex.hpp>
+#include <map>
 #include <sstream>
 #include <string.h>
 #include <string>
-#include <map>
 #include <windows.h>
+#include "../util/locale_data.hpp"
 
 namespace boost {
 namespace locale {

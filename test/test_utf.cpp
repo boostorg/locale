@@ -5,11 +5,10 @@
 //  accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt)
 //
+#include <boost/locale/utf.hpp>
+#include <cstring>
 #include "test_locale.hpp"
 #include "test_locale_tools.hpp"
-#include <boost/locale/utf.hpp>
-
-#include <string.h>
 
 using namespace boost::locale::utf;
 

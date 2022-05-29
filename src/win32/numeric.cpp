@@ -12,14 +12,14 @@
 #include <boost/locale/encoding.hpp>
 #include <boost/locale/formatting.hpp>
 #include <boost/locale/generator.hpp>
-#include <ctype.h>
+#include <cctype>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
 #include <ios>
 #include <locale>
 #include <sstream>
-#include <stdlib.h>
-#include <string.h>
 #include <string>
-#include <time.h>
 #include <wctype.h>
 
 namespace boost {

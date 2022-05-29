@@ -9,17 +9,18 @@
 #define BOOST_LOCALE_FORMATTING_HPP_INCLUDED
 
 #include <boost/locale/config.hpp>
+#include <boost/locale/time_zone.hpp>
+#include <boost/cstdint.hpp>
+#include <cstring>
+#include <istream>
+#include <ostream>
+#include <string>
+#include <typeinfo>
+
 #ifdef BOOST_MSVC
 #  pragma warning(push)
 #  pragma warning(disable : 4275 4251 4231 4660)
 #endif
-#include <boost/cstdint.hpp>
-#include <boost/locale/time_zone.hpp>
-#include <ostream>
-#include <istream>
-#include <string>
-#include <string.h>
-#include <typeinfo>
 
 namespace boost {
     namespace locale {

@@ -15,24 +15,23 @@ int main()
 #else
 
 #include <boost/locale/formatting.hpp>
-#include <boost/locale/localization_backend.hpp>
-#include <boost/locale/generator.hpp>
 #include <boost/locale/encoding.hpp>
+#include <boost/locale/generator.hpp>
 #include <boost/locale/info.hpp>
+#include <boost/locale/localization_backend.hpp>
 #include <iomanip>
-#include "test_locale.hpp"
-#include "test_locale_tools.hpp"
-#include "../src/win32/lcid.hpp"
+#include <cassert>
+#include <ctime>
 #include <iostream>
-
-#include <time.h>
-#include <assert.h>
 
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif
-
 #include <windows.h>
+
+#include "test_locale.hpp"
+#include "test_locale_tools.hpp"
+#include "../src/win32/lcid.hpp"
 
 #define DEBUG_FMT
 

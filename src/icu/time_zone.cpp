@@ -25,13 +25,13 @@
 #endif
 
 #ifdef BOOST_LOCALE_WORKAROUND_ICU_BUG
+#include <cstring>
 #include <dirent.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fstream>
 #include <pthread.h>
-#include <string.h>
 #include <memory>
 #endif
 

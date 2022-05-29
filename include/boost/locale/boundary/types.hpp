@@ -9,13 +9,13 @@
 #define BOOST_LOCALE_BOUNDARY_TYPES_HPP_INCLUDED
 
 #include <boost/locale/config.hpp>
-#include <boost/cstdint.hpp>
 #include <boost/assert.hpp>
+#include <boost/cstdint.hpp>
+
 #ifdef BOOST_MSVC
 #  pragma warning(push)
 #  pragma warning(disable : 4275 4251 4231 4660)
 #endif
-
 
 namespace boost {
 

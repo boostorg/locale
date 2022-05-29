@@ -16,13 +16,12 @@
 #include <boost/locale/util.hpp>
 #include <boost/locale/hold_ptr.hpp>
 #include "codecvt.hpp"
+#include "icu_util.hpp"
 
 #ifdef BOOST_MSVC
 #  pragma warning(disable : 4244) // loose data 
 #endif
 
-#include "icu_util.hpp"
-#include <vector>
 namespace boost {
 namespace locale {
 namespace impl_icu {

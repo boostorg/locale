@@ -15,6 +15,7 @@
 #endif
 #include <unicode/brkiter.h>
 #include <unicode/rbbi.h>
+#include <vector>
 
 #include "cdata.hpp"
 #include "all_generator.hpp"

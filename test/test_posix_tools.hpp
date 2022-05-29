@@ -9,7 +9,7 @@
 #ifndef BOOST_LOCLAE_TEST_LOCALE_POSIX_TOOLS_HPP
 #define BOOST_LOCLAE_TEST_LOCALE_POSIX_TOOLS_HPP
 
-#include <locale.h>
+#include <clocale>
 #include <string>
 
 #if defined(__APPLE__) || defined(__FreeBSD__)
