@@ -6,26 +6,22 @@
 //  http://www.boost.org/LICENSE_1_0.txt)
 //
 #define BOOST_LOCALE_SOURCE
-#include <boost/locale/date_time_facet.hpp>
 #include <boost/locale/date_time.hpp>
+#include <boost/locale/date_time_facet.hpp>
 #include <boost/locale/formatting.hpp>
 #include <boost/locale/hold_ptr.hpp>
-#include "all_generator.hpp"
-
 #include <boost/thread.hpp>
+#include <cmath>
+#include <iostream>
+#include <memory>
 #include <unicode/calendar.h>
 #include <unicode/gregocal.h>
 #include <unicode/utypes.h>
 
-#include <memory>
-#include <math.h>
-
+#include "all_generator.hpp"
 #include "cdata.hpp"
-#include "uconv.hpp"
 #include "time_zone.hpp"
-
-#include <iostream>
-
+#include "uconv.hpp"
 
 namespace boost {
 namespace locale {

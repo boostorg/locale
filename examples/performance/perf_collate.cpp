@@ -5,11 +5,11 @@
 //  accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt)
 //
-#include <iostream>
-#include <string>
-#include <set>
-
 #include <boost/locale.hpp>
+#include <iostream>
+#include <set>
+#include <string>
+#include <vector>
 
 using namespace std;
 using namespace boost::locale;

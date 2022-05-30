@@ -6,22 +6,22 @@
 //  http://www.boost.org/LICENSE_1_0.txt)
 //
 #define BOOST_LOCALE_SOURCE
-#if defined(__FreeBSD__)
-#include <xlocale.h>
-#endif
+#include "posix_backend.hpp"
 #include <boost/locale/localization_backend.hpp>
 #include <boost/locale/gnu_gettext.hpp>
 #include <boost/locale/info.hpp>
-#include "all_generator.hpp"
-#include "posix_backend.hpp"
-
-#include "../util/locale_data.hpp"
-#include "../util/gregorian.hpp"
 #include <boost/locale/util.hpp>
 #include <algorithm>
 #include <iterator>
-
 #include <langinfo.h>
+#include <vector>
+#if defined(__FreeBSD__)
+#include <xlocale.h>
+#endif
+
+#include "all_generator.hpp"
+#include "../util/gregorian.hpp"
+#include "../util/locale_data.hpp"
 
 namespace boost {
 namespace locale {

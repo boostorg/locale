@@ -9,19 +9,17 @@
 #ifndef BOOST_LOCALE_IMPL_WCONV_CODEPAGE_HPP
 #define BOOST_LOCALE_IMPL_WCONV_CODEPAGE_HPP
 
-
 #include <boost/locale/encoding.hpp>
 #include <algorithm>
 #include <cstring>
 #include <string>
-#include "conv.hpp"
-
+#include <vector>
 #ifndef NOMINMAX
 # define NOMINMAX
 #endif
 #include <windows.h>
-#include <vector>
 
+#include "conv.hpp"
 
 namespace boost {
 namespace locale {

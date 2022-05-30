@@ -9,8 +9,7 @@
 #define BOOST_LOCALE_IMPL_WIN32_ALL_GENERATOR_HPP
 
 #include <boost/locale/generator.hpp>
-#include <vector>
-#include <locale.h>
+#include <locale>
 
 namespace boost {
     namespace locale {

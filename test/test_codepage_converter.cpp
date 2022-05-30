@@ -5,8 +5,6 @@
 //  accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt)
 //
-#include "test_locale.hpp"
-#include "test_locale_tools.hpp"
 #include <boost/locale/util.hpp>
 #ifdef BOOST_LOCALE_WITH_ICU
 #include "../src/icu/codecvt.hpp"
@@ -18,7 +16,9 @@
 #include <boost/locale/hold_ptr.hpp>
 #endif
 
-#include <string.h>
+#include <cstring>
+#include "test_locale.hpp"
+#include "test_locale_tools.hpp"
 
 char *make2(unsigned v)
 {

@@ -22,6 +22,7 @@ int main()
 #include "test_locale_tools.hpp"
 #include <list>
 #include <unicode/uversion.h>
+#include <vector>
 
 // Debugging code
 

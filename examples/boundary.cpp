@@ -18,6 +18,12 @@ int main()
     generator gen;
     // Make system default locale global
     std::locale loc = gen("");
+    // We need the boundary facet, currently only available via ICU
+    if(!std::has_facet<boundary::boundary_indexing<char>>(loc))
+    {
+        cout << "boundary detection not implemented in this environment" << endl;
+        return 0;
+    }
     locale::global(loc); 
     cout.imbue(loc);
     

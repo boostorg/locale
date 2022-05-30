@@ -9,16 +9,16 @@
 #define BOOST_LOCALE_FORMAT_HPP_INCLUDED
 
 #include <boost/locale/config.hpp>
+#include <boost/locale/formatting.hpp>
+#include <boost/locale/hold_ptr.hpp>
+#include <boost/locale/message.hpp>
+#include <sstream>
+#include <vector>
+
 #ifdef BOOST_MSVC
 #  pragma warning(push)
 #  pragma warning(disable : 4275 4251 4231 4660)
 #endif
-#include <boost/locale/message.hpp>
-#include <boost/locale/formatting.hpp>
-#include <boost/locale/hold_ptr.hpp>
-
-#include <sstream>
-
 
 namespace boost {
     namespace locale {

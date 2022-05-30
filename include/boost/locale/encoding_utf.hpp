@@ -11,12 +11,11 @@
 #include <boost/locale/utf.hpp>
 #include <boost/locale/encoding_errors.hpp>
 #include <iterator>
+
 #ifdef BOOST_MSVC
 #  pragma warning(push)
 #  pragma warning(disable : 4275 4251 4231 4660)
 #endif
-
-
 
 namespace boost {
     namespace locale {

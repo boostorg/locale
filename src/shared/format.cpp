@@ -7,12 +7,11 @@
 //
 #define BOOST_LOCALE_SOURCE
 #include <boost/locale/format.hpp>
-#include <boost/locale/generator.hpp>
 #include <boost/locale/info.hpp>
-#include <limits>
-#include <stdlib.h>
-
+#include <boost/locale/generator.hpp>
+#include <cstdlib>
 #include <iostream>
+#include <limits>
 
 namespace boost {
     namespace locale {

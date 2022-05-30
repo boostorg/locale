@@ -7,20 +7,20 @@
 //
 #define BOOST_LOCALE_SOURCE
 
-#if defined(__FreeBSD__)
-#include <xlocale.h>
-#endif
-#include <locale>
-#include <stdexcept>
 #include <boost/locale/generator.hpp>
 #include <boost/locale/conversion.hpp>
 #include <boost/locale/encoding.hpp>
 #include <boost/shared_ptr.hpp>
-#include <vector>
-#include <string.h>
-#include <wctype.h>
-#include <ctype.h>
+#include <cctype>
+#include <cstring>
 #include <langinfo.h>
+#include <locale>
+#include <stdexcept>
+#include <wctype.h>
+#if defined(__FreeBSD__)
+#include <xlocale.h>
+#endif
+
 #include "all_generator.hpp"
 
 namespace boost {

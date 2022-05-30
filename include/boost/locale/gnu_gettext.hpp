@@ -11,6 +11,7 @@
 #include <boost/locale/message.hpp>
 #include <boost/function.hpp>
 #include <stdexcept>
+#include <vector>
 
 namespace boost {
 namespace locale {

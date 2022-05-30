@@ -6,15 +6,15 @@
 //  http://www.boost.org/LICENSE_1_0.txt)
 //
 
+#include <boost/locale.hpp>
+#include <cstdlib>
+#include <clocale>
+#include <ctime>
 #include <iostream>
 #include <iomanip>
-#include <stdlib.h>
-#include <locale.h>
 #include <locale>
-#include <time.h>
 #include <stdexcept>
 
-#include <boost/locale.hpp>
 #ifdef BOOST_LOCALE_WITH_ICU
 #include <unicode/uversion.h>
 #endif

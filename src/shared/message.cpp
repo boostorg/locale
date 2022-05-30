@@ -17,37 +17,26 @@
 #endif
 #endif
 
-#include <boost/config.hpp>
-#include <boost/version.hpp>
+
 #include <boost/locale/message.hpp>
-#include <boost/locale/gnu_gettext.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/locale/hold_ptr.hpp>
 #include <boost/locale/encoding.hpp>
-#ifdef BOOST_MSVC
-#  pragma warning(disable : 4996)
-#endif
-
-
-#if BOOST_VERSION >= 103600
-#define BOOST_LOCALE_UNORDERED_CATALOG
-#endif
-
-#ifdef BOOST_LOCALE_UNORDERED_CATALOG
+#include <boost/locale/gnu_gettext.hpp>
+#include <boost/locale/hold_ptr.hpp>
+#include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
-#else
-#include <map>
-#endif
-
+#include <boost/version.hpp>
+#include <algorithm>
+#include <cstdio>
+#include <cstring>
 #include <iostream>
-
+#include <vector>
 
 #include "mo_hash.hpp"
 #include "mo_lambda.hpp"
 
-#include <stdio.h>
-
-#include <string.h>
+#ifdef BOOST_MSVC
+#  pragma warning(disable : 4996)
+#endif
 
 namespace boost {
     namespace locale {

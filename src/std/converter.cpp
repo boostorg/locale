@@ -7,26 +7,23 @@
 //
 #define BOOST_LOCALE_SOURCE
 
-#include <boost/config.hpp>
+#include <boost/locale/config.hpp>
+#include <boost/locale/conversion.hpp>
+#include <boost/locale/encoding.hpp>
+#include <boost/locale/generator.hpp>
+#include <locale>
+#include <stdexcept>
+#include <vector>
+
+#include "all_generator.hpp"
+
 #ifdef BOOST_MSVC
 #  pragma warning(disable : 4996)
 #endif
 
-#include <locale>
-#include <stdexcept>
-#include <boost/locale/generator.hpp>
-#include <boost/locale/conversion.hpp>
-#include <boost/locale/encoding.hpp>
-#include <vector>
-
-
-
-#include "all_generator.hpp"
-
 namespace boost {
 namespace locale {
 namespace impl_std {
-
 
 template<typename CharType>
 class std_converter : public converter<CharType> 

@@ -8,20 +8,18 @@
 #ifndef BOOST_LOCALE_GENERATOR_HPP
 #define BOOST_LOCALE_GENERATOR_HPP
 #include <boost/locale/config.hpp>
+#include <boost/locale/hold_ptr.hpp>
 #include <boost/cstdint.hpp>
+#include <string>
+#include <locale>
+#include <memory>
+
 #ifdef BOOST_MSVC
 #  pragma warning(push)
 #  pragma warning(disable : 4275 4251 4231 4660)
 #endif
-#include <string>
-#include <locale>
-#include <memory>
-#include <boost/locale/hold_ptr.hpp>
 
 namespace boost {
-
-    template<typename Type>
-    class shared_ptr;
 
     ///
     /// \brief This is the main namespace that encloses all localization classes 
@@ -215,7 +213,7 @@ namespace boost {
 
         private:
 
-            void set_all_options(shared_ptr<localization_backend> backend,std::string const &id) const;
+            void set_all_options(localization_backend& backend,std::string const &id) const;
 
             generator(generator const &);
             void operator=(generator const &);

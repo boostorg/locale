@@ -8,13 +8,10 @@
 
 #include <boost/locale/encoding.hpp>
 #include <boost/locale/generator.hpp>
-#include <boost/locale/localization_backend.hpp>
 #include <boost/locale/info.hpp>
-#include <boost/locale/config.hpp>
+#include <boost/locale/localization_backend.hpp>
 #include <fstream>
-#include "test_locale.hpp"
-#include "test_locale_tools.hpp"
-
+#include <vector>
 
 #ifndef BOOST_LOCALE_NO_POSIX_BACKEND
 # ifdef __APPLE__
@@ -30,6 +27,8 @@
 #include <windows.h>
 #endif
 
+#include "test_locale.hpp"
+#include "test_locale_tools.hpp"
 
 bool test_iso;
 bool test_iso_8859_8 = true;

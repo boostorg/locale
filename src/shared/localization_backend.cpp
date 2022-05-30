@@ -7,10 +7,10 @@
 //
 #define BOOST_LOCALE_SOURCE
 #include <boost/locale/localization_backend.hpp>
+#include <boost/locale/hold_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/thread/locks.hpp>
 #include <boost/thread/mutex.hpp>
-#include <boost/locale/hold_ptr.hpp>
 #include <vector>
 
 #ifdef BOOST_LOCALE_WITH_ICU

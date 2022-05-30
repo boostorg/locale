@@ -29,7 +29,6 @@
 #  pragma warning(disable : 4244) // lose data 
 #endif
 
-
 namespace boost {
 namespace locale {
     namespace impl_icu {

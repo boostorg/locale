@@ -9,13 +9,12 @@
 #define BOOST_LOCALE_TIME_ZONE_HPP_INCLUDED
 
 #include <boost/locale/config.hpp>
+#include <string>
+
 #ifdef BOOST_MSVC
 #  pragma warning(push)
 #  pragma warning(disable : 4275 4251 4231 4660)
 #endif
-
-#include <string>
-
 
 namespace boost {
     namespace locale {

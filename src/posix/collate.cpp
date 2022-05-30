@@ -6,20 +6,20 @@
 //  http://www.boost.org/LICENSE_1_0.txt)
 //
 #define BOOST_LOCALE_SOURCE
+#include <boost/locale/generator.hpp>
 #if defined(__FreeBSD__)
 #include <xlocale.h>
 #endif
+#include <clocale>
+#include <cstring>
 #include <locale>
-#include <locale.h>
-#include <string.h>
 #include <wchar.h>
 #include <string>
 #include <stdexcept>
 #include <ios>
 #include <vector>
-#include <boost/locale/generator.hpp>
-#include "../shared/mo_hash.hpp"
 
+#include "../shared/mo_hash.hpp"
 #include "all_generator.hpp"
 
 namespace boost {

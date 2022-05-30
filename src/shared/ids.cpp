@@ -10,8 +10,8 @@
 #include <boost/locale/collator.hpp>
 #include <boost/locale/conversion.hpp>
 #include <boost/locale/date_time_facet.hpp>
-#include <boost/locale/message.hpp>
 #include <boost/locale/info.hpp>
+#include <boost/locale/message.hpp>
 
 namespace boost {
     namespace locale {

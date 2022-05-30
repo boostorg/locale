@@ -6,11 +6,10 @@
 //  http://www.boost.org/LICENSE_1_0.txt)
 //
 #define BOOST_LOCALE_SOURCE
-#include <locale>
-#include <boost/cstdint.hpp>
-#include <boost/locale/util.hpp>
 #include "all_generator.hpp"
-#include <vector>
+#include <boost/locale/util.hpp>
+#include <locale>
+
 namespace boost {
 namespace locale {
 namespace impl_std {
@@ -20,7 +19,6 @@ namespace impl_std {
     {
         return std::locale(in,new std::codecvt_byname<CharType,char,std::mbstate_t>(locale_name.c_str()));
     }
-    
 
     std::locale create_codecvt( std::locale const &in,
                                 std::string const &locale_name,

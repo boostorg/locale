@@ -8,12 +8,7 @@
 
 #define BOOST_LOCALE_SOURCE
 #include <boost/locale/util.hpp>
-#include <boost/config.hpp>
-#include <stdlib.h>
-
-#ifdef BOOST_MSVC
-#  pragma warning(disable : 4996)
-#endif
+#include <cstdlib>
 
 #if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
 #ifndef NOMINMAX
@@ -21,6 +16,10 @@
 #endif
 #include <windows.h>
 #define BOOST_LOCALE_USE_WIN32_API
+#endif
+
+#ifdef BOOST_MSVC
+#  pragma warning(disable : 4996)
 #endif
 
 namespace boost {

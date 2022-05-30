@@ -10,7 +10,7 @@
 #include <boost/locale/formatting.hpp>
 #include <boost/thread/locks.hpp>
 #include <boost/thread/mutex.hpp>
-#include <math.h>
+#include <cmath>
 
 namespace boost {
 namespace locale {

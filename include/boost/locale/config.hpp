@@ -8,7 +8,17 @@
 #ifndef BOOST_LOCALE_CONFIG_HPP_INCLUDED
 #define BOOST_LOCALE_CONFIG_HPP_INCLUDED
 
-#include <boost/locale/definitions.hpp>
+#include <boost/config.hpp>
+
+#if defined(BOOST_ALL_DYN_LINK) || defined(BOOST_LOCALE_DYN_LINK)
+#   ifdef BOOST_LOCALE_SOURCE
+#       define BOOST_LOCALE_DECL BOOST_SYMBOL_EXPORT
+#   else
+#       define BOOST_LOCALE_DECL BOOST_SYMBOL_IMPORT
+#   endif  // BOOST_LOCALE_SOURCE
+#else
+#   define BOOST_LOCALE_DECL
+#endif // BOOST_LOCALE_DYN_LINK
 
 //
 // Automatically link to the correct build variant where possible. 

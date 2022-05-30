@@ -9,12 +9,12 @@
 #include <boost/locale/generator.hpp>
 #include <boost/locale/encoding.hpp>
 #include <boost/locale/localization_backend.hpp>
-#include <map>
-#include <vector>
-#include <algorithm>
 #include <boost/shared_ptr.hpp>
 #include <boost/thread/locks.hpp>
 #include <boost/thread/mutex.hpp>
+#include <algorithm>
+#include <map>
+#include <vector>
 
 namespace boost {
     namespace locale {
@@ -126,8 +126,8 @@ namespace boost {
                     return p->second;
                 }
             }
-            shared_ptr<localization_backend> backend(d->backend_manager.create());
-            set_all_options(backend,id);
+            hold_ptr<localization_backend> backend(d->backend_manager.create());
+            set_all_options(*backend,id);
 
             std::locale result = base;
             locale_category_type facets = d->cats;
@@ -176,15 +176,15 @@ namespace boost {
             d->caching_enabled = enabled;
         }
         
-        void generator::set_all_options(shared_ptr<localization_backend> backend,std::string const &id) const
+        void generator::set_all_options(localization_backend& backend,std::string const &id) const
         {
-            backend->set_option("locale",id);
+            backend.set_option("locale",id);
             if(d->use_ansi_encoding)
-                backend->set_option("use_ansi_encoding","true");
+                backend.set_option("use_ansi_encoding","true");
             for(size_t i=0;i<d->domains.size();i++)
-                backend->set_option("message_application",d->domains[i]);
+                backend.set_option("message_application",d->domains[i]);
             for(size_t i=0;i<d->paths.size();i++)
-                backend->set_option("message_path",d->paths[i]);
+                backend.set_option("message_path",d->paths[i]);
         }
         
     } // locale

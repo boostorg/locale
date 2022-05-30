@@ -8,6 +8,8 @@
 #ifndef BOOST_LOCALE_HOLD_PTR_H
 #define BOOST_LOCALE_HOLD_PTR_H
 
+#include <boost/locale/config.hpp>
+
 namespace boost { 
 namespace locale {
     ///

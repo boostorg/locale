@@ -9,15 +9,14 @@
 #define BOOST_LOCALE_ENCODING_HPP_INCLUDED
 
 #include <boost/locale/config.hpp>
-#ifdef BOOST_MSVC
-#  pragma warning(push)
-#  pragma warning(disable : 4275 4251 4231 4660)
-#endif
 #include <boost/locale/info.hpp>
 #include <boost/locale/encoding_errors.hpp>
 #include <boost/locale/encoding_utf.hpp>
 
-
+#ifdef BOOST_MSVC
+#  pragma warning(push)
+#  pragma warning(disable : 4275 4251 4231 4660)
+#endif
 
 namespace boost {
     namespace locale {

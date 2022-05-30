@@ -8,15 +8,12 @@
 #ifndef BOOST_LOCALE_IMPL_UCONV_CODEPAGE_HPP
 #define BOOST_LOCALE_IMPL_UCONV_CODEPAGE_HPP
 #include <boost/locale/encoding.hpp>
+#include <boost/locale/hold_ptr.hpp>
+#include <unicode/ucnv.h>
+#include <unicode/ucnv_err.h>
 #include "conv.hpp"
 #include "../icu/icu_util.hpp"
 #include "../icu/uconv.hpp"
-#include <unicode/ucnv.h>
-#include <unicode/ucnv_err.h>
-#include <vector>
-#include <memory>
-
-#include <boost/locale/hold_ptr.hpp>
 
 namespace boost {
 namespace locale {

@@ -6,19 +6,18 @@
 //  http://www.boost.org/LICENSE_1_0.txt)
 //
 #define BOOST_LOCALE_SOURCE
+#include "codecvt.hpp"
 #include <boost/locale/encoding.hpp>
-#include <boost/shared_ptr.hpp>
 #include <boost/locale/hold_ptr.hpp>
-#include "../encoding/conv.hpp"
 #include <boost/locale/util.hpp>
-#include "all_generator.hpp"
-
-#include <errno.h>
+#include <boost/shared_ptr.hpp>
 #include <algorithm>
+#include <cerrno>
 #include <stdexcept>
 #include <vector>
-#include "codecvt.hpp"
 
+#include "all_generator.hpp"
+#include "../encoding/conv.hpp"
 #ifdef BOOST_LOCALE_WITH_ICONV
 #include "../util/iconv.hpp"
 #endif

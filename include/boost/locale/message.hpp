@@ -8,17 +8,16 @@
 #ifndef BOOST_LOCALE_MESSAGE_HPP_INCLUDED
 #define BOOST_LOCALE_MESSAGE_HPP_INCLUDED
 
-#include <boost/locale/config.hpp>
+#include <boost/locale/formatting.hpp>
+#include <locale>
+#include <memory>
+#include <set>
+#include <string>
+
 #ifdef BOOST_MSVC
 #  pragma warning(push)
 #  pragma warning(disable : 4275 4251 4231 4660)
 #endif
-#include <locale>
-#include <string>
-#include <vector>
-#include <set>
-#include <memory>
-#include <boost/locale/formatting.hpp>
 
 // glibc < 2.3.4 declares those as macros if compiled with optimization turned on
 #ifdef gettext
