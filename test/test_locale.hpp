@@ -8,6 +8,7 @@
 
 #ifndef BOOST_LOCALE_TEST_H
 #define BOOST_LOCALE_TEST_H
+#include <boost/locale/config.hpp>
 #include <stdexcept>
 #include <sstream>
 #include <iostream>
@@ -76,13 +77,15 @@ inline unsigned utf8_next(std::string const &s,unsigned &pos)
     else
         l = 3;
     
-    c&=(1<<(6-l))-1;
+    c &= (1 << (6-l)) - 1;
     
     switch(l) {
     case 3:
         c = (c << 6) | (((unsigned char)s[pos++]) & 0x3F);
+        BOOST_FALLTHROUGH;
     case 2:
         c = (c << 6) | (((unsigned char)s[pos++]) & 0x3F);
+        BOOST_FALLTHROUGH;
     case 1:
         c = (c << 6) | (((unsigned char)s[pos++]) & 0x3F);
     }
