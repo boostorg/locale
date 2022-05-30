@@ -91,7 +91,6 @@ std::string get_std_name(std::string const &name,std::string *real_name = 0)
             if(real_name) 
                 *real_name = "Hebrew_Israel.1255";
             return utf8 ? name : "he_IL.windows-1255";
-            return name;
         }
     }
     else if(name=="ru_RU.UTF-8")  {
@@ -120,7 +119,32 @@ std::string get_std_name(std::string const &name,std::string *real_name = 0)
     return "";
 }
 
+char* make2(unsigned v)
+{
+    static unsigned char buf[3] = {0};
+    buf[0] = static_cast<unsigned char>(0xC0 | (v >> 6));
+    buf[1] = static_cast<unsigned char>(0x80 | (v & 0x3F));
+    return reinterpret_cast<char*>(buf);
+}
 
+char* make3(unsigned v)
+{
+    static unsigned char buf[4] = {0};
+    buf[0] = static_cast<unsigned char>(0xE0 | ((v >> 12)));
+    buf[1] = static_cast<unsigned char>(0x80 | ((v >> 6) & 0x3F));
+    buf[2] = static_cast<unsigned char>(0x80 | ((v >> 0) & 0x3F));
+    return reinterpret_cast<char*>(buf);
+}
+
+char* make4(unsigned v)
+{
+    static unsigned char buf[5] = {0};
+    buf[0] = static_cast<unsigned char>(0xF0 | ((v >> 18)));
+    buf[1] = static_cast<unsigned char>(0x80 | ((v >> 12) & 0x3F));
+    buf[2] = static_cast<unsigned char>(0x80 | ((v >> 6) & 0x3F));
+    buf[3] = static_cast<unsigned char>(0x80 | ((v >> 0) & 0x3F));
+    return reinterpret_cast<char*>(buf);
+}
 
 #endif
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4

@@ -323,10 +323,12 @@ namespace util {
                     case absolute_maximum:
                     case least_maximum:
                     case actual_maximum:
+BOOST_LOCALE_START_CONST_CONDITION
                         if(sizeof(std::time_t) == 4)
                             return 2038; // Y2K38 - maximal with 32 bit time_t
                         else
                             return std::numeric_limits<int>::max();
+BOOST_LOCALE_END_CONST_CONDITION
                     case current:
                         return tm_.tm_year + 1900;
                     };

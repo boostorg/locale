@@ -30,7 +30,7 @@ struct file_loader {
         if(!f)
             return buffer;
         f.seekg(0,std::ifstream::end);
-        size_t len = f.tellg();
+        size_t len = static_cast<size_t>(f.tellg());
         if(len == 0)
             return buffer;
         f.seekg(0);

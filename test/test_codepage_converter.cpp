@@ -20,33 +20,6 @@
 #include "test_locale.hpp"
 #include "test_locale_tools.hpp"
 
-char *make2(unsigned v)
-{
-    static unsigned char buf[3] = {0};
-    buf[0] = 0xC0 | (v >> 6);
-    buf[1] = 0x80 | (v & 0x3F );
-    return reinterpret_cast<char*>(buf);
-}
-
-char *make3(unsigned v)
-{
-    static unsigned char buf[4] = {0};
-    buf[0] = 0xE0 | ((v >> 12) ) ;
-    buf[1] = 0x80 | ((v >>  6) & 0x3F );
-    buf[2] = 0x80 | ((v >>  0) & 0x3F );
-    return reinterpret_cast<char*>(buf);
-}
-
-char *make4(unsigned v)
-{
-    static unsigned char buf[5] = {0};
-    buf[0] = 0xF0 | ((v >> 18) ) ;
-    buf[1] = 0x80 | ((v >> 12) & 0x3F );
-    buf[2] = 0x80 | ((v >>  6) & 0x3F );
-    buf[3] = 0x80 | ((v >>  0) & 0x3F );
-    return reinterpret_cast<char*>(buf);
-}
-
 static const unsigned illegal=0xFFFFFFFF;
 static const unsigned incomplete=0xFFFFFFFE;
 

@@ -41,6 +41,7 @@ public:
         std::wstring tmp=conv::to_utf<wchar_t>(b,e,"UTF-8");
         std::wstring wkey = wcsxfrm_l(level,tmp.c_str(),tmp.c_str()+tmp.size(),lc_);
         std::string key;
+BOOST_LOCALE_START_CONST_CONDITION
         if(sizeof(wchar_t)==2)
             key.reserve(wkey.size()*2);
         else
@@ -59,6 +60,7 @@ public:
                 key += char(tv & 0xFF);
             }
         }
+BOOST_LOCALE_END_CONST_CONDITION
         return key;
     }
 private:

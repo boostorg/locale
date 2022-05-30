@@ -499,9 +499,9 @@ namespace boost {
 
                 typedef std::pair<CharType const *,CharType const *> pair_type;
 
-                char_type const *get(int domain_id,char_type const *context,char_type const *id) const BOOST_OVERRIDE
+                char_type const *get(int domain_id,char_type const *context,char_type const *in_id) const BOOST_OVERRIDE
                 {
-                    return get_string(domain_id,context,id).first;
+                    return get_string(domain_id,context,in_id).first;
                 }
 
                 char_type const *get(int domain_id,char_type const *context,char_type const *single_id,int n) const BOOST_OVERRIDE
@@ -614,7 +614,7 @@ namespace boost {
                 bool load_file( std::string const &file_name,
                                 std::string const &locale_encoding,
                                 std::string const &key_encoding,
-                                int id,
+                                int idx,
                                 messages_info::callback_type const &callback)
                 {
                     locale_encoding_ = locale_encoding;
@@ -647,12 +647,12 @@ namespace boost {
                         throw std::runtime_error("Invalid mo-format, encoding is not specified");
 
                     if(!plural.empty()) {
-                        plural_forms_[id] = lambda::compile(plural.c_str());;
+                        plural_forms_[idx] = lambda::compile(plural.c_str());;
                     }
 
                     if( mo_useable_directly(mo_encoding,*mo) )
                     {
-                        mo_catalogs_[id]=mo;
+                        mo_catalogs_[idx]=mo;
                     }
                     else {
                         converter<CharType> cvt_value(locale_encoding,mo_encoding);
@@ -664,7 +664,7 @@ namespace boost {
                             
                             mo_file::pair_type tmp = mo->value(i);
                             string_type value = cvt_value(tmp.first,tmp.second);
-                            catalogs_[id][key].swap(value);
+                            catalogs_[idx][key].swap(value);
                         }
                     }
                     return true;
@@ -679,8 +679,10 @@ namespace boost {
                 bool mo_useable_directly(   std::string const &mo_encoding,
                                             mo_file const &mo)
                 {
+BOOST_LOCALE_START_CONST_CONDITION
                     if(sizeof(CharType) != 1)
                         return false;
+BOOST_LOCALE_END_CONST_CONDITION
                     if(!mo.has_hash())
                         return false;
                     if(compare_encodings(mo_encoding,locale_encoding_)!=0)
@@ -716,7 +718,9 @@ namespace boost {
                     pair_type null_pair((CharType const *)0,(CharType const *)0);
                     if(domain_id < 0 || size_t(domain_id) >= catalogs_.size())
                         return null_pair;
+BOOST_LOCALE_START_CONST_CONDITION
                     if(mo_file_use_traits<char_type>::in_use && mo_catalogs_[domain_id]) {
+BOOST_LOCALE_END_CONST_CONDITION
                         return mo_file_use_traits<char_type>::use(*mo_catalogs_[domain_id],context,in_id);
                     }
                     else {

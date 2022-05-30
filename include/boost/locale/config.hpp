@@ -47,6 +47,15 @@
 #define BOOST_LOCALE_USE_AUTO_PTR 1
 #endif
 
+#ifdef BOOST_MSVC
+// Denote a constant condition, e.g. for if(sizeof(...
+#define BOOST_LOCALE_START_CONST_CONDITION __pragma(warning(push)) __pragma(warning(disable : 4127))
+#define BOOST_LOCALE_END_CONST_CONDITION __pragma(warning(pop))
+#else
+#define BOOST_LOCALE_START_CONST_CONDITION
+#define BOOST_LOCALE_END_CONST_CONDITION
+#endif
+
 #endif // boost/locale/config.hpp
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 

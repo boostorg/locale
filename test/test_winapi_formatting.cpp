@@ -122,10 +122,12 @@ void test_by_char(std::locale const &l,std::string name,int lcid)
         TEST(n == 1045.45);
 
         if(name == "ru_RU.UTF-8") {
+BOOST_LOCALE_START_CONST_CONDITION
             if(sizeof(CharType)==1)
                 TEST(equal(ss.str(),"1 045,45")); // SP
             else
                 TEST(equal(ss.str(),"1\xC2\xA0" "045,45")); // NBSP
+BOOST_LOCALE_END_CONST_CONDITION
         }
         else
             TEST(equal(ss.str(),"1,045.45"));

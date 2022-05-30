@@ -284,13 +284,13 @@ namespace impl_win {
     inline std::wstring wcsftime_l(char c,std::tm const *tm,winlocale const &l)
     {
         SYSTEMTIME wtm=SYSTEMTIME();
-        wtm.wYear = tm->tm_year + 1900;
-        wtm.wMonth = tm->tm_mon+1;
-        wtm.wDayOfWeek = tm->tm_wday;
-        wtm.wDay = tm->tm_mday;
-        wtm.wHour = tm->tm_hour;
-        wtm.wMinute = tm->tm_min;
-        wtm.wSecond = tm->tm_sec;
+        wtm.wYear = static_cast<WORD>(tm->tm_year + 1900);
+        wtm.wMonth = static_cast<WORD>(tm->tm_mon+1);
+        wtm.wDayOfWeek = static_cast<WORD>(tm->tm_wday);
+        wtm.wDay = static_cast<WORD>(tm->tm_mday);
+        wtm.wHour = static_cast<WORD>(tm->tm_hour);
+        wtm.wMinute = static_cast<WORD>(tm->tm_min);
+        wtm.wSecond = static_cast<WORD>(tm->tm_sec);
         switch(c) {
         case 'a': // Abbr Weekday
             return wcs_format_date_l(L"ddd",&wtm,l);
@@ -340,9 +340,9 @@ namespace impl_win {
             return wcs_format_time_l(L"HH:mm:ss",&wtm,l);
 /*          case 'u': // weekday 1,7 1=Monday
         case 'U': // week number of year [00,53] Sunday first
-        case 'V': // week number of year [01,53] Moday first
+        case 'V': // week number of year [01,53] Monday first
         case 'w': // weekday 0,7 0=Sunday
-        case 'W': // week number of year [00,53] Moday first, */
+        case 'W': // week number of year [00,53] Monday first, */
         case 'x': // Date
             return wcs_format_date_l(0,&wtm,l);
         case 'X': // Time

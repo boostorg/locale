@@ -42,6 +42,7 @@ public:
         std::wstring wkey = 
             std::use_facet<wfacet>(base_).transform(tmp.c_str(),tmp.c_str()+tmp.size());
         std::string key;
+BOOST_LOCALE_START_CONST_CONDITION
         if(sizeof(wchar_t)==2)
             key.reserve(wkey.size()*2);
         else
@@ -60,6 +61,7 @@ public:
                 key += char(tv & 0xFF);
             }
         }
+BOOST_LOCALE_END_CONST_CONDITION
         return key;
     }
 private:

@@ -75,7 +75,7 @@ private:
             return out;
         }
         else {
-            std::wstring cur = wcsfmon_l(val,lc_);
+            std::wstring cur = wcsfmon_l(static_cast<double>(val),lc_);
             return write_it(out,cur);
         }
     }
@@ -121,8 +121,11 @@ public:
         std::numpunct<CharType>(refs)
     {
         numeric_info np = wcsnumformat_l(lc) ;
+
+BOOST_LOCALE_START_CONST_CONDITION
         if(sizeof(CharType) == 1 && np.thousands_sep == L"\xA0")
             np.thousands_sep=L" ";
+BOOST_LOCALE_END_CONST_CONDITION
 
         to_str(np.thousands_sep,thousands_sep_);
         to_str(np.decimal_point,decimal_point_);

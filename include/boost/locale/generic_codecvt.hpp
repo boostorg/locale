@@ -208,8 +208,7 @@ protected:
         boost::uint16_t state = *reinterpret_cast<boost::uint16_t const *>(&std_state);
         #endif
 
-        typedef typename CodecvtImpl::state_type state_type;
-        state_type cvt_state = implementation().initial_state(generic_codecvt_base::to_unicode_state);
+        typename CodecvtImpl::state_type cvt_state = implementation().initial_state(generic_codecvt_base::to_unicode_state);
         while(max > 0 && from < from_end){
             char const *prev_from = from;
             boost::uint32_t ch=implementation().to_unicode(cvt_state,from,from_end);
@@ -253,8 +252,7 @@ protected:
         // if 0 no code above >0xFFFF observed, of 1 a code above 0xFFFF observerd
         // and first pair is written, but no input consumed
         boost::uint16_t &state = *reinterpret_cast<boost::uint16_t *>(&std_state);
-        typedef typename CodecvtImpl::state_type state_type;
-        state_type cvt_state = implementation().initial_state(generic_codecvt_base::to_unicode_state);
+        typename CodecvtImpl::state_type cvt_state = implementation().initial_state(generic_codecvt_base::to_unicode_state);
         while(to < to_end && from < from_end)
         {
 #ifdef DEBUG_CODECVT            
@@ -278,7 +276,7 @@ protected:
             }
             // Normal codepoints go direcly to stream
             if(ch <= 0xFFFF) {
-                *to++=ch;
+                *to++ = static_cast<uchar>(ch);
             }
             else {
                 // for  other codepoints we do following
@@ -291,10 +289,8 @@ protected:
                 //    once again and then we would consume our input together with writing
                 //    second surrogate pair
                 ch-=0x10000;
-                boost::uint16_t vh = ch >> 10;
-                boost::uint16_t vl = ch & 0x3FF;
-                boost::uint16_t w1 = vh + 0xD800;
-                boost::uint16_t w2 = vl + 0xDC00;
+                boost::uint16_t w1 = static_cast<boost::uint16_t>(0xD800 | (ch >> 10));
+                boost::uint16_t w2 = static_cast<boost::uint16_t>(0xDC00 | (ch & 0x3FF));
                 if(state == 0) {
                     from = from_saved;
                     *to++ = w1;
@@ -350,8 +346,7 @@ protected:
         // we expect the second one to come and then zero the state
         ///
         boost::uint16_t &state = *reinterpret_cast<boost::uint16_t *>(&std_state);
-        typedef typename CodecvtImpl::state_type state_type;
-        state_type cvt_state = implementation().initial_state(generic_codecvt_base::from_unicode_state);
+        typename CodecvtImpl::state_type cvt_state = implementation().initial_state(generic_codecvt_base::from_unicode_state);
         while(to < to_end && from < from_end)
         {
 #ifdef DEBUG_CODECVT            
@@ -361,7 +356,7 @@ protected:
 #endif            
             boost::uint32_t ch=0;
             if(state != 0) {
-                // if the state idecates that 1st surrogate pair was written
+                // if the state indicates that 1st surrogate pair was written
                 // we should make sure that the second one that comes is actually
                 // second surrogate
                 boost::uint16_t w1 = state;
@@ -386,7 +381,7 @@ protected:
                     // it into the state and consume it, note we don't
                     // go forward as it should be illegal so we increase
                     // the from pointer manually
-                    state = ch;
+                    state = static_cast<uint16_t>(ch);
                     from++;
                     continue;
                 }
@@ -501,8 +496,7 @@ protected:
         #else
         size_t save_max = max;
         #endif
-        typedef typename CodecvtImpl::state_type state_type;
-        state_type cvt_state = implementation().initial_state(generic_codecvt_base::to_unicode_state);
+        typename CodecvtImpl::state_type cvt_state = implementation().initial_state(generic_codecvt_base::to_unicode_state);
         while(max > 0 && from < from_end){
             char const *save_from = from;
             boost::uint32_t ch=implementation().to_unicode(cvt_state,from,from_end);
