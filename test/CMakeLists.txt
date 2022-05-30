@@ -36,6 +36,7 @@ function(boost_locale_add_test name)
   add_dependencies(tests ${name})
   target_link_libraries(${name} PRIVATE Boost::locale)
   target_compile_definitions(${name} PRIVATE ${boost_locale_defines})
+  target_compile_options(${name} PRIVATE ${BOOST_LOCALE_WARNING_OPTIONS})
 
   if(ARG_WORKING_DIRECTORY)
     set_target_properties(${name} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${ARG_WORKING_DIRECTORY}")

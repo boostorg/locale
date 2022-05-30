@@ -8,11 +8,17 @@
 
 project : requirements
     <library>/boost/locale//boost_locale
+    <warnings>extra
+    <toolset>msvc:<warnings-as-errors>on
+    <toolset>gcc:<cxxflags>"-Wno-long-long -Wno-error=deprecated-declarations"
+    <toolset>gcc-11:<warnings-as-errors>on
+    <toolset>clang:<cxxflags>"-Wno-long-long -Wno-error=deprecated-declarations"
+    <toolset>clang-5:<warnings-as-errors>on
     # Make sure we get all defines we need
     # Otherwise we would have problem knowing
     # what backends are actually in use
     <use>../build//build_flags
-    ;
+  ;
 
 # Shared boost.locale tests
 

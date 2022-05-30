@@ -204,6 +204,21 @@ message(STATUS "Boost.Locale: "
   "winapi ${BOOST_LOCALE_ENABLE_WINAPI}"
 )
 
+if(MSVC)
+    set(BOOST_LOCALE_WARNING_OPTIONS /W4)
+    if(BOOST_LOCALE_WERROR)
+        list(APPEND BOOST_LOCALE_WARNING_OPTIONS /WX)
+    endif()
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    set(BOOST_LOCALE_WARNING_OPTIONS -Wall -Wextra -Wno-error=deprecated-declarations)
+    if(BOOST_LOCALE_WERROR)
+        list(APPEND BOOST_LOCALE_WARNING_OPTIONS -Werror)
+    endif()
+elseif(NOT DEFINED BOOST_LOCALE_WARNING_OPTIONS)
+    set(BOOST_LOCALE_WARNING_OPTIONS "")
+endif()
+target_compile_options(boost_locale PRIVATE ${BOOST_LOCALE_WARNING_OPTIONS})
+
 # Testing
 
 if(BUILD_TESTING AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/test/CMakeLists.txt")

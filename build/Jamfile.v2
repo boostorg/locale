@@ -426,6 +426,8 @@ boost-lib locale
       <define>BOOST_THREAD_NO_LIB=1
       <threading>multi
       <target-os>windows:<define>_CRT_SECURE_NO_WARNINGS
+      <toolset>gcc:<cxxflags>"-Wno-long-long -Wno-deprecated-declarations"
+      <toolset>clang:<cxxflags>"-Wno-long-long -Wno-deprecated-declarations"
       # Meanwhile remove this
       <conditional>@configure
     ;
