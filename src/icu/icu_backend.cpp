@@ -42,7 +42,7 @@ namespace impl_icu {
             return new icu_localization_backend(*this);
         }
 
-        void set_option(std::string const &name,std::string const &value) 
+        void set_option(std::string const &name,std::string const &value) BOOST_OVERRIDE
         {
             invalid_ = true;
             if(name=="locale")
@@ -55,7 +55,7 @@ namespace impl_icu {
                 use_ansi_encoding_ = value == "true";
 
         }
-        void clear_options()
+        void clear_options() BOOST_OVERRIDE
         {
             invalid_ = true;
             use_ansi_encoding_ = false;

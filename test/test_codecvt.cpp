@@ -35,8 +35,8 @@ typedef std::codecvt<wchar_t,char,std::mbstate_t> cvt_type;
 void test_codecvt_in_n_m(cvt_type const &cvt,int n,int m)
 {
     wchar_t const *wptr = wide_name;
-    int wlen = wcslen(wide_name);
-    int u8len = strlen(utf8_name);
+    const size_t wlen = wcslen(wide_name);
+    const size_t u8len = strlen(utf8_name);
     char const *from = utf8_name;
     char const *end = from;
     char const *real_end = utf8_name + u8len;
@@ -94,8 +94,8 @@ void test_codecvt_in_n_m(cvt_type const &cvt,int n,int m)
 void test_codecvt_out_n_m(cvt_type const &cvt,int n,int m)
 {
     char const *nptr = utf8_name;
-    int wlen = wcslen(wide_name);
-    int u8len = strlen(utf8_name);
+    const size_t wlen = wcslen(wide_name);
+    const size_t u8len = strlen(utf8_name);
     
     std::mbstate_t mb=std::mbstate_t();
     

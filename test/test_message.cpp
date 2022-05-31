@@ -30,7 +30,7 @@ struct file_loader {
         if(!f)
             return buffer;
         f.seekg(0,std::ifstream::end);
-        size_t len = f.tellg();
+        size_t len = static_cast<size_t>(f.tellg());
         if(len == 0)
             return buffer;
         f.seekg(0);
@@ -356,7 +356,7 @@ int main(int argc,char **argv)
                     try {
                         l = g(locales[i]);
                     }
-                    catch(boost::locale::conv::invalid_charset_error const &e) {
+                    catch(boost::locale::conv::invalid_charset_error const &) {
                         std::cout << "Looks like ISO-8859-8 is not supported! skipping" << std::endl;
                         iso_8859_8_not_supported = true;
                         continue;

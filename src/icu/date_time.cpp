@@ -82,17 +82,17 @@ namespace impl_icu {
             encoding_ = other.encoding_;
         }
 
-        calendar_impl *clone() const
+        calendar_impl *clone() const BOOST_OVERRIDE
         {
             return new calendar_impl(*this);
         }
 
-        void set_value(period::marks::period_mark p,int value)
+        void set_value(period::marks::period_mark p,int value) BOOST_OVERRIDE
         {
             calendar_->set(to_icu(p),int32_t(value));
         }
 
-        int get_value(period::marks::period_mark p,value_type type) const
+        int get_value(period::marks::period_mark p,value_type type) const BOOST_OVERRIDE
         {
             UErrorCode err=U_ZERO_ERROR;
             int v=0;

@@ -204,7 +204,7 @@ namespace util {
                         value += (-value / 7) * 7 + 7;
                     // convert to local DOW
                     value = (value - 1 - first_day_of_week_ + 14) % 7 + 1;
-                    // fall throght
+                    BOOST_FALLTHROUGH;
                 case day_of_week_local:     ///< Local day of week, for example in France Monday is 1, in US Sunday is 1, [1..7]
                     normalize();
                     tm_updated_.tm_mday += (value - 1) - (tm_updated_.tm_wday - first_day_of_week_ + 7) % 7;
@@ -323,10 +323,12 @@ namespace util {
                     case absolute_maximum:
                     case least_maximum:
                     case actual_maximum:
+BOOST_LOCALE_START_CONST_CONDITION
                         if(sizeof(std::time_t) == 4)
                             return 2038; // Y2K38 - maximal with 32 bit time_t
                         else
                             return std::numeric_limits<int>::max();
+BOOST_LOCALE_END_CONST_CONDITION
                     case current:
                         return tm_.tm_year + 1900;
                     };
@@ -724,7 +726,7 @@ namespace util {
                 case week_of_month:
                 case week_of_year:
                     factor = 7;
-                    // fall 
+                    BOOST_FALLTHROUGH;
                 case day:
                 case day_of_year:
                 case day_of_week:

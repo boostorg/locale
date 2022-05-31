@@ -102,13 +102,13 @@ namespace boost {
                         tmp.resize(len);
                     return tmp;
                 }
-                std::basic_string<CharType> do_transform(level_type level,CharType const *b,CharType const *e) const
+                std::basic_string<CharType> do_transform(level_type level,CharType const *b,CharType const *e) const BOOST_OVERRIDE
                 {
                     std::vector<uint8_t> tmp = do_basic_transform(level,b,e);
                     return std::basic_string<CharType>(tmp.begin(),tmp.end());
                 }
                 
-                long do_hash(level_type level,CharType const *b,CharType const *e) const
+                long do_hash(level_type level,CharType const *b,CharType const *e) const BOOST_OVERRIDE
                 {
                     std::vector<uint8_t> tmp = do_basic_transform(level,b,e);
                     tmp.push_back(0);

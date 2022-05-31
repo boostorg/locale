@@ -247,7 +247,7 @@ namespace { // anon
         }
     private:
         char const *text;
-        int pos;
+        size_t pos;
         int next_tocken;
         int int_value;
         bool is_blank(char c)

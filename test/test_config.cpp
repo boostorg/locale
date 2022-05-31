@@ -6,6 +6,10 @@
 //  http://www.boost.org/LICENSE_1_0.txt)
 //
 
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS 
+#endif
+
 #include <boost/locale.hpp>
 #include <cstdlib>
 #include <clocale>
@@ -20,7 +24,6 @@
 #endif
 
 #include "test_locale_tools.hpp"
-
 
 char const *env(char const *s)
 {

@@ -8,6 +8,7 @@
 
 #ifndef BOOST_LOCALE_TEST_H
 #define BOOST_LOCALE_TEST_H
+#include <boost/locale/config.hpp>
 #include <stdexcept>
 #include <sstream>
 #include <iostream>
@@ -76,13 +77,15 @@ inline unsigned utf8_next(std::string const &s,unsigned &pos)
     else
         l = 3;
     
-    c&=(1<<(6-l))-1;
+    c &= (1 << (6-l)) - 1;
     
     switch(l) {
     case 3:
         c = (c << 6) | (((unsigned char)s[pos++]) & 0x3F);
+        BOOST_FALLTHROUGH;
     case 2:
         c = (c << 6) | (((unsigned char)s[pos++]) & 0x3F);
+        BOOST_FALLTHROUGH;
     case 1:
         c = (c << 6) | (((unsigned char)s[pos++]) & 0x3F);
     }
@@ -98,6 +101,7 @@ std::basic_string<Char> to(std::string const &utf8)
         unsigned point;
         unsigned prev=i;
         point = utf8_next(utf8,i);
+BOOST_LOCALE_START_CONST_CONDITION
         if(sizeof(Char)==1 && point > 255) {
             std::ostringstream ss;
             ss << "Can't convert codepoint U" << std::hex << point <<"(" <<std::string(utf8.begin()+prev,utf8.begin()+i)<<") to Latin1";
@@ -109,6 +113,7 @@ std::basic_string<Char> to(std::string const &utf8)
             out+=static_cast<Char>(0xDC00 | (point & 0x3FF));
             continue;
         }
+BOOST_LOCALE_END_CONST_CONDITION
         out+=static_cast<Char>(point);
     }
     return out;
