@@ -117,18 +117,26 @@ void test_to_utf(CharType const *str,unsigned codepoint)
     TEST(memcmp(str,buf,sizeof(CharType) * (end-str))==0);
 }
 
+template<typename CharType>
+void test_valid_utf(CharType const* str, unsigned codepoint)
+{
+    test_from_utf(str, codepoint);
+    test_to_utf(str, codepoint);
+}
+
 void test_utf8()
 {
-    std::cout << "- From UTF-8" << std::endl;
+    std::cout << "- Test UTF-8" << std::endl;
 
     std::cout << "-- Correct" << std::endl;
-    test_from_utf("\x7f", 0x7f);
-    test_from_utf("\xc2\x80", 0x80);
-    test_from_utf("\xdf\xbf", 0x7ff);
-    test_from_utf("\xe0\xa0\x80", 0x800);
-    test_from_utf("\xef\xbf\xbf", 0xffff);
-    test_from_utf("\xf0\x90\x80\x80", 0x10000);
-    test_from_utf("\xf4\x8f\xbf\xbf", 0x10ffff);
+    test_valid_utf("\x7f", 0x7f);
+    test_valid_utf("\xc2\x80", 0x80);
+    test_valid_utf("\xdf\xbf", 0x7ff);
+    test_valid_utf("\xe0\xa0\x80", 0x800);
+    test_valid_utf("\xef\xbf\xbf", 0xffff);
+    test_valid_utf("\xf0\x90\x80\x80", 0x10000);
+    test_valid_utf("\xf4\x8f\xbf\xbf", 0x10ffff);
+
     /// test that this actually works
     test_from_utf(make2(0x80), 0x80);
     test_from_utf(make2(0x7ff), 0x7ff);
@@ -198,26 +206,17 @@ void test_utf8()
     test_from_utf("\xf4\x8f\xbf", incomplete);
     test_from_utf("\xf4\x8f", incomplete);
     test_from_utf("\xf4", incomplete);
-
-    std::cout << "- To UTF-8" << std::endl;
-    test_to_utf("\x7f", 0x7f);
-    test_to_utf("\xc2\x80", 0x80);
-    test_to_utf("\xdf\xbf", 0x7ff);
-    test_to_utf("\xe0\xa0\x80", 0x800);
-    test_to_utf("\xef\xbf\xbf", 0xffff);
-    test_to_utf("\xf0\x90\x80\x80", 0x10000);
-    test_to_utf("\xf4\x8f\xbf\xbf", 0x10ffff);
 }
 
 void test_utf16()
 {
-    std::cout << "- From UTF-16" << std::endl;
+    std::cout << "- Test UTF-16" << std::endl;
 
     std::cout << "-- Correct" << std::endl;
-    test_from_utf(u16_seq(0x10), 0x10);
-    test_from_utf(u16_seq(0xffff), 0xffff);
-    test_from_utf(u16_seq(0xD800, 0xDC00), 0x10000);
-    test_from_utf(u16_seq(0xDBFF, 0xDFFF), 0x10FFFF);
+    test_valid_utf(u16_seq(0x10), 0x10);
+    test_valid_utf(u16_seq(0xffff), 0xffff);
+    test_valid_utf(u16_seq(0xD800, 0xDC00), 0x10000);
+    test_valid_utf(u16_seq(0xDBFF, 0xDFFF), 0x10FFFF);
 
     std::cout << "-- Invalid surrogate" << std::endl;
     test_from_utf(u16_seq(0xDFFF), illegal);
@@ -228,45 +227,31 @@ void test_utf16()
     test_from_utf(u16_seq(0xD800), incomplete);
     test_from_utf(u16_seq(0xDBFF), incomplete);
 
-    std::cout << "- To UTF-16" << std::endl;
-    test_to_utf(u16_seq(0x10), 0x10);
-    test_to_utf(u16_seq(0xffff), 0xffff);
-    test_to_utf(u16_seq(0xD800, 0xDC00), 0x10000);
-    test_to_utf(u16_seq(0xDBFF, 0xDFFF), 0x10FFFF);
-
 #ifndef BOOST_NO_CXX11_CHAR16_T
     std::cout << "-- Test char16_t" << std::endl;
-    test_from_utf(u"\u0010", 0x10);
 #if BOOST_WORKAROUND(BOOST_GCC_VERSION, < 50000)
-    test_from_utf(u"\xffff", 0xffff);
+    test_valid_utf(u"\x0010", 0x10);
+    test_valid_utf(u"\xffff", 0xffff);
 #else
-    test_from_utf(u"\uffff", 0xffff);
+    test_valid_utf(u"\u0010", 0x10);
+    test_valid_utf(u"\uffff", 0xffff);
 #endif
-    test_from_utf(u"\U00010000", 0x10000);
-    test_from_utf(u"\U0010FFFF", 0x10FFFF);
+    test_valid_utf(u"\U00010000", 0x10000);
+    test_valid_utf(u"\U0010FFFF", 0x10FFFF);
     test_from_utf(c16_seq(0xDFFF), illegal);
     test_from_utf(c16_seq(0xDC00), illegal);
-
-    test_to_utf(u"\u0010", 0x10);
-#if BOOST_WORKAROUND(BOOST_GCC_VERSION, < 50000)
-    test_to_utf(u"\xffff", 0xffff);
-#else
-    test_to_utf(u"\uffff", 0xffff);
-#endif
-    test_to_utf(u"\U00010000", 0x10000);
-    test_to_utf(u"\U0010FFFF", 0x10FFFF);
 #endif
 }
 
 void test_utf32()
 {
-    std::cout << "- From UTF-32" << std::endl;
+    std::cout << "- Test UTF-32" << std::endl;
 
     std::cout << "-- Correct" << std::endl;
-    test_from_utf(u32_seq(0x10), 0x10);
-    test_from_utf(u32_seq(0xffff), 0xffff);
-    test_from_utf(u32_seq(0x10000), 0x10000);
-    test_from_utf(u32_seq(0x10ffff), 0x10ffff);
+    test_valid_utf(u32_seq(0x10), 0x10);
+    test_valid_utf(u32_seq(0xffff), 0xffff);
+    test_valid_utf(u32_seq(0x10000), 0x10000);
+    test_valid_utf(u32_seq(0x10ffff), 0x10ffff);
 
     std::cout << "-- Invalid surrogate" << std::endl;
     test_from_utf(u32_seq(0xD800), illegal);
@@ -278,28 +263,21 @@ void test_utf32()
     std::cout << "-- Incomplete" << std::endl;
     test_from_utf(u32_seq(0), incomplete);
 
-    std::cout << "- To UTF-32" << std::endl;
-    test_to_utf(u32_seq(0x10), 0x10);
-    test_to_utf(u32_seq(0xffff), 0xffff);
-    test_to_utf(u32_seq(0x10000), 0x10000);
-    test_to_utf(u32_seq(0x10ffff), 0x10ffff);
-
 #ifndef BOOST_NO_CXX11_CHAR32_T
     std::cout << "-- Test char32_t" << std::endl;
-    test_from_utf(U"\U00000010", 0x10);
-    test_from_utf(U"\U0000ffff", 0xffff);
-    test_from_utf(U"\U00010000", 0x10000);
-    test_from_utf(U"\U0010ffff", 0x10ffff);
+#if BOOST_WORKAROUND(BOOST_GCC_VERSION, < 50000)
+    test_valid_utf(U"\x0010", 0x10);
+#else
+    test_valid_utf(U"\U00000010", 0x10);
+#endif
+    test_valid_utf(U"\U0000ffff", 0xffff);
+    test_valid_utf(U"\U00010000", 0x10000);
+    test_valid_utf(U"\U0010ffff", 0x10ffff);
     test_from_utf(c32_seq(0xD800), illegal);
     test_from_utf(c32_seq(0xDBFF), illegal);
     test_from_utf(c32_seq(0xDFFF), illegal);
     test_from_utf(c32_seq(0xDC00), illegal);
     test_from_utf(c32_seq(0x110000), illegal);
-
-    test_to_utf(U"\U00000010", 0x10);
-    test_to_utf(U"\U0000ffff", 0xffff);
-    test_to_utf(U"\U00010000", 0x10000);
-    test_to_utf(U"\U0010ffff", 0x10ffff);
 #endif
 }
 
