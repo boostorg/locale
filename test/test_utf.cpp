@@ -6,6 +6,7 @@
 //  http://www.boost.org/LICENSE_1_0.txt)
 //
 #include <boost/locale/utf.hpp>
+#include <boost/detail/workaround.hpp>
 #include <boost/static_assert.hpp>
 #include <cstring>
 #include "test_locale.hpp"
@@ -236,14 +237,22 @@ void test_utf16()
 #ifndef BOOST_NO_CXX11_CHAR16_T
     std::cout << "-- Test char16_t" << std::endl;
     test_from_utf(u"\u0010", 0x10);
+#if BOOST_WORKAROUND(BOOST_GCC_VERSION, < 50000)
+    test_from_utf(u"\xffff", 0xffff);
+#else
     test_from_utf(u"\uffff", 0xffff);
+#endif
     test_from_utf(u"\U00010000", 0x10000);
     test_from_utf(u"\U0010FFFF", 0x10FFFF);
     test_from_utf(c16_seq(0xDFFF), illegal);
     test_from_utf(c16_seq(0xDC00), illegal);
 
     test_to_utf(u"\u0010", 0x10);
+#if BOOST_WORKAROUND(BOOST_GCC_VERSION, < 50000)
+    test_to_utf(u"\xffff", 0xffff);
+#else
     test_to_utf(u"\uffff", 0xffff);
+#endif
     test_to_utf(u"\U00010000", 0x10000);
     test_to_utf(u"\U0010FFFF", 0x10FFFF);
 #endif
