@@ -49,6 +49,7 @@ target_link_libraries(boost_locale
   PRIVATE
     Boost::thread
     Boost::unordered
+    Boost::predef
 )
 
 target_compile_definitions(boost_locale
