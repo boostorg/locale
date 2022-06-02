@@ -315,7 +315,7 @@ int main(int argc,char **argv)
     try {
         std::string def[] = {
         #ifdef BOOST_LOCALE_WITH_ICU
-            "icu" , 
+            "icu" ,
         #endif
         #ifndef BOOST_LOCALE_NO_STD_BACKEND
             "std" ,
@@ -331,9 +331,9 @@ int main(int argc,char **argv)
             boost::locale::localization_backend_manager tmp_backend = boost::locale::localization_backend_manager::global();
             tmp_backend.select(def[type]);
             boost::locale::localization_backend_manager::global(tmp_backend);
-            
+
             backend = def[type];
-            
+
             std::cout << "Testing for backend --------- " << def[type] << std::endl;
 
             boost::locale::generator g;
@@ -346,12 +346,12 @@ int main(int argc,char **argv)
                 g.add_messages_path("./");
             g.set_default_messages_domain("default");
 
-            
+
             std::string locales[] = { "he_IL.UTF-8", "he_IL.ISO8859-8" };
 
             for(unsigned i=0;i<sizeof(locales)/sizeof(locales[0]);i++){
                 std::locale l;
-                
+
                 if(i==1) {
                     try {
                         l = g(locales[i]);
@@ -365,7 +365,7 @@ int main(int argc,char **argv)
                 else {
                         l = g(locales[i]);
                 }
-                
+
                 std::cout << "  Testing "<<locales[i]<<std::endl;
                 std::cout << "    single forms" << std::endl;
 
@@ -387,7 +387,7 @@ int main(int argc,char **argv)
                     test_ntranslate("x day","x days",2,"יומיים",l,"default");
                     test_ntranslate("x day","x days",3,"x ימים",l,"default");
                     test_ntranslate("x day","x days",20,"x יום",l,"default");
-                    
+
                     test_ntranslate("x day","x days",0,"x days",l,"undefined");
                     test_ntranslate("x day","x days",1,"x day",l,"undefined");
                     test_ntranslate("x day","x days",2,"x days",l,"undefined");
@@ -395,15 +395,15 @@ int main(int argc,char **argv)
                 }
                 std::cout << "    plural forms with context" << std::endl;
                 {
-                    std::string inp = "context"; 
-                    std::string out = "בהקשר "; 
+                    std::string inp = "context";
+                    std::string out = "בהקשר ";
 
                     test_cntranslate(inp,"x day","x days",0,out+"x ימים",l,"default");
                     test_cntranslate(inp,"x day","x days",1,out+"יום x",l,"default");
                     test_cntranslate(inp,"x day","x days",2,out+"יומיים",l,"default");
                     test_cntranslate(inp,"x day","x days",3,out+"x ימים",l,"default");
                     test_cntranslate(inp,"x day","x days",20,out+"x יום",l,"default");
-                    
+
                     test_cntranslate(inp,"x day","x days",0,"x days",l,"undefined");
                     test_cntranslate(inp,"x day","x days",1,"x day",l,"undefined");
                     test_cntranslate(inp,"x day","x days",2,"x days",l,"undefined");
@@ -413,26 +413,26 @@ int main(int argc,char **argv)
             std::cout << "  Testing fallbacks" <<std::endl;
             test_translate("test","he_IL",g("he_IL.UTF-8"),"full");
             test_translate("test","he",g("he_IL.UTF-8"),"fall");
-            
+
             std::cout << "  Testing automatic conversions " << std::endl;
             std::locale::global(g("he_IL.UTF-8"));
 
 
             TEST(same_s(bl::translate("hello"))=="שלום");
             TEST(same_w(bl::translate(to<wchar_t>("hello")))==to<wchar_t>("שלום"));
-            
+
             #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
             if(backend=="icu" || backend=="std")
                 TEST(same_u16(bl::translate(to<char16_t>("hello")))==to<char16_t>("שלום"));
             #endif
-            
+
             #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
             if(backend=="icu" || backend=="std")
                 TEST(same_u32(bl::translate(to<char32_t>("hello")))==to<char32_t>("שלום"));
             #endif
 
         }
-        
+
         std::cout << "Testing custom file system support" << std::endl;
         {
             boost::locale::gnu_gettext::messages_info info;
@@ -453,12 +453,12 @@ int main(int argc,char **argv)
         }
         if(iso_8859_8_not_supported)
         {
-            std::cout << "ISO 8859-8 not supported so skipping non-US-ASCII keys" << std::endl; 
+            std::cout << "ISO 8859-8 not supported so skipping non-US-ASCII keys" << std::endl;
         }
-        else 
+        else
         {
-            std::cout << "Testing non-US-ASCII keys" << std::endl; 
-            std::cout << "  UTF-8 keys" << std::endl; 
+            std::cout << "Testing non-US-ASCII keys" << std::endl;
+            std::cout << "  UTF-8 keys" << std::endl;
             {
                 boost::locale::generator g;
                 g.add_messages_domain("default");
@@ -466,13 +466,13 @@ int main(int argc,char **argv)
                     g.add_messages_path(argv[1]);
                 else
                     g.add_messages_path("./");
-                
+
                 std::locale l = g("he_IL.UTF-8");
 
                 // narrow
                 TEST(bl::gettext("בדיקה",l)=="test");
                 TEST(bl::gettext("לא קיים",l)=="לא קיים");
-                
+
                 // wide
                 std::wstring wtest = bl::conv::to_utf<wchar_t>("בדיקה","UTF-8");
                 std::wstring wmiss = bl::conv::to_utf<wchar_t>("לא קיים","UTF-8");
@@ -484,8 +484,8 @@ int main(int argc,char **argv)
                 // conversion with substitution
                 TEST(bl::gettext("test-あにま-בדיקה",l)==bl::conv::from_utf("test--בדיקה","ISO-8859-8"));
             }
-            
-            std::cout << "  `ANSI' keys" << std::endl; 
+
+            std::cout << "  `ANSI' keys" << std::endl;
 
             {
                 boost::locale::generator g;
@@ -494,7 +494,7 @@ int main(int argc,char **argv)
                     g.add_messages_path(argv[1]);
                 else
                     g.add_messages_path("./");
-                
+
                 std::locale l = g("he_IL.UTF-8");
 
                 // narrow non-UTF-8 keys
@@ -523,7 +523,7 @@ int main(int argc,char **argv)
             bl::dnpgettext("","","","",1);
             bl::dnpgettext("",L"",L"",L"",1);
         }
-        
+
     }
     catch(std::exception const &e) {
         std::cerr << "Failed " << e.what() << std::endl;
@@ -533,4 +533,4 @@ int main(int argc,char **argv)
 }
 
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
-// boostinspect:noascii 
+// boostinspect:noascii

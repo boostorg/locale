@@ -12,8 +12,8 @@
 namespace boost {
     namespace locale {
         namespace impl {
-       
-            template<typename Property> 
+
+            template<typename Property>
             class ios_prop {
             public:
                 static void set(Property const &prop,std::ios_base &ios)
@@ -30,7 +30,7 @@ namespace boost {
                         *static_cast<Property *>(ios.pword(id))=prop;
                     }
                 }
-                
+
                 static Property &get(std::ios_base &ios)
                 {
                     int id=get_id();
@@ -38,7 +38,7 @@ namespace boost {
                         set(Property(),ios);
                     return *static_cast<Property *>(ios.pword(id));
                 }
-                
+
                 static bool has(std::ios_base &ios)
                 {
                     int id=get_id();
@@ -62,7 +62,7 @@ namespace boost {
                 }
             private:
                 static void * const invalid;
-                
+
                 static void callback(std::ios_base::event ev,std::ios_base &ios,int id)
                 {
                     switch(ev) {
@@ -79,9 +79,9 @@ namespace boost {
                     case std::ios_base::imbue_event:
                         if(ios.pword(id)==invalid || ios.pword(id)==0)
                             break;
-                        reinterpret_cast<Property *>(ios.pword(id))->on_imbue(); 
+                        reinterpret_cast<Property *>(ios.pword(id))->on_imbue();
                         break;
-                        
+
                     default: ;
                     }
                 }
@@ -105,5 +105,5 @@ namespace boost {
 
 #endif
 
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 
+// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 

@@ -23,7 +23,7 @@ namespace impl_std {
     std::locale create_codecvt( std::locale const &in,
                                 std::string const &locale_name,
                                 character_facet_type type,
-                                utf8_support utf) 
+                                utf8_support utf)
     {
         if(utf == utf8_from_wide) {
             return util::create_utf8_codecvt(in,type);
@@ -47,7 +47,7 @@ namespace impl_std {
     }
 
 } // impl_std
-} // locale 
+} // locale
 } // boost
 
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4

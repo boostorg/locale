@@ -25,15 +25,15 @@
 
 namespace boost {
 namespace locale {
-namespace impl_posix { 
-    
+namespace impl_posix {
+
     class posix_localization_backend : public localization_backend {
     public:
-        posix_localization_backend() : 
+        posix_localization_backend() :
             invalid_(true)
         {
         }
-        posix_localization_backend(posix_localization_backend const &other) : 
+        posix_localization_backend(posix_localization_backend const &other) :
             localization_backend(),
             paths_(other.paths_),
             domains_(other.domains_),
@@ -80,18 +80,18 @@ namespace impl_posix {
             real_id_ = locale_id_;
             if(real_id_.empty())
                 real_id_ = util::get_system_locale();
-            
+
             locale_t tmp = newlocale(LC_ALL_MASK,real_id_.c_str(),0);
-            
+
             if(!tmp) {
                 tmp=newlocale(LC_ALL_MASK,"C",0);
             }
             if(!tmp) {
                 throw std::runtime_error("newlocale failed");
             }
-            
+
             locale_t *tmp_p = 0;
-            
+
             try {
                 tmp_p = new locale_t();
             }
@@ -99,11 +99,11 @@ namespace impl_posix {
                 freelocale(tmp);
                 throw;
             }
-            
+
             *tmp_p = tmp;
             lc_ = boost::shared_ptr<locale_t>(tmp_p,free_locale_by_ptr);
         }
-        
+
         std::locale install(std::locale const &base,
                             locale_category_type category,
                             character_facet_type type = nochar_facet) BOOST_OVERRIDE
@@ -172,7 +172,7 @@ namespace impl_posix {
         bool invalid_;
         boost::shared_ptr<locale_t> lc_;
     };
-    
+
     localization_backend *create_localization_backend()
     {
         return new posix_localization_backend();
@@ -181,4 +181,4 @@ namespace impl_posix {
 }  // impl posix
 }  // locale
 }  // boost
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 
+// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4

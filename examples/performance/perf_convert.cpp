@@ -46,8 +46,8 @@ int main(int argc,char **argv)
                 boost::locale::to_upper(all[j]);
                 boost::locale::to_lower(all[j]);
                 if(i==0) {
-                    std::cout << boost::locale::to_upper(all[j]) << std::endl; 
-                    std::cout << boost::locale::to_lower(all[j]) << std::endl; 
+                    std::cout << boost::locale::to_upper(all[j]) << std::endl;
+                    std::cout << boost::locale::to_lower(all[j]) << std::endl;
                 }
             }
         }

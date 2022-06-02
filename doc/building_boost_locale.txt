@@ -131,7 +131,7 @@ You can run unit tests by invoking \c bjam with \c libs/locale/test project para
 
 Boost.Locale is built with binary compatibility in mind. Switching localization back ends on or off,
 or using iconv or not, does not affect binary compatibility. So if a dynamic library was built
-with all possible backends, other dynamic libraries compiled with, for example, only the \c std, \c posix 
+with all possible backends, other dynamic libraries compiled with, for example, only the \c std, \c posix
 or \c winapi backends would still be binary-compatible with it.
 
 However this definitely has an effect on some features. For example, if you

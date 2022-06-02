@@ -51,7 +51,7 @@ namespace boost {
         }
 #endif
 
-    } // locale 
+    } // locale
 } // boost
 
 #endif

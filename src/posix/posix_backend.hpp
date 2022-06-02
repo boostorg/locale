@@ -10,11 +10,11 @@
 namespace boost {
     namespace locale {
         class localization_backend;
-        namespace impl_posix { 
+        namespace impl_posix {
             localization_backend *create_localization_backend();
         } // impl_std
-    } // locale 
+    } // locale
 } // boost
 #endif
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 
+// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 

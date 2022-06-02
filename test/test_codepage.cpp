@@ -63,7 +63,7 @@ void test_ok(std::string file,std::locale const &l,std::basic_string<Char> cmp=s
 
     stream_type f1("testi.txt",stream_type::in);
     f1.imbue(l);
-    TEST(read_file<Char>(f1) == cmp); 
+    TEST(read_file<Char>(f1) == cmp);
     f1.close();
 
     stream_type f2("testo.txt",stream_type::out);
@@ -139,7 +139,7 @@ void test_for_char()
     else {
         std::cout << "    UTF-8 Not supported " << std::endl;
     }
-    
+
     if(test_iso) {
         if(test_iso_8859_8) {
             std::cout << "    ISO8859-8" << std::endl;
@@ -160,7 +160,7 @@ void test_wide_io()
 {
     std::cout << "  wchar_t" << std::endl;
     test_for_char<wchar_t>();
-    
+
     #if defined BOOST_LOCALE_ENABLE_CHAR16_T && !defined(BOOST_NO_CHAR16_T_CODECVT)
     std::cout << "  char16_t" << std::endl;
     test_for_char<char16_t>();
@@ -180,7 +180,7 @@ void test_pos(std::string source,std::basic_string<Char> target,std::string enco
     TEST(to_utf<Char>(source,encoding)==target);
     TEST(to_utf<Char>(source.c_str(),encoding)==target);
     TEST(to_utf<Char>(source.c_str(),source.c_str()+source.size(),encoding)==target);
-    
+
     TEST(to_utf<Char>(source,l)==target);
     TEST(to_utf<Char>(source.c_str(),l)==target);
     TEST(to_utf<Char>(source.c_str(),source.c_str()+source.size(),l)==target);
@@ -188,7 +188,7 @@ void test_pos(std::string source,std::basic_string<Char> target,std::string enco
     TEST(from_utf<Char>(target,encoding)==source);
     TEST(from_utf<Char>(target.c_str(),encoding)==source);
     TEST(from_utf<Char>(target.c_str(),target.c_str()+target.size(),encoding)==source);
-    
+
     TEST(from_utf<Char>(target,l)==source);
     TEST(from_utf<Char>(target.c_str(),l)==source);
     TEST(from_utf<Char>(target.c_str(),target.c_str()+target.size(),l)==source);
@@ -273,8 +273,8 @@ struct utfutf<char,1> {
 template<>
 struct utfutf<wchar_t,2> {
     static wchar_t const *ok(){ return  L"\x67\x72\xfc\xdf\x65\x6e"; }
-    static wchar_t const *bad() { 
-        static wchar_t buf[256] = L"\x67\x72\xFF\xfc\xFE\xFD\xdf\x65\x6e"; 
+    static wchar_t const *bad() {
+        static wchar_t buf[256] = L"\x67\x72\xFF\xfc\xFE\xFD\xdf\x65\x6e";
         buf[2]=0xDC01; // second surrogate must not be
         buf[4]=0xD801; // First
         buf[5]=0xD801; // Must be surrogate trail
@@ -284,8 +284,8 @@ struct utfutf<wchar_t,2> {
 template<>
 struct utfutf<wchar_t,4> {
     static wchar_t const *ok(){ return  L"\x67\x72\xfc\xdf\x65\x6e"; }
-    static wchar_t const *bad() { 
-        static wchar_t buf[256] = L"\x67\x72\xFF\xfc\xdf\x65\x6e"; 
+    static wchar_t const *bad() {
+        static wchar_t buf[256] = L"\x67\x72\xFF\xfc\xdf\x65\x6e";
         buf[2]=static_cast<wchar_t>(0x1000000); // > 10FFFF
         return buf;
     }
@@ -324,10 +324,10 @@ void test_to()
         test_pos<Char>("\xf9\xec\xe5\xed",utf<Char>("שלום"),"ISO8859-8");
     test_pos<Char>("grüßen",utf<Char>("grüßen"),"UTF-8");
     test_pos<Char>("abc\"\xf0\xa0\x82\x8a\"",utf<Char>("abc\"\xf0\xa0\x82\x8a\""),"UTF-8");
-    
+
     test_to_neg<Char>("g\xFFrüßen",utf<Char>("grüßen"),"UTF-8");
     test_from_neg<Char>(utf<Char>("hello שלום"),"hello ","ISO8859-1");
- 
+
     test_with_0<Char>();
 }
 
@@ -399,16 +399,16 @@ int main()
         #endif
 
         test_simple_conversions();
-        
-        
+
+
         for(int type = 0; type < int(def.size()); type ++ ) {
             boost::locale::localization_backend_manager tmp_backend = boost::locale::localization_backend_manager::global();
             tmp_backend.select(def[type]);
             boost::locale::localization_backend_manager::global(tmp_backend);
-            
+
             std::string bname = def[type];
-            
-            if(bname=="std") { 
+
+            if(bname=="std") {
                 en_us_8bit = get_std_name("en_US.ISO8859-1");
                 he_il_8bit = get_std_name("he_IL.ISO8859-8");
                 ja_jp_shiftjis = get_std_name("ja_JP.SJIS");
@@ -477,11 +477,11 @@ int main()
             }
             #endif
 
-            if(def[type]=="std" && (get_std_name("en_US.UTF-8").empty() || get_std_name("he_IL.UTF-8").empty())) 
+            if(def[type]=="std" && (get_std_name("en_US.UTF-8").empty() || get_std_name("he_IL.UTF-8").empty()))
             {
                 test_utf = false;
             }
-            
+
             std::cout << "Testing wide I/O" << std::endl;
             test_wide_io();
             std::cout << "Testing charset to/from UTF conversion functions" << std::endl;
@@ -513,4 +513,4 @@ int main()
 }
 
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
-// boostinspect:noascii 
+// boostinspect:noascii

@@ -44,7 +44,7 @@ int main()
     // Make boost.filesystem use it
     boost::filesystem::path::imbue(std::locale());
     // Now Works perfectly fine with UTF-8!
-    boost::filesystem::ofstream hello("שלום.txt"); 
+    boost::filesystem::ofstream hello("שלום.txt");
 }
 
 \endcode

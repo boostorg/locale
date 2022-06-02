@@ -74,7 +74,7 @@ int main()
         TEST(std::use_facet<boost::locale::info>(l).encoding()=="iso8859-1");
 
         std::locale l_wt(std::locale::classic(),new test_facet);
-        
+
         TEST(std::has_facet<test_facet>(g.generate(l_wt,"en_US.UTF-8")));
         TEST(std::has_facet<test_facet>(g.generate(l_wt,"en_US.ISO8859-1")));
         TEST(!std::has_facet<test_facet>(g("en_US.UTF-8")));
@@ -97,4 +97,4 @@ int main()
 
 }
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
-// boostinspect:noascii 
+// boostinspect:noascii

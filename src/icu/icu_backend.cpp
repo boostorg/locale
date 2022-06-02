@@ -20,15 +20,15 @@
 
 namespace boost {
 namespace locale {
-namespace impl_icu { 
+namespace impl_icu {
     class icu_localization_backend : public localization_backend {
     public:
-        icu_localization_backend() : 
+        icu_localization_backend() :
             invalid_(true),
             use_ansi_encoding_(false)
         {
         }
-        icu_localization_backend(icu_localization_backend const &other) : 
+        icu_localization_backend(icu_localization_backend const &other) :
             localization_backend(),
             paths_(other.paths_),
             domains_(other.domains_),
@@ -74,7 +74,7 @@ namespace impl_icu {
                 bool utf8 = ! use_ansi_encoding_;
                 real_id_ = util::get_system_locale(utf8);
             }
-            
+
             util::locale_data d;
             d.parse(real_id_);
 
@@ -85,7 +85,7 @@ namespace impl_icu {
             country_ = d.country;
             variant_ = d.variant;
         }
-        
+
         std::locale install(std::locale const &base,
                             locale_category_type category,
                             character_facet_type type = nochar_facet) BOOST_OVERRIDE
@@ -130,7 +130,7 @@ namespace impl_icu {
                     }
                 }
             case boundary_facet:
-                return create_boundary(base,data_,type); 
+                return create_boundary(base,data_,type);
             case calendar_facet:
                 return create_calendar(base,data_);
             case information_facet:
@@ -154,7 +154,7 @@ namespace impl_icu {
         bool invalid_;
         bool use_ansi_encoding_;
     };
-    
+
     localization_backend *create_localization_backend()
     {
         return new icu_localization_backend();
@@ -163,4 +163,4 @@ namespace impl_icu {
 }  // impl icu
 }  // locale
 }  // boost
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 
+// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4

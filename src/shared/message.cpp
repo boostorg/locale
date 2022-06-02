@@ -42,15 +42,15 @@
 namespace boost {
     namespace locale {
         namespace gnu_gettext {
-            
+
             class c_file {
                 c_file(c_file const &);
                 void operator=(c_file const &);
             public:
-                
+
                 FILE *file;
 
-                c_file() : 
+                c_file() :
                     file(0)
                 {
                 }
@@ -90,7 +90,7 @@ namespace boost {
                 #else // POSIX systems do not have all this Wide API crap, as native codepages are UTF-8
 
                 // We do not use encoding as we use native file name encoding
-                
+
                 bool open(std::string const &file_name,std::string const &/* encoding */)
                 {
                     close();
@@ -107,7 +107,7 @@ namespace boost {
             class mo_file {
             public:
                 typedef std::pair<char const *,char const *> pair_type;
-                
+
                 mo_file(std::vector<char> &file) :
                     native_byteorder_(true),
                     size_(0)
@@ -137,13 +137,13 @@ namespace boost {
                         st = pj_winberger_hash::update_state(st,context_in);
                         st = pj_winberger_hash::update_state(st,'\4'); // EOT
                         st = pj_winberger_hash::update_state(st,key_in);
-                        hkey = st; 
+                        hkey = st;
                     }
                     uint32_t incr = 1 + hkey % (hash_size_-2);
                     hkey %= hash_size_;
                     uint32_t orig=hkey;
-                    
-                    
+
+
                     do {
                         uint32_t idx = get(hash_offset_ + 4*hkey);
                         /// Not found
@@ -168,13 +168,13 @@ namespace boost {
                         size_t key_len = strlen(key);
                         if(cntx_len + 1 + key_len != real_len)
                             return false;
-                        return 
+                        return
                             memcmp(real_key,cntx,cntx_len) == 0
                             && real_key[cntx_len] == '\4'
                             && memcmp(real_key + cntx_len + 1 ,key,key_len) == 0;
                     }
                 }
-                
+
                 char const *key(int id) const
                 {
                     uint32_t off = get(keys_offset_ + id*8 + 4);
@@ -240,14 +240,14 @@ namespace boost {
                     // ok to ingnore fread result
                     size_t four_bytes = fread(&magic,4,1,file);
                     (void)four_bytes; // shut GCC
-                    
+
                     if(magic == 0x950412de)
                         native_byteorder_ = true;
                     else if(magic == 0xde120495)
                         native_byteorder_ = false;
                     else
                         throw std::runtime_error("Invalid file format");
-                    
+
                     fseek(file,0,SEEK_END);
                     long len=ftell(file);
                     if(len < 0) {
@@ -260,7 +260,7 @@ namespace boost {
                     data_ = &vdata_[0];
                     file_size_ = len;
                 }
-                
+
                 uint32_t get(unsigned offset) const
                 {
                     uint32_t tmp;
@@ -304,7 +304,7 @@ namespace boost {
                     return pair_type((char_type const *)(0),(char_type const *)(0));
                 }
             };
-            
+
             template<>
             struct mo_file_use_traits<char> {
                 static const bool in_use = true;
@@ -332,7 +332,7 @@ namespace boost {
             private:
                 std::string in_;
             };
-            
+
             template<>
             class converter<char> {
             public:
@@ -377,7 +377,7 @@ namespace boost {
                     if(c!=0)
                         c_context_ = c;
                     else
-                        c_context_ = &empty; 
+                        c_context_ = &empty;
                 }
                 bool operator < (message_key const &other) const
                 {
@@ -453,8 +453,8 @@ namespace boost {
                     return state;
                 }
             };
-            
-           
+
+
             // By default for wide types the conversion is not requiredyy
             template<typename CharType>
             CharType const *runtime_conversion(CharType const *msg,
@@ -507,7 +507,7 @@ namespace boost {
                     if(!ptr.first)
                         return 0;
                     int form=0;
-                    if(plural_forms_.at(domain_id)) 
+                    if(plural_forms_.at(domain_id))
                         form = (*plural_forms_[domain_id])(n);
                     else
                         form = n == 1 ? 0 : 1; // Fallback to english plural form
@@ -541,17 +541,17 @@ namespace boost {
                     std::string lc_cat = inf.locale_category;
                     std::vector<messages_info::domain> const &domains = inf.domains;
                     std::vector<std::string> const &search_paths = inf.paths;
-                    
+
                     //
-                    // List of fallbacks: en_US@euro, en@euro, en_US, en. 
+                    // List of fallbacks: en_US@euro, en@euro, en_US, en.
                     //
                     std::vector<std::string> paths;
 
 
-                    if(!variant.empty() && !country.empty()) 
+                    if(!variant.empty() && !country.empty())
                         paths.push_back(language + "_" + country + "@" + variant);
 
-                    if(!variant.empty()) 
+                    if(!variant.empty())
                         paths.push_back(language + "@" + variant);
 
                     if(!country.empty())
@@ -570,7 +570,7 @@ namespace boost {
                         domains_[domain]=i;
 
 
-                        bool found=false; 
+                        bool found=false;
                         for(unsigned j=0;!found && j<paths.size();j++) {
                             for(unsigned k=0;!found && k<search_paths.size();k++) {
                                 std::string full_path = search_paths[k]+"/"+paths[j]+"/" + lc_cat + "/"+domain+".mo";
@@ -579,7 +579,7 @@ namespace boost {
                         }
                     }
                 }
-                
+
                 char_type const *convert(char_type const *msg,string_type &buffer) const BOOST_OVERRIDE
                 {
                     return runtime_conversion<char_type>(msg,buffer,key_conversion_required_,locale_encoding_,key_encoding_);
@@ -588,7 +588,7 @@ namespace boost {
             private:
                 int compare_encodings(std::string const &left,std::string const &right)
                 {
-                    return convert_encoding_name(left).compare(convert_encoding_name(right)); 
+                    return convert_encoding_name(left).compare(convert_encoding_name(right));
                 }
 
                 std::string convert_encoding_name(std::string const &in)
@@ -616,15 +616,15 @@ namespace boost {
                 {
                     locale_encoding_ = locale_encoding;
                     key_encoding_ = key_encoding;
-                    
-                    key_conversion_required_ =  sizeof(CharType) == 1 
+
+                    key_conversion_required_ =  sizeof(CharType) == 1
                                                 && compare_encodings(locale_encoding,key_encoding)!=0;
 
                     boost::shared_ptr<mo_file> mo;
 
                     if(callback) {
                         std::vector<char> vfile = callback(file_name,locale_encoding);
-                        if(vfile.empty()) 
+                        if(vfile.empty())
                             return false;
                         mo.reset(new mo_file(vfile));
                     }
@@ -635,7 +635,7 @@ namespace boost {
                             return false;
                         mo.reset(new mo_file(the_file.file));
                     }
-                    
+
                     std::string plural = extract(mo->value(0).first,"plural=","\r\n;");
 
                     std::string mo_encoding = extract(mo->value(0).first,"charset="," \r\n;");
@@ -658,7 +658,7 @@ namespace boost {
                             char const *ckey = mo->key(i);
                             string_type skey = cvt_key(ckey,ckey+strlen(ckey));
                             key_type key(skey);
-                            
+
                             mo_file::pair_type tmp = mo->value(i);
                             string_type value = cvt_value(tmp.first,tmp.second);
                             catalogs_[idx][key].swap(value);
@@ -695,7 +695,7 @@ BOOST_LOCALE_END_CONST_CONDITION
                     return true;
                 }
 
-                
+
 
                 static std::string extract(std::string const &meta,std::string const &key,char const *separator)
                 {
@@ -737,7 +737,7 @@ BOOST_LOCALE_END_CONST_CONDITION
                 domains_map_type domains_;
 
                 std::string locale_encoding_;
-                std::string key_encoding_; 
+                std::string key_encoding_;
                 bool key_conversion_required_;
             };
 
@@ -752,7 +752,7 @@ BOOST_LOCALE_END_CONST_CONDITION
             {
                 return new mo_message<wchar_t>(info);
             }
-            
+
             #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
 
             template<>
@@ -761,7 +761,7 @@ BOOST_LOCALE_END_CONST_CONDITION
                 return new mo_message<char16_t>(info);
             }
             #endif
-            
+
             #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
 
             template<>

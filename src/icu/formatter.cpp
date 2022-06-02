@@ -26,27 +26,27 @@
 #include "time_zone.hpp"
 
 #ifdef BOOST_MSVC
-#  pragma warning(disable : 4244) // lose data 
+#  pragma warning(disable : 4244) // lose data
 #endif
 
 namespace boost {
 namespace locale {
     namespace impl_icu {
-        
-        
+
+
         std::locale::id icu_formatters_cache::id;
 
         namespace {
             struct init { init() { std::has_facet<icu_formatters_cache>(std::locale::classic()); } } instance;
         }
 
-        
+
         template<typename CharType>
         class number_format : public formatter<CharType> {
         public:
             typedef CharType char_type;
             typedef std::basic_string<CharType> string_type;
-            
+
             string_type format(double value,size_t &code_points) const BOOST_OVERRIDE
             {
                 icu::UnicodeString tmp;
@@ -65,7 +65,7 @@ namespace locale {
             string_type format(int32_t value,size_t &code_points) const BOOST_OVERRIDE
             {
                 icu::UnicodeString tmp;
-                #ifdef __SUNPRO_CC 
+                #ifdef __SUNPRO_CC
                 icu_fmt_->format(static_cast<int>(value),tmp);
                 #else
                 icu_fmt_->format(::int32_t(value),tmp);
@@ -93,9 +93,9 @@ namespace locale {
                 icu_fmt_(fmt)
             {
             }
- 
+
         private:
-            
+
             bool get_value(double &v,icu::Formattable &fmt) const
             {
                 UErrorCode err=U_ZERO_ERROR;
@@ -146,14 +146,14 @@ namespace locale {
             icu_std_converter<CharType> cvt_;
             icu::NumberFormat *icu_fmt_;
         };
-        
-        
+
+
         template<typename CharType>
         class date_format : public formatter<CharType> {
         public:
             typedef CharType char_type;
             typedef std::basic_string<CharType> string_type;
-            
+
             string_type format(double value,size_t &code_points) const BOOST_OVERRIDE
             {
                 return do_format(value,code_points);
@@ -192,7 +192,7 @@ namespace locale {
                     icu_fmt_ = fmt;
                 }
             }
- 
+
         private:
 
             template<typename ValueType>
@@ -215,8 +215,8 @@ namespace locale {
                 return cut;
 
             }
-            
-            string_type do_format(double value,size_t &codepoints) const 
+
+            string_type do_format(double value,size_t &codepoints) const
             {
                 UDate date = value * 1000.0; /// UDate is time_t in miliseconds
                 icu::UnicodeString tmp;
@@ -371,7 +371,7 @@ namespace locale {
                 result+="'";
             return result;
         }
-        
+
         template<typename CharType>
         formatter<CharType> *generate_formatter(
                     std::ios_base &ios,
@@ -389,9 +389,9 @@ namespace locale {
 
             if(disp == posix)
                 return fmt.release();
-           
+
             UErrorCode err=U_ZERO_ERROR;
-            
+
             switch(disp) {
             case number:
                 {
@@ -402,7 +402,7 @@ namespace locale {
                         nf = cache.number_format(icu_formatters_cache::fmt_sci);
                     else
                         nf = cache.number_format(icu_formatters_cache::fmt_number);
-                    
+
                     nf->setMaximumFractionDigits(ios.precision());
                     if(how == std::ios_base::scientific || how == std::ios_base::fixed ) {
                         nf->setMinimumFractionDigits(ios.precision());
@@ -416,7 +416,7 @@ namespace locale {
             case currency:
                 {
                     icu::NumberFormat *nf;
-                    
+
                     uint64_t curr = info.currency_flags();
 
                     if(curr == currency_default || curr == currency_national)
@@ -439,7 +439,7 @@ namespace locale {
                         nf->setMinimumFractionDigits(0);
                     }
                     fmt.reset(new number_format<CharType>(nf,encoding));
-                    
+
                 }
                 break;
             case spellout:
@@ -505,7 +505,7 @@ namespace locale {
                             break;
                         case strftime:
                             {
-                                if( !cache.date_format_[1].isEmpty() 
+                                if( !cache.date_format_[1].isEmpty()
                                     && !cache.time_format_[1].isEmpty()
                                     && !cache.date_time_format_[1][1].isEmpty())
                                 {
@@ -523,11 +523,11 @@ namespace locale {
                         }
                         sdf = 0;
                     }
-                    
+
                     if(!df) {
                         icu::DateFormat::EStyle dstyle = icu::DateFormat::kDefault;
                         icu::DateFormat::EStyle tstyle = icu::DateFormat::kDefault;
-                        
+
                         switch(info.time_flags()) {
                         case time_short:    tstyle=icu::DateFormat::kShort; break;
                         case time_medium:   tstyle=icu::DateFormat::kMedium; break;
@@ -540,7 +540,7 @@ namespace locale {
                         case date_long:     dstyle=icu::DateFormat::kLong; break;
                         case date_full:     dstyle=icu::DateFormat::kFull; break;
                         }
-                        
+
                         if(disp==date)
                             adf.reset(icu::DateFormat::createDateInstance(dstyle,locale));
                         else if(disp==time)
@@ -553,13 +553,13 @@ namespace locale {
                             icu::UnicodeString fmt = strftime_to_icu(cvt_.icu(f.data(),f.data()+f.size()),locale);
                             adf.reset(new icu::SimpleDateFormat(fmt,locale,err));
                         }
-                        if(U_FAILURE(err)) 
+                        if(U_FAILURE(err))
                             return fmt.release();
                         df = adf.get();
                     }
 
                     df->adoptTimeZone(get_time_zone(info.time_zone()));
-                        
+
                     // Depending if we own formatter or not
                     if(adf.get())
                         fmt.reset(new date_format<CharType>(adf.release(),true,encoding));
@@ -604,7 +604,7 @@ namespace locale {
     }
 
     #endif
-    
+
 } // impl_icu
 
 } // locale

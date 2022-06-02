@@ -20,7 +20,7 @@
 namespace boost {
 
     namespace locale {
-        
+
         ///
         /// \brief This namespace contains all operations required for boundary analysis of text
         ///
@@ -31,7 +31,7 @@ namespace boost {
             /// @{
             ///
 
-            
+
             ///
             /// \brief This structure is used for representing boundary point
             /// that follows the offset.
@@ -41,7 +41,7 @@ namespace boost {
                 ///
                 /// Create empty break point at beginning
                 ///
-                break_info() : 
+                break_info() :
                     offset(0),
                     rule(0)
                 {
@@ -61,11 +61,11 @@ namespace boost {
                 ///
                 size_t offset;
                 ///
-                /// The identification of this break point according to 
+                /// The identification of this break point according to
                 /// various break types
                 ///
                 rule_type rule;
-               
+
                 ///
                 /// Compare two break points' offset. Allows to search with
                 /// standard algorithms over the index.
@@ -75,7 +75,7 @@ namespace boost {
                     return offset < other.offset;
                 }
             };
-            
+
             ///
             /// This type holds the analysis of the text - all its break points
             /// with marks
@@ -114,7 +114,7 @@ namespace boost {
                 /// Identification of this facet
                 ///
                 static std::locale::id id;
-                
+
                 #if defined (__SUNPRO_CC) && defined (_RWSTD_VER)
                 std::locale::id& __get_id (void) const { return id; }
                 #endif
@@ -135,7 +135,7 @@ namespace boost {
                 std::locale::id& __get_id (void) const { return id; }
                 #endif
             };
-            
+
             template<>
             class BOOST_LOCALE_DECL boundary_indexing<wchar_t> : public std::locale::facet {
             public:
@@ -150,7 +150,7 @@ namespace boost {
                 std::locale::id& __get_id (void) const { return id; }
                 #endif
             };
-            
+
             #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
             template<>
             class BOOST_LOCALE_DECL boundary_indexing<char16_t> : public std::locale::facet {
@@ -166,7 +166,7 @@ namespace boost {
                 #endif
             };
             #endif
-            
+
             #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
             template<>
             class BOOST_LOCALE_DECL boundary_indexing<char32_t> : public std::locale::facet {

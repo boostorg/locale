@@ -26,7 +26,7 @@ namespace boost {
 
         ///
         /// \brief this class represents a localization backend that can be used for localizing your application.
-        /// 
+        ///
         /// Backends are usually registered inside the localization backends manager and allow transparent support
         /// of different backends, so a user can switch the backend by simply linking the application to the correct one.
         ///
@@ -38,18 +38,18 @@ namespace boost {
         ///     by default
         /// -# \c message_path - path to the location of message catalogs (vector of strings)
         /// -# \c message_application - the name of applications that use message catalogs (vector of strings)
-        /// 
+        ///
         /// Each backend can be installed with a different default priotiry so when you work with two different backends, you
         /// can specify priotiry so this backend will be chosen according to their priority.
         ///
-        
+
         class localization_backend {
             localization_backend(localization_backend const &);
             void operator=(localization_backend const &);
         public:
 
             localization_backend() {}
-            
+
             virtual ~localization_backend() {}
 
             ///
@@ -68,11 +68,11 @@ namespace boost {
             virtual void clear_options() = 0;
 
             ///
-            /// Create a facet for category \a category and character type \a type 
+            /// Create a facet for category \a category and character type \a type
             ///
             virtual std::locale install(std::locale const &base,locale_category_type category,character_facet_type type = nochar_facet) = 0;
 
-        }; // localization_backend 
+        }; // localization_backend
 
 
         ///
@@ -83,15 +83,15 @@ namespace boost {
         class BOOST_LOCALE_DECL localization_backend_manager {
         public:
             ///
-            /// New empty localization_backend_manager 
+            /// New empty localization_backend_manager
             ///
             localization_backend_manager();
             ///
-            /// Copy localization_backend_manager 
+            /// Copy localization_backend_manager
             ///
             localization_backend_manager(localization_backend_manager const &);
             ///
-            /// Assign localization_backend_manager 
+            /// Assign localization_backend_manager
             ///
             localization_backend_manager const &operator=(localization_backend_manager const &);
 
@@ -143,29 +143,29 @@ namespace boost {
             /// Clear backend
             ///
             void remove_all_backends();
-            
+
             ///
             /// Get list of all available backends
             ///
             std::vector<std::string> get_all_backends() const;
-            
+
             ///
             /// Select specific backend by name for a category \a category. It allows combining different
             /// backends for user preferences.
             ///
             void select(std::string const &backend_name,locale_category_type category = all_categories);
-           
+
             ///
             /// Set new global backend manager, the old one is returned.
             ///
             /// This function is thread safe
-            /// 
+            ///
             static localization_backend_manager global(localization_backend_manager const &);
             ///
             /// Get global backend manager
             ///
             /// This function is thread safe
-            /// 
+            ///
             static localization_backend_manager global();
         private:
             class impl;
@@ -181,5 +181,5 @@ namespace boost {
 #endif
 
 #endif
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 
+// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 

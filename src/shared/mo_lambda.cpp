@@ -26,9 +26,9 @@ namespace { // anon
         }
     };
 
-    struct unary : public plural 
+    struct unary : public plural
     {
-        unary(plural_ptr ptr) : 
+        unary(plural_ptr ptr) :
             op1(ptr)
         {
         }
@@ -37,7 +37,7 @@ namespace { // anon
     };
 
 
-    struct binary : public plural 
+    struct binary : public plural
     {
         binary(plural_ptr p1,plural_ptr p2) :
             op1(p1),
@@ -50,7 +50,7 @@ namespace { // anon
 
     struct number : public plural
     {
-        number(int v) : 
+        number(int v) :
             val(v)
         {
         }
@@ -179,12 +179,12 @@ namespace { // anon
             return (*op1)(n) ? (*op2)(n) : (*op3)(n);
         }
         conditional *clone() const BOOST_OVERRIDE
-        {                                           
-            plural_ptr op1_copy(op1->clone());      
-            plural_ptr op2_copy(op2->clone());      
-            plural_ptr op3_copy(op3->clone());      
-            return new conditional(op1_copy,op2_copy,op3_copy);     
-        }                                           
+        {
+            plural_ptr op1_copy(op1->clone());
+            plural_ptr op2_copy(op2->clone());
+            plural_ptr op3_copy(op3->clone());
+            return new conditional(op1_copy,op2_copy,op3_copy);
+        }
     private:
         plural_ptr op1,op2,op3;
     };
@@ -254,11 +254,11 @@ namespace { // anon
         {
             return c==' ' || c=='\r' || c=='\n' || c=='\t';
         }
-        bool isdigit(char c) 
+        bool isdigit(char c)
         {
-            return '0'<=c && c<='9'; 
+            return '0'<=c && c<='9';
         }
-        void step() 
+        void step()
         {
             while(text[pos] && is_blank(text[pos])) pos++;
             char const *ptr=text+pos;
@@ -339,14 +339,14 @@ namespace { // anon
             static int level_unary[]={3,'-','!','~'};
             if(is_in(t.next(),level_unary)) {
                 int op=t.get();
-                if((op1=un_expr()).get()==0) 
+                if((op1=un_expr()).get()==0)
                     return plural_ptr();
                 switch(op) {
-                case '-': 
+                case '-':
                     return plural_ptr(new minus(op1));
-                case '!': 
+                case '!':
                     return plural_ptr(new l_not(op1));
-                case '~': 
+                case '~':
                     return plural_ptr(new bin_not(op1));
                 default:
                     return plural_ptr();
@@ -407,5 +407,5 @@ plural_ptr compile(char const *str)
 } // locale
 } // boost
 
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 
+// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 

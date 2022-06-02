@@ -48,12 +48,12 @@ public:
     typedef std::basic_string<CharType> string_type;
     typedef CharType char_type;
 
-    num_format(boost::shared_ptr<locale_t> lc,size_t refs = 0) : 
+    num_format(boost::shared_ptr<locale_t> lc,size_t refs = 0) :
         util::base_num_format<CharType>(refs),
         lc_(lc)
     {
     }
-protected: 
+protected:
 
     iter_type do_format_currency(bool intl,iter_type out,std::ios_base &/*ios*/,char_type /*fill*/,long double val) const BOOST_OVERRIDE
     {
@@ -61,9 +61,9 @@ protected:
         char const *format = intl ? "%i" : "%n";
         errno=0;
         ssize_t n = strfmon_l(buf,sizeof(buf),*lc_,format,static_cast<double>(val));
-        if(n >= 0) 
+        if(n >= 0)
             return write_it(out,buf,n);
-        
+
         for(std::vector<char> tmp(sizeof(buf)*2);tmp.size() <= 4098;tmp.resize(tmp.size()*2)) {
             n = strfmon_l(&tmp.front(),tmp.size(),*lc_,format,static_cast<double>(val));
             if(n >= 0)
@@ -78,7 +78,7 @@ protected:
             *out++ = *ptr++;
         return out;
     }
-    
+
     std::ostreambuf_iterator<wchar_t> write_it(std::ostreambuf_iterator<wchar_t> out,char const *ptr,size_t n) const
     {
         std::wstring tmp = conv::to_utf<wchar_t>(ptr,ptr+n,nl_langinfo_l(CODESET,*lc_));
@@ -152,7 +152,7 @@ struct ftime_traits<wchar_t> {
 template<typename CharType>
 class time_put_posix : public std::time_put<CharType> {
 public:
-    time_put_posix(boost::shared_ptr<locale_t> lc, size_t refs = 0) : 
+    time_put_posix(boost::shared_ptr<locale_t> lc, size_t refs = 0) :
         std::time_put<CharType>(refs),
         lc_(lc)
     {
@@ -182,11 +182,11 @@ template<>
 class ctype_posix<char> : public std::ctype<char> {
 public:
 
-    ctype_posix(boost::shared_ptr<locale_t> lc) 
+    ctype_posix(boost::shared_ptr<locale_t> lc)
     {
         lc_ = lc;
     }
-   
+
     bool do_is(mask m,char c) const
     {
         if((m & space) && isspace_l(c,*lc_))
@@ -280,11 +280,11 @@ private:
 template<>
 class ctype_posix<wchar_t> : public std::ctype<wchar_t> {
 public:
-    ctype_posix(boost::shared_ptr<locale_t> lc) 
+    ctype_posix(boost::shared_ptr<locale_t> lc)
     {
         lc_ = lc;
     }
-   
+
     bool do_is(mask m,wchar_t c) const
     {
         if((m & space) && iswspace_l(c,*lc_))
@@ -382,11 +382,11 @@ struct basic_numpunct {
     std::string grouping;
     std::string thousands_sep;
     std::string decimal_point;
-    basic_numpunct() : 
+    basic_numpunct() :
         decimal_point(".")
     {
     }
-    basic_numpunct(locale_t lc) 
+    basic_numpunct(locale_t lc)
     {
     #if defined(__APPLE__) || defined(__FreeBSD__)
         lconv *cv = localeconv_l(lc);
@@ -407,7 +407,7 @@ template<typename CharType>
 class num_punct_posix : public std::numpunct<CharType> {
 public:
     typedef std::basic_string<CharType> string_type;
-    num_punct_posix(locale_t lc,size_t refs = 0) : 
+    num_punct_posix(locale_t lc,size_t refs = 0) :
         std::numpunct<CharType>(refs)
     {
         basic_numpunct np(lc);
@@ -480,7 +480,7 @@ std::locale create_formatting(  std::locale const &in,
                                 character_facet_type type)
 {
         switch(type) {
-        case char_facet: 
+        case char_facet:
             return create_formatting_impl<char>(in,lc);
         case wchar_t_facet:
             return create_formatting_impl<wchar_t>(in,lc);
@@ -494,7 +494,7 @@ std::locale create_parsing( std::locale const &in,
                             character_facet_type type)
 {
         switch(type) {
-        case char_facet: 
+        case char_facet:
             return create_parsing_impl<char>(in,lc);
         case wchar_t_facet:
             return create_parsing_impl<wchar_t>(in,lc);
@@ -506,7 +506,7 @@ std::locale create_parsing( std::locale const &in,
 
 
 } // impl_std
-} // locale 
+} // locale
 } //boost
 
 

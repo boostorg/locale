@@ -13,7 +13,7 @@
 All of the examples that come with Boost.Locale are designed for UTF-8 and it is
 the default encoding used by Boost.Locale.
 
-However, the default narrow encoding under Microsoft Windows is not UTF-8 and 
+However, the default narrow encoding under Microsoft Windows is not UTF-8 and
 the output of the applications would not be displayed correctly in the console.
 
 So in order to use UTF-8 encoding under the Windows console and see the output correctly, do the following:

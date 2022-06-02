@@ -47,7 +47,7 @@ Boost.Locale enhances and unifies the standard library's API
 the way it becomes useful and convenient for development
 of cross platform and "cross-culture" software.
 
-In order to achieve this goal Boost.Locale uses 
+In order to achieve this goal Boost.Locale uses
 the-state-of-the-art Unicode and Localization
 library: <a href="http://icu-project.org/">ICU</a> - International Components for Unicode.
 
@@ -70,7 +70,7 @@ and use library.
     - \ref conversions
     - \ref formatting_and_parsing
     - \ref messages_formatting
-    - \ref charset_handling 
+    - \ref charset_handling
     - \ref boundary_analysys
     - \ref localized_text_formatting
     - \ref dates_times_timezones
@@ -83,7 +83,7 @@ and use library.
     - \ref rationale
     - \ref faq
     - \ref default_encoding_under_windows
-    - \ref running_examples_under_windows 
+    - \ref running_examples_under_windows
     - \ref gettext_for_windows
     - \ref glossary
     - \ref tested_compilers_and_platforms

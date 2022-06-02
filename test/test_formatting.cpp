@@ -14,7 +14,7 @@ int main()
 #else
 
 #ifdef _MSC_VER
-#define _CRT_SECURE_NO_WARNINGS 
+#define _CRT_SECURE_NO_WARNINGS
 // Disable this "security crap"
 #endif
 
@@ -118,7 +118,7 @@ do{                                                             \
         TEST_THROWS(ss >> v,std::ios_base::failure);            \
     }                                                           \
 }while(0)
- 
+
 #define TEST_PAR(manip,type,actual,expected) \
 do{ \
     type v; \
@@ -219,12 +219,12 @@ void test_manip(std::string e_charset="UTF-8")
 {
     boost::locale::generator g;
     std::locale loc=g("en_US."+e_charset);
-    
+
     TEST_FP1(as::posix,1200.1,"1200.1",double,1200.1);
     TEST_FP1(as::number,1200.1,"1,200.1",double,1200.1);
     TEST_FMT(as::number<<std::setfill(CharType('_'))<<std::setw(6),1534,"_1,534");
     TEST_FMT(as::number<<std::left<<std::setfill(CharType('_'))<<std::setw(6),1534,"1,534_");
-    
+
     // Ranges
     if(sizeof(short) == 2) {
         TEST_MIN_MAX(short,"-32,768","32,767");
@@ -267,7 +267,7 @@ void test_manip(std::string e_charset="UTF-8")
     TEST_FP3(as::number,std::left,std::setw(3),15,"15 ",int,15);
     TEST_FP3(as::number,std::right,std::setw(3),15," 15",int,15);
     TEST_FP3(as::number,std::setprecision(3),std::fixed,13.1,"13.100",double,13.1);
-    #if BOOST_ICU_VER < 5601 
+    #if BOOST_ICU_VER < 5601
     // bug #13276
     TEST_FP3(as::number,std::setprecision(3),std::scientific,13.1,"1.310E1",double,13.1);
     #endif
@@ -312,7 +312,7 @@ void test_manip(std::string e_charset="UTF-8")
     TEST_FP3(as::date,as::date_medium,as::gmt,a_datetime,"Feb 5, 1970",time_t,a_date);
     TEST_FP3(as::date,as::date_long  ,as::gmt,a_datetime,"February 5, 1970",time_t,a_date);
     TEST_FP3(as::date,as::date_full  ,as::gmt,a_datetime,"Thursday, February 5, 1970",time_t,a_date);
-    
+
     TEST_NOPAR(as::date>>as::date_short,"aa/bb/cc",double);
 
 #if BOOST_ICU_VER >= 5901
@@ -320,7 +320,7 @@ void test_manip(std::string e_charset="UTF-8")
 #else
 #define GMT_FULL "GMT"
 #endif
-    
+
     TEST_FP2(as::time,                as::gmt,a_datetime,"3:33:13 PM",time_t,a_time+a_timesec);
     TEST_FP3(as::time,as::time_short ,as::gmt,a_datetime,"3:33 PM",time_t,a_time);
     TEST_FP3(as::time,as::time_medium,as::gmt,a_datetime,"3:33:13 PM",time_t,a_time+a_timesec);
@@ -334,7 +334,7 @@ void test_manip(std::string e_charset="UTF-8")
     TEST_FP3(as::time,as::time_long  ,as::gmt,a_datetime,"3:33:13 PM GMT+00:00",time_t,a_time+a_timesec);
     TEST_FP3(as::time,as::time_full  ,as::gmt,a_datetime,"3:33:13 PM GMT+00:00",time_t,a_time+a_timesec);
     #endif
-    
+
     TEST_NOPAR(as::time,"AM",double);
 
     TEST_FP2(as::time,                as::time_zone("GMT+01:00"),a_datetime,"4:33:13 PM",time_t,a_time+a_timesec);
@@ -349,7 +349,7 @@ void test_manip(std::string e_charset="UTF-8")
 
 
 #if U_ICU_VERSION_MAJOR_NUM >= 50
-#define PERIOD "," 
+#define PERIOD ","
 #define ICUAT " at"
 #else
 #define PERIOD ""
@@ -386,8 +386,8 @@ void test_manip(std::string e_charset="UTF-8")
     TEST_FMT(as::ftime(format_string),now,local_time_str);
     TEST_FMT(as::ftime(format_string)<<as::gmt<<as::local_time,now,local_time_str);
 
-    std::string marks =  
-        "aAbB" 
+    std::string marks =
+        "aAbB"
         "cdeh"
         "HIjm"
         "Mnpr"
@@ -395,7 +395,7 @@ void test_manip(std::string e_charset="UTF-8")
         "xXyY"
         "Z%";
 
-    std::string result[]= { 
+    std::string result[]= {
         "Thu","Thursday","Feb","February",  // aAbB
         #if BOOST_ICU_VER >= 408
         "Thursday, February 5, 1970" ICUAT  " 3:33:13 PM " GMT_FULL, // c
@@ -425,7 +425,7 @@ void test_manip(std::string e_charset="UTF-8")
         "Now is %A, %H o'clo''ck ' or not ' ",
         "'test %H'",
         "%H'",
-        "'%H'" 
+        "'%H'"
     };
     std::string expected_f[] = {
         "Now is Thursday, 15 o'clo''ck ' or not ' ",
@@ -446,13 +446,13 @@ void test_format(std::string charset="UTF-8")
 {
     boost::locale::generator g;
     std::locale loc=g("en_US."+charset);
-    
+
     FORMAT("{3} {1} {2}", 1 % 2 % 3,"3 1 2");
     FORMAT("{1} {2}", "hello" % 2,"hello 2");
     FORMAT("{1}",1200.1,"1200.1");
     FORMAT("Test {1,num}",1200.1,"Test 1,200.1");
     FORMAT("{{}} {1,number}",1200.1,"{} 1,200.1");
-    #if BOOST_ICU_VER < 5601 
+    #if BOOST_ICU_VER < 5601
     // bug #13276
     FORMAT("{1,num=sci,p=3}",13.1,"1.310E1");
     FORMAT("{1,num=scientific,p=3}",13.1,"1.310E1");
@@ -570,4 +570,4 @@ int main()
 
 #endif // NOICU
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
-// boostinspect:noascii 
+// boostinspect:noascii

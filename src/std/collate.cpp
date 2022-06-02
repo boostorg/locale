@@ -19,7 +19,7 @@ namespace impl_std {
 class utf8_collator_from_wide : public std::collate<char> {
 public:
     typedef std::collate<wchar_t> wfacet;
-    utf8_collator_from_wide(std::locale const &base,size_t refs = 0) : 
+    utf8_collator_from_wide(std::locale const &base,size_t refs = 0) :
         std::collate<char>(refs),
         base_(base)
     {
@@ -39,7 +39,7 @@ public:
     std::string do_transform(char const *b,char const *e) const BOOST_OVERRIDE
     {
         std::wstring tmp=conv::to_utf<wchar_t>(b,e,"UTF-8");
-        std::wstring wkey = 
+        std::wstring wkey =
             std::use_facet<wfacet>(base_).transform(tmp.c_str(),tmp.c_str()+tmp.size());
         std::string key;
 BOOST_LOCALE_START_CONST_CONDITION
@@ -107,7 +107,7 @@ std::locale create_collate( std::locale const &in,
 
 
 } // impl_std
-} // locale 
+} // locale
 } //boost
 
 

@@ -50,7 +50,7 @@ void test_one(std::locale const &l,std::string ia,std::string ib,int diff)
         TEST(!l(a,b));
         TEST(l(b,a));
     }
-    
+
     std::collate<CharType> const &col = std::use_facet<std::collate<CharType> >(l);
 
     TEST(diff == col.compare(a.c_str(),a.c_str()+a.size(),b.c_str(),b.c_str()+b.size()));
@@ -64,7 +64,7 @@ template<typename CharType>
 void test_char()
 {
     boost::locale::generator gen;
-    
+
     {
         std::cout << "- Testing at least C" << std::endl;
         std::locale l = gen("en_US.UTF-8");
@@ -127,4 +127,4 @@ int main()
 
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 
-// boostinspect:noascii 
+// boostinspect:noascii

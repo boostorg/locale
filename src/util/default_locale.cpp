@@ -68,7 +68,7 @@ namespace boost {
                     lc_name += ".UTF-8";
                 }
                 return lc_name;
-                
+
                 #endif
             }
         } // impl

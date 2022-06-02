@@ -17,12 +17,12 @@
 #include "../encoding/conv.hpp"
 
 //#define DEBUG_CODECVT
-#ifdef DEBUG_CODECVT            
+#ifdef DEBUG_CODECVT
 #include <iostream>
 #endif
 
 #ifdef BOOST_MSVC
-#  pragma warning(disable : 4244 4996) // loose data 
+#  pragma warning(disable : 4244 4996) // loose data
 #endif
 
 namespace boost {
@@ -30,7 +30,7 @@ namespace locale {
 namespace util {
 
     base_converter::~base_converter() {}
-    
+
     class utf8_converter  : public base_converter {
     public:
         int max_len() const BOOST_OVERRIDE
@@ -51,7 +51,7 @@ namespace util {
         uint32_t to_unicode(char const *&begin,char const *end) BOOST_OVERRIDE
         {
             char const *p=begin;
-                        
+
             utf::code_point c = utf::utf_traits<char>::decode(p,end);
 
             if(c==utf::illegal)
@@ -79,7 +79,7 @@ namespace util {
 
     class simple_converter_impl {
     public:
-        
+
         static const int hash_table_size = 1024;
 
         simple_converter_impl(std::string const &encoding)
@@ -147,7 +147,7 @@ namespace util {
     class simple_converter : public base_converter {
     public:
 
-        simple_converter(std::string const &encoding) : 
+        simple_converter(std::string const &encoding) :
             cvt_(encoding)
         {
         }
@@ -163,7 +163,7 @@ namespace util {
         }
         base_converter *clone() const BOOST_OVERRIDE
         {
-           return new simple_converter(*this); 
+           return new simple_converter(*this);
         }
 
         uint32_t to_unicode(char const *&begin,char const *end) BOOST_OVERRIDE
@@ -190,7 +190,7 @@ namespace util {
         }
 
         struct state_type {};
-        static state_type initial_state(generic_codecvt_base::initial_convertion_state /* unused */) 
+        static state_type initial_state(generic_codecvt_base::initial_convertion_state /* unused */)
         {
             return state_type();
         }
@@ -199,7 +199,7 @@ namespace util {
             return 1;
         }
 
-        utf::code_point to_unicode(state_type &,char const *&begin,char const *end) const 
+        utf::code_point to_unicode(state_type &,char const *&begin,char const *end) const
         {
             return cvt_.to_unicode(begin,end);
         }
@@ -209,8 +209,8 @@ namespace util {
             return cvt_.from_unicode(u,begin,end);
         }
     private:
-        simple_converter_impl cvt_;        
-         
+        simple_converter_impl cvt_;
+
     };
 
     namespace {
@@ -262,7 +262,7 @@ namespace util {
                         compare_strings);
         return 0;
     }
-    
+
     #if BOOST_LOCALE_USE_AUTO_PTR
     std::auto_ptr<base_converter> create_utf8_converter()
     {
@@ -307,7 +307,7 @@ namespace util {
     {
         return new utf8_converter();
     }
-    
+
     template<typename CharType>
     class code_converter : public generic_codecvt<CharType,code_converter<CharType> >
     {
@@ -320,8 +320,8 @@ namespace util {
         #define PTR_TRANS(x) (x)
         #endif
         typedef base_converter_ptr state_type;
-        
-        code_converter(base_converter_ptr cvt,size_t refs = 0) : 
+
+        code_converter(base_converter_ptr cvt,size_t refs = 0) :
             generic_codecvt<CharType,code_converter<CharType> >(refs),
             cvt_(PTR_TRANS(cvt))
         {
@@ -343,7 +343,7 @@ namespace util {
             return r;
         }
 
-        utf::code_point to_unicode(base_converter_ptr &ptr,char const *&begin,char const *end) const 
+        utf::code_point to_unicode(base_converter_ptr &ptr,char const *&begin,char const *end) const
         {
             if(thread_safe_)
                 return cvt_->to_unicode(begin,end);
@@ -358,7 +358,7 @@ namespace util {
             else
                 return ptr->from_unicode(u,begin,end);
         }
-        
+
     private:
         base_converter_ptr cvt_;
         int max_len_;
@@ -390,10 +390,10 @@ namespace util {
     }
 
 
-    /// 
+    ///
     /// Install utf8 codecvt to UTF-16 or UTF-32 into locale \a in and return
-    /// new locale that is based on \a in and uses new facet. 
-    /// 
+    /// new locale that is based on \a in and uses new facet.
+    ///
     std::locale create_utf8_codecvt(std::locale const &in,character_facet_type type)
     {
         switch(type) {
@@ -417,7 +417,7 @@ namespace util {
     ///
     /// This function installs codecvt that can be used for conversion between single byte
     /// character encodings like ISO-8859-1, koi8-r, windows-1255 and Unicode code points,
-    /// 
+    ///
     /// Throws invalid_charset_error if the chacater set is not supported or isn't single byte character
     /// set
     std::locale create_simple_codecvt(std::locale const &in,std::string const &encoding,character_facet_type type)
@@ -446,7 +446,7 @@ namespace util {
 
 
 } // util
-} // locale 
+} // locale
 } // boost
 
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4

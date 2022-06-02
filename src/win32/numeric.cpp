@@ -33,7 +33,7 @@ namespace impl_win {
                 *out++ = s[i];
             return out;
         }
-        
+
         std::ostreambuf_iterator<char> write_it(std::ostreambuf_iterator<char> out,std::wstring const &s)
         {
             std::string tmp = conv::from_utf(s,"UTF-8");
@@ -52,7 +52,7 @@ public:
     typedef std::basic_string<CharType> string_type;
     typedef CharType char_type;
 
-    num_format(winlocale const &lc,size_t refs = 0) : 
+    num_format(winlocale const &lc,size_t refs = 0) :
         util::base_num_format<CharType>(refs),
         lc_(lc)
     {
@@ -88,7 +88,7 @@ private:
 template<typename CharType>
 class time_put_win : public std::time_put<CharType> {
 public:
-    time_put_win(winlocale const &lc, size_t refs = 0) : 
+    time_put_win(winlocale const &lc, size_t refs = 0) :
         std::time_put<CharType>(refs),
         lc_(lc)
     {
@@ -117,7 +117,7 @@ template<typename CharType>
 class num_punct_win : public std::numpunct<CharType> {
 public:
     typedef std::basic_string<CharType> string_type;
-    num_punct_win(winlocale const &lc,size_t refs = 0) : 
+    num_punct_win(winlocale const &lc,size_t refs = 0) :
         std::numpunct<CharType>(refs)
     {
         numeric_info np = wcsnumformat_l(lc) ;
@@ -135,7 +135,7 @@ BOOST_LOCALE_END_CONST_CONDITION
         if(decimal_point_.size() > 1)
             decimal_point_ = CharType('.');
     }
-    
+
     void to_str(std::wstring &s1,std::wstring &s2)
     {
         s2.swap(s1);
@@ -209,7 +209,7 @@ std::locale create_formatting(  std::locale const &in,
                                 character_facet_type type)
 {
         switch(type) {
-        case char_facet: 
+        case char_facet:
             return create_formatting_impl<char>(in,lc);
         case wchar_t_facet:
             return create_formatting_impl<wchar_t>(in,lc);
@@ -223,7 +223,7 @@ std::locale create_parsing( std::locale const &in,
                             character_facet_type type)
 {
         switch(type) {
-        case char_facet: 
+        case char_facet:
             return create_parsing_impl<char>(in,lc);
         case wchar_t_facet:
             return create_parsing_impl<wchar_t>(in,lc);
@@ -235,7 +235,7 @@ std::locale create_parsing( std::locale const &in,
 
 
 } // impl_std
-} // locale 
+} // locale
 } //boost
 
 

@@ -20,7 +20,7 @@ namespace impl_win {
 
 class utf8_collator : public collator<char> {
 public:
-    utf8_collator(winlocale lc,size_t refs = 0) : 
+    utf8_collator(winlocale lc,size_t refs = 0) :
         collator<char>(refs),
         lc_(lc)
     {
@@ -71,7 +71,7 @@ private:
 class utf16_collator : public collator<wchar_t> {
 public:
     typedef std::collate<wchar_t> wfacet;
-    utf16_collator(winlocale lc,size_t refs = 0) : 
+    utf16_collator(winlocale lc,size_t refs = 0) :
         collator<wchar_t>(refs),
         lc_(lc)
     {
@@ -121,7 +121,7 @@ std::locale create_collate( std::locale const &in,
 
 
 } // impl_std
-} // locale 
+} // locale
 } //boost
 
 

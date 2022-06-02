@@ -165,13 +165,13 @@ void test_by_char(std::locale const &l,std::locale const &lreal)
         std::cout << "[" << boost::locale::conv::from_utf(ss_ref.str(),"UTF-8") << "]\n" ;
         #endif
     }
-    
-    
+
+
     {
         std::cout << "- Testing as::date/time" << std::endl;
         ss_type ss;
         ss.imbue(l);
-        
+
         time_t a_date = 3600*24*(31+4); // Feb 5th
         time_t a_time = 3600*15+60*33; // 15:33:05
         time_t a_timesec = 13;
@@ -223,11 +223,11 @@ int main()
             else {
                 std::locale l1=gen(name),l2(real_name.c_str());
                 std::cout << "UTF-8" << std::endl;
-                if(name==real_name) 
+                if(name==real_name)
                     test_by_char<char,char>(l1,l2);
                 else
                     test_by_char<char,wchar_t>(l1,l2);
-                
+
                 std::cout << "Wide UTF-" << sizeof(wchar_t) * 8 << std::endl;
                 test_by_char<wchar_t,wchar_t>(l1,l2);
 
@@ -274,11 +274,11 @@ int main()
             else {
                 std::locale l1=gen(name),l2(real_name.c_str());
                 std::cout << "UTF-8" << std::endl;
-                if(name==real_name) 
+                if(name==real_name)
                     test_by_char<char,char>(l1,l2);
                 else
                     test_by_char<char,wchar_t>(l1,l2);
-                
+
                 std::cout << "Wide UTF-" << sizeof(wchar_t) * 8 << std::endl;
                 test_by_char<wchar_t,wchar_t>(l1,l2);
 
@@ -338,7 +338,7 @@ int main()
                 catch(...) {
                     fails = true;
                 }
-                
+
                 if(!fails) {
                     std::cout << "- No invalid UTF. No need to check"<<std::endl;
                 }
@@ -365,4 +365,4 @@ int main()
 
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 
-// boostinspect:noascii 
+// boostinspect:noascii

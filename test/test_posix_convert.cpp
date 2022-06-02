@@ -67,12 +67,12 @@ void test_char()
     else {
         std::cout << "- en_US.ISO8859-1 is not supported, skipping" << std::endl;
     }
-    
+
     name = "tr_TR.UTF-8";
     if(have_locale(name)) {
         std::cout << "Testing " << name << std::endl;
         locale_t cl = newlocale(LC_ALL_MASK,name.c_str(),0);
-        try { 
+        try {
             TEST(cl);
             if(towupper_l(L'i',cl) == 0x130) {
                 test_one<CharType>(gen(name),"i","i","İ");
@@ -86,9 +86,9 @@ void test_char()
             throw;
         }
         if(cl) freelocale(cl);
-        
+
     }
-    else 
+    else
     {
         std::cout << "- tr_TR.UTF-8 is not supported, skipping" << std::endl;
     }
@@ -119,4 +119,4 @@ int main()
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 
 
-// boostinspect:noascii 
+// boostinspect:noascii

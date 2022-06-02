@@ -64,8 +64,8 @@ namespace impl {
         hold_ptr<to_type> cvt_to_;
 
     };
-  
-  
+
+
     template<typename CharType>
     class uconv_from_utf : public converter_from_utf<CharType> {
     public:
@@ -89,7 +89,7 @@ namespace impl {
             cvt_to_.reset();
         }
 
-        std::string convert(CharType const *begin,CharType const *end) BOOST_OVERRIDE 
+        std::string convert(CharType const *begin,CharType const *end) BOOST_OVERRIDE
         {
             try {
                 return cvt_to_->std(cvt_from_->icu_checked(begin,end));
@@ -153,7 +153,7 @@ namespace impl {
 
 } // impl
 } // conv
-} // locale 
+} // locale
 } // boost
 
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4

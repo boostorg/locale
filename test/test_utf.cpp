@@ -75,7 +75,7 @@ void test_from_utf(CharType const * const s,unsigned codepoint)
     CharType const * const end = str_end(s);
 
     typedef utf_traits<CharType> tr;
-    
+
     BOOST_STATIC_ASSERT(tr::max_width == 4 / sizeof(CharType));
 
     TEST(tr::template decode<CharType const *>(cur,end) == codepoint);
@@ -296,4 +296,4 @@ int main()
 }
 
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
-// boostinspect:noascii 
+// boostinspect:noascii

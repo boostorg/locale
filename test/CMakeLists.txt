@@ -31,7 +31,7 @@ function(boost_locale_add_test name)
     set(ARG_SRC ${name}.cpp)
   endif()
   set(name ${PROJECT_NAME}-${name})
-  
+
   add_executable(${name} ${ARG_SRC})
   add_dependencies(tests ${name})
   target_link_libraries(${name} PRIVATE Boost::locale)

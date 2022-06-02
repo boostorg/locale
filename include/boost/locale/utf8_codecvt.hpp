@@ -18,12 +18,12 @@ namespace locale {
 
 ///
 /// \brief Geneneric utf8 codecvt facet, it allows to convert UTF-8 strings to UTF-16 and UTF-32 using wchar_t, char32_t and char16_t
-/// 
+///
 template<typename CharType>
-class utf8_codecvt : public generic_codecvt<CharType,utf8_codecvt<CharType> > 
+class utf8_codecvt : public generic_codecvt<CharType,utf8_codecvt<CharType> >
 {
 public:
-   
+
     struct state_type {};
 
     utf8_codecvt(size_t refs = 0) : generic_codecvt<CharType,utf8_codecvt<CharType> >(refs)
@@ -39,7 +39,7 @@ public:
     {
         return state_type();
     }
-    static utf::code_point to_unicode(state_type &,char const *&begin,char const *end) 
+    static utf::code_point to_unicode(state_type &,char const *&begin,char const *end)
     {
         char const *p=begin;
 
@@ -49,7 +49,7 @@ public:
         return c;
     }
 
-    static utf::code_point from_unicode(state_type &,utf::code_point u,char *begin,char const *end) 
+    static utf::code_point from_unicode(state_type &,utf::code_point u,char *begin,char const *end)
     {
         if(!utf::is_valid_codepoint(u))
             return utf::illegal;

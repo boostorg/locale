@@ -10,7 +10,7 @@
 
 #include <boost/locale/config.hpp>
 
-namespace boost { 
+namespace boost {
 namespace locale {
     ///
     /// \brief a smart pointer similar to std::auto_ptr but it is non-copyable and the
@@ -18,7 +18,7 @@ namespace locale {
     ///
     template<typename T>
     class hold_ptr {
-        hold_ptr(hold_ptr const &other); // non copyable 
+        hold_ptr(hold_ptr const &other); // non copyable
         hold_ptr const &operator=(hold_ptr const &other); // non assignable
     public:
         ///
@@ -33,7 +33,7 @@ namespace locale {
         ///
         /// Destroy smart pointer and the object it owns.
         ///
-        ~hold_ptr() 
+        ~hold_ptr()
         {
             delete ptr_;
         }
@@ -43,15 +43,15 @@ namespace locale {
         ///
         T const *get() const { return ptr_; }
         ///
-        /// Get a mutable pointer to the object 
+        /// Get a mutable pointer to the object
         ///
         T *get() { return ptr_; }
 
-        /// 
+        ///
         /// Get a const reference to the object
         ///
         T const &operator *() const { return *ptr_; }
-        /// 
+        ///
         /// Get a mutable reference to the object
         ///
         T &operator *() { return *ptr_; }
@@ -60,7 +60,7 @@ namespace locale {
         ///
         T const *operator->() const { return ptr_; }
         ///
-        /// Get a mutable pointer to the object 
+        /// Get a mutable pointer to the object
         ///
         T *operator->() { return ptr_; }
 

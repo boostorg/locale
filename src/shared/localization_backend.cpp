@@ -44,7 +44,7 @@ namespace boost {
                     all_backends_.push_back(v);
                 }
             }
-            impl() : 
+            impl() :
                 default_backends_(32,-1)
             {
             }
@@ -64,7 +64,7 @@ namespace boost {
                     for(unsigned i=0;i<default_backends_.size();i++)
                         default_backends_[i]=0;
                 }
-                else { 
+                else {
                     for(unsigned i=0;i<all_backends_.size();i++)
                         if(all_backends_[i].first == name)
                             return;
@@ -142,7 +142,7 @@ namespace boost {
                         return l;
                     if(unsigned(id) >= index_.size())
                         return l;
-                    if(index_[id]==-1) 
+                    if(index_[id]==-1)
                         return l;
                     return backends_[index_[id]]->install(l,category,type);
                 }
@@ -158,7 +158,7 @@ namespace boost {
 
 
 
-        localization_backend_manager::localization_backend_manager() : 
+        localization_backend_manager::localization_backend_manager() :
             pimpl_(new impl())
         {
         }
@@ -241,7 +241,7 @@ namespace boost {
             }
 
             struct init {
-                init() { 
+                init() {
                     localization_backend_manager mgr;
                     #ifdef BOOST_LOCALE_WITH_ICU
                     mgr.adopt_backend("icu",impl_icu::create_localization_backend());
@@ -254,7 +254,7 @@ namespace boost {
                     #ifndef BOOST_LOCALE_NO_WINAPI_BACKEND
                     mgr.adopt_backend("winapi",impl_win::create_localization_backend());
                     #endif
-                    
+
                     #ifndef BOOST_LOCALE_NO_STD_BACKEND
                     mgr.adopt_backend("std",impl_std::create_localization_backend());
                     #endif
@@ -282,4 +282,4 @@ namespace boost {
 
     } // locale
 } // boost
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 
+// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4

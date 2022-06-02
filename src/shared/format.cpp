@@ -27,7 +27,7 @@ namespace boost {
                 void (*imbuer)(void *,std::locale const &);
             };
 
-            format_parser::format_parser(std::ios_base &ios,void *cookie,void (*imbuer)(void *,std::locale const &)) : 
+            format_parser::format_parser(std::ios_base &ios,void *cookie,void (*imbuer)(void *,std::locale const &)) :
                 ios_(ios),
                 d(new data)
             {
@@ -92,7 +92,7 @@ namespace boost {
                 }
                 else if(key=="cur" || key=="currency") {
                     as::currency(ios_);
-                    if(value=="iso") 
+                    if(value=="iso")
                         as::currency_iso(ios_);
                     else if(value=="nat" || value=="national")
                         as::currency_national(ios_);
@@ -170,9 +170,9 @@ namespace boost {
                     std::string encoding=std::use_facet<info>(d->saved_locale).encoding();
                     generator gen;
                     gen.categories(formatting_facet);
-                   
+
                     std::locale new_loc;
-                    if(value.find('.')==std::string::npos) 
+                    if(value.find('.')==std::string::npos)
                         new_loc = gen(value + "." +  encoding);
                     else
                         new_loc = gen(value);

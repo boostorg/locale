@@ -41,7 +41,7 @@ namespace boost {
                                                 ///< If first day of week is Monday and the current day is Tuesday then setting
                                                 ///< the value to Sunday (1) would forward the date by 5 days forward and not backward
                                                 ///< by two days as it could be expected if the numbers were taken as is.
-                    day_of_week_in_month,       ///< Original number of the day of the week in month. For example 1st Sunday, 
+                    day_of_week_in_month,       ///< Original number of the day of the week in month. For example 1st Sunday,
                                                 ///< 2nd Sunday, etc. in Gregorian [1..5]
                     day_of_week_local,          ///< Local day of week, for example in France Monday is 1, in US Sunday is 1, [1..7]
                     hour,                       ///< 24 clock hour [0..23]
@@ -72,13 +72,13 @@ namespace boost {
                 ///
                 /// Create a period of specific type, default is invalid.
                 ///
-                period_type(marks::period_mark m = marks::invalid) : mark_(m) 
+                period_type(marks::period_mark m = marks::invalid) : mark_(m)
                 {
                 }
-               
+
                 ///
                 /// Get the value of marks::period_mark it was created with.
-                /// 
+                ///
                 marks::period_mark mark() const
                 {
                     return mark_;
@@ -233,7 +233,7 @@ namespace boost {
             ///
             /// Basic constructor
             ///
-            calendar_facet(size_t refs = 0) : std::locale::facet(refs) 
+            calendar_facet(size_t refs = 0) : std::locale::facet(refs)
             {
             }
             ///

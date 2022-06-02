@@ -39,11 +39,11 @@ int main()
     for(now=start; period::year(now) == current_year;) {
 
         // Print heading of month
-        if(calendar().is_gregorian()) 
+        if(calendar().is_gregorian())
             std::cout << format("{1,ftime='%B'}") % now <<std::endl;
         else
             std::cout << format("{1,ftime='%B'} ({1,ftime='%Y-%m-%d',locale=en} - {2,locale=en,ftime='%Y-%m-%d'})")
-                % now 
+                % now
                 % date_time(now,now.maximum(period::day())*period::day()) << std::endl;
 
         int first = calendar().first_day_of_week();
@@ -60,7 +60,7 @@ int main()
         for(int i=0;i<skip*9;i++)
             std::cout << ' ';
         for(;now / period::month() == current_month ;now += period::day()) {
-            std::cout << format("{1,w=8,ftime='%e'} ") % now;     
+            std::cout << format("{1,w=8,ftime='%e'} ") % now;
             if(now / period::day_of_week_local() == 7)
                 std::cout << std::endl;
         }

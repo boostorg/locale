@@ -76,7 +76,7 @@ void test_char()
             std::cout << "Standard library does not support this locale's case conversion correctly" << std::endl;
         }
     }
-    else 
+    else
     {
         std::cout << "- tr_TR.UTF-8 is not supported, skipping" << std::endl;
     }
@@ -115,4 +115,4 @@ int main()
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 
 
-// boostinspect:noascii 
+// boostinspect:noascii

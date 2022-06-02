@@ -35,7 +35,7 @@ void test_comp(std::locale l,std::basic_string<Char> left,std::basic_string<Char
         else if(expected == 0) {
             TEST(lt==rt);
         }
-        else 
+        else
             TEST(lt > rt);
         long lh=coll.hash(left.c_str(),left.c_str()+left.size());
         long rh=coll.hash(right.c_str(),right.c_str()+right.size());
@@ -53,7 +53,7 @@ void test_comp(std::locale l,std::basic_string<Char> left,std::basic_string<Char
         TEST(lt<rt);
     else if(expected == 0)
         TEST(lt==rt);
-    else 
+    else
         TEST(lt > rt);
     long lh=coll.hash(level,left.c_str(),left.c_str()+left.size());
     TEST(lh==coll.hash(level,left));
@@ -64,8 +64,8 @@ void test_comp(std::locale l,std::basic_string<Char> left,std::basic_string<Char
     else
         TEST(lh!=rh);
 
-}    
-        
+}
+
 #define TEST_COMP(c,_l,_r) test_comp<c>(l,_l,_r,level,expected)
 
 
@@ -136,4 +136,4 @@ int main()
 
 #endif // NOICU
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
-// boostinspect:noascii 
+// boostinspect:noascii

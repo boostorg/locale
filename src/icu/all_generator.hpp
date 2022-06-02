@@ -15,7 +15,7 @@ namespace boost {
         namespace impl_icu {
             struct cdata;
             std::locale create_convert(std::locale const &,cdata const &,character_facet_type); // ok
-            std::locale create_collate(std::locale const &,cdata const &,character_facet_type); // ok 
+            std::locale create_collate(std::locale const &,cdata const &,character_facet_type); // ok
             std::locale create_formatting(std::locale const &,cdata const &,character_facet_type); // ok
             std::locale create_parsing(std::locale const &,cdata const &,character_facet_type);  // ok
             std::locale create_codecvt(std::locale const &,std::string const &encoding,character_facet_type); // ok

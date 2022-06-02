@@ -40,7 +40,7 @@
 namespace boost {
 namespace locale {
 namespace impl_win {
-    
+
     struct numeric_info {
         std::wstring thousands_sep;
         std::wstring decimal_point;
@@ -66,14 +66,14 @@ namespace impl_win {
         return flags;
     }
 
-    
-  
-    #ifdef BOOST_LOCALE_WINDOWS_2000_API 
-    
+
+
+    #ifdef BOOST_LOCALE_WINDOWS_2000_API
+
     class winlocale{
     public:
-        winlocale() : 
-            lcid(0) 
+        winlocale() :
+            lcid(0)
         {
         }
 
@@ -81,9 +81,9 @@ namespace impl_win {
         {
             lcid = locale_to_lcid(name);
         }
-        
+
         unsigned lcid;
-        
+
         bool is_c() const
         {
             return lcid == 0;
@@ -96,7 +96,7 @@ namespace impl_win {
     /// Number Format
     ///
     ////////////////////////////////////////////////////////////////////////
-    
+
     inline numeric_info wcsnumformat_l(winlocale const &l)
     {
         numeric_info res;
@@ -111,9 +111,9 @@ namespace impl_win {
         static const int de_size = 4;
         static const int gr_size = 10;
 
-        wchar_t th[th_size]={0}; 
+        wchar_t th[th_size]={0};
         wchar_t de[de_size]={0};
-        wchar_t gr[gr_size]={0}; 
+        wchar_t gr[gr_size]={0};
 
         if( GetLocaleInfoW(lcid,LOCALE_STHOUSAND,th,th_size)==0
             || GetLocaleInfoW(lcid,LOCALE_SDECIMAL ,de,de_size)==0
@@ -203,21 +203,21 @@ namespace impl_win {
     ///
     ////////////////////////////////////////////////////////////////////////
 
-    
+
     inline std::wstring wcs_format_date_l(wchar_t const *format,SYSTEMTIME const *tm,winlocale const &l)
     {
         int len = GetDateFormatW(l.lcid,0,tm,format,0,0);
         std::vector<wchar_t> buf(len+1);
         GetDateFormatW(l.lcid,0,tm,format,&buf.front(),len);
-        return &buf.front(); 
+        return &buf.front();
     }
-    
+
     inline std::wstring wcs_format_time_l(wchar_t const *format,SYSTEMTIME const *tm,winlocale const &l)
     {
         int len = GetTimeFormatW(l.lcid,0,tm,format,0,0);
         std::vector<wchar_t> buf(len+1);
         GetTimeFormatW(l.lcid,0,tm,format,&buf.front(),len);
-        return &buf.front(); 
+        return &buf.front();
     }
 
     inline std::wstring wcsfold(wchar_t const *begin,wchar_t const *end)

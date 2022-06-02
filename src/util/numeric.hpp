@@ -69,12 +69,12 @@ public:
     typedef std::basic_string<CharType> string_type;
     typedef CharType char_type;
 
-    base_num_format(size_t refs = 0) : 
+    base_num_format(size_t refs = 0) :
         std::num_put<CharType>(refs)
     {
     }
-protected: 
-    
+protected:
+
 
     iter_type do_put (iter_type out, std::ios_base &ios, char_type fill, long val) const BOOST_OVERRIDE
     {
@@ -92,8 +92,8 @@ protected:
     {
         return do_real_put(out,ios,fill,val);
     }
-    
-    #ifndef BOOST_NO_LONG_LONG 
+
+    #ifndef BOOST_NO_LONG_LONG
     iter_type do_put (iter_type out, std::ios_base &ios, char_type fill, long long val) const BOOST_OVERRIDE
     {
         return do_real_put(out,ios,fill,val);
@@ -139,7 +139,7 @@ private:
             return format_time(out,ios,fill,static_cast<std::time_t>(val),info.date_time_pattern<char_type>());
         case flags::currency:
             {
-                bool nat =  info.currency_flags()==flags::currency_default 
+                bool nat =  info.currency_flags()==flags::currency_default
                             || info.currency_flags() == flags::currency_national;
                 bool intl = !nat;
                 return do_format_currency(intl,out,ios,fill,static_cast<long double>(val));
@@ -210,7 +210,7 @@ private:
             #else
             gmtime_r(&time,&tm);
             #endif
-            
+
             #if BOOST_OS_LINUX || BOOST_OS_BSD_FREE || defined(__APPLE__)
             // These have extra fields to specify timezone
             if(gmtoff!=0) {
@@ -224,13 +224,13 @@ private:
         std::use_facet<std::time_put<char_type> >(ios.getloc()).put(tmp_out,tmp_out,fill,&tm,format.c_str(),format.c_str()+format.size());
         string_type str = tmp_out.str();
         std::streamsize on_left=0,on_right = 0;
-        std::streamsize points = 
+        std::streamsize points =
             formatting_size_traits<char_type>::size(str,ios.getloc());
         if(points < ios.width()) {
             std::streamsize n = ios.width() - points;
-            
+
             std::ios_base::fmtflags flags = ios.flags() & std::ios_base::adjustfield;
-            
+
             //
             // we do not really know internal point, so we assume that it does not
             // exist. so according to the standard field should be right aligned
@@ -259,11 +259,11 @@ template<typename CharType>
 class base_num_parse : public std::num_get<CharType>
 {
 public:
-    base_num_parse(size_t refs = 0) : 
+    base_num_parse(size_t refs = 0) :
         std::num_get<CharType>(refs)
     {
     }
-protected: 
+protected:
     typedef typename std::num_get<CharType>::iter_type iter_type;
     typedef std::basic_string<CharType> string_type;
     typedef CharType char_type;
@@ -303,7 +303,7 @@ protected:
         return do_real_get(in,end,ios,err,val);
     }
 
-    #ifndef BOOST_NO_LONG_LONG 
+    #ifndef BOOST_NO_LONG_LONG
     iter_type do_get (iter_type in, iter_type end, std::ios_base &ios,std::ios_base::iostate &err,long long &val) const BOOST_OVERRIDE
     {
         return do_real_get(in,end,ios,err,val);
@@ -317,7 +317,7 @@ protected:
     #endif
 
 private:
-    
+
     template<typename ValueType>
     iter_type do_real_get(iter_type in,iter_type end,std::ios_base &ios,std::ios_base::iostate &err,ValueType &val) const
     {
@@ -383,7 +383,7 @@ private:
 };
 
 } // util
-} // locale 
+} // locale
 } //boost
 
 

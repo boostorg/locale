@@ -19,7 +19,7 @@
 #include "icu_util.hpp"
 
 #ifdef BOOST_MSVC
-#  pragma warning(disable : 4244) // loose data 
+#  pragma warning(disable : 4244) // loose data
 #endif
 
 namespace boost {
@@ -27,12 +27,12 @@ namespace locale {
 namespace impl_icu {
     class uconv_converter : public util::base_converter {
     public:
-       
+
         uconv_converter(std::string const &encoding) :
             encoding_(encoding)
         {
             UErrorCode err=U_ZERO_ERROR;
-            
+
             // No need to check err each time, this
             // is how ICU works.
             cvt_ = ucnv_open(encoding.c_str(),&err);
@@ -44,10 +44,10 @@ namespace impl_icu {
                     ucnv_close(cvt_);
                 throw conv::invalid_charset_error(encoding);
             }
-            
+
             max_len_ = ucnv_getMaxCharSize(cvt_);
         }
-        
+
         ~uconv_converter()
         {
             ucnv_close(cvt_);
@@ -116,7 +116,7 @@ namespace impl_icu {
         UConverter *cvt_;
         int max_len_;
     };
-    
+
     util::base_converter *create_uconv_converter(std::string const &encoding)
     {
         hold_ptr<util::base_converter> cvt;
@@ -152,7 +152,7 @@ namespace impl_icu {
     }
 
 } // impl_icu
-} // locale 
+} // locale
 } // boost
 
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4

@@ -61,11 +61,11 @@ namespace boost {
 
             //
             // This is a workaround for an ICU timezone detection bug.
-            // It is \b very ICU specific and should not be used 
+            // It is \b very ICU specific and should not be used
             // in general. It is also designed to work only on
             // specific patforms: Linux, BSD and Apple, where this bug may actually
             // occur
-            // 
+            //
             namespace {
 
                 // Under BSD, Linux and Mac OS X dirent has normal size
@@ -99,7 +99,7 @@ namespace boost {
                     struct dirent de;
                     struct dirent *read_result;
                 };
-               
+
                 bool files_equal(std::string const &left,std::string const &right)
                 {
                     char l[256],r[256];
@@ -122,19 +122,19 @@ namespace boost {
                         return false;
                     return true;
                 }
-                
+
                 std::string find_file_in(std::string const &ref,size_t size,std::string const &dir)
                 {
                     directory d(dir.c_str());
                     if(!d.is_open())
                         return std::string();
-                
+
                     char const *name=0;
                     while((name=d.next())!=0) {
                         std::string file_name = name;
-                        if( file_name == "." 
-                            || file_name ==".." 
-                            || file_name=="posixrules" 
+                        if( file_name == "."
+                            || file_name ==".."
+                            || file_name=="posixrules"
                             || file_name=="localtime")
                         {
                             continue;
@@ -147,7 +147,7 @@ namespace boost {
                                 if(!res.empty())
                                     return file_name + "/" + res;
                             }
-                            else { 
+                            else {
                                 if(size_t(st.st_size) == size && files_equal(path,ref)) {
                                     return file_name;
                                 }
@@ -161,7 +161,7 @@ namespace boost {
                 // algorithm... just it ignores localtime
                 std::string detect_correct_time_zone()
                 {
-                     
+
                     char const *tz_dir = "/usr/share/zoneinfo";
                     char const *tz_file = "/etc/localtime";
 
@@ -177,7 +177,7 @@ namespace boost {
                     return r;
                 }
 
-                
+
                 //
                 // Using pthread as:
                 // - This bug is relevant for only Linux, BSD, Mac OS X and

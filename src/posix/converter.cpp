@@ -56,13 +56,13 @@ struct case_traits<wchar_t> {
 
 
 template<typename CharType>
-class std_converter : public converter<CharType> 
+class std_converter : public converter<CharType>
 {
 public:
     typedef CharType char_type;
     typedef std::basic_string<char_type> string_type;
     typedef std::ctype<char_type> ctype_type;
-    std_converter(boost::shared_ptr<locale_t> lc,size_t refs = 0) : 
+    std_converter(boost::shared_ptr<locale_t> lc,size_t refs = 0) :
         converter<CharType>(refs),
         lc_(lc)
     {
@@ -99,7 +99,7 @@ private:
 
 class utf8_converter : public converter<char> {
 public:
-    utf8_converter(boost::shared_ptr<locale_t> lc,size_t refs = 0) : 
+    utf8_converter(boost::shared_ptr<locale_t> lc,size_t refs = 0) :
         converter<char>(refs),
         lc_(lc)
     {
@@ -116,7 +116,7 @@ public:
                     wres+=towupper_l(tmp[i],*lc_);
                 return conv::from_utf<wchar_t>(wres,"UTF-8");
             }
-            
+
         case lower_case:
         case case_folding:
             {
@@ -140,7 +140,7 @@ std::locale create_convert( std::locale const &in,
                             character_facet_type type)
 {
         switch(type) {
-        case char_facet: 
+        case char_facet:
             {
                 std::string encoding = nl_langinfo_l(CODESET,*lc);
                 for(unsigned i=0;i<encoding.size();i++)
@@ -160,6 +160,6 @@ std::locale create_convert( std::locale const &in,
 
 
 } // namespace impl_std
-} // locale 
+} // locale
 } // boost
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4

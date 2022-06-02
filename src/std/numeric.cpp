@@ -25,7 +25,7 @@ namespace impl_std {
 template<typename CharType>
 class time_put_from_base : public std::time_put<CharType> {
 public:
-    time_put_from_base(std::locale const &base, size_t refs = 0) : 
+    time_put_from_base(std::locale const &base, size_t refs = 0) :
         std::time_put<CharType>(refs),
         base_(base)
     {
@@ -44,7 +44,7 @@ private:
 
 class utf8_time_put_from_wide : public std::time_put<char> {
 public:
-    utf8_time_put_from_wide(std::locale const &base, size_t refs = 0) : 
+    utf8_time_put_from_wide(std::locale const &base, size_t refs = 0) :
         std::time_put<char>(refs),
         base_(base)
     {
@@ -71,14 +71,14 @@ public:
     {
         typedef std::numpunct<wchar_t> wfacet_type;
         wfacet_type const &wfacet = std::use_facet<wfacet_type>(base);
-        
+
         truename_ = conv::from_utf<wchar_t>(wfacet.truename(),"UTF-8");
         falsename_ = conv::from_utf<wchar_t>(wfacet.falsename(),"UTF-8");
-        
+
         wchar_t tmp_decimal_point = wfacet.decimal_point();
         wchar_t tmp_thousands_sep = wfacet.thousands_sep();
         std::string tmp_grouping = wfacet.grouping();
-        
+
         if( 32 <= tmp_thousands_sep && tmp_thousands_sep <=126 &&
             32 <= tmp_decimal_point && tmp_decimal_point <=126)
         {
@@ -131,7 +131,7 @@ private:
     char thousands_sep_;
     char decimal_point_;
     std::string grouping_;
-    
+
 };
 
 template<bool Intl>
@@ -230,7 +230,7 @@ private:
     std::string negative_sign_;
     int frac_digits_;
     std::money_base::pattern pos_format_,neg_format_;
-    
+
 };
 
 class utf8_numpunct : public std::numpunct_byname<char> {
@@ -315,11 +315,11 @@ std::locale create_formatting(  std::locale const &in,
                                 utf8_support utf)
 {
         switch(type) {
-        case char_facet: 
+        case char_facet:
             {
                 if(utf == utf8_from_wide ) {
                     std::locale base = std::locale(locale_name.c_str());
-                    
+
                     std::locale tmp = std::locale(in,new utf8_time_put_from_wide(base));
                     tmp = std::locale(tmp,new utf8_numpunct_from_wide(base));
                     tmp = std::locale(tmp,new utf8_moneypunct_from_wide<true>(base));
@@ -388,7 +388,7 @@ std::locale create_parsing( std::locale const &in,
             {
                 if(utf == utf8_from_wide ) {
                     std::locale base = std::locale::classic();
-                    
+
                     base = std::locale(base,new std::numpunct_byname<wchar_t>(locale_name.c_str()));
                     base = std::locale(base,new std::moneypunct_byname<wchar_t,true>(locale_name.c_str()));
                     base = std::locale(base,new std::moneypunct_byname<wchar_t,false>(locale_name.c_str()));
@@ -412,7 +412,7 @@ std::locale create_parsing( std::locale const &in,
                     tmp = std::locale(tmp,new utf8_moneypunct_from_wide<false>(base));
                     return std::locale(tmp,new util::base_num_parse<char>());
                 }
-                else 
+                else
                 {
                     std::locale tmp = create_basic_parsing<char>(in,locale_name);
                     tmp = std::locale(in,new util::base_num_parse<char>());
@@ -448,7 +448,7 @@ std::locale create_parsing( std::locale const &in,
 
 
 } // impl_std
-} // locale 
+} // locale
 } //boost
 
 

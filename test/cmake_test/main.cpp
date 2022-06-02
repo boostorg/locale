@@ -33,6 +33,6 @@ int main()
     {
         std::cout << "Failed creation..." << std::endl;
     }
-    
+
     return cvt.get() ? 0 : 1;
 }
