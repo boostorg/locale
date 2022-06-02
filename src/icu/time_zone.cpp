@@ -7,6 +7,7 @@
 //
 #define BOOST_LOCALE_SOURCE
 #include "time_zone.hpp"
+#include <boost/predef/os.h>
 
 //
 // Bug - when ICU tries to find a file that is equivalent to /etc/localtime it finds /usr/share/zoneinfo/localtime
@@ -19,7 +20,7 @@
 //
 
 #if U_ICU_VERSION_MAJOR_NUM == 4 && (U_ICU_VERSION_MINOR_NUM * 100 + U_ICU_VERSION_PATCHLEVEL_NUM) <= 402
-# if defined(__linux) || defined(__FreeBSD__) || defined(__APPLE__)
+# if BOOST_OS_LINUX || BOOST_OS_BSD_FREE || defined(__APPLE__)
 #   define BOOST_LOCALE_WORKAROUND_ICU_BUG
 # endif
 #endif

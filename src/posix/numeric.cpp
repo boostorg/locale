@@ -12,6 +12,7 @@
 #include <boost/locale/encoding.hpp>
 #include <boost/locale/formatting.hpp>
 #include <boost/locale/generator.hpp>
+#include <boost/predef/os.h>
 #include <boost/shared_ptr.hpp>
 #include <cctype>
 #include <cerrno>
@@ -31,7 +32,7 @@
 #include "all_generator.hpp"
 
 
-#if defined(__linux) || defined(__APPLE__)
+#if BOOST_OS_LINUX || defined(__APPLE__)
 #define BOOST_LOCALE_HAVE_WCSFTIME_L
 #endif
 

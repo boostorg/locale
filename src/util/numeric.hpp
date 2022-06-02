@@ -9,6 +9,7 @@
 #define BOOST_LOCALE_IMPL_UTIL_NUMERIC_HPP
 #include <boost/locale/info.hpp>
 #include <boost/locale/formatting.hpp>
+#include <boost/predef/os.h>
 #include <ctime>
 #include <cstdlib>
 #include <ios>
@@ -189,7 +190,7 @@ private:
     {
         std::string tz = ios_info::get(ios).time_zone();
         std::tm tm;
-        #if defined(__linux) || defined(__FreeBSD__) || defined(__APPLE__) 
+        #if BOOST_OS_LINUX || BOOST_OS_BSD_FREE || defined(__APPLE__)
         std::vector<char> tmp_buf(tz.c_str(),tz.c_str()+tz.size()+1);
         #endif
         if(tz.empty()) {
@@ -210,7 +211,7 @@ private:
             gmtime_r(&time,&tm);
             #endif
             
-            #if defined(__linux) || defined(__FreeBSD__) || defined(__APPLE__) 
+            #if BOOST_OS_LINUX || BOOST_OS_BSD_FREE || defined(__APPLE__)
             // These have extra fields to specify timezone
             if(gmtoff!=0) {
                 // bsd and apple want tm_zone be non-const
