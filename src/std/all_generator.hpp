@@ -45,7 +45,7 @@ namespace boost {
             std::locale create_codecvt( std::locale const &in,
                                         std::string const &locale_name,
                                         character_facet_type type,
-                                        utf8_support utf = utf8_none); 
+                                        utf8_support utf = utf8_none);
 
         }
     }

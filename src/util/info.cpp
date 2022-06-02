@@ -60,7 +60,7 @@ namespace util {
         locale_data d;
         std::string name_;
     };
-    
+
     std::locale create_info(std::locale const &in,std::string const &name)
     {
         return std::locale(in,new simple_info(name));
@@ -68,7 +68,7 @@ namespace util {
 
 
 } // util
-} // locale 
+} // locale
 } //boost
 
 

@@ -72,7 +72,7 @@ namespace boost {
         {
             d->chars=t;
         }
-        
+
         character_facet_type generator::characters() const
         {
             return d->chars;
@@ -83,7 +83,7 @@ namespace boost {
             if(std::find(d->domains.begin(),d->domains.end(),domain) == d->domains.end())
                 d->domains.push_back(domain);
         }
-        
+
         void generator::set_default_messages_domain(std::string const &domain)
         {
             std::vector<std::string>::iterator p;
@@ -171,11 +171,11 @@ namespace boost {
         {
             return d->caching_enabled;
         }
-        void generator::locale_cache_enabled(bool enabled) 
+        void generator::locale_cache_enabled(bool enabled)
         {
             d->caching_enabled = enabled;
         }
-        
+
         void generator::set_all_options(localization_backend& backend,std::string const &id) const
         {
             backend.set_option("locale",id);
@@ -186,7 +186,7 @@ namespace boost {
             for(size_t i=0;i<d->paths.size();i++)
                 backend.set_option("message_path",d->paths[i]);
         }
-        
+
     } // locale
 } // boost
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 
+// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4

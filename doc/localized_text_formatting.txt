@@ -51,7 +51,7 @@ The syntax is described by following grammar:
     parameters: parameter | parameter ',' parameters;
     parameter : key ["=" value] ;
     key : [0-9a-zA-Z<>]+ ;
-    value : ascii-string-excluding-"}"-and="," | local-string ; 
+    value : ascii-string-excluding-"}"-and="," | local-string ;
     local-string : quoted-text | quoted-text local-string;
     quoted-text : '[^']*' ;
 \endverbatim

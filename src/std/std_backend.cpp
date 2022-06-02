@@ -28,16 +28,16 @@
 
 namespace boost {
 namespace locale {
-namespace impl_std { 
-    
+namespace impl_std {
+
     class std_localization_backend : public localization_backend {
     public:
-        std_localization_backend() : 
+        std_localization_backend() :
             invalid_(true),
             use_ansi_encoding_(false)
         {
         }
-        std_localization_backend(std_localization_backend const &other) : 
+        std_localization_backend(std_localization_backend const &other) :
             localization_backend(),
             paths_(other.paths_),
             domains_(other.domains_),
@@ -100,8 +100,8 @@ namespace impl_std {
                     utf_mode_ = utf8_none;
                 }
                 #if defined(BOOST_WINDOWS)
-                else if(loadable(win_name) 
-                        && win_codepage == conv::impl::encoding_to_windows_codepage(data_.encoding.c_str())) 
+                else if(loadable(win_name)
+                        && win_codepage == conv::impl::encoding_to_windows_codepage(data_.encoding.c_str()))
                 {
                     name_ = win_name;
                     utf_mode_ = utf8_none;
@@ -121,7 +121,7 @@ namespace impl_std {
                 #endif
             }
         }
-        
+
         #if defined(BOOST_WINDOWS)
         std::pair<std::string,int> to_windows_name(std::string const &l)
         {
@@ -137,7 +137,7 @@ namespace impl_std {
                 lc_name += "_";
                 lc_name += win_country;
             }
-            
+
             res.first = lc_name;
 
             if(GetLocaleInfoA(lcid,LOCALE_IDEFAULTANSICODEPAGE,win_codepage,sizeof(win_codepage))!=0)
@@ -145,7 +145,7 @@ namespace impl_std {
             return res;
         }
         #endif
-        
+
         bool loadable(std::string name)
         {
             try {
@@ -156,7 +156,7 @@ namespace impl_std {
                 return false;
             }
         }
-        
+
         std::locale install(std::locale const &base,
                                     locale_category_type category,
                                     character_facet_type type = nochar_facet) BOOST_OVERRIDE
@@ -222,7 +222,7 @@ namespace impl_std {
         bool invalid_;
         bool use_ansi_encoding_;
     };
-    
+
     localization_backend *create_localization_backend()
     {
         return new std_localization_backend();
@@ -231,4 +231,4 @@ namespace impl_std {
 }  // impl icu
 }  // locale
 }  // boost
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 
+// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4

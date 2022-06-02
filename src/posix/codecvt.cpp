@@ -29,7 +29,7 @@ namespace impl_posix {
 #ifdef BOOST_LOCALE_WITH_ICONV
     class mb2_iconv_converter : public util::base_converter {
     public:
-       
+
         mb2_iconv_converter(std::string const &encoding) :
             encoding_(encoding),
             to_utf_((iconv_t)(-1)),
@@ -55,7 +55,7 @@ namespace impl_posix {
                         first_byte_table.push_back(obuf[0]);
                         continue;
                     }
-                    
+
                     // Test if this is illegal first byte or incomplete
                     in = ibuf;
                     insize = 1;
@@ -63,8 +63,8 @@ namespace impl_posix {
                     outsize = 8;
                     call_iconv(d,0,0,0,0);
                     size_t res = call_iconv(d,&in,&insize,&out,&outsize);
-                    
-                    // Now if this single byte starts a sequence we add incomplete 
+
+                    // Now if this single byte starts a sequence we add incomplete
                     // to know to ask that we need two bytes, othewise it may only be
                     // illegal
 
@@ -94,7 +94,7 @@ namespace impl_posix {
             from_utf_((iconv_t)(-1))
         {
         }
-        
+
         ~mb2_iconv_converter()
         {
             if(to_utf_ != (iconv_t)(-1))
@@ -117,7 +117,7 @@ namespace impl_posix {
         {
             if(begin == end)
                 return incomplete;
-            
+
             unsigned char seq0 = *begin;
             uint32_t index = (*first_byte_table_)[seq0];
             if(index == illegal)
@@ -128,7 +128,7 @@ namespace impl_posix {
             }
             else if(begin+1 == end)
                 return incomplete;
-            
+
             open(to_utf_,utf32_encoding(),encoding_.c_str());
 
             // maybe illegal or may be double byte
@@ -244,7 +244,7 @@ namespace impl_posix {
     }
 
 } // impl_posix
-} // locale 
+} // locale
 } // boost
 
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4

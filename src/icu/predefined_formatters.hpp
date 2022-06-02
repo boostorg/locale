@@ -24,7 +24,7 @@
 
 namespace boost {
 namespace locale {
-    namespace impl_icu {        
+    namespace impl_icu {
 
         class icu_formatters_cache : public std::locale::facet {
         public:
@@ -35,7 +35,7 @@ namespace locale {
                 locale_(locale)
             {
 
-                static const icu::DateFormat::EStyle styles[4] = { 
+                static const icu::DateFormat::EStyle styles[4] = {
                     icu::DateFormat::kShort,
                     icu::DateFormat::kMedium,
                     icu::DateFormat::kLong,
@@ -145,7 +145,7 @@ namespace locale {
                 if(U_FAILURE(err))
                     throw std::runtime_error("Failed to create a formatter");
             }
-            
+
             icu::UnicodeString date_format_[4];
             icu::UnicodeString time_format_[4];
             icu::UnicodeString date_time_format_[4][4];
@@ -160,14 +160,14 @@ namespace locale {
                     icu::DateFormat::kMedium,
                     icu::DateFormat::kMedium,
                     locale_));
-                
+
                 if(dynamic_cast<icu::SimpleDateFormat *>(fmt.get())) {
                     p = static_cast<icu::SimpleDateFormat *>(fmt.release());
                     date_formatter_.reset(p);
                 }
                 return p;
             }
-        
+
         private:
 
             mutable boost::thread_specific_ptr<icu::NumberFormat>    number_format_[fmt_count];

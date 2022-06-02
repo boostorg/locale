@@ -17,7 +17,7 @@ namespace util {
     std::locale install_gregorian_calendar(std::locale const &in,std::string const &terr);
 
 } // util
-} // locale 
+} // locale
 } //boost
 
 

@@ -15,7 +15,7 @@
 namespace boost {
     namespace locale {
 
-        ios_info::string_set::string_set() : 
+        ios_info::string_set::string_set() :
             type(0),
             size(0),
             ptr(0)
@@ -39,14 +39,14 @@ namespace boost {
                 type=0;
             }
         }
-        
+
         void ios_info::string_set::swap(string_set &other)
         {
             std::swap(type,other.type);
             std::swap(size,other.size);
             std::swap(ptr,other.ptr);
         }
-        
+
         ios_info::string_set const &ios_info::string_set::operator=(string_set const &other)
         {
             if(this!=&other) {
@@ -58,7 +58,7 @@ namespace boost {
 
         struct ios_info::data {};
 
-        ios_info::ios_info() : 
+        ios_info::ios_info() :
             flags_(0),
             domain_id_(0),
             d(0)
@@ -68,7 +68,7 @@ namespace boost {
         ios_info::~ios_info()
         {
         }
-        
+
         ios_info::ios_info(ios_info const &other)
         {
             flags_ = other.flags_;
@@ -89,23 +89,23 @@ namespace boost {
             return *this;
         }
 
-        void ios_info::display_flags(uint64_t f) 
+        void ios_info::display_flags(uint64_t f)
         {
             flags_ = (flags_ & ~uint64_t(flags::display_flags_mask)) | f;
         }
-        void ios_info::currency_flags(uint64_t f) 
+        void ios_info::currency_flags(uint64_t f)
         {
             flags_ = (flags_ & ~uint64_t(flags::currency_flags_mask)) | f;
         }
-        void ios_info::date_flags(uint64_t f) 
+        void ios_info::date_flags(uint64_t f)
         {
             flags_ = (flags_ & ~uint64_t(flags::date_flags_mask)) | f;
         }
-        void ios_info::time_flags(uint64_t f) 
+        void ios_info::time_flags(uint64_t f)
         {
             flags_ = (flags_ & ~uint64_t(flags::time_flags_mask)) | f;
         }
-        
+
         void ios_info::domain_id(int id)
         {
             domain_id_ = id;
@@ -130,7 +130,7 @@ namespace boost {
         {
             return flags_ & flags::date_flags_mask;
         }
-        
+
         uint64_t ios_info::time_flags() const
         {
             return flags_ & flags::time_flags_mask;
@@ -151,7 +151,7 @@ namespace boost {
             return datetime_;
         }
 
-        
+
         ios_info::string_set &ios_info::date_time_pattern_set()
         {
             return datetime_;

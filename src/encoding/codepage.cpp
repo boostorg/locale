@@ -32,7 +32,7 @@ namespace boost {
     namespace locale {
         namespace conv {
             namespace impl {
-                
+
                 std::string convert_between(char const *begin,
                                             char const *end,
                                             char const *to_charset,
@@ -125,12 +125,12 @@ namespace boost {
                     }
                     return charset;
                 }
-                
 
-            } // impl 
+
+            } // impl
 
             using namespace impl;
-            
+
             std::string between(char const *begin,char const *end,
                                 std::string const &to_charset,std::string const &from_charset,method_type how)
             {

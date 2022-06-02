@@ -21,7 +21,7 @@
 #endif
 
 #ifdef BOOST_MSVC
-#  pragma warning(disable : 4244) // loose data 
+#  pragma warning(disable : 4244) // loose data
 #endif
 
 #define RESET() do { time_point = base_time_point; ss.str(""); } while(0)
@@ -34,9 +34,9 @@ int main()
     try {
         using namespace boost::locale;
         using namespace boost::locale::period;
-        std::string def[] = { 
+        std::string def[] = {
         #ifdef BOOST_LOCALE_WITH_ICU
-            "icu" , 
+            "icu" ,
         #endif
         #ifndef BOOST_LOCALE_NO_STD_BACKEND
             "std" ,
@@ -55,16 +55,16 @@ int main()
             std::cout << "Testing for backend: " << def[type] << std::endl;
             std::string backend_name = def[type];
             {
- 
+
                 boost::locale::generator g;
 
                 std::locale loc=g("en_US.UTF-8");
 
                 std::locale::global(loc);
-                
+
                 std::string tz("GMT");
                 time_zone::global(tz);
-                calendar cal(loc,tz); 
+                calendar cal(loc,tz);
 
                 TEST(calendar() == cal);
                 TEST(calendar(loc) == cal);
@@ -86,15 +86,15 @@ int main()
                 std::ostringstream ss;
                 ss.imbue(loc);
                 ss<<boost::locale::as::time_zone(tz);
-                
+
                 date_time time_point;
-                
+
                 time_point=year(1970) + february() + day(5);
 
                 ss << as::ftime("%Y-%m-%d")<< time_point;
 
                 TEST(ss.str() == "1970-02-05");
-                time_point = 3 * hour_12() + 1 * am_pm() + 33 * minute() + 13 * second(); 
+                time_point = 3 * hour_12() + 1 * am_pm() + 33 * minute() + 13 * second();
                 ss.str("");
                 ss << as::ftime("%Y-%m-%d %H:%M:%S") << time_point;
                 TEST( ss.str() == "1970-02-05 15:33:13"); ss.str("");
@@ -121,7 +121,7 @@ int main()
                 TESTEQSR( time_point, "1970-02-05 15:32:13");
 
                 time_point <<= minute() * 30;
-                TESTEQSR( time_point, "1970-02-05 15:03:13"); 
+                TESTEQSR( time_point, "1970-02-05 15:03:13");
 
                 time_point >>= minute(40);
                 TESTEQSR( time_point, "1970-02-05 15:53:13");
@@ -143,9 +143,9 @@ int main()
                 TEST( (time_point + 2* month()- (time_point+month())) / day() == 31);
                 TEST( day(time_point + 2* month()- (time_point+month())) == 31);
 
-                TESTEQSR( time_point + hour(), "1970-02-05 16:33:13"); 
+                TESTEQSR( time_point + hour(), "1970-02-05 16:33:13");
                 TESTEQSR( time_point - hour(2), "1970-02-05 13:33:13");
-                TESTEQSR( time_point >> minute(), "1970-02-05 15:32:13"); 
+                TESTEQSR( time_point >> minute(), "1970-02-05 15:32:13");
                 TESTEQSR( time_point << second(), "1970-02-05 15:33:14");
 
                 TEST(time_point == time_point);
@@ -194,10 +194,10 @@ int main()
                 TEST(time_point.get(week_of_year()) == 2);
                 TEST(time_point.get(week_of_month()) == 2);
                 time_point = february() + day() * 2;
-                
+
 
                 TEST(time_point.get(week_of_year()) == 6);
-               
+
                 if(backend_name!="icu" || BOOST_ICU_VER<408 || BOOST_ICU_VER > 6000) {
                     TEST(time_point.get(week_of_month()) == 1);
                 }
@@ -207,16 +207,16 @@ int main()
                 }
 
                 time_point = year(2010) + january() + day() * 3;
-                
+
                 if(backend_name!="icu" || BOOST_ICU_VER<408 || BOOST_ICU_VER > 6000) {
                     TEST(time_point.get(week_of_year()) == 53);
                 }
                 else {
                     TEST(time_point.get(week_of_year()) == 1);
                 }
-                
+
                 time_point = year()*2010 + january() + day() * 4;
-                
+
                 if(backend_name!="icu" || BOOST_ICU_VER<408 || BOOST_ICU_VER > 6000) {
                     TEST(time_point.get(week_of_year()) == 1);
                 }
@@ -224,7 +224,7 @@ int main()
                     TEST(time_point.get(week_of_year()) == 2);
                 }
                 time_point = year()*2010 + january() + day() * 10;
-                
+
                 if(backend_name!="icu" || BOOST_ICU_VER<408 || BOOST_ICU_VER > 6000) {
                     TEST(time_point.get(week_of_year()) == 1);
                 }
@@ -249,7 +249,7 @@ int main()
                 TEST(date_time(year()* 1984 + february() + day()).get(week_of_year())==5);
                 TEST(time_point.get(week_of_month()) == 1);
                 RESET();
-                
+
                 // Make sure we don't get year() < 1970 so the test would
                 // work on windows where mktime supports positive time_t
                 // only
@@ -279,7 +279,7 @@ int main()
                 TEST(time_point.get(year()) == 2011);
                 TEST(time_point.get(month()) == 2); // march
                 TEST(time_point.get(day()) == 5);
-                
+
                 time_point = tmp_save;
 
                 time_point = year() * 2011 + february() + day() * 5;
@@ -299,4 +299,4 @@ int main()
 
 }
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
-// boostinspect:noascii 
+// boostinspect:noascii

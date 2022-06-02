@@ -9,7 +9,7 @@
 
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 filetype=cpp.doxygen
 /*!
-\page collation Collation 
+\page collation Collation
 
 Boost.Locale provides a \ref boost::locale::collator "collator" class, derived from \c std::collate, that adds support for
 primary, secondary, tertiary, quaternary and identical comparison levels. They can be approximately defined as:

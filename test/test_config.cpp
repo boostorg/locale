@@ -7,7 +7,7 @@
 //
 
 #ifdef _MSC_VER
-#define _CRT_SECURE_NO_WARNINGS 
+#define _CRT_SECURE_NO_WARNINGS
 #endif
 
 #include <boost/locale.hpp>
@@ -137,4 +137,4 @@ int main()
 }
 
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
-// boostinspect:noascii 
+// boostinspect:noascii

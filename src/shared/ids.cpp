@@ -47,7 +47,7 @@ namespace boost {
 
         #endif
 
-        namespace boundary {        
+        namespace boundary {
 
             std::locale::id boundary_indexing<char>::id;
             boundary_indexing<char>::~boundary_indexing() {}

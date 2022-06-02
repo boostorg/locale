@@ -53,7 +53,7 @@ BOOL CALLBACK proc(char *s)
         if(ss.fail() || !ss.eof()) {
             return FALSE;
         }
-            
+
         char iso_639_lang[16];
         char iso_3166_country[16];
         if(GetLocaleInfoA(lcid,LOCALE_SISO639LANGNAME,iso_639_lang,sizeof(iso_639_lang))==0)
@@ -98,7 +98,7 @@ unsigned locale_to_lcid(std::string const &locale_name)
 {
     if(locale_name.empty()) {
         return LOCALE_USER_DEFAULT;
-    } 
+    }
     boost::locale::util::locale_data d;
     d.parse(locale_name);
     std::string id = d.language;
@@ -112,7 +112,7 @@ unsigned locale_to_lcid(std::string const &locale_name)
 
     table_type const &tbl = get_ready_lcid_table();
     table_type::const_iterator p = tbl.find(id);
-    
+
     unsigned lcid = 0;
     if(p!=tbl.end())
         lcid = p->second;

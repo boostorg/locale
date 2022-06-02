@@ -24,9 +24,9 @@ int main()
         cout << "boundary detection not implemented in this environment" << endl;
         return 0;
     }
-    locale::global(loc); 
+    locale::global(loc);
     cout.imbue(loc);
-    
+
 
     string text="Hello World! あにま! Linux2.6 and Windows7 is word and number. שָלוֹם עוֹלָם!";
 
@@ -70,7 +70,7 @@ int main()
         cout<<"|" <<*p ;
     }
     cout<<"|\n\n";
-    
+
 }
 
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4

@@ -50,7 +50,7 @@ void test_word_container(Iterator begin,Iterator end,
     )
 {
     for(int sm=(bt == lb::word ? 31 : 3 ) ;sm>=0;sm--) {
-        unsigned mask = 
+        unsigned mask =
               ((sm & 1 ) != 0) * 0xF
             + ((sm & 2 ) != 0) * 0xF0
             + ((sm & 4 ) != 0) * 0xF00
@@ -96,7 +96,7 @@ void test_word_container(Iterator begin,Iterator end,
 
             map.rule(mask);
 
-            {        
+            {
                 unsigned i=0;
                 iter_type p;
                 map.full_select(false);
@@ -104,7 +104,7 @@ void test_word_container(Iterator begin,Iterator end,
                     TEST(p->str()==chunks[i]);
                     TEST(p->rule() == unsigned(masks[i]));
                 }
-                
+
                 TEST(chunks.size() == i);
                 for(;;) {
                     if(p==map.begin()) {
@@ -136,7 +136,7 @@ void test_word_container(Iterator begin,Iterator end,
                 }
 
                 TEST(chunks.size() == i);
-                
+
                 for(;;) {
                     if(p==map.begin()) {
                         TEST(i==0);
@@ -152,7 +152,7 @@ void test_word_container(Iterator begin,Iterator end,
                         TEST(p->rule() == unsigned(masks[i]));
                     }
                 }
-                
+
                 for(i=0,p=map.end();i<chunks.size();i++){
                     --p;
                     unsigned index = chunks.size() - i - 1;
@@ -161,8 +161,8 @@ void test_word_container(Iterator begin,Iterator end,
                 }
                 TEST(p==map.begin());
             }
-            
-            {            
+
+            {
                 iter_type p;
                 unsigned chunk_ptr=0;
                 unsigned i=0;
@@ -181,7 +181,7 @@ void test_word_container(Iterator begin,Iterator end,
                     }
                 }
             }
-            {            
+            {
                 iter_type p;
                 unsigned chunk_ptr=0;
                 unsigned i=0;
@@ -208,7 +208,7 @@ void test_word_container(Iterator begin,Iterator end,
             typedef typename lb::boundary_point_index<Iterator>::iterator iter_type;
 
             map.rule(mask);
-        
+
             unsigned i=0;
             iter_type p;
             for(p=map.begin();p!=map.end();++p,i++) {
@@ -232,7 +232,7 @@ void test_word_container(Iterator begin,Iterator end,
                 if(iters.at(iters_ptr)==optr)
                     iters_ptr++;
             }
-        
+
         } // break iterator tests
 
         { // copy test
@@ -348,8 +348,8 @@ void run_word(std::string *original,int *none,int *num,int *word,int *kana,int *
         pos.push_back(test_string.size());
         masks.push_back(
               ( none ? none[i]*15 : 0)
-            | ( num  ? ((num[i]*15)  << 4) : 0) 
-            | ( word ? ((word[i]*15) << 8) : 0) 
+            | ( num  ? ((num[i]*15)  << 4) : 0)
+            | ( word ? ((word[i]*15) << 8) : 0)
             | ( kana ? ((kana[i]*15) << 12) : 0)
             | ( ideo ? ((ideo[i]*15) << 16) : 0)
         );
@@ -402,11 +402,11 @@ void word_boundary()
     int         num1[]={ 1,   0,      0,  0,         1,   0,      0 ,        0 ,         0};
     int        word1[]={ 0,   0,      1,  0,         1,   0,      0 ,        0 ,         0};
 #if U_ICU_VERSION_MAJOR_NUM >= 50
-    int        kana1[]={ 0,   0,      0,  0,         0,   0,      0,         0 ,         0}; 
-    int        ideo1[]={ 0,   0,      0,  0,         0,   0,      1,         1 ,         1}; 
+    int        kana1[]={ 0,   0,      0,  0,         0,   0,      0,         0 ,         0};
+    int        ideo1[]={ 0,   0,      0,  0,         0,   0,      1,         1 ,         1};
 #else
-    int        kana1[]={ 0,   0,      0,  0,         0,   0,      0,         1 ,         1}; 
-    int        ideo1[]={ 0,   0,      0,  0,         0,   0,      1,         0 ,         0}; 
+    int        kana1[]={ 0,   0,      0,  0,         0,   0,      0,         1 ,         1};
+    int        ideo1[]={ 0,   0,      0,  0,         0,   0,      1,         0 ,         0};
 #endif
 
 
@@ -437,14 +437,14 @@ void word_boundary()
     run_word<char16_t>(all1,none1,num1,word1,kana1,ideo1,g("ja_JP.UTF-8"));
     run_word<char16_t>(all2,zero,zero,zero,zero,zero,g("en_US.UTF-8"));
     run_word<char16_t>(all3,none3,zero,word3,zero,zero,g("en_US.UTF-8"));
-    #endif 
+    #endif
 
     #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
     std::cout << " char32_t"<<std::endl;
     run_word<char32_t>(all1,none1,num1,word1,kana1,ideo1,g("ja_JP.UTF-8"));
     run_word<char32_t>(all2,zero,zero,zero,zero,zero,g("en_US.UTF-8"));
     run_word<char32_t>(all3,none3,zero,word3,zero,zero,g("en_US.UTF-8"));
-    #endif 
+    #endif
 }
 void test_op_one_side(std::string const &sl,std::string const &sr,int val)
 {
@@ -465,7 +465,7 @@ void test_op_one_side(std::string const &sl,std::string const &sr,int val)
     TEST( (l< sr.c_str()) == (val<0));
     TEST( (l>=sr.c_str()) == (val>=0));
     TEST( (l> sr.c_str()) == (val>0));
-    
+
     TEST( (sl.c_str()==r) == (val==0));
     TEST( (sl.c_str()!=r) == (val!=0));
     TEST( (sl.c_str()<=r) == (val<=0));
@@ -481,7 +481,7 @@ void test_op_one_side(std::string const &sl,std::string const &sr,int val)
     TEST( (l< sr) == (val<0));
     TEST( (l>=sr) == (val>=0));
     TEST( (l> sr) == (val>0));
-    
+
     TEST( (sl==r) == (val==0));
     TEST( (sl!=r) == (val!=0));
     TEST( (sl<=r) == (val<=0));
@@ -535,4 +535,4 @@ int main()
 #endif // NOICU
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 
-// boostinspect:noascii 
+// boostinspect:noascii

@@ -8,4 +8,4 @@
 #
 
 
-rm html/* && doxygen 
+rm html/* && doxygen

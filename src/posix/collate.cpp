@@ -58,7 +58,7 @@ class collator : public std::collate<CharType> {
 public:
     typedef CharType char_type;
     typedef std::basic_string<char_type> string_type;
-    collator(boost::shared_ptr<locale_t> l,size_t refs = 0) : 
+    collator(boost::shared_ptr<locale_t> l,size_t refs = 0) :
         std::collate<CharType>(refs),
         lc_(l)
     {
@@ -114,7 +114,7 @@ std::locale create_collate( std::locale const &in,
 
 
 } // impl_std
-} // locale 
+} // locale
 } //boost
 
 

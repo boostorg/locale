@@ -26,7 +26,7 @@ namespace boost {
     namespace locale {
         namespace impl_icu {
             template<typename CharType>
-            class collate_impl : public collator<CharType> 
+            class collate_impl : public collator<CharType>
             {
             public:
                 typedef typename collator<CharType>::level_type level_type;
@@ -51,7 +51,7 @@ namespace boost {
 
                 }
                 #endif
-        
+
                 int do_ustring_compare( level_type level,
                                         CharType const *b1,CharType const *e1,
                                         CharType const *b2,CharType const *e2,
@@ -61,7 +61,7 @@ namespace boost {
                     icu::UnicodeString right=cvt_.icu(b2,e2);
                     return get_collator(level)->compare(left,right,status);
                 }
-                
+
                 int do_real_compare(level_type level,
                                     CharType const *b1,CharType const *e1,
                                     CharType const *b2,CharType const *e2,
@@ -75,9 +75,9 @@ namespace boost {
                                CharType const *b2,CharType const *e2) const BOOST_OVERRIDE
                 {
                     UErrorCode status=U_ZERO_ERROR;
-                    
+
                     int res = do_real_compare(level,b1,e1,b2,e2,status);
-                    
+
                     if(U_FAILURE(status))
                             throw std::runtime_error(std::string("Collation failed:") + u_errorName(status));
                     if(res < 0)
@@ -86,8 +86,8 @@ namespace boost {
                         return 1;
                     return 0;
                 }
-               
-                std::vector<uint8_t> do_basic_transform(level_type level,CharType const *b,CharType const *e) const 
+
+                std::vector<uint8_t> do_basic_transform(level_type level,CharType const *b,CharType const *e) const
                 {
                     icu::UnicodeString str=cvt_.icu(b,e);
                     std::vector<uint8_t> tmp;
@@ -98,7 +98,7 @@ namespace boost {
                         tmp.resize(len);
                         collate->getSortKey(str,&tmp[0],tmp.size());
                     }
-                    else 
+                    else
                         tmp.resize(len);
                     return tmp;
                 }
@@ -107,7 +107,7 @@ namespace boost {
                     std::vector<uint8_t> tmp = do_basic_transform(level,b,e);
                     return std::basic_string<CharType>(tmp.begin(),tmp.end());
                 }
-                
+
                 long do_hash(level_type level,CharType const *b,CharType const *e) const BOOST_OVERRIDE
                 {
                     std::vector<uint8_t> tmp = do_basic_transform(level,b,e);
@@ -115,25 +115,25 @@ namespace boost {
                     return gnu_gettext::pj_winberger_hash_function(reinterpret_cast<char *>(&tmp.front()));
                 }
 
-                collate_impl(cdata const &d) : 
+                collate_impl(cdata const &d) :
                     cvt_(d.encoding),
                     locale_(d.locale),
                     is_utf8_(d.utf8)
                 {
-                
+
                 }
                 icu::Collator *get_collator(level_type ilevel) const
                 {
                     int l = limit(ilevel);
-                    static const icu::Collator::ECollationStrength levels[level_count] = 
-                    { 
+                    static const icu::Collator::ECollationStrength levels[level_count] =
+                    {
                         icu::Collator::PRIMARY,
                         icu::Collator::SECONDARY,
                         icu::Collator::TERTIARY,
                         icu::Collator::QUATERNARY,
                         icu::Collator::IDENTICAL
                     };
-                    
+
                     icu::Collator *col = collates_[l].get();
                     if(col)
                         return col;
@@ -160,7 +160,7 @@ namespace boost {
 
             #if U_ICU_VERSION_MAJOR_NUM*100 + U_ICU_VERSION_MINOR_NUM >= 402
             template<>
-            int collate_impl<char>::do_real_compare(    
+            int collate_impl<char>::do_real_compare(
                                     level_type level,
                                     char const *b1,char const *e1,
                                     char const *b2,char const *e2,
@@ -172,7 +172,7 @@ namespace boost {
                     return do_ustring_compare(level,b1,e1,b2,e2,status);
             }
             #endif
-        
+
             std::locale create_collate(std::locale const &in,cdata const &cd,character_facet_type type)
             {
                 switch(type) {

@@ -19,7 +19,7 @@
 // So, before you compile "wide" examples with MSVC, please convert them to text
 // files with BOM. There are two very simple ways to do it:
 //
-// 1. Open file with Notepad and save it from there. It would convert 
+// 1. Open file with Notepad and save it from there. It would convert
 //    it to file with BOM.
 // 2. In Visual Studio go File->Advances Save Options... and select
 //    Unicode (UTF-8  with signature) Codepage 65001
@@ -43,16 +43,16 @@ int main()
     using namespace std;
     // Create system default locale
     generator gen;
-    locale loc=gen(""); 
+    locale loc=gen("");
     locale::global(loc);
     wcout.imbue(loc);
 
     // This is needed to prevent C library to
-    // convert strings to narrow 
+    // convert strings to narrow
     // instead of C++ on some platforms
     std::ios_base::sync_with_stdio(false);
 
-    
+
     wcout<<L"Correct case conversion can't be done by simple, character by character conversion"<<endl;
     wcout<<L"because case conversion is context sensitive and not 1-to-1 conversion"<<endl;
     wcout<<L"For example:"<<endl;
@@ -65,7 +65,7 @@ int main()
     wcout<<L"Such type of conversion just can't be done using std::toupper that work on character base, also std::toupper is "<<endl;
     wcout<<L"not fully applicable when working with variable character length like in UTF-8 or UTF-16 limiting the correct "<<endl;
     wcout<<L"behavoir to BMP or ASCII only"<<endl;
-   
+
 }
 
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4

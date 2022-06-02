@@ -38,7 +38,7 @@ index_type map_direct(boundary_type t,icu::BreakIterator *it,int reserve)
 #else
     icu::RuleBasedBreakIterator *rbbi=dynamic_cast<icu::RuleBasedBreakIterator *>(it);
 #endif
-    
+
     indx.push_back(break_info());
     it->first();
     int pos=0;
@@ -56,7 +56,7 @@ index_type map_direct(boundary_type t,icu::BreakIterator *it,int reserve)
 
             UErrorCode err=U_ZERO_ERROR;
             int n = rbbi->getRuleStatusVec(buf,8,err);
-            
+
             if(err == U_BUFFER_OVERFLOW_ERROR) {
                 buf=&buffer.front();
                 buffer.resize(n,0);
@@ -137,7 +137,7 @@ index_type do_map(boundary_type t,CharType const *begin,CharType const *end,icu:
 {
     index_type indx;
     hold_ptr<icu::BreakIterator> bi(get_iterator(t,loc));
-   
+
 #if U_ICU_VERSION_MAJOR_NUM*100 + U_ICU_VERSION_MINOR_NUM >= 306
     UErrorCode err=U_ZERO_ERROR;
     if(sizeof(CharType) == 2 || (sizeof(CharType)==1 && encoding=="UTF-8"))
@@ -164,7 +164,7 @@ index_type do_map(boundary_type t,CharType const *begin,CharType const *end,icu:
         }
         if(ut) utext_close(ut);
     }
-    else 
+    else
 #endif
     {
         icu_std_converter<CharType> cvt(encoding);
@@ -190,7 +190,7 @@ public:
         encoding_(data.encoding)
     {
     }
-    index_type map(boundary_type t,CharType const *begin,CharType const *end) const 
+    index_type map(boundary_type t,CharType const *begin,CharType const *end) const
     {
         return do_map<CharType>(t,begin,end,locale_,encoding_);
     }

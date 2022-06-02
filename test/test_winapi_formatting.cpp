@@ -142,10 +142,10 @@ BOOST_LOCALE_END_CONST_CONDITION
         ss << as::currency;
         ss << 1043.34;
         TEST(ss);
-        
+
         wchar_t buf[256];
         GetCurrencyFormatW(lcid,0,L"1043.34",0,buf,256);
-        
+
         TEST(equal(ss.str(),buf));
     }
 
@@ -153,7 +153,7 @@ BOOST_LOCALE_END_CONST_CONDITION
         std::cout << "--- Testing as::date/time" << std::endl;
         ss_type ss;
         ss.imbue(l);
-        
+
         time_t a_date = 3600*24*(31+4); // Feb 5th
         time_t a_time = 3600*15+60*33; // 15:33:13
         time_t a_timesec = 13;
@@ -171,7 +171,7 @@ BOOST_LOCALE_END_CONST_CONDITION
 
         wchar_t time_buf[256];
         wchar_t date_buf[256];
-        
+
         SYSTEMTIME st= { 1970, 2,5, 5,15,33,13,0 };
         GetTimeFormatW(lcid,0,&st,0,time_buf,256);
         GetDateFormatW(lcid,0,&st,0,date_buf,256);
@@ -264,4 +264,4 @@ int main()
 
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 
-// boostinspect:noascii 
+// boostinspect:noascii

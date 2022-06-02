@@ -26,8 +26,8 @@
 namespace boost {
 namespace locale {
 namespace impl_icu {
-    
-    
+
+
     namespace {
         void normalize_string(icu::UnicodeString &str,int flags)
         {
@@ -94,7 +94,7 @@ namespace impl_icu {
             }
             return cvt.std(str);
         }
-    
+
     private:
         icu::Locale locale_;
         std::string encoding_;
@@ -138,7 +138,7 @@ namespace impl_icu {
 
     class utf8_converter_impl : public converter<char> {
     public:
-        
+
         utf8_converter_impl(cdata const &d) :
             locale_id_(d.locale.getName()),
             map_(locale_id_)
@@ -147,15 +147,15 @@ namespace impl_icu {
 
         std::string convert(converter_base::conversion_type how,char const *begin,char const *end,int flags = 0) const BOOST_OVERRIDE
         {
-            
+
             if(how == converter_base::normalization) {
                 icu_std_converter<char> cvt("UTF-8");
                 icu::UnicodeString str=cvt.icu(begin,end);
                 normalize_string(str,flags);
                 return cvt.std(str);
             }
-            
-            switch(how) 
+
+            switch(how)
             {
             case converter_base::upper_case:
                 return map_.convert(ucasemap_utf8ToUpper,begin,end);
@@ -203,7 +203,7 @@ namespace impl_icu {
             return in;
         }
     }
-    
+
 
 } // impl_icu
 } // locale

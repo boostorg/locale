@@ -129,13 +129,13 @@ void test_by_char(std::locale const &l,locale_t lreal)
         std::cout << "[" << boost::locale::conv::from_utf(buf,"UTF-8") << "]\n" ;
         #endif
     }
-    
-    
+
+
     {
         std::cout << "- Testing as::date/time" << std::endl;
         ss_type ss;
         ss.imbue(l);
-        
+
         time_t a_date = 3600*24*(31+4); // Feb 5th
         time_t a_time = 3600*15+60*33; // 15:33:05
         time_t a_timesec = 13;
@@ -185,9 +185,9 @@ int main()
                 lreal=newlocale(LC_ALL_MASK,name.c_str(),0);
                 assert(lreal);
                 std::cout << "UTF-8" << std::endl;
-                
+
                 test_by_char<char,char>(l1,lreal);
-                
+
                 std::cout << "Wide UTF-" << sizeof(wchar_t) * 8 << std::endl;
                 test_by_char<wchar_t,char>(l1,lreal);
                 freelocale(lreal);
@@ -222,9 +222,9 @@ int main()
                 lreal=newlocale(LC_ALL_MASK,name.c_str(),0);
                 assert(lreal);
                 std::cout << "UTF-8" << std::endl;
-                
+
                 test_by_char<char,char>(l1,lreal);
-                
+
                 std::cout << "Wide UTF-" << sizeof(wchar_t) * 8 << std::endl;
                 test_by_char<wchar_t,char>(l1,lreal);
                 freelocale(lreal);
@@ -278,4 +278,4 @@ int main()
 #endif // posix
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 
-// boostinspect:noascii 
+// boostinspect:noascii

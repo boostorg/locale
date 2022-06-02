@@ -25,7 +25,7 @@ supported by other localization backends.
 - \subpage localized_text_formatting
 - \subpage dates_times_timezones
 - \subpage locale_information
-- \subpage working_with_multiple_locales 
+- \subpage working_with_multiple_locales
 
 */
 

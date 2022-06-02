@@ -36,7 +36,7 @@ do {                                                                            
         if(X) break;                                                    \
         std::cerr << "Error in line:"<<__LINE__ << " "#X  << std::endl; \
         THROW_IF_TOO_BIG(error_counter++);                              \
-    }while(0)    
+    }while(0)
 #endif
 
 #define TEST_THROWS(X,E)                                                \
@@ -45,7 +45,7 @@ do {                                                                            
         try { X; } catch(E const &/*e*/ ) {break;} catch(...){}         \
         std::cerr << "Error in line:"<<__LINE__ << " "#X  << std::endl; \
         THROW_IF_TOO_BIG(error_counter++);                              \
-    }while(0)    
+    }while(0)
 
 #define FINALIZE()                                                      \
     do {                                                                \
@@ -76,9 +76,9 @@ inline unsigned utf8_next(std::string const &s,unsigned &pos)
         l = 2;
     else
         l = 3;
-    
+
     c &= (1 << (6-l)) - 1;
-    
+
     switch(l) {
     case 3:
         c = (c << 6) | (((unsigned char)s[pos++]) & 0x3F);

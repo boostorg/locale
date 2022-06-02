@@ -26,7 +26,7 @@
 namespace boost {
 namespace locale {
 namespace impl_icu {
-    
+
     static void check_and_throw_dt(UErrorCode &e)
     {
         if(U_FAILURE(e)) {
@@ -64,7 +64,7 @@ namespace impl_icu {
 
     class calendar_impl : public abstract_calendar {
     public:
-        
+
         calendar_impl(cdata const &dat)
         {
             UErrorCode err=U_ZERO_ERROR;
@@ -148,7 +148,7 @@ namespace impl_icu {
         }
         posix_time get_time() const BOOST_OVERRIDE
         {
-            
+
             UErrorCode code=U_ZERO_ERROR;
             double rtime = 0;
             {
@@ -213,7 +213,7 @@ namespace impl_icu {
             //
             // fieldDifference has side effect of moving calendar (WTF?)
             // So we clone it for performing this operation
-            // 
+            //
             hold_ptr<icu::Calendar> self(calendar_->clone());
 
             calendar_impl const *other_cal=dynamic_cast<calendar_impl const *>(other_ptr);
@@ -257,10 +257,10 @@ namespace impl_icu {
         std::string encoding_;
         hold_ptr<icu::Calendar> calendar_;
     };
-    
+
     class icu_calendar_facet : public calendar_facet  {
     public:
-        icu_calendar_facet(cdata const &d,size_t refs = 0) : 
+        icu_calendar_facet(cdata const &d,size_t refs = 0) :
             calendar_facet(refs),
             data_(d)
         {
@@ -272,7 +272,7 @@ namespace impl_icu {
     private:
         cdata data_;
     };
-    
+
     std::locale create_calendar(std::locale const &in,cdata const &d)
     {
         return std::locale(in,new icu_calendar_facet(d));

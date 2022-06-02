@@ -46,7 +46,7 @@ namespace boost {
             /// convert string to UTF string from text in range [begin,end) encoded according to locale \a loc according to policy \a how
             ///
             /// \note throws std::bad_cast if the loc does not have \ref info facet installed
-            /// 
+            ///
             template<typename CharType>
             std::basic_string<CharType> to_utf(char const *begin,char const *end,std::locale const &loc,method_type how=default_method)
             {
@@ -57,7 +57,7 @@ namespace boost {
             /// convert UTF text in range [begin,end) to a text encoded according to locale \a loc according to policy \a how
             ///
             /// \note throws std::bad_cast if the loc does not have \ref info facet installed
-            /// 
+            ///
             template<typename CharType>
             std::string from_utf(CharType const *begin,CharType const *end,std::locale const &loc,method_type how=default_method)
             {
@@ -67,7 +67,7 @@ namespace boost {
             ///
             /// convert a string \a text encoded with \a charset to UTF string
             ///
-            
+
             template<typename CharType>
             std::basic_string<CharType> to_utf(std::string const &text,std::string const &charset,method_type how=default_method)
             {
@@ -90,7 +90,7 @@ namespace boost {
             std::basic_string<CharType> to_utf(char const *text,std::string const &charset,method_type how=default_method)
             {
                 char const *text_end = text;
-                while(*text_end) 
+                while(*text_end)
                     text_end++;
                 return to_utf<CharType>(text,text_end,charset,how);
             }
@@ -102,7 +102,7 @@ namespace boost {
             std::string from_utf(CharType const *text,std::string const &charset,method_type how=default_method)
             {
                 CharType const *text_end = text;
-                while(*text_end) 
+                while(*text_end)
                     text_end++;
                 return from_utf(text,text_end,charset,how);
             }
@@ -111,7 +111,7 @@ namespace boost {
             /// Convert a \a text in locale encoding given by \a loc to UTF
             ///
             /// \note throws std::bad_cast if the loc does not have \ref info facet installed
-            /// 
+            ///
             template<typename CharType>
             std::basic_string<CharType> to_utf(std::string const &text,std::locale const &loc,method_type how=default_method)
             {
@@ -122,7 +122,7 @@ namespace boost {
             /// Convert a \a text in UTF to locale encoding given by \a loc
             ///
             /// \note throws std::bad_cast if the loc does not have \ref info facet installed
-            /// 
+            ///
             template<typename CharType>
             std::string from_utf(std::basic_string<CharType> const &text,std::locale const &loc,method_type how=default_method)
             {
@@ -133,12 +133,12 @@ namespace boost {
             /// Convert a \a text in locale encoding given by \a loc to UTF
             ///
             /// \note throws std::bad_cast if the loc does not have \ref info facet installed
-            /// 
+            ///
             template<typename CharType>
             std::basic_string<CharType> to_utf(char const *text,std::locale const &loc,method_type how=default_method)
             {
                 char const *text_end = text;
-                while(*text_end) 
+                while(*text_end)
                     text_end++;
                 return to_utf<CharType>(text,text_end,loc,how);
             }
@@ -147,12 +147,12 @@ namespace boost {
             /// Convert a \a text in UTF to locale encoding given by \a loc
             ///
             /// \note throws std::bad_cast if the loc does not have \ref info facet installed
-            /// 
+            ///
             template<typename CharType>
             std::string from_utf(CharType const *text,std::locale const &loc,method_type how=default_method)
             {
                 CharType const *text_end = text;
-                while(*text_end) 
+                while(*text_end)
                     text_end++;
                 return from_utf(text,text_end,loc,how);
             }
@@ -161,7 +161,7 @@ namespace boost {
             ///
             /// Convert a text in range [begin,end) to \a to_encoding from \a from_encoding
             ///
-            
+
             BOOST_LOCALE_DECL
             std::string between(char const *begin,
                                 char const *end,
@@ -172,7 +172,7 @@ namespace boost {
             ///
             /// Convert a \a text to \a to_encoding from \a from_encoding
             ///
-            
+
             inline
             std::string between(char const *text,
                                 std::string const &to_encoding,
@@ -196,7 +196,7 @@ namespace boost {
             {
                 return boost::locale::conv::between(text.c_str(),text.c_str()+text.size(),to_encoding,from_encoding,how);
             }
-          
+
             /// \cond INTERNAL
 
             template<>

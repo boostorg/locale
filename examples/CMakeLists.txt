@@ -5,7 +5,7 @@ function(boost_locale_add_example name)
     set(ARG_SRC ${name}.cpp)
   endif()
   set(name ${PROJECT_NAME}-expl_${name})
-  
+
   add_executable(${name} ${ARG_SRC})
   add_dependencies(tests ${name})
   target_link_libraries(${name} PRIVATE

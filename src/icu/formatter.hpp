@@ -16,7 +16,7 @@
 
 namespace boost {
 namespace locale {
-namespace impl_icu {        
+namespace impl_icu {
 
     ///
     /// \brief Special base polymorphic class that is used as a character type independent base for all formatter classes
@@ -87,7 +87,7 @@ namespace impl_icu {
         ///
         static formatter *create(std::ios_base &ios,icu::Locale const &l,std::string const &enc);
     }; // class formatter
-    
+
     ///
     /// Specialization for real implementation
     ///

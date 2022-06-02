@@ -13,10 +13,10 @@
 namespace boost {
     namespace locale {
         namespace util {
-            
+
             class locale_data {
             public:
-                locale_data() : 
+                locale_data() :
                     language("C"),
                     encoding("us-ascii"),
                     utf8(false)
@@ -40,7 +40,7 @@ namespace boost {
             };
 
         } // util
-    } // locale 
+    } // locale
 } // boost
 
 #endif

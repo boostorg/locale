@@ -20,10 +20,10 @@ namespace boost {
 namespace locale {
 namespace impl_win {
 
-class utf16_converter : public converter<wchar_t> 
+class utf16_converter : public converter<wchar_t>
 {
 public:
-    utf16_converter(winlocale const &lc,size_t refs = 0) : 
+    utf16_converter(winlocale const &lc,size_t refs = 0) :
         converter<wchar_t>(refs),
         lc_(lc)
     {
@@ -49,7 +49,7 @@ private:
 
 class utf8_converter : public converter<char> {
 public:
-    utf8_converter(winlocale const &lc,size_t refs = 0) : 
+    utf8_converter(winlocale const &lc,size_t refs = 0) :
         converter<char>(refs),
         lc_(lc)
     {
@@ -89,7 +89,7 @@ std::locale create_convert( std::locale const &in,
                             character_facet_type type)
 {
         switch(type) {
-        case char_facet: 
+        case char_facet:
             return std::locale(in,new utf8_converter(lc));
         case wchar_t_facet:
             return std::locale(in,new utf16_converter(lc));
@@ -100,6 +100,6 @@ std::locale create_convert( std::locale const &in,
 
 
 } // namespace impl_win32
-} // locale 
+} // locale
 } // boost
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4

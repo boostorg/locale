@@ -23,7 +23,7 @@ namespace util {
         parse_from_lang(locale_name);
     }
 
-    void locale_data::parse_from_lang(std::string const &locale_name) 
+    void locale_data::parse_from_lang(std::string const &locale_name)
     {
         size_t end = locale_name.find_first_of("-_@.");
         std::string tmp = locale_name.substr(0,end);
@@ -50,7 +50,7 @@ namespace util {
         }
     }
 
-    void locale_data::parse_from_country(std::string const &locale_name) 
+    void locale_data::parse_from_country(std::string const &locale_name)
     {
         size_t end = locale_name.find_first_of("@.");
         std::string tmp = locale_name.substr(0,end);
@@ -74,8 +74,8 @@ namespace util {
            parse_from_variant(locale_name.substr(end+1));
         }
     }
-    
-    void locale_data::parse_from_encoding(std::string const &locale_name) 
+
+    void locale_data::parse_from_encoding(std::string const &locale_name)
     {
         size_t end = locale_name.find_first_of("@");
         std::string tmp = locale_name.substr(0,end);
@@ -86,7 +86,7 @@ namespace util {
                 tmp[i]=tmp[i]-'A'+'a';
         }
         encoding = tmp;
-        
+
         utf8 = conv::impl::normalize_encoding(encoding.c_str()) == "utf8";
 
         if(end >= locale_name.size())
@@ -107,7 +107,7 @@ namespace util {
     }
 
 } // util
-} // locale 
+} // locale
 } // boost
 
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4

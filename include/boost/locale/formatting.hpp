@@ -87,7 +87,7 @@ namespace boost {
                 domain_id           ///< Domain code - for message formatting
             } value_type;
 
-            
+
         } // flags
 
         ///
@@ -117,37 +117,37 @@ namespace boost {
             /// Set a flags that define a way for format data like number, spell, currency etc.
             ///
             void display_flags(uint64_t flags);
-            
+
             ///
             /// Set a flags that define how to format currency
             ///
             void currency_flags(uint64_t flags);
-            
+
             ///
             /// Set a flags that define how to format date
             ///
             void date_flags(uint64_t flags);
-            
+
             ///
             /// Set a flags that define how to format time
             ///
             void time_flags(uint64_t flags);
-            
+
             ///
             /// Set a flags that define how to format both date and time
             ///
             void datetime_flags(uint64_t flags);
-            
+
             ///
             /// Set special message domain identification
             ///
             void domain_id(int);
-            
+
             ///
             /// Set time zone for formatting dates and time
             ///
             void time_zone(std::string const &);
-            
+
 
             ///
             /// Set date/time pattern (strftime like)
@@ -164,18 +164,18 @@ namespace boost {
             /// Get a flags that define a way for format data like number, spell, currency etc.
             ///
             uint64_t display_flags() const;
-            
+
             ///
             /// Get a flags that define how to format currency
             ///
             uint64_t currency_flags() const;
 
-            
+
             ///
             /// Get a flags that define how to format date
             ///
             uint64_t date_flags() const;
-            
+
             ///
             /// Get a flags that define how to format time
             ///
@@ -185,17 +185,17 @@ namespace boost {
             /// Get a flags that define how to format both date and time
             ///
             uint64_t datetime_flags() const;
-            
+
             ///
             /// Get special message domain identification
             ///
             int domain_id() const;
-            
+
             ///
             /// Get time zone for formatting dates and time
             ///
             std::string time_zone() const;
-            
+
             ///
             /// Get date/time pattern (strftime like)
             ///
@@ -205,26 +205,26 @@ namespace boost {
                 string_set const &s = date_time_pattern_set();
                 return s.get<CharType>();
             }
-            
+
             /// \cond INTERNAL
             void on_imbue();
             /// \endcond
-            
+
         private:
 
             class string_set;
 
             string_set const &date_time_pattern_set() const;
             string_set &date_time_pattern_set();
-            
+
             class BOOST_LOCALE_DECL string_set {
             public:
-                string_set(); 
+                string_set();
                 ~string_set();
                 string_set(string_set const &other);
                 string_set const &operator=(string_set const &other);
                 void swap(string_set &other);
-                
+
                 template<typename Char>
                 void set(Char const *s)
                 {
@@ -279,7 +279,7 @@ namespace boost {
             /// Format values with "POSIX" or "C"  locale. Note, if locale was created with additional non-classic locale then
             /// These numbers may be localized
             ///
-            
+
             inline std::ios_base & posix(std::ios_base & ios)
             {
                 ios_info::get(ios).display_flags(flags::posix);
@@ -295,7 +295,7 @@ namespace boost {
                 ios_info::get(ios).display_flags(flags::number);
                 return ios;
             }
-            
+
             ///
             /// Format currency, number is treated like amount of money
             ///
@@ -304,7 +304,7 @@ namespace boost {
                 ios_info::get(ios).display_flags(flags::currency);
                 return ios;
             }
-            
+
             ///
             /// Format percent, value 0.3 is treated as 30%.
             ///
@@ -313,7 +313,7 @@ namespace boost {
                 ios_info::get(ios).display_flags(flags::percent);
                 return ios;
             }
-            
+
             ///
             /// Format a date, number is treated as POSIX time
             ///
@@ -350,7 +350,7 @@ namespace boost {
                 ios_info::get(ios).display_flags(flags::strftime);
                 return ios;
             }
-            
+
             ///
             /// Spell the number, like "one hundred and ten"
             ///
@@ -359,7 +359,7 @@ namespace boost {
                 ios_info::get(ios).display_flags(flags::spellout);
                 return ios;
             }
-            
+
             ///
             /// Write an order of the number like 4th.
             ///
@@ -484,10 +484,10 @@ namespace boost {
             {
                 ios_info::get(ios).date_flags(flags::date_full);
                 return ios;
-            }            
-            
-            
-            /// \cond INTERNAL 
+            }
+
+
+            /// \cond INTERNAL
             namespace details {
                 template<typename CharType>
                 struct add_ftime {
@@ -508,7 +508,7 @@ namespace boost {
                     fmt.apply(out);
                     return out;
                 }
-                
+
                 template<typename CharType>
                 std::basic_istream<CharType> &operator>>(std::basic_istream<CharType> &in,add_ftime<CharType> const &fmt)
                 {
@@ -517,7 +517,7 @@ namespace boost {
                 }
 
             }
-            /// \endcond 
+            /// \endcond
 
             ///
             /// Set strftime like formatting string
@@ -559,7 +559,7 @@ namespace boost {
             #ifdef BOOST_LOCALE_DOXYGEN
             unspecified_type
             #else
-            details::add_ftime<CharType> 
+            details::add_ftime<CharType>
             #endif
             ftime(std::basic_string<CharType> const &format)
             {
@@ -575,7 +575,7 @@ namespace boost {
             #ifdef BOOST_LOCALE_DOXYGEN
             unspecified_type
             #else
-            details::add_ftime<CharType> 
+            details::add_ftime<CharType>
             #endif
             ftime(CharType const *format)
             {
@@ -595,7 +595,7 @@ namespace boost {
                     ios_info::get(out).time_zone(fmt.id);
                     return out;
                 }
-                
+
                 template<typename CharType>
                 std::basic_istream<CharType> &operator>>(std::basic_istream<CharType> &in,set_timezone const &fmt)
                 {
@@ -604,10 +604,10 @@ namespace boost {
                 }
             }
             /// \endcond
-            
+
             ///
             /// Set GMT time zone to stream
-            /// 
+            ///
             inline std::ios_base &gmt(std::ios_base &ios)
             {
                 ios_info::get(ios).time_zone("GMT");
@@ -626,13 +626,13 @@ namespace boost {
             ///
             /// Set time zone using \a id
             ///
-            inline 
+            inline
             #ifdef BOOST_LOCALE_DOXYGEN
             unspecified_type
             #else
-            details::set_timezone 
+            details::set_timezone
             #endif
-            time_zone(char const *id) 
+            time_zone(char const *id)
             {
                 details::set_timezone tz;
                 tz.id=id;
@@ -642,13 +642,13 @@ namespace boost {
             ///
             /// Set time zone using \a id
             ///
-            inline 
+            inline
             #ifdef BOOST_LOCALE_DOXYGEN
             unspecified_type
             #else
-            details::set_timezone 
-            #endif            
-            time_zone(std::string const &id) 
+            details::set_timezone
+            #endif
+            time_zone(std::string const &id)
             {
                 details::set_timezone tz;
                 tz.id=id;
@@ -661,7 +661,7 @@ namespace boost {
         ///
 
         } // as manipulators
-        
+
     } // locale
 } // boost
 

@@ -14,7 +14,7 @@
 namespace boost {
 namespace locale {
 namespace util {
-    inline int parse_tz(std::string const &tz) 
+    inline int parse_tz(std::string const &tz)
     {
         int gmtoff = 0;
         std::string ltz;
@@ -46,7 +46,7 @@ namespace util {
     }
 
 } // util
-} // locale 
+} // locale
 } //boost
 
 

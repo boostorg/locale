@@ -17,7 +17,7 @@ namespace impl_icu {
     util::base_converter *create_uconv_converter(std::string const &encoding);
 
 } // impl_icu
-} // locale 
+} // locale
 } // boost
 
 #endif

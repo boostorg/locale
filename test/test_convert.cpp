@@ -66,8 +66,8 @@ void test_norm(std::string orig,std::string normal,boost::locale::norm_type type
             TEST_V(to_upper,"i","İ");                        \
             TEST_V(to_lower,"İ","i");                        \
         }while(0)
-    
-    
+
+
 int main()
 {
     try {
@@ -84,7 +84,7 @@ int main()
 
         boost::locale::generator gen;
         bool eight_bit=true;
-        
+
         #define TEST_V(how,source_s,dest_s)                                    \
         do {                                                                \
             TEST_A(char,how,source_s,dest_s);                                \
@@ -95,7 +95,7 @@ int main()
                 std::locale::global(tmp);                                    \
             }                                                                \
         }while(0)
-        
+
         TEST_ALL_CASES;
         #undef TEST_V
 
@@ -126,4 +126,4 @@ int main()
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 
 
-// boostinspect:noascii 
+// boostinspect:noascii

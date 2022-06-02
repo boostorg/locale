@@ -47,8 +47,8 @@ void test_char()
     std::cout << "- Testing " << name << std::endl;
     l=gen(name);
     test_one<CharType>(l,"Façade","façade","FAÇADE");
-    
-    
+
+
     name = "tr_TR.UTF-8";
     std::cout << "Testing " << name << std::endl;
     test_one<CharType>(gen(name),"i","i","İ");
@@ -82,7 +82,7 @@ int main()
         test_char<char>();
         std::cout << "Testing wchar_t" << std::endl;
         test_char<wchar_t>();
-        
+
         std::cout << "Testing Unicode normalization" << std::endl;
         test_norm("\xEF\xAC\x81","\xEF\xAC\x81",boost::locale::norm_nfd); /// ligature fi
         test_norm("\xEF\xAC\x81","\xEF\xAC\x81",boost::locale::norm_nfc);
@@ -105,4 +105,4 @@ int main()
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 
 
-// boostinspect:noascii 
+// boostinspect:noascii
