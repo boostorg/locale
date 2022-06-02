@@ -488,11 +488,7 @@ namespace boost {
                 typedef CharType char_type;
                 typedef std::basic_string<CharType> string_type;
                 typedef message_key<CharType> key_type;
-                #ifdef BOOST_LOCALE_UNORDERED_CATALOG
                 typedef boost::unordered_map<key_type,string_type,hash_function<CharType> > catalog_type;
-                #else
-                typedef std::map<key_type,string_type> catalog_type;
-                #endif
                 typedef std::vector<catalog_type> catalogs_set_type;
                 typedef std::map<std::string,int> domains_map_type;
             public:
