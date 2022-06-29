@@ -27,7 +27,7 @@ endfunction()
 
 boost_locale_add_example(boundary)
 boost_locale_add_example(calendar)
-boost_locale_add_example(collate)
+boost_locale_add_example(collate COMPILE_ONLY)
 boost_locale_add_example(conversions)
 boost_locale_add_example(hello)
 boost_locale_add_example(wboundary)
