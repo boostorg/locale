@@ -34,7 +34,7 @@ void print_str(std::basic_string<Char> const &/*s*/)
 template<>
 void print_str<char>(std::basic_string<char> const &s)
 {
-    std::cout << "[" << s <<"]" << std::endl;
+    std::cout << "[" << s << "]" << std::endl;
 }
 
 
@@ -379,14 +379,14 @@ void test_boundaries(std::string *all,int *first,int *second,lb::boundary_type t
     run_word<char>(all,first,second,0,0,0,g("he_IL.UTF-8"),t);
     std::cout << " char CP1255" << std::endl;
     run_word<char>(all,first,second,0,0,0,g("he_IL.cp1255"),t);
-    std::cout << " wchar_t"<<std::endl;
+    std::cout << " wchar_t" << std::endl;
     run_word<wchar_t>(all,first,second,0,0,0,g("he_IL.UTF-8"),t);
     #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-    std::cout << " char16_t"<<std::endl;
+    std::cout << " char16_t" << std::endl;
     run_word<char16_t>(all,first,second,0,0,0,g("he_IL.UTF-8"),t);
     #endif
     #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-    std::cout << " char32_t"<<std::endl;
+    std::cout << " char32_t" << std::endl;
     run_word<char32_t>(all,first,second,0,0,0,g("he_IL.UTF-8"),t);
     #endif
 
@@ -427,20 +427,20 @@ void word_boundary()
     run_word<char>(all2,zero,zero,zero,zero,zero,g("ja_JP.Shift-JIS"));
     run_word<char>(all3,none3,zero,word3,zero,zero,g("ja_JP.Shift-JIS"));
 
-    std::cout << " wchar_t"<<std::endl;
+    std::cout << " wchar_t" << std::endl;
     run_word<wchar_t>(all1,none1,num1,word1,kana1,ideo1,g("ja_JP.UTF-8"));
     run_word<wchar_t>(all2,zero,zero,zero,zero,zero,g("en_US.UTF-8"));
     run_word<wchar_t>(all3,none3,zero,word3,zero,zero,g("en_US.UTF-8"));
 
     #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-    std::cout << " char16_t"<<std::endl;
+    std::cout << " char16_t" << std::endl;
     run_word<char16_t>(all1,none1,num1,word1,kana1,ideo1,g("ja_JP.UTF-8"));
     run_word<char16_t>(all2,zero,zero,zero,zero,zero,g("en_US.UTF-8"));
     run_word<char16_t>(all3,none3,zero,word3,zero,zero,g("en_US.UTF-8"));
     #endif
 
     #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-    std::cout << " char32_t"<<std::endl;
+    std::cout << " char32_t" << std::endl;
     run_word<char32_t>(all1,none1,num1,word1,kana1,ideo1,g("ja_JP.UTF-8"));
     run_word<char32_t>(all2,zero,zero,zero,zero,zero,g("en_US.UTF-8"));
     run_word<char32_t>(all3,none3,zero,word3,zero,zero,g("en_US.UTF-8"));

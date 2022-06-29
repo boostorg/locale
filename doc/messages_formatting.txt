@@ -101,7 +101,6 @@ This is an example of our first fully localized program:
 #include <boost/locale.hpp>
 #include <iostream>
 
-using namespace std;
 using namespace boost::locale;
 
 int main()
@@ -113,11 +112,11 @@ int main()
     gen.add_messages_domain("hello");
 
     // Generate locales and imbue them to iostream
-    locale::global(gen(""));
-    cout.imbue(locale());
+    std::locale::global(gen(""));
+    std::cout.imbue(std::locale());
 
     // Display a message using current system locale
-    cout << translate("Hello World") << endl;
+    std::cout << translate("Hello World") << std::endl;
 }
 \endcode
 
@@ -494,7 +493,6 @@ domain name for the application.
 #include <boost/locale.hpp>
 #include <iostream>
 
-using namespace std;
 using namespace boost::locale;
 
 int main()
@@ -507,8 +505,8 @@ int main()
     gen.add_messages_domain("copyrighted/windows-1255");
 
     // Generate locales and imbue them to iostream
-    locale::global(gen(""));
-    cout.imbue(locale());
+    std::locale::global(gen(""));
+    std::cout.imbue(std::locale());
 
     // In Windows 1255 (C) symbol is encoded as 0xA9
     cout << translate("© 2001 All Rights Reserved") << endl;

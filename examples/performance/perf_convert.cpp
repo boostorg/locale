@@ -12,7 +12,6 @@
 #include <string>
 #include <vector>
 
-using namespace std;
 using namespace boost::locale;
 
 int main(int argc,char **argv)

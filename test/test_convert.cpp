@@ -42,29 +42,29 @@ void test_norm(std::string orig,std::string normal,boost::locale::norm_type type
 }
 
 #define TEST_A(Chr,how,source,dest)                                                            \
-    do {                                                                                    \
-        boost::locale::info const &inf=std::use_facet<boost::locale::info>(std::locale());    \
-        std::cout <<"Testing " #how " for " #Chr ", lang="<<inf.language();                    \
-        if(std::string("char")==#Chr) std::cout <<" charset="<<    inf.encoding();                \
+    do {                                                                                       \
+        boost::locale::info const &inf=std::use_facet<boost::locale::info>(std::locale());     \
+        std::cout << "Testing " #how " for " #Chr ", lang=" << inf.language();                 \
+        if(std::string("char")==#Chr) std::cout << " charset=" <<    inf.encoding();           \
         std::cout << std::endl;                                                                \
         std::basic_string<Chr> source_s=(source),dest_s=(dest);                                \
         TEST(boost::locale::how(source_s)==dest_s);                                            \
         TEST(boost::locale::how(source_s.c_str())==dest_s);                                    \
-        TEST(boost::locale::how(source_s.c_str(),source_s.c_str()+source_s.size())==dest_s);\
+        TEST(boost::locale::how(source_s.c_str(),source_s.c_str()+source_s.size())==dest_s);   \
     }while(0)
 
-#define TEST_ALL_CASES                                        \
+#define TEST_ALL_CASES                                      \
         do {                                                \
-            eight_bit=true;                                    \
+            eight_bit=true;                                 \
             std::locale::global(gen("en_US.UTF-8"));        \
             TEST_V(to_upper,"grüßen i","GRÜSSEN I");        \
-            TEST_V(to_lower,"Façade","façade");                \
-            TEST_V(to_title,"façadE world","Façade World");    \
-            TEST_V(fold_case,"Hello World","hello world");    \
+            TEST_V(to_lower,"Façade","façade");             \
+            TEST_V(to_title,"façadE world","Façade World"); \
+            TEST_V(fold_case,"Hello World","hello world");  \
             std::locale::global(gen("tr_TR.UTF-8"));        \
             eight_bit=false;                                \
-            TEST_V(to_upper,"i","İ");                        \
-            TEST_V(to_lower,"İ","i");                        \
+            TEST_V(to_upper,"i","İ");                       \
+            TEST_V(to_lower,"İ","i");                       \
         }while(0)
 
 

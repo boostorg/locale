@@ -34,7 +34,7 @@ do {                                                                            
     do {                                                                \
         test_counter++;                                                 \
         if(X) break;                                                    \
-        std::cerr << "Error in line:"<<__LINE__ << " "#X  << std::endl; \
+        std::cerr << "Error in line:" << __LINE__ << " "#X  << std::endl; \
         THROW_IF_TOO_BIG(error_counter++);                              \
     }while(0)
 #endif
@@ -43,7 +43,7 @@ do {                                                                            
     do {                                                                \
         test_counter++;                                                 \
         try { X; } catch(E const &/*e*/ ) {break;} catch(...){}         \
-        std::cerr << "Error in line:"<<__LINE__ << " "#X  << std::endl; \
+        std::cerr << "Error in line:" << __LINE__ << " "#X  << std::endl; \
         THROW_IF_TOO_BIG(error_counter++);                              \
     }while(0)
 
@@ -51,11 +51,11 @@ do {                                                                            
     do {                                                                \
         int passed=test_counter - error_counter;                        \
         std::cout << std::endl;                                         \
-        std::cout << "Passed "<<passed<<" tests" << std::endl;          \
+        std::cout << "Passed " << passed << " tests" << std::endl;          \
         if(error_counter >0 ) {                                         \
-            std::cout << "Failed "<<error_counter<<" tests"<<std::endl; \
+            std::cout << "Failed " << error_counter << " tests" << std::endl; \
         }                                                               \
-        std::cout <<" "<< std::fixed << std::setprecision(1)            \
+        std::cout << " " << std::fixed << std::setprecision(1)          \
                 << std::setw(5) << 100.0 * passed / test_counter <<     \
                 "% of tests completed sucsessefully" << std::endl;      \
         return error_counter == 0 ? EXIT_SUCCESS : EXIT_FAILURE ;       \
@@ -104,7 +104,9 @@ std::basic_string<Char> to(std::string const &utf8)
 BOOST_LOCALE_START_CONST_CONDITION
         if(sizeof(Char)==1 && point > 255) {
             std::ostringstream ss;
-            ss << "Can't convert codepoint U" << std::hex << point <<"(" <<std::string(utf8.begin()+prev,utf8.begin()+i)<<") to Latin1";
+            ss << "Can't convert codepoint U"
+               << std::hex << point << "(" << std::string(utf8.begin()+prev,utf8.begin()+i)
+               << ") to Latin1";
             throw std::runtime_error(ss.str());
         }
         else if(sizeof(Char)==2 && point >0xFFFF) { // Deal with surragates

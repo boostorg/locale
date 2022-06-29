@@ -693,7 +693,7 @@ namespace boost {
             ///
             date_time operator<<(period::period_type f) const
             {
-                return *this<<date_time_period(f);
+                return *this << date_time_period(f);
             }
 
             ///
@@ -709,14 +709,14 @@ namespace boost {
             ///
             date_time const &operator<<=(period::period_type f)
             {
-                return *this<<=date_time_period(f);
+                return *this <<= date_time_period(f);
             }
             ///
             /// roll backward a date by single period f.
             ///
             date_time const &operator>>=(period::period_type f)
             {
-                return *this>>=date_time_period(f);
+                return *this >>= date_time_period(f);
             }
 
             ///
@@ -863,7 +863,7 @@ namespace boost {
         /// For example:
         /// \code
         ///  date_time now(time(0),hebrew_calendar)
-        ///  cout << "Year: " << period::year(now) <<" Full Date:"<< now;
+        ///  cout << "Year: " << period::year(now) << " Full Date:" << now;
         /// \endcode
         ///
         /// The output may be Year:5770 Full Date:Jan 1, 2010

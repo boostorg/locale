@@ -179,7 +179,7 @@ int main()
         TEST_TO(make4(0xDC00),illegal);
         TEST_TO(make4(0xDFFF),illegal);
 
-        std::cout <<"-- Incomplete" << std::endl;
+        std::cout << "-- Incomplete" << std::endl;
 
         TEST_TO("\x80",illegal);
         TEST_TO("\xC2",incomplete);

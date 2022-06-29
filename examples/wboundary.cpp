@@ -38,19 +38,18 @@
 int main()
 {
     using namespace boost::locale;
-    using namespace std;
 
     // Create system default locale
     generator gen;
-    locale loc=gen("");
+    std::locale loc=gen("");
     // We need the boundary facet, currently only available via ICU
     if(!std::has_facet<boundary::boundary_indexing<wchar_t>>(loc))
     {
-        cout << "boundary detection not implemented in this environment" << endl;
+        std::cout << "boundary detection not implemented in this environment" << std::endl;
         return 0;
     }
-    locale::global(loc);
-    wcout.imbue(loc);
+    std::locale::global(loc);
+    std::wcout.imbue(loc);
 
     // This is needed to prevent C library to
     // convert strings to narrow
@@ -58,48 +57,48 @@ int main()
     std::ios_base::sync_with_stdio(false);
 
 
-    wstring text=L"Hello World! あにま! Linux2.6 and Windows7 is word and number. שָלוֹם עוֹלָם!";
+    std::wstring text=L"Hello World! あにま! Linux2.6 and Windows7 is word and number. שָלוֹם עוֹלָם!";
 
-    wcout<<text<<endl;
+    std::wcout << text << std::endl;
 
     boundary::wssegment_index index(boundary::word,text.begin(),text.end());
     boundary::wssegment_index::iterator p,e;
 
     for(p=index.begin(),e=index.end();p!=e;++p) {
-        wcout<<L"Part ["<<*p<<L"] has ";
+        std::wcout << L"Part [" << *p << L"] has ";
         if(p->rule() & boundary::word_number)
-            wcout<<L"number(s) ";
+            std::wcout << L"number(s) ";
         if(p->rule() & boundary::word_letter)
-            wcout<<L"letter(s) ";
+            std::wcout << L"letter(s) ";
         if(p->rule() & boundary::word_kana)
-            wcout<<L"kana character(s) ";
+            std::wcout << L"kana character(s) ";
         if(p->rule() & boundary::word_ideo)
-            wcout<<L"ideographic character(s) ";
+            std::wcout << L"ideographic character(s) ";
         if(p->rule() & boundary::word_none)
-            wcout<<L"no word characters";
-        wcout<<endl;
+            std::wcout << L"no word characters";
+        std::wcout << std::endl;
     }
 
     index.map(boundary::character,text.begin(),text.end());
 
     for(p=index.begin(),e=index.end();p!=e;++p) {
-        wcout<<L"|" <<*p ;
+        std::wcout << L"|" << *p ;
     }
-    wcout<<L"|\n\n";
+    std::wcout << L"|\n\n";
 
     index.map(boundary::line,text.begin(),text.end());
 
     for(p=index.begin(),e=index.end();p!=e;++p) {
-        wcout<<L"|" <<*p ;
+        std::wcout << L"|" << *p ;
     }
-    wcout<<L"|\n\n";
+    std::wcout << L"|\n\n";
 
     index.map(boundary::sentence,text.begin(),text.end());
 
     for(p=index.begin(),e=index.end();p!=e;++p) {
-        wcout<<L"|" <<*p ;
+        std::wcout << L"|"  
     }
-    wcout<<"|\n\n";
+    std::wcout << "|\n\n";
 
 }
 

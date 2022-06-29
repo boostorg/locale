@@ -78,7 +78,7 @@ void test_char()
                 test_one<CharType>(gen(name),"i","i","İ");
             }
             else {
-                std::cout <<"  Turkish locale is not supported well" << std::endl;
+                std::cout << "  Turkish locale is not supported well" << std::endl;
             }
         }
         catch(...) {

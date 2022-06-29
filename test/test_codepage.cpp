@@ -108,11 +108,11 @@ void test_wfail(std::string file,std::locale const &l,int pos)
     int i;
     for(i=0;i<pos;i++) {
         f1 << out.at(i);
-        f1<<std::flush;
+        f1 << std::flush;
         TEST(f1.good());
     }
     f1 << out.at(i);
-    TEST(f1.fail() || (f1<<std::flush).fail());
+    TEST(f1.fail() || (f1 << std::flush).fail());
 }
 
 
@@ -306,13 +306,13 @@ void test_combinations()
 void test_all_combinations()
 {
     std::cout << "Testing utf_to_utf" << std::endl;
-    std::cout <<"  char<-char"<<std::endl;
+    std::cout << "  char<-char" << std::endl;
     test_combinations<char,char>();
-    std::cout <<"  char<-wchar"<<std::endl;
+    std::cout << "  char<-wchar" << std::endl;
     test_combinations<char,wchar_t>();
-    std::cout <<"  wchar<-char"<<std::endl;
+    std::cout << "  wchar<-char" << std::endl;
     test_combinations<wchar_t,char>();
-    std::cout <<"  wchar<-wchar"<<std::endl;
+    std::cout << "  wchar<-wchar" << std::endl;
     test_combinations<wchar_t,wchar_t>();
 }
 
@@ -362,7 +362,7 @@ void test_simple_conversions()
         test_skip("\xFB-","-","ISO-8859-8");
     }
     catch(blc::invalid_charset_error const &) {
-        std::cout <<"--- not supported" << std::endl;
+        std::cout << "--- not supported" << std::endl;
     }
     try {
         std::cout << "-- cp932" << std::endl;
@@ -372,7 +372,7 @@ void test_simple_conversions()
         test_skip("\x83\xF8-","-","cp932","");
     }
     catch(blc::invalid_charset_error const &) {
-        std::cout <<"--- not supported" << std::endl;
+        std::cout << "--- not supported" << std::endl;
     }
 }
 
