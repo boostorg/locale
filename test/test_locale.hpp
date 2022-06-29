@@ -51,13 +51,13 @@ do {                                                                            
     do {                                                                \
         int passed=test_counter - error_counter;                        \
         std::cout << std::endl;                                         \
-        std::cout << "Passed " << passed << " tests" << std::endl;          \
+        std::cout << "Passed " << passed << " tests\n";          \
         if(error_counter >0 ) {                                         \
-            std::cout << "Failed " << error_counter << " tests" << std::endl; \
+            std::cout << "Failed " << error_counter << " tests\n"; \
         }                                                               \
         std::cout << " " << std::fixed << std::setprecision(1)          \
                 << std::setw(5) << 100.0 * passed / test_counter <<     \
-                "% of tests completed sucsessefully" << std::endl;      \
+                "% of tests completed sucsessefully\n";      \
         return error_counter == 0 ? EXIT_SUCCESS : EXIT_FAILURE ;       \
     }while(0)
 

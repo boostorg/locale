@@ -137,7 +137,7 @@ void test_for_char()
         test_ok<Char>(res.c_str(),g("en_US.UTF-8")); // U+2008A
     }
     else {
-        std::cout << "    UTF-8 Not supported " << std::endl;
+        std::cout << "    UTF-8 Not supported \n";
     }
 
     if(test_iso) {
@@ -305,7 +305,7 @@ void test_combinations()
 
 void test_all_combinations()
 {
-    std::cout << "Testing utf_to_utf" << std::endl;
+    std::cout << "Testing utf_to_utf\n";
     std::cout << "  char<-char" << std::endl;
     test_combinations<char,char>();
     std::cout << "  char<-wchar" << std::endl;
@@ -353,7 +353,7 @@ void test_skip(char const *enc,char const *utf,char const *name,char const *opt=
 void test_simple_conversions()
 {
     namespace blc=boost::locale::conv;
-    std::cout << "- Testing correct invalid bytes skipping" << std::endl;
+    std::cout << "- Testing correct invalid bytes skipping\n";
     try {
         std::cout << "-- ISO-8859-8" << std::endl;
         test_skip("test \xE0\xE1\xFB-","test \xd7\x90\xd7\x91-","ISO-8859-8");
@@ -362,7 +362,7 @@ void test_simple_conversions()
         test_skip("\xFB-","-","ISO-8859-8");
     }
     catch(blc::invalid_charset_error const &) {
-        std::cout << "--- not supported" << std::endl;
+        std::cout << "--- not supported\n";
     }
     try {
         std::cout << "-- cp932" << std::endl;
@@ -372,7 +372,7 @@ void test_simple_conversions()
         test_skip("\x83\xF8-","-","cp932","");
     }
     catch(blc::invalid_charset_error const &) {
-        std::cout << "--- not supported" << std::endl;
+        std::cout << "--- not supported\n";
     }
 }
 
@@ -484,7 +484,7 @@ int main()
 
             std::cout << "Testing wide I/O" << std::endl;
             test_wide_io();
-            std::cout << "Testing charset to/from UTF conversion functions" << std::endl;
+            std::cout << "Testing charset to/from UTF conversion functions\n";
             std::cout << "  char" << std::endl;
             test_to<char>();
             std::cout << "  wchar_t" << std::endl;

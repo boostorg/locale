@@ -9,7 +9,7 @@
 #include <iostream>
 int main()
 {
-        std::cout << "POSIX Backend is not build... Skipping" << std::endl;
+        std::cout << "POSIX Backend is not build... Skipping\n";
 }
 #else
 #include <boost/locale/conversion.hpp>

@@ -276,7 +276,7 @@ int main()
         std::cerr << "Failed : " << e.what() << std::endl;
         return 1;
     }
-    std::cout << "Ok" << std::endl;
+    std::cout << "Ok\n";
     return 0;
 }
 ///

@@ -45,7 +45,7 @@ int main()
     // We need the boundary facet, currently only available via ICU
     if(!std::has_facet<boundary::boundary_indexing<wchar_t>>(loc))
     {
-        std::cout << "boundary detection not implemented in this environment" << std::endl;
+        std::cout << "boundary detection not implemented in this environment\n";
         return 0;
     }
     std::locale::global(loc);
@@ -96,7 +96,7 @@ int main()
     index.map(boundary::sentence,text.begin(),text.end());
 
     for(p=index.begin(),e=index.end();p!=e;++p) {
-        std::wcout << L"|"  
+        std::wcout << L"|" << *p;
     }
     std::wcout << "|\n\n";
 

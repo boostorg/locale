@@ -10,7 +10,7 @@
 #include <iostream>
 int main()
 {
-        std::cout << "STD Backend is not build... Skipping" << std::endl;
+        std::cout << "STD Backend is not build... Skipping\n";
 }
 #else
 

@@ -9,7 +9,7 @@
 #include <iostream>
 int main()
 {
-        std::cout << "WinAPI Backend is not build... Skipping" << std::endl;
+        std::cout << "WinAPI Backend is not build... Skipping\n";
 }
 #else
 

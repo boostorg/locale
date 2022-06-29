@@ -10,7 +10,7 @@
 #include <iostream>
 int main()
 {
-        std::cout << "WinAPI Backend is not build... Skipping" << std::endl;
+        std::cout << "WinAPI Backend is not build... Skipping\n";
 }
 #else
 
@@ -40,7 +40,7 @@ bool equal(std::string const &s1,std::wstring const &s2)
     bool res = s1 == boost::locale::conv::from_utf(s2,"UTF-8");
     #ifdef DEBUG_FMT
     if(!res)
-        std::cout << "[" << s1 << "]!=[" << boost::locale::conv::from_utf(s2,"UTF-8") << "]" << std::endl;
+        std::cout << "[" << s1 << "]!=[" << boost::locale::conv::from_utf(s2,"UTF-8") << "]\n";
     #endif
     return res;
 }
@@ -50,7 +50,7 @@ bool equal(std::wstring const &s1,std::wstring const &s2)
     bool res = s1 == s2;
     #ifdef DEBUG_FMT
     if(!res)
-        std::cout << "[" << boost::locale::conv::from_utf(s1,"UTF-8") << "]!=[" << boost::locale::conv::from_utf(s2,"UTF-8") << "]" << std::endl;
+        std::cout << "[" << boost::locale::conv::from_utf(s1,"UTF-8") << "]!=[" << boost::locale::conv::from_utf(s2,"UTF-8") << "]\n";
     #endif
     return res;
 }
@@ -61,7 +61,7 @@ bool equal(std::string const &s1,std::string const &s2)
     bool res = s1 == s2;
     #ifdef DEBUG_FMT
     if(!res)
-        std::cout << "[" << s1 << "]!=[" << s2 << "]" << std::endl;
+        std::cout << "[" << s1 << "]!=[" << s2 << "]\n";
     #endif
     return res;
 }
@@ -71,7 +71,7 @@ bool equal(std::wstring const &s1,std::string const &s2)
     bool res = s1 == boost::locale::conv::to_utf<wchar_t>(s2,"UTF-8");
     #ifdef DEBUG_FMT
     if(!res)
-        std::cout << "[" << boost::locale::conv::from_utf(s1,"UTF-8") << "]!=[" << s2 << "]" << std::endl;
+        std::cout << "[" << boost::locale::conv::from_utf(s1,"UTF-8") << "]!=[" << s2 << "]\n";
     #endif
     return res;
 

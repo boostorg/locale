@@ -10,7 +10,7 @@
 #include <iostream>
 int main()
 {
-        std::cout << "ICU is not build... Skipping" << std::endl;
+        std::cout << "ICU is not build... Skipping\n";
 }
 #else
 
@@ -34,7 +34,7 @@ void print_str(std::basic_string<Char> const &/*s*/)
 template<>
 void print_str<char>(std::basic_string<char> const &s)
 {
-    std::cout << "[" << s << "]" << std::endl;
+    std::cout << "[" << s << "]\n";
 }
 
 

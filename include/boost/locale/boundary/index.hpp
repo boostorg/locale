@@ -571,7 +571,7 @@ namespace boost {
                 ///     segment_index<some_iterator>::iterator p=index.begin();
                 ///     segment<some_iterator> &t = *p;
                 ///     ++p;
-                ///     cout << t.str() << endl;
+                ///     std::cout << t.str() << std::endl;
                 ///     \endcode
                 ///
                 typedef unspecified_iterator_type iterator;

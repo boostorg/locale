@@ -35,7 +35,7 @@ char const *env(char const *s)
 
 void check_locale(char const **names)
 {
-    std::cout << "  " << std::setw(32) << "locale" << std::setw(4) << "C" << std::setw(4) << "C++" << std::endl;
+    std::cout << "  " << std::setw(32) << "locale" << std::setw(4) << "C" << std::setw(4) << "C++\n";
     while(*names) {
         char const *name = *names;
         std::cout << "  " << std::setw(32) << name << std::setw(4);
@@ -73,11 +73,11 @@ int main()
     #endif
     std::cout << std::endl;
     #ifdef BOOST_LOCALE_WITH_ICONV
-    std::cout << "- With iconv" << std::endl;
+    std::cout << "- With iconv\n";
     #else
-    std::cout << "- Without iconv" << std::endl;
+    std::cout << "- Without iconv\n";
     #endif
-    std::cout << "- Environment " << std::endl;
+    std::cout << "- Environment \n";
     std::cout << "  LANG=" << env("LANG") << std::endl;
     std::cout << "  LC_ALL=" << env("LC_ALL") << std::endl;
     std::cout << "  LC_CTYPE=" << env("LC_CTYPE") << std::endl;
@@ -91,13 +91,13 @@ int main()
     try {
         std::locale loc("");
 #if defined(BOOST_CLANG) && BOOST_CLANG_VERSION < 30800
-        std::cout << "- C++ locale: n/a on Clang < 3.8" << std::endl;
+        std::cout << "- C++ locale: n/a on Clang < 3.8\n";
 #else
         std::cout << "- C++ locale: " << loc.name() << std::endl;
 #endif
     }
     catch(std::exception const &) {
-        std::cout << "- C++ locale: is not supported" << std::endl;
+        std::cout << "- C++ locale: is not supported\n";
     }
 
     char const *locales_to_check[] = {
@@ -129,7 +129,7 @@ int main()
         std::cout << std::use_facet<boost::locale::info>(l).name() << std::endl;
     }
     catch(std::exception const &) {
-        std::cout << " undetected" << std::endl;
+        std::cout << " undetected\n";
         return EXIT_FAILURE;
     }
     return EXIT_SUCCESS;
