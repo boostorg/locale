@@ -91,7 +91,7 @@ int main()
     try {
         using namespace boost::locale::util;
 
-        std::cout << "Test UTF-8" << std::endl;
+        std::cout << "Test UTF-8\n";
         std::cout << "- From UTF-8" << std::endl;
 
 
@@ -200,7 +200,7 @@ int main()
         TEST_TO("\xf4\x8f",incomplete);
         TEST_TO("\xf4",incomplete);
 
-        std::cout << "- To UTF-8" << std::endl;
+        std::cout << "- To UTF-8\n";
 
         std::cout << "-- Test correct" << std::endl;
 

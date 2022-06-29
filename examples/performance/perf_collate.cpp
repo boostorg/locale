@@ -16,7 +16,7 @@ using namespace boost::locale;
 int main(int argc,char **argv)
 {
     if(argc!=2) {
-        std::cerr << "Usage backend locale" << std::endl;
+        std::cerr << "Usage backend locale\n";
         return 1;
     }
     boost::locale::localization_backend_manager mgr = boost::locale::localization_backend_manager::global();

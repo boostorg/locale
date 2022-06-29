@@ -9,7 +9,7 @@
 #include <iostream>
 int main()
 {
-        std::cout << "ICU is not build... Skipping" << std::endl;
+        std::cout << "ICU is not build... Skipping\n";
 }
 #else
 
@@ -89,7 +89,7 @@ static bool parsing_fails()
         }
         checked=true;
         if(!fails) {
-            std::cerr << "!!! Warning: libc++ library does not throw an exception on failbit !!!" << std::endl;
+            std::cerr << "!!! Warning: libc++ library does not throw an exception on failbit !!!\n";
         }
     }
     return fails;

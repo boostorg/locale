@@ -863,7 +863,7 @@ namespace boost {
         /// For example:
         /// \code
         ///  date_time now(time(0),hebrew_calendar)
-        ///  cout << "Year: " << period::year(now) << " Full Date:" << now;
+        ///  std::cout << "Year: " << period::year(now) << " Full Date:" << now;
         /// \endcode
         ///
         /// The output may be Year:5770 Full Date:Jan 1, 2010

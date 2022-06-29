@@ -17,7 +17,7 @@ using namespace boost::locale;
 int main(int argc,char **argv)
 {
     if(argc!=2) {
-        std::cerr << "Usage backend locale" << std::endl;
+        std::cerr << "Usage backend locale\n";
         return 1;
     }
     /// Set global locale to requested
@@ -29,9 +29,9 @@ int main(int argc,char **argv)
     set_type all_strings;
 
     /// Read all strings into the set
-    while(!cin.eof()) {
+    while(!std::cin.eof()) {
         std::string tmp;
-        getline(cin,tmp);
+        getline(std::cin,tmp);
         all.push_back(tmp);
     }
 

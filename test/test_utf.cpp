@@ -126,7 +126,7 @@ void test_valid_utf(CharType const* str, unsigned codepoint)
 
 void test_utf8()
 {
-    std::cout << "- Test UTF-8" << std::endl;
+    std::cout << "- Test UTF-8\n";
 
     std::cout << "-- Correct" << std::endl;
     test_valid_utf("\x7f", 0x7f);
@@ -210,7 +210,7 @@ void test_utf8()
 
 void test_utf16()
 {
-    std::cout << "- Test UTF-16" << std::endl;
+    std::cout << "- Test UTF-16\n";
 
     std::cout << "-- Correct" << std::endl;
     test_valid_utf(u16_seq(0x10), 0x10);
@@ -245,7 +245,7 @@ void test_utf16()
 
 void test_utf32()
 {
-    std::cout << "- Test UTF-32" << std::endl;
+    std::cout << "- Test UTF-32\n";
 
     std::cout << "-- Correct" << std::endl;
     test_valid_utf(u32_seq(0x10), 0x10);

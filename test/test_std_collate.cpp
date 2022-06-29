@@ -10,7 +10,7 @@
 #include <iostream>
 int main()
 {
-        std::cout << "STD Backend is not build... Skipping" << std::endl;
+        std::cout << "STD Backend is not build... Skipping\n";
 }
 #else
 
@@ -76,7 +76,7 @@ void test_char()
     std::string name;
 
     #if defined(_LIBCPP_VERSION) && (defined(__APPLE__) || defined(__FreeBSD__))
-    std::cout << "- Collation is broken on this OS's standard C++ library, skipping" << std::endl;
+    std::cout << "- Collation is broken on this OS's standard C++ library, skipping\n";
     #else
     std::string names[] = { "en_US.UTF-8", "en_US.ISO8859-1" };
     for(unsigned i=0;i<sizeof(names)/sizeof(names[0]);i++) {

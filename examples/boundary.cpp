@@ -20,7 +20,7 @@ int main()
     // We need the boundary facet, currently only available via ICU
     if(!std::has_facet<boundary::boundary_indexing<char>>(loc))
     {
-        std::cout << "boundary detection not implemented in this environment" << std::endl;
+        std::cout << "boundary detection not implemented in this environment\n";
         return 0;
     }
     std::locale::global(loc);

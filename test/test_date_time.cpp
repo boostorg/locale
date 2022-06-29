@@ -31,7 +31,7 @@
     do {                                                                     \
         ss << (t);                                                            \
         if(ss.str()!=X) {                                                     \
-            std::cerr << "[" << ss.str() << "]!=[" << X << "]" << std::endl;  \
+            std::cerr << "[" << ss.str() << "]!=[" << X << "]\n";  \
         }                                                                     \
         TESTR(ss.str() == X);                                                 \
     } while(0)

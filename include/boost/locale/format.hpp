@@ -137,7 +137,7 @@ namespace boost {
         ///
         /// For example
         /// \code
-        ///  cout << format("Hello {1}, you are {2} years old") % name % age << endl;
+        ///  std::cout << format("Hello {1}, you are {2} years old") % name % age << std::endl;
         /// \endcode
         ///
         /// Formatting is enclosed between curly brackets \c { \c } and defined by a comma separated list of flags in the format key[=value]
@@ -150,7 +150,7 @@ namespace boost {
         /// For example:
         ///
         /// \code
-        ///   cout << format("The height of water at {1,time} is {2,num=fixed,precision=3}") % time % height;
+        ///   std::cout << format("The height of water at {1,time} is {2,num=fixed,precision=3}") % time % height;
         /// \endcode
         ///
         /// The special key -- a number without a value defines the position of an input parameter.
@@ -185,16 +185,16 @@ namespace boost {
         /// -  \c locale -- with parameter -- switch locale for current operation. This command generates locale
         ///     with formatting facets giving more fine grained control of formatting. For example:
         ///    \code
-        ///    cout << format("Today {1,date} ({1,date,locale=he_IL.UTF-8@calendar=hebrew,date} Hebrew Date)") % date;
+        ///    std::cout << format("Today {1,date} ({1,date,locale=he_IL.UTF-8@calendar=hebrew,date} Hebrew Date)") % date;
         ///    \endcode
         /// -  \c timezone or \c tz -- the name of the timezone to display the time in. For example:\n
         ///    \code
-        ///    cout << format("Time is: Local {1,time}, ({1,time,tz=EET} Eastern European Time)") % date;
+        ///    std::cout << format("Time is: Local {1,time}, ({1,time,tz=EET} Eastern European Time)") % date;
         ///    \endcode
         /// -  \c local - display the time in local time
         /// -  \c gmt - display the time in UTC time scale
         ///    \code
-        ///    cout << format("Local time is: {1,time,local}, universal time is {1,time,gmt}") % time;
+        ///    std::cout << format("Local time is: {1,time,local}, universal time is {1,time,gmt}") % time;
         ///    \endcode
         ///
         ///

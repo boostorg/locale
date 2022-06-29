@@ -256,7 +256,7 @@ protected:
         while(to < to_end && from < from_end)
         {
 #ifdef DEBUG_CODECVT
-            std::cout << "Entering IN--------------" << std::endl;
+            std::cout << "Entering IN--------------\n";
             std::cout << "State " << std::hex << state << std::endl;
             std::cout << "Left in " << std::dec << from_end - from << " out " << to_end -to << std::endl;
 #endif
@@ -310,16 +310,16 @@ protected:
         std::cout << "Returning ";
         switch(r) {
         case std::codecvt_base::ok:
-            std::cout << "ok" << std::endl;
+            std::cout << "ok\n";
             break;
         case std::codecvt_base::partial:
-            std::cout << "partial" << std::endl;
+            std::cout << "partial\n";
             break;
         case std::codecvt_base::error:
-            std::cout << "error" << std::endl;
+            std::cout << "error\n";
             break;
         default:
-            std::cout << "other" << std::endl;
+            std::cout << "other\n";
             break;
         }
         std::cout << "State " << std::hex << state << std::endl;
@@ -350,7 +350,7 @@ protected:
         while(to < to_end && from < from_end)
         {
 #ifdef DEBUG_CODECVT
-        std::cout << "Entering OUT --------------" << std::endl;
+        std::cout << "Entering OUT --------------\n";
         std::cout << "State " << std::hex << state << std::endl;
         std::cout << "Left in " << std::dec << from_end - from << " out " << to_end -to << std::endl;
 #endif
@@ -419,16 +419,16 @@ protected:
         std::cout << "Returning ";
         switch(r) {
         case std::codecvt_base::ok:
-            std::cout << "ok" << std::endl;
+            std::cout << "ok\n";
             break;
         case std::codecvt_base::partial:
-            std::cout << "partial" << std::endl;
+            std::cout << "partial\n";
             break;
         case std::codecvt_base::error:
-            std::cout << "error" << std::endl;
+            std::cout << "error\n";
             break;
         default:
-            std::cout << "other" << std::endl;
+            std::cout << "other\n";
             break;
         }
         std::cout << "State " << std::hex << state << std::endl;
@@ -535,7 +535,7 @@ protected:
         while(to < to_end && from < from_end)
         {
 #ifdef DEBUG_CODECVT
-            std::cout << "Entering IN--------------" << std::endl;
+            std::cout << "Entering IN--------------\n";
             std::cout << "State " << std::hex << state << std::endl;
             std::cout << "Left in " << std::dec << from_end - from << " out " << to_end -to << std::endl;
 #endif
@@ -563,16 +563,16 @@ protected:
         std::cout << "Returning ";
         switch(r) {
         case std::codecvt_base::ok:
-            std::cout << "ok" << std::endl;
+            std::cout << "ok\n";
             break;
         case std::codecvt_base::partial:
-            std::cout << "partial" << std::endl;
+            std::cout << "partial\n";
             break;
         case std::codecvt_base::error:
-            std::cout << "error" << std::endl;
+            std::cout << "error\n";
             break;
         default:
-            std::cout << "other" << std::endl;
+            std::cout << "other\n";
             break;
         }
         std::cout << "State " << std::hex << state << std::endl;
@@ -596,7 +596,7 @@ protected:
         while(to < to_end && from < from_end)
         {
 #ifdef DEBUG_CODECVT
-        std::cout << "Entering OUT --------------" << std::endl;
+        std::cout << "Entering OUT --------------\n";
         std::cout << "State " << std::hex << state << std::endl;
         std::cout << "Left in " << std::dec << from_end - from << " out " << to_end -to << std::endl;
 #endif
@@ -626,16 +626,16 @@ protected:
         std::cout << "Returning ";
         switch(r) {
         case std::codecvt_base::ok:
-            std::cout << "ok" << std::endl;
+            std::cout << "ok\n";
             break;
         case std::codecvt_base::partial:
-            std::cout << "partial" << std::endl;
+            std::cout << "partial\n";
             break;
         case std::codecvt_base::error:
-            std::cout << "error" << std::endl;
+            std::cout << "error\n";
             break;
         default:
-            std::cout << "other" << std::endl;
+            std::cout << "other\n";
             break;
         }
         std::cout << "State " << std::hex << state << std::endl;
