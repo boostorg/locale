@@ -366,7 +366,7 @@ int main(int argc,char **argv)
                         l = g(locales[i]);
                 }
 
-                std::cout << "  Testing "<<locales[i]<<std::endl;
+                std::cout << "  Testing " << locales[i] << std::endl;
                 std::cout << "    single forms" << std::endl;
 
                 test_translate("hello","שלום",l,"default");
@@ -410,7 +410,7 @@ int main(int argc,char **argv)
                     test_cntranslate(inp,"x day","x days",20,"x days",l,"undefined");
                 }
             }
-            std::cout << "  Testing fallbacks" <<std::endl;
+            std::cout << "  Testing fallbacks" << std::endl;
             test_translate("test","he_IL",g("he_IL.UTF-8"),"full");
             test_translate("test","he",g("he_IL.UTF-8"),"fall");
 

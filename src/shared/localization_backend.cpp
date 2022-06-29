@@ -134,7 +134,7 @@ namespace boost {
                 {
                     int id;
                     unsigned v;
-                    for(v=1,id=0;v!=0;v<<=1,id++) {
+                    for(v=1,id=0;v!=0;v <<= 1,id++) {
                         if(category == v)
                             break;
                     }

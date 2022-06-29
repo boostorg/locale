@@ -46,7 +46,7 @@ template<>
 void print_diff(std::string const &l,std::string const &r,int line)
 {
     if(l!=r) {
-        std::cerr << "----[" << l <<"]!=\n----["<<r<<"] in " << line << std::endl;
+        std::cerr << "----[" << l << "]!=\n----[" << r << " ] in " << line << std::endl;
     }
 }
 
@@ -145,19 +145,19 @@ do { \
 
 #define TEST_FP2(m1,m2,value_in,str,type,value_out) \
 do { \
-    TEST_FMT(m1<<m2,value_in,str); \
+    TEST_FMT(m1 << m2,value_in,str); \
     TEST_PAR(m1>>m2,type,str,value_out);  \
 }while(0)
 
 #define TEST_FP3(m1,m2,m3,value_in,str,type,value_out) \
 do { \
-    TEST_FMT(m1<<m2<<m3,value_in,str); \
+    TEST_FMT(m1 << m2 << m3,value_in,str); \
     TEST_PAR(m1>>m2>>m3,type,str,value_out); \
 }while(0)
 
 #define TEST_FP4(m1,m2,m3,m4,value_in,str,type,value_out) \
 do { \
-    TEST_FMT(m1<<m2<<m3<<m4,value_in,str); \
+    TEST_FMT(m1 << m2 << m3 << m4,value_in,str); \
     TEST_PAR(m1>>m2>>m3>>m4,type,str,value_out); \
 }while(0)
 
@@ -222,8 +222,8 @@ void test_manip(std::string e_charset="UTF-8")
 
     TEST_FP1(as::posix,1200.1,"1200.1",double,1200.1);
     TEST_FP1(as::number,1200.1,"1,200.1",double,1200.1);
-    TEST_FMT(as::number<<std::setfill(CharType('_'))<<std::setw(6),1534,"_1,534");
-    TEST_FMT(as::number<<std::left<<std::setfill(CharType('_'))<<std::setw(6),1534,"1,534_");
+    TEST_FMT(as::number << std::setfill(CharType('_')) << std::setw(6),1534,"_1,534");
+    TEST_FMT(as::number << std::left << std::setfill(CharType('_')) << std::setw(6),1534,"1,534_");
 
     // Ranges
     if(sizeof(short) == 2) {
@@ -384,7 +384,7 @@ void test_manip(std::string e_charset="UTF-8")
     std::basic_string<CharType> format_string(format.begin(),format.end());
     strftime(local_time_str,sizeof(local_time_str),format.c_str(),gmtime(&lnow));
     TEST_FMT(as::ftime(format_string),now,local_time_str);
-    TEST_FMT(as::ftime(format_string)<<as::gmt<<as::local_time,now,local_time_str);
+    TEST_FMT(as::ftime(format_string) << as::gmt << as::local_time,now,local_time_str);
 
     std::string marks =
         "aAbB"
@@ -418,7 +418,7 @@ void test_manip(std::string e_charset="UTF-8")
         format_string.clear();
         format_string+=static_cast<CharType>('%');
         format_string+=static_cast<CharType>(marks[i]);
-        TEST_FMT(as::ftime(format_string)<<as::gmt,a_datetime,result[i]);
+        TEST_FMT(as::ftime(format_string) << as::gmt,a_datetime,result[i]);
     }
 
     std::string sample_f[]={
@@ -436,7 +436,7 @@ void test_manip(std::string e_charset="UTF-8")
 
     for(unsigned i=0;i<sizeof(sample_f)/sizeof(sample_f[0]);i++) {
         format_string.assign(sample_f[i].begin(),sample_f[i].end());
-        TEST_FMT(as::ftime(format_string)<<as::gmt,a_datetime,expected_f[i]);
+        TEST_FMT(as::ftime(format_string) << as::gmt,a_datetime,expected_f[i]);
     }
 
 }

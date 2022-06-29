@@ -80,7 +80,7 @@ namespace impl_icu {
         /// \code
         ///     std::cout << as::spellout;
         ///     for(int i=1;i<=10;i++)
-        ///         std::cout << i <<std::endl;
+        ///         std::cout << i << std::endl;
         /// \endcode
         ///
         /// Would create a new spelling formatter only once.

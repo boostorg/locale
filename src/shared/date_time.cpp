@@ -244,14 +244,14 @@ date_time date_time::operator-(date_time_period const &v) const
 date_time date_time::operator<<(date_time_period const &v) const
 {
     date_time tmp(*this);
-    tmp<<=v;
+    tmp <<= v;
     return tmp;
 }
 
 date_time date_time::operator>>(date_time_period const &v) const
 {
     date_time tmp(*this);
-    tmp>>=v;
+    tmp >>= v;
     return tmp;
 }
 
@@ -297,14 +297,14 @@ date_time date_time::operator-(date_time_period_set const &v) const
 date_time date_time::operator<<(date_time_period_set const &v) const
 {
     date_time tmp(*this);
-    tmp<<=v;
+    tmp <<= v;
     return tmp;
 }
 
 date_time date_time::operator>>(date_time_period_set const &v) const
 {
     date_time tmp(*this);
-    tmp>>=v;
+    tmp >>= v;
     return tmp;
 }
 
@@ -327,7 +327,7 @@ date_time const &date_time::operator-=(date_time_period_set const &v)
 date_time const &date_time::operator<<=(date_time_period_set const &v)
 {
     for(unsigned i=0;i<v.size();i++) {
-        *this<<=v[i];
+        *this <<= v[i];
     }
     return *this;
 }
@@ -335,7 +335,7 @@ date_time const &date_time::operator<<=(date_time_period_set const &v)
 date_time const &date_time::operator>>=(date_time_period_set const &v)
 {
     for(unsigned i=0;i<v.size();i++) {
-        *this>>=v[i];
+        *this >>= v[i];
     }
     return *this;
 }

@@ -78,15 +78,15 @@ int main()
     std::cout << "- Without iconv" << std::endl;
     #endif
     std::cout << "- Environment " << std::endl;
-    std::cout << "  LANG="<< env("LANG") << std::endl;
-    std::cout << "  LC_ALL="<< env("LC_ALL") << std::endl;
-    std::cout << "  LC_CTYPE="<< env("LC_CTYPE") << std::endl;
-    std::cout << "  TZ="<< env("TZ") << std::endl;
+    std::cout << "  LANG=" << env("LANG") << std::endl;
+    std::cout << "  LC_ALL=" << env("LC_ALL") << std::endl;
+    std::cout << "  LC_CTYPE=" << env("LC_CTYPE") << std::endl;
+    std::cout << "  TZ=" << env("TZ") << std::endl;
 
     char const *clocale=setlocale(LC_ALL,"");
     if(!clocale)
         clocale= "undetected";
-    std::cout <<"- C locale: " << clocale << std::endl;
+    std::cout << "- C locale: " << clocale << std::endl;
 
     try {
         std::locale loc("");

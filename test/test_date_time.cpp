@@ -27,7 +27,14 @@
 #define RESET() do { time_point = base_time_point; ss.str(""); } while(0)
 #define TESTR(X) do { TEST(X); RESET(); } while(0)
 //#define TESTEQSR(t,X) do { ss << (t); TESTR(ss.str() == X); } while(0)
-#define TESTEQSR(t,X) do { ss << (t); if(ss.str()!=X) { std::cerr <<"[" << ss.str() <<"]!=[" <<X<<"]" << std::endl; } TESTR(ss.str() == X); } while(0)
+#define TESTEQSR(t,X)                                                        \
+    do {                                                                     \
+        ss << (t);                                                            \
+        if(ss.str()!=X) {                                                     \
+            std::cerr << "[" << ss.str() << "]!=[" << X << "]" << std::endl;  \
+        }                                                                     \
+        TESTR(ss.str() == X);                                                 \
+    } while(0)
 
 int main()
 {
@@ -85,7 +92,7 @@ int main()
 
                 std::ostringstream ss;
                 ss.imbue(loc);
-                ss<<boost::locale::as::time_zone(tz);
+                ss << boost::locale::as::time_zone(tz);
 
                 date_time time_point;
 

@@ -211,7 +211,7 @@ namespace utf {
             if(trail_size == 0)
                 return lead;
 
-            code_point c = lead & ((1<<(6-trail_size))-1);
+            code_point c = lead & ((1 << (6-trail_size))-1);
 
             // Read the rest
             unsigned char tmp;
@@ -270,7 +270,7 @@ namespace utf {
             else
                 trail_size = 3;
 
-            code_point c = lead & ((1<<(6-trail_size))-1);
+            code_point c = lead & ((1 << (6-trail_size))-1);
 
             switch(trail_size) {
             case 3:

@@ -257,7 +257,7 @@ protected:
         {
 #ifdef DEBUG_CODECVT
             std::cout << "Entering IN--------------" << std::endl;
-            std::cout << "State " << std::hex << state <<std::endl;
+            std::cout << "State " << std::hex << state << std::endl;
             std::cout << "Left in " << std::dec << from_end - from << " out " << to_end -to << std::endl;
 #endif
             char const *from_saved = from;
@@ -322,7 +322,7 @@ protected:
             std::cout << "other" << std::endl;
             break;
         }
-        std::cout << "State " << std::hex << state <<std::endl;
+        std::cout << "State " << std::hex << state << std::endl;
         std::cout << "Left in " << std::dec << from_end - from << " out " << to_end -to << std::endl;
 #endif
         return r;
@@ -351,7 +351,7 @@ protected:
         {
 #ifdef DEBUG_CODECVT
         std::cout << "Entering OUT --------------" << std::endl;
-        std::cout << "State " << std::hex << state <<std::endl;
+        std::cout << "State " << std::hex << state << std::endl;
         std::cout << "Left in " << std::dec << from_end - from << " out " << to_end -to << std::endl;
 #endif
             boost::uint32_t ch=0;
@@ -431,7 +431,7 @@ protected:
             std::cout << "other" << std::endl;
             break;
         }
-        std::cout << "State " << std::hex << state <<std::endl;
+        std::cout << "State " << std::hex << state << std::endl;
         std::cout << "Left in " << std::dec << from_end - from << " out " << to_end -to << std::endl;
 #endif
         return r;
@@ -536,7 +536,7 @@ protected:
         {
 #ifdef DEBUG_CODECVT
             std::cout << "Entering IN--------------" << std::endl;
-            std::cout << "State " << std::hex << state <<std::endl;
+            std::cout << "State " << std::hex << state << std::endl;
             std::cout << "Left in " << std::dec << from_end - from << " out " << to_end -to << std::endl;
 #endif
             char const *from_saved = from;
@@ -575,7 +575,7 @@ protected:
             std::cout << "other" << std::endl;
             break;
         }
-        std::cout << "State " << std::hex << state <<std::endl;
+        std::cout << "State " << std::hex << state << std::endl;
         std::cout << "Left in " << std::dec << from_end - from << " out " << to_end -to << std::endl;
 #endif
         return r;
@@ -597,7 +597,7 @@ protected:
         {
 #ifdef DEBUG_CODECVT
         std::cout << "Entering OUT --------------" << std::endl;
-        std::cout << "State " << std::hex << state <<std::endl;
+        std::cout << "State " << std::hex << state << std::endl;
         std::cout << "Left in " << std::dec << from_end - from << " out " << to_end -to << std::endl;
 #endif
             boost::uint32_t ch=0;
@@ -638,7 +638,7 @@ protected:
             std::cout << "other" << std::endl;
             break;
         }
-        std::cout << "State " << std::hex << state <<std::endl;
+        std::cout << "State " << std::hex << state << std::endl;
         std::cout << "Left in " << std::dec << from_end - from << " out " << to_end -to << std::endl;
 #endif
         return r;

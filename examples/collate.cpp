@@ -11,7 +11,6 @@
 
 #include <boost/locale.hpp>
 
-using namespace std;
 using namespace boost::locale;
 
 int main()
@@ -26,14 +25,14 @@ int main()
      set_type all_strings;
 
      /// Read all strings into the set
-     while(!cin.eof()) {
+     while(!std::cin.eof()) {
           std::string tmp;
-          getline(cin,tmp);
+          std::getline(std::cin,tmp);
           all_strings.insert(tmp);
      }
      /// Print them out
      for(set_type::iterator p=all_strings.begin();p!=all_strings.end();++p) {
-          cout<<*p<<endl;
+          std::cout << *p << std::endl;
      }
 
 }

@@ -340,7 +340,7 @@ int main()
                 }
 
                 if(!fails) {
-                    std::cout << "- No invalid UTF. No need to check"<<std::endl;
+                    std::cout << "- No invalid UTF. No need to check" << std::endl;
                 }
                 else {
                     std::ostringstream ss;

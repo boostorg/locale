@@ -88,7 +88,7 @@ std::string text="To be or not to be, that is the question."
 ssegment_index map(word,text.begin(),text.end(),gen("en_US.UTF-8"));
 // Print all "words" -- chunks of word boundary
 for(ssegment_index::iterator it=map.begin(),e=map.end();it!=e;++it)
-    std::cout <<"\""<< * it << "\", ";
+    std::cout  << "\""<< * it << "\", ";
 std::cout << std::endl;
 \endcode
 

@@ -84,7 +84,7 @@ namespace boost {
                 static void void_write(stream_type &output,void const * /*ptr*/)
                 {
                     CharType empty_string[1]={0};
-                    output<<empty_string;
+                    output << empty_string;
                 }
 
                 template<typename Type>
@@ -319,7 +319,7 @@ namespace boost {
                             pos+=2;
                         }
                         else {
-                            out<<format[pos];
+                            out << format[pos];
                             pos++;
                         }
                         continue;

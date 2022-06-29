@@ -235,7 +235,7 @@ int main()
             std::cout << "he_IL.ISO locale" << std::endl;
             std::string name = "he_IL.ISO8859-8";
             if(!have_locale(name)) {
-                std::cout << name <<" not supported" << std::endl;
+                std::cout << name << " not supported" << std::endl;
             }
             else {
                 std::locale l1=gen(name);

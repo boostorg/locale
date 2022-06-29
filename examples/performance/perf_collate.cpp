@@ -11,7 +11,6 @@
 #include <string>
 #include <vector>
 
-using namespace std;
 using namespace boost::locale;
 
 int main(int argc,char **argv)
@@ -33,9 +32,9 @@ int main(int argc,char **argv)
     set_type all_strings;
 
     /// Read all strings into the set
-    while(!cin.eof()) {
+    while(!std::cin.eof()) {
         std::string tmp;
-        getline(cin,tmp);
+        std::getline(std::cin,tmp);
         all.push_back(tmp);
     }
     for(int i=0;i<10000;i++) {

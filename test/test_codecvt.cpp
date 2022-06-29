@@ -242,7 +242,7 @@ void test_codecvt_err()
 
 void test_char_char()
 {
-    std::cout << "Char-char specialization"<<std::endl;
+    std::cout << "Char-char specialization" << std::endl;
     std::locale l(std::locale::classic(),new boost::locale::utf8_codecvt<char>());
     std::codecvt<char,char,std::mbstate_t> const &cvt=std::use_facet<std::codecvt<char,char,std::mbstate_t> >(l);
     std::mbstate_t mb=std::mbstate_t();

@@ -40,7 +40,7 @@ int main()
 
         // Print heading of month
         if(calendar().is_gregorian())
-            std::cout << format("{1,ftime='%B'}") % now <<std::endl;
+            std::cout << format("{1,ftime='%B'}") % now << std::endl;
         else
             std::cout << format("{1,ftime='%B'} ({1,ftime='%Y-%m-%d',locale=en} - {2,locale=en,ftime='%Y-%m-%d'})")
                 % now
