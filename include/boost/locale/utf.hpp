@@ -51,7 +51,7 @@ namespace utf {
     {
         if(v>0x10FFFF)
             return false;
-        if(0xD800 <=v && v<= 0xDFFF) // surragates
+        if(0xD800 <=v && v<= 0xDFFF) // surrogates
             return false;
         return true;
     }

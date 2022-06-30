@@ -264,20 +264,11 @@ void test_char_char()
     TEST(cvt.max_length()==1);
 }
 
-int main()
+void test_main(int /*argc*/, char** /*argv*/)
 {
-    try {
-        test_codecvt_conv();
-        test_codecvt_err();
-        test_char_char();
-
-    }
-    catch(std::exception const &e) {
-        std::cerr << "Failed : " << e.what() << std::endl;
-        return 1;
-    }
-    std::cout << "Ok\n";
-    return 0;
+    test_codecvt_conv();
+    test_codecvt_err();
+    test_char_char();
 }
 ///
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4

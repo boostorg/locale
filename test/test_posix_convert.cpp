@@ -19,7 +19,6 @@ int main()
 #include <iomanip>
 #include "test_locale.hpp"
 #include "test_locale_tools.hpp"
-#include "test_posix_tools.hpp"
 #include <iostream>
 
 #include <wctype.h>
@@ -71,22 +70,12 @@ void test_char()
     name = "tr_TR.UTF-8";
     if(have_locale(name)) {
         std::cout << "Testing " << name << std::endl;
-        locale_t cl = newlocale(LC_ALL_MASK,name.c_str(),0);
-        try {
-            TEST(cl);
-            if(towupper_l(L'i',cl) == 0x130) {
-                test_one<CharType>(gen(name),"i","i","İ");
-            }
-            else {
-                std::cout << "  Turkish locale is not supported well" << std::endl;
-            }
-        }
-        catch(...) {
-            if(cl) freelocale(cl);
-            throw;
-        }
-        if(cl) freelocale(cl);
-
+        locale_holder cl(newlocale(LC_ALL_MASK,name.c_str(),0));
+        TEST(cl);
+        if(towupper_l(L'i',cl) == 0x130)
+            test_one<CharType>(gen(name),"i","i","İ");
+        else
+            std::cout << "  Turkish locale is not supported well" << std::endl; // LCOV_EXCL_LINE
     }
     else
     {
@@ -95,24 +84,16 @@ void test_char()
 }
 
 
-int main()
+void test_main(int /*argc*/, char** /*argv*/)
 {
-    try {
-        boost::locale::localization_backend_manager mgr = boost::locale::localization_backend_manager::global();
-        mgr.select("posix");
-        boost::locale::localization_backend_manager::global(mgr);
+    boost::locale::localization_backend_manager mgr = boost::locale::localization_backend_manager::global();
+    mgr.select("posix");
+    boost::locale::localization_backend_manager::global(mgr);
 
-        std::cout << "Testing char" << std::endl;
-        test_char<char>();
-        std::cout << "Testing wchar_t" << std::endl;
-        test_char<wchar_t>();
-    }
-    catch(std::exception const &e) {
-        std::cerr << "Failed " << e.what() << std::endl;
-        return EXIT_FAILURE;
-    }
-    FINALIZE();
-
+    std::cout << "Testing char" << std::endl;
+    test_char<char>();
+    std::cout << "Testing wchar_t" << std::endl;
+    test_char<wchar_t>();
 }
 
 #endif // POSIX

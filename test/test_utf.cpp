@@ -281,18 +281,11 @@ void test_utf32()
 #endif
 }
 
-int main()
+void test_main(int /*argc*/, char** /*argv*/)
 {
-    try {
-        test_utf8();
-        test_utf16();
-        test_utf32();
-    }
-    catch(std::exception const &e) {
-        std::cerr << "Failed " << e.what() << std::endl;
-        return EXIT_FAILURE;
-    }
-    FINALIZE();
+    test_utf8();
+    test_utf16();
+    test_utf32();
 }
 
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4

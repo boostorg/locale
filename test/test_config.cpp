@@ -85,7 +85,7 @@ int main()
 
     char const *clocale=setlocale(LC_ALL,"");
     if(!clocale)
-        clocale= "undetected";
+        clocale= "undetected"; // LCOV_EXCL_LINE
     std::cout << "- C locale: " << clocale << std::endl;
 
     try {
@@ -97,7 +97,7 @@ int main()
 #endif
     }
     catch(std::exception const &) {
-        std::cout << "- C++ locale: is not supported\n";
+        std::cout << "- C++ locale: is not supported\n"; // LCOV_EXCL_LINE
     }
 
     char const *locales_to_check[] = {
@@ -129,11 +129,10 @@ int main()
         std::cout << std::use_facet<boost::locale::info>(l).name() << std::endl;
     }
     catch(std::exception const &) {
-        std::cout << " undetected\n";
-        return EXIT_FAILURE;
+        std::cout << " undetected\n"; // LCOV_EXCL_LINE
+        return EXIT_FAILURE;          // LCOV_EXCL_LINE
     }
     return EXIT_SUCCESS;
-
 }
 
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4

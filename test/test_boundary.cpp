@@ -511,25 +511,18 @@ void segment_operator()
     test_op("aa","ab",-1);
 }
 
-int main()
+void test_main(int /*argc*/, char** /*argv*/)
 {
-    try {
-        std::cout << "Testing segment operators" << std::endl;
-        segment_operator();
-        std::cout << "Testing word boundary" << std::endl;
-        word_boundary();
-        std::cout << "Testing character boundary" << std::endl;
-        test_boundaries(character,nones,0,lb::character);
-        std::cout << "Testing sentence boundary" << std::endl;
-        test_boundaries(sentence1,sentence1a,sentence1b,lb::sentence);
-        std::cout << "Testing line boundary" << std::endl;
-        test_boundaries(line1,line1a,line1b,lb::line);
-    }
-    catch(std::exception const &e) {
-        std::cerr << "Failed " << e.what() << std::endl;
-        return EXIT_FAILURE;
-    }
-    FINALIZE();
+    std::cout << "Testing segment operators" << std::endl;
+    segment_operator();
+    std::cout << "Testing word boundary" << std::endl;
+    word_boundary();
+    std::cout << "Testing character boundary" << std::endl;
+    test_boundaries(character,nones,0,lb::character);
+    std::cout << "Testing sentence boundary" << std::endl;
+    test_boundaries(sentence1,sentence1a,sentence1b,lb::sentence);
+    std::cout << "Testing line boundary" << std::endl;
+    test_boundaries(line1,line1a,line1b,lb::line);
 }
 
 #endif // NOICU

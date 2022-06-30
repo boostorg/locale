@@ -85,7 +85,7 @@ namespace impl_icu {
             UChar code_point[2]={0};
             int len;
             if(u<=0xFFFF) {
-                if(0xD800 <=u && u<= 0xDFFF) // No surragates
+                if(0xD800 <=u && u<= 0xDFFF) // No surrogates
                     return illegal;
                 code_point[0]=u;
                 len=1;

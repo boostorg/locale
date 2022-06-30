@@ -47,20 +47,26 @@ do {                                                                            
         THROW_IF_TOO_BIG(error_counter++);                              \
     }while(0)
 
-#define FINALIZE()                                                      \
-    do {                                                                \
-        int passed=test_counter - error_counter;                        \
-        std::cout << std::endl;                                         \
-        std::cout << "Passed " << passed << " tests\n";          \
-        if(error_counter >0 ) {                                         \
-            std::cout << "Failed " << error_counter << " tests\n"; \
-        }                                                               \
-        std::cout << " " << std::fixed << std::setprecision(1)          \
-                << std::setw(5) << 100.0 * passed / test_counter <<     \
-                "% of tests completed sucsessefully\n";      \
-        return error_counter == 0 ? EXIT_SUCCESS : EXIT_FAILURE ;       \
-    }while(0)
+void test_main(int argc, char **argv);
 
+int main(int argc,char **argv) {
+    try {
+        test_main(argc, argv);
+    } catch(std::exception const &e) {
+        std::cerr << "Failed " << e.what() << std::endl; // LCOV_EXCL_LINE
+        return EXIT_FAILURE;                             // LCOV_EXCL_LINE
+    }
+    int passed = test_counter - error_counter; 
+    std::cout << std::endl;
+    std::cout << "Passed " << passed << " tests\n";
+    if(error_counter > 0 ) { 
+        std::cout << "Failed " << error_counter << " tests\n"; // LCOV_EXCL_LINE
+    }
+    std::cout << " " << std::fixed << std::setprecision(1)
+              << std::setw(5) << 100.0 * passed / test_counter <<
+              "% of tests completed sucsessefully\n";
+    return error_counter == 0 ? EXIT_SUCCESS : EXIT_FAILURE ;
+}
 
 inline unsigned utf8_next(std::string const &s,unsigned &pos)
 {
@@ -109,7 +115,7 @@ BOOST_LOCALE_START_CONST_CONDITION
                << ") to Latin1";
             throw std::runtime_error(ss.str());
         }
-        else if(sizeof(Char)==2 && point >0xFFFF) { // Deal with surragates
+        else if(sizeof(Char)==2 && point >0xFFFF) { // Deal with surrogates
             point-=0x10000;
             out+=static_cast<Char>(0xD800 | (point>>10));
             out+=static_cast<Char>(0xDC00 | (point & 0x3FF));
