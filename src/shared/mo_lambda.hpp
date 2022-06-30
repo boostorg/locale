@@ -8,7 +8,7 @@
 #ifndef BOOST_SRC_LOCALE_MO_LAMBDA_HPP_INCLUDED
 #define BOOST_SRC_LOCALE_MO_LAMBDA_HPP_INCLUDED
 
-#include <boost/locale/config>
+#include <boost/locale/config.hpp>
 #include <boost/shared_ptr.hpp>
 
 namespace boost {
