@@ -225,39 +225,31 @@ void test_date_time(std::locale l)
     }
 }
 
-int main()
+void test_main(int /*argc*/, char** /*argv*/)
 {
-    try {
-        boost::locale::localization_backend_manager mgr = boost::locale::localization_backend_manager::global();
-        mgr.select("winapi");
-        boost::locale::localization_backend_manager::global(mgr);
-        boost::locale::generator gen;
-        std::string name;
-        std::string names[] = { "en_US.UTF-8", "he_IL.UTF-8", "ru_RU.UTF-8" };
-        int lcids[] = { 0x0409, 0x040D ,0x0419 };
+    boost::locale::localization_backend_manager mgr = boost::locale::localization_backend_manager::global();
+    mgr.select("winapi");
+    boost::locale::localization_backend_manager::global(mgr);
+    boost::locale::generator gen;
+    std::string name;
+    std::string names[] = { "en_US.UTF-8", "he_IL.UTF-8", "ru_RU.UTF-8" };
+    int lcids[] = { 0x0409, 0x040D ,0x0419 };
 
-        for(unsigned i=0;i<sizeof(names)/sizeof(names[9]);i++) {
-            name = names[i];
-            std::cout << "- " << name << " locale" << std::endl;
-            if(boost::locale::impl_win::locale_to_lcid(name) == 0) {
-                std::cout << "-- not supported, skipping" << std::endl;
-                continue;
-            }
-            std::locale l1=gen(name);
-            std::cout << "-- UTF-8" << std::endl;
-            test_by_char<char>(l1,name,lcids[i]);
-            std::cout << "-- UTF-16" << std::endl;
-            test_by_char<wchar_t>(l1,name,lcids[i]);
+    for(unsigned i=0;i<sizeof(names)/sizeof(names[9]);i++) {
+        name = names[i];
+        std::cout << "- " << name << " locale" << std::endl;
+        if(boost::locale::impl_win::locale_to_lcid(name) == 0) {
+            std::cout << "-- not supported, skipping" << std::endl;
+            continue;
         }
-        std::cout << "- Testing strftime" << std::endl;
-        test_date_time(gen("en_US.UTF-8"));
+        std::locale l1=gen(name);
+        std::cout << "-- UTF-8" << std::endl;
+        test_by_char<char>(l1,name,lcids[i]);
+        std::cout << "-- UTF-16" << std::endl;
+        test_by_char<wchar_t>(l1,name,lcids[i]);
     }
-    catch(std::exception const &e) {
-        std::cerr << "Failed " << e.what() << std::endl;
-        return EXIT_FAILURE;
-    }
-    FINALIZE();
-
+    std::cout << "- Testing strftime" << std::endl;
+    test_date_time(gen("en_US.UTF-8"));
 }
 
 #endif // no winapi

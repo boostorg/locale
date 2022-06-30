@@ -121,17 +121,9 @@ void test_collate()
 
 
 
-int main()
+void test_main(int /*argc*/, char** /*argv*/)
 {
-    try {
-        test_collate();
-    }
-    catch(std::exception const &e) {
-        std::cerr << "Failed " << e.what() << std::endl;
-        return EXIT_FAILURE;
-    }
-    FINALIZE();
-
+    test_collate();
 }
 
 #endif // NOICU

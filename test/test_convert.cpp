@@ -68,59 +68,51 @@ void test_norm(std::string orig,std::string normal,boost::locale::norm_type type
         }while(0)
 
 
-int main()
+void test_main(int /*argc*/, char** /*argv*/)
 {
-    try {
-        {
-            using namespace boost::locale;
-            std::cout << "Testing Unicode normalization" << std::endl;
-            test_norm("\xEF\xAC\x81","\xEF\xAC\x81",norm_nfd); /// ligature fi
-            test_norm("\xEF\xAC\x81","\xEF\xAC\x81",norm_nfc);
-            test_norm("\xEF\xAC\x81","fi",norm_nfkd);
-            test_norm("\xEF\xAC\x81","fi",norm_nfkc);
-            test_norm("ä","ä",norm_nfd); // ä to a and accent
-            test_norm("ä","ä",norm_nfc);
-        }
-
-        boost::locale::generator gen;
-        bool eight_bit=true;
-
-        #define TEST_V(how,source_s,dest_s)                                    \
-        do {                                                                \
-            TEST_A(char,how,source_s,dest_s);                                \
-            if(eight_bit) {                                                    \
-                std::locale tmp=std::locale();                                \
-                std::locale::global(gen("en_US.ISO8859-1"));                \
-                TEST_A(char,how,to<char>(source_s),to<char>(dest_s));        \
-                std::locale::global(tmp);                                    \
-            }                                                                \
-        }while(0)
-
-        TEST_ALL_CASES;
-        #undef TEST_V
-
-        #define TEST_V(how,source_s,dest_s) TEST_A(wchar_t,how,to<wchar_t>(source_s),to<wchar_t>(dest_s))
-        TEST_ALL_CASES;
-        #undef TEST_V
-
-        #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-        #define TEST_V(how,source_s,dest_s) TEST_A(char16_t,how,to<char16_t>(source_s),to<char16_t>(dest_s))
-        TEST_ALL_CASES;
-        #undef TEST_V
-        #endif
-
-        #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-        #define TEST_V(how,source_s,dest_s) TEST_A(char32_t,how,to<char32_t>(source_s),to<char32_t>(dest_s))
-        TEST_ALL_CASES;
-        #undef TEST_V
-        #endif
+    {
+        using namespace boost::locale;
+        std::cout << "Testing Unicode normalization" << std::endl;
+        test_norm("\xEF\xAC\x81","\xEF\xAC\x81",norm_nfd); /// ligature fi
+        test_norm("\xEF\xAC\x81","\xEF\xAC\x81",norm_nfc);
+        test_norm("\xEF\xAC\x81","fi",norm_nfkd);
+        test_norm("\xEF\xAC\x81","fi",norm_nfkc);
+        test_norm("ä","ä",norm_nfd); // ä to a and accent
+        test_norm("ä","ä",norm_nfc);
     }
-    catch(std::exception const &e) {
-        std::cerr << "Failed " << e.what() << std::endl;
-        return EXIT_FAILURE;
-    }
-    FINALIZE();
 
+    boost::locale::generator gen;
+    bool eight_bit=true;
+
+    #define TEST_V(how,source_s,dest_s)                            \
+    do {                                                           \
+        TEST_A(char,how,source_s,dest_s);                          \
+        if(eight_bit) {                                            \
+            std::locale tmp=std::locale();                         \
+            std::locale::global(gen("en_US.ISO8859-1"));           \
+            TEST_A(char,how,to<char>(source_s),to<char>(dest_s));  \
+            std::locale::global(tmp);                              \
+        }                                                          \
+    }while(0)
+
+    TEST_ALL_CASES;
+    #undef TEST_V
+
+    #define TEST_V(how,source_s,dest_s) TEST_A(wchar_t,how,to<wchar_t>(source_s),to<wchar_t>(dest_s))
+    TEST_ALL_CASES;
+    #undef TEST_V
+
+    #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
+    #define TEST_V(how,source_s,dest_s) TEST_A(char16_t,how,to<char16_t>(source_s),to<char16_t>(dest_s))
+    TEST_ALL_CASES;
+    #undef TEST_V
+    #endif
+
+    #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
+    #define TEST_V(how,source_s,dest_s) TEST_A(char32_t,how,to<char32_t>(source_s),to<char32_t>(dest_s))
+    TEST_ALL_CASES;
+    #undef TEST_V
+    #endif
 }
 #endif // NO ICU
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4

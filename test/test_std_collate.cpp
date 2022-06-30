@@ -95,32 +95,24 @@ void test_char()
 }
 
 
-int main()
+void test_main(int /*argc*/, char** /*argv*/)
 {
-    try {
-        boost::locale::localization_backend_manager mgr = boost::locale::localization_backend_manager::global();
-        mgr.select("std");
-        boost::locale::localization_backend_manager::global(mgr);
+    boost::locale::localization_backend_manager mgr = boost::locale::localization_backend_manager::global();
+    mgr.select("std");
+    boost::locale::localization_backend_manager::global(mgr);
 
-        std::cout << "Testing char" << std::endl;
-        test_char<char>();
-        std::cout << "Testing wchar_t" << std::endl;
-        test_char<wchar_t>();
-        #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-        std::cout << "Testing char16_t" << std::endl;
-        test_char<char16_t>();
-        #endif
-        #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-        std::cout << "Testing char32_t" << std::endl;
-        test_char<char32_t>();
-        #endif
-    }
-    catch(std::exception const &e) {
-        std::cerr << "Failed " << e.what() << std::endl;
-        return EXIT_FAILURE;
-    }
-    FINALIZE();
-
+    std::cout << "Testing char" << std::endl;
+    test_char<char>();
+    std::cout << "Testing wchar_t" << std::endl;
+    test_char<wchar_t>();
+    #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
+    std::cout << "Testing char16_t" << std::endl;
+    test_char<char16_t>();
+    #endif
+    #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
+    std::cout << "Testing char32_t" << std::endl;
+    test_char<char32_t>();
+    #endif
 }
 
 #endif // NO STD

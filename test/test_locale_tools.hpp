@@ -10,10 +10,11 @@
 #define BOOST_LOCLAE_TEST_LOCALE_TOOLS_HPP
 
 #include <boost/locale/encoding.hpp>
-
-#include <cstdio>
-#include <cstdlib>
 #include <fstream>
+
+#ifndef BOOST_LOCALE_NO_POSIX_BACKEND
+#include "test_posix_tools.hpp"
+#endif
 
 template<typename Char>
 std::basic_string<Char> to_correct_string(std::string const &e,std::locale /*l*/)

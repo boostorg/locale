@@ -109,24 +109,13 @@ void test_collate()
     compare("ä","a",identical,gt); //  a , ä
 }
 
-
-
-
-int main()
+void test_main(int /*argc*/, char** /*argv*/)
 {
-    try {
-        boost::locale::localization_backend_manager mgr = boost::locale::localization_backend_manager::global();
-        mgr.select("winapi");
-        boost::locale::localization_backend_manager::global(mgr);
+    boost::locale::localization_backend_manager mgr = boost::locale::localization_backend_manager::global();
+    mgr.select("winapi");
+    boost::locale::localization_backend_manager::global(mgr);
 
-        test_collate();
-    }
-    catch(std::exception const &e) {
-        std::cerr << "Failed " << e.what() << std::endl;
-        return EXIT_FAILURE;
-    }
-    FINALIZE();
-
+    test_collate();
 }
 #endif // NO WINAPI
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4

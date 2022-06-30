@@ -532,40 +532,31 @@ void test_format(std::string charset="UTF-8")
 }
 
 
-int main()
+void test_main(int /*argc*/, char** /*argv*/)
 {
-    try {
-        boost::locale::time_zone::global("GMT+4:00");
-        std::cout << "Testing char, UTF-8" << std::endl;
-        test_manip<char>();
-        test_format<char>();
-        std::cout << "Testing char, ISO8859-1" << std::endl;
-        test_manip<char>("ISO8859-1");
-        test_format<char>("ISO8859-1");
+    boost::locale::time_zone::global("GMT+4:00");
+    std::cout << "Testing char, UTF-8" << std::endl;
+    test_manip<char>();
+    test_format<char>();
+    std::cout << "Testing char, ISO8859-1" << std::endl;
+    test_manip<char>("ISO8859-1");
+    test_format<char>("ISO8859-1");
 
-        std::cout << "Testing wchar_t" << std::endl;
-        test_manip<wchar_t>();
-        test_format<wchar_t>();
+    std::cout << "Testing wchar_t" << std::endl;
+    test_manip<wchar_t>();
+    test_format<wchar_t>();
 
-        #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-        std::cout << "Testing char16_t" << std::endl;
-        test_manip<char16_t>();
-        test_format<char16_t>();
-        #endif
+    #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
+    std::cout << "Testing char16_t" << std::endl;
+    test_manip<char16_t>();
+    test_format<char16_t>();
+    #endif
 
-        #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-        std::cout << "Testing char32_t" << std::endl;
-        test_manip<char32_t>();
-        test_format<char32_t>();
-        #endif
-
-    }
-    catch(std::exception const &e) {
-        std::cerr << "Failed " << e.what() << std::endl;
-        return EXIT_FAILURE;
-    }
-    FINALIZE();
-
+    #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
+    std::cout << "Testing char32_t" << std::endl;
+    test_manip<char32_t>();
+    test_format<char32_t>();
+    #endif
 }
 
 #endif // NOICU
