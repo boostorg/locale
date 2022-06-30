@@ -25,6 +25,8 @@
 #include "predefined_formatters.hpp"
 #include "time_zone.hpp"
 
+#include <boost/core/ignore_unused.hpp>
+
 #ifdef BOOST_MSVC
 #  pragma warning(disable : 4244) // lose data
 #endif
@@ -37,7 +39,7 @@ namespace locale {
         std::locale::id icu_formatters_cache::id;
 
         namespace {
-            struct init { init() { std::has_facet<icu_formatters_cache>(std::locale::classic()); } } instance;
+            struct init { init() { ignore_unused(std::has_facet<icu_formatters_cache>(std::locale::classic())); } } instance;
         }
 
 
@@ -550,8 +552,8 @@ namespace locale {
                         else {// strftime
                             icu_std_converter<CharType> cvt_(encoding);
                             std::basic_string<CharType> const &f=info.date_time_pattern<CharType>();
-                            icu::UnicodeString fmt = strftime_to_icu(cvt_.icu(f.data(),f.data()+f.size()),locale);
-                            adf.reset(new icu::SimpleDateFormat(fmt,locale,err));
+                            icu::UnicodeString pattern = strftime_to_icu(cvt_.icu(f.data(),f.data()+f.size()),locale);
+                            adf.reset(new icu::SimpleDateFormat(pattern,locale,err));
                         }
                         if(U_FAILURE(err))
                             return fmt.release();

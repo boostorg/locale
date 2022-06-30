@@ -24,17 +24,14 @@
 #  pragma warning(disable : 4244) // loose data
 #endif
 
-#define RESET() do { time_point = base_time_point; ss.str(""); } while(0)
-#define TESTR(X) do { TEST(X); RESET(); } while(0)
-//#define TESTEQSR(t,X) do { ss << (t); TESTR(ss.str() == X); } while(0)
-#define TESTEQSR(t,X)                                                        \
-    do {                                                                     \
-        ss << (t);                                                            \
-        if(ss.str()!=X) {                                                     \
-            std::cerr << "[" << ss.str() << "]!=[" << X << "]\n";  \
-        }                                                                     \
-        TESTR(ss.str() == X);                                                 \
-    } while(0)
+#define RESET() time_point = base_time_point; ss.str("")
+#define TESTR(X) TEST(X); RESET()
+#define TESTEQSR(t,X)                                         \
+    ss << (t);                                                \
+    if(ss.str()!=X) {                                         \
+        std::cerr << "[" << ss.str() << "]!=[" << X << "]\n"; \
+    }                                                         \
+    TESTR(ss.str() == X)
 
 void test_main(int /*argc*/, char** /*argv*/)
 {
@@ -142,8 +139,6 @@ void test_main(int /*argc*/, char** /*argv*/)
             TEST((time_point >> month()) / month()== 0);
             TEST(time_point / month()== 1);
 
-
-
             TEST( (time_point + 2 * hour() - time_point) / minute() == 120);
             TEST( (time_point + month()- time_point) / day() == 28);
             TEST( (time_point + 2* month()- (time_point+month())) / day() == 31);
@@ -199,52 +194,54 @@ void test_main(int /*argc*/, char** /*argv*/)
             time_point += day() * 1;
             TEST(time_point.get(week_of_year()) == 2);
             TEST(time_point.get(week_of_month()) == 2);
-            time_point = february() + day() * 2;
 
+            time_point = february() + day() * 2;
 
             TEST(time_point.get(week_of_year()) == 6);
 
-            if(backend_name!="icu" || BOOST_ICU_VER<408 || BOOST_ICU_VER > 6000) {
-                TEST(time_point.get(week_of_month()) == 1);
-            }
-            else {
-                // cldr changes
+            // cldr changes
+#if BOOST_ICU_VER >= 408 && BOOST_ICU_VER <= 6000
+            const bool ICU_cldr_issue = backend_name == "icu";
+#else
+            const bool ICU_cldr_issue = false;
+#endif
+BOOST_LOCALE_START_CONST_CONDITION
+
+            if((ICU_cldr_issue))
                 TEST(time_point.get(week_of_month()) == 2);
-            }
+            else
+                TEST(time_point.get(week_of_month()) == 1);
 
             time_point = year(2010) + january() + day() * 3;
 
-            if(backend_name!="icu" || BOOST_ICU_VER<408 || BOOST_ICU_VER > 6000) {
-                TEST(time_point.get(week_of_year()) == 53);
-            }
-            else {
+            if((ICU_cldr_issue))
                 TEST(time_point.get(week_of_year()) == 1);
-            }
+            else
+                TEST(time_point.get(week_of_year()) == 53);
 
             time_point = year()*2010 + january() + day() * 4;
 
-            if(backend_name!="icu" || BOOST_ICU_VER<408 || BOOST_ICU_VER > 6000) {
-                TEST(time_point.get(week_of_year()) == 1);
-            }
-            else {
+            if((ICU_cldr_issue))
                 TEST(time_point.get(week_of_year()) == 2);
-            }
+            else
+                TEST(time_point.get(week_of_year()) == 1);
+
             time_point = year()*2010 + january() + day() * 10;
 
-            if(backend_name!="icu" || BOOST_ICU_VER<408 || BOOST_ICU_VER > 6000) {
-                TEST(time_point.get(week_of_year()) == 1);
-            }
-            else {
+            if((ICU_cldr_issue))
                 TEST(time_point.get(week_of_year()) == 2);
-            }
+            else
+                TEST(time_point.get(week_of_year()) == 1);
 
             time_point = year()*2010 + january() + day() * 11;
-            if(backend_name!="icu" || BOOST_ICU_VER<408 || BOOST_ICU_VER > 6000) {
-                TEST(time_point.get(week_of_year()) == 2);
-            }
-            else {
+
+            if((ICU_cldr_issue))
                 TEST(time_point.get(week_of_year()) == 3);
-            }
+            else 
+                TEST(time_point.get(week_of_year()) == 2);
+
+BOOST_LOCALE_END_CONST_CONDITION
+
             RESET();
             TEST(time_point.get(hour()) == 15);
             TEST(date_time(a_datetime,calendar("GMT+01:00")).get(hour()) ==16);
@@ -252,7 +249,7 @@ void test_main(int /*argc*/, char** /*argv*/)
             TEST(time_point.get(am_pm()) == 1);
             TEST(time_point.get(minute()) == 33);
             TEST(time_point.get(second()) == 13);
-            TEST(date_time(year()* 1984 + february() + day()).get(week_of_year())==5);
+            TEST(date_time(year() * 1984 + february() + day()).get(week_of_year())==5);
             TEST(time_point.get(week_of_month()) == 1);
             RESET();
 

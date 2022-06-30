@@ -22,6 +22,11 @@
 #include "icu_util.hpp"
 #include "uconv.hpp"
 
+#ifdef BOOST_MSVC
+#pragma warning(disable:4244) // 'argument' : conversion from 'int'
+#pragma warning(disable:4267) // 'argument' : conversion from 'size_t'
+#endif
+
 namespace boost {
 namespace locale {
 namespace boundary {
@@ -140,6 +145,7 @@ index_type do_map(boundary_type t,CharType const *begin,CharType const *end,icu:
 
 #if U_ICU_VERSION_MAJOR_NUM*100 + U_ICU_VERSION_MINOR_NUM >= 306
     UErrorCode err=U_ZERO_ERROR;
+BOOST_LOCALE_START_CONST_CONDITION
     if(sizeof(CharType) == 2 || (sizeof(CharType)==1 && encoding=="UTF-8"))
     {
         UText *ut=0;
@@ -148,6 +154,7 @@ index_type do_map(boundary_type t,CharType const *begin,CharType const *end,icu:
                 ut=utext_openUTF8(0,reinterpret_cast<char const *>(begin),end-begin,&err);
             else // sizeof(CharType)==2
                 ut=utext_openUChars(0,reinterpret_cast<UChar const *>(begin),end-begin,&err);
+BOOST_LOCALE_END_CONST_CONDITION
 
             check_and_throw_icu_error(err);
             err=U_ZERO_ERROR;

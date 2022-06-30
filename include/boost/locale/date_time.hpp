@@ -919,6 +919,10 @@ namespace boost {
             return in;
         }
 
+#ifdef BOOST_MSVC
+#pragma warning(push)
+#pragma warning(disable:4512) //assignment operator could not be generated
+#endif
         ///
         /// \brief This class represents a period: a pair of two date_time objects.
         ///
@@ -968,6 +972,9 @@ namespace boost {
             date_time const &s_;
             date_time const &e_;
         };
+#ifdef BOOST_MSVC
+#pragma warning(pop)
+#endif
 
         ///
         /// Calculates the difference between two dates, the left operand is a later point on time line.

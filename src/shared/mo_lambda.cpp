@@ -9,6 +9,10 @@
 #include <cstring>
 #include <cstdlib>
 
+#ifdef BOOST_MSVC
+#pragma warning(disable:4512) //assignment operator could not be generated
+#endif
+
 namespace boost {
 namespace locale {
 namespace gnu_gettext {

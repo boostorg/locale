@@ -260,7 +260,6 @@ namespace util {
                         simple_encoding_table + sizeof(simple_encoding_table)/sizeof(char const *),
                         norm.c_str(),
                         compare_strings);
-        return 0;
     }
 
     #if BOOST_LOCALE_USE_AUTO_PTR

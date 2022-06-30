@@ -25,27 +25,27 @@ int test_counter=0;
 
 
 #define THROW_IF_TOO_BIG(X)                                                     \
-do {                                                                            \
     if((X) > BOOST_LOCALE_ERROR_LIMIT)                                          \
-        throw std::runtime_error("Error limits reached, stopping unit test");   \
-}while(0)
+        throw std::runtime_error("Error limits reached, stopping unit test")
 
-#define TEST(X)                                                         \
-    do {                                                                \
-        test_counter++;                                                 \
-        if(X) break;                                                    \
+#define TEST(X)                                                           \
+    do {                                                                  \
+        test_counter++;                                                   \
+        if(X) break;                                                      \
         std::cerr << "Error in line:" << __LINE__ << " "#X  << std::endl; \
-        THROW_IF_TOO_BIG(error_counter++);                              \
-    }while(0)
+        THROW_IF_TOO_BIG(error_counter++);                                \
+        BOOST_LOCALE_START_CONST_CONDITION                                \
+    }while(0) BOOST_LOCALE_END_CONST_CONDITION
 #endif
 
-#define TEST_THROWS(X,E)                                                \
-    do {                                                                \
-        test_counter++;                                                 \
-        try { X; } catch(E const &/*e*/ ) {break;} catch(...){}         \
+#define TEST_THROWS(X,E)                                                  \
+    do {                                                                  \
+        test_counter++;                                                   \
+        try { X; } catch(E const &/*e*/ ) {break;} catch(...){}           \
         std::cerr << "Error in line:" << __LINE__ << " "#X  << std::endl; \
-        THROW_IF_TOO_BIG(error_counter++);                              \
-    }while(0)
+        THROW_IF_TOO_BIG(error_counter++);                                \
+        BOOST_LOCALE_START_CONST_CONDITION                                \
+    }while(0) BOOST_LOCALE_END_CONST_CONDITION
 
 void test_main(int argc, char **argv);
 
@@ -64,7 +64,7 @@ int main(int argc,char **argv) {
     }
     std::cout << " " << std::fixed << std::setprecision(1)
               << std::setw(5) << 100.0 * passed / test_counter <<
-              "% of tests completed sucsessefully\n";
+              "% of tests completed successfully\n";
     return error_counter == 0 ? EXIT_SUCCESS : EXIT_FAILURE ;
 }
 

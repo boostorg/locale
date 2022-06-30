@@ -164,10 +164,10 @@ namespace util {
             ///
             /// Set specific \a value for period \a p, note not all values are settable.
             ///
-            void set_value(period::marks::period_mark p,int value) BOOST_OVERRIDE
+            void set_value(period::marks::period_mark m,int value) BOOST_OVERRIDE
             {
                 using namespace period::marks;
-                switch(p) {
+                switch(m) {
                 case era:                        ///< Era i.e. AC, BC in Gregorian and Julian calendar, range [0,1]
                     return;
                 case year:                       ///< Year, it is calendar specific
@@ -214,7 +214,7 @@ namespace util {
                 case week_of_month:         ///< The week number withing current month
                     {
                         normalize();
-                        int current_week = get_value(p,current);
+                        int current_week = get_value(m,current);
                         int diff = 7 * (value - current_week);
                         tm_updated_.tm_mday += diff;
                     }
@@ -300,10 +300,10 @@ namespace util {
             ///
             /// Get specific value for period \a p according to a value_type \a v
             ///
-            int get_value(period::marks::period_mark p,value_type v) const BOOST_OVERRIDE
+            int get_value(period::marks::period_mark m,value_type v) const BOOST_OVERRIDE
             {
                 using namespace period::marks;
-                switch(p) {
+                switch(m) {
                 case era:
                     return 1;
                 case year:
@@ -606,13 +606,13 @@ BOOST_LOCALE_END_CONST_CONDITION
             /// Adjust period's \a p value by \a difference items using a update_type \a u.
             /// Note: not all values are adjustable
             ///
-            void adjust_value(period::marks::period_mark p,update_type u,int difference) BOOST_OVERRIDE
+            void adjust_value(period::marks::period_mark m,update_type u,int difference) BOOST_OVERRIDE
             {
                 switch(u) {
                 case move:
                     {
                         using namespace period::marks;
-                        switch(p) {
+                        switch(m) {
                         case year:                       ///< Year, it is calendar specific
                         case extended_year:              ///< Extended year for Gregorian/Julian calendars, where 1 BC == 0, 2 BC == -1.
                             tm_updated_.tm_year +=difference;
@@ -653,16 +653,16 @@ BOOST_LOCALE_END_CONST_CONDITION
                     break;
                 case roll:
                     { // roll
-                        int cur_min = get_value(p,actual_minimum);
-                        int cur_max = get_value(p,actual_maximum);
+                        int cur_min = get_value(m,actual_minimum);
+                        int cur_max = get_value(m,actual_maximum);
                         int max_diff = cur_max - cur_min + 1;
                         if(max_diff > 0) {
-                            int value = get_value(p,current);
+                            int value = get_value(m,current);
                             int addon = 0;
                             if(difference < 0)
                                 addon = ((-difference/max_diff) + 1) * max_diff;
                             value = (value - cur_min + difference + addon) % max_diff + cur_min;
-                            set_value(p,value);
+                            set_value(m,value);
                             normalize();
                         }
                     }
@@ -671,12 +671,12 @@ BOOST_LOCALE_END_CONST_CONDITION
                 }
             }
 
-            int get_diff(period::marks::period_mark p,int diff,gregorian_calendar const *other) const
+            int get_diff(period::marks::period_mark m,int diff,gregorian_calendar const *other) const
             {
                 if(diff == 0)
                     return 0;
                 hold_ptr<gregorian_calendar> self(clone());
-                self->adjust_value(p,move,diff);
+                self->adjust_value(m,move,diff);
                 if(diff > 0){
                     if(self->time_ > other->time_)
                         return diff - 1;
@@ -694,7 +694,7 @@ BOOST_LOCALE_END_CONST_CONDITION
             ///
             /// Calculate the difference between this calendar  and \a other in \a p units
             ///
-            int difference(abstract_calendar const *other_cal,period::marks::period_mark p) const BOOST_OVERRIDE
+            int difference(abstract_calendar const *other_cal,period::marks::period_mark m) const BOOST_OVERRIDE
             {
                 hold_ptr<gregorian_calendar> keeper;
                 gregorian_calendar const *other = dynamic_cast<gregorian_calendar const *>(other_cal);
@@ -707,7 +707,7 @@ BOOST_LOCALE_END_CONST_CONDITION
                 int factor = 1; // for weeks vs days handling
 
                 using namespace period::marks;
-                switch(p) {
+                switch(m) {
                 case era:
                     return 0;
                 case year:

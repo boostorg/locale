@@ -51,7 +51,8 @@ void test_norm(std::string orig,std::string normal,boost::locale::norm_type type
         TEST(boost::locale::how(source_s)==dest_s);                                            \
         TEST(boost::locale::how(source_s.c_str())==dest_s);                                    \
         TEST(boost::locale::how(source_s.c_str(),source_s.c_str()+source_s.size())==dest_s);   \
-    }while(0)
+    BOOST_LOCALE_START_CONST_CONDITION                                                         \
+    }while(0) BOOST_LOCALE_END_CONST_CONDITION
 
 #define TEST_ALL_CASES                                      \
         do {                                                \
@@ -65,7 +66,8 @@ void test_norm(std::string orig,std::string normal,boost::locale::norm_type type
             eight_bit=false;                                \
             TEST_V(to_upper,"i","İ");                       \
             TEST_V(to_lower,"İ","i");                       \
-        }while(0)
+        BOOST_LOCALE_START_CONST_CONDITION                  \
+        }while(0) BOOST_LOCALE_END_CONST_CONDITION
 
 
 void test_main(int /*argc*/, char** /*argv*/)
@@ -93,7 +95,8 @@ void test_main(int /*argc*/, char** /*argv*/)
             TEST_A(char,how,to<char>(source_s),to<char>(dest_s));  \
             std::locale::global(tmp);                              \
         }                                                          \
-    }while(0)
+    BOOST_LOCALE_START_CONST_CONDITION                             \
+    }while(0) BOOST_LOCALE_END_CONST_CONDITION
 
     TEST_ALL_CASES;
     #undef TEST_V

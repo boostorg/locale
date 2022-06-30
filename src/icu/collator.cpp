@@ -22,6 +22,11 @@
 #  include <unicode/stringpiece.h>
 #endif
 
+#ifdef BOOST_MSVC
+#pragma warning(disable:4244) // 'argument' : conversion from 'int'
+#pragma warning(disable:4267) // 'argument' : conversion from 'size_t'
+#endif
+
 namespace boost {
     namespace locale {
         namespace impl_icu {

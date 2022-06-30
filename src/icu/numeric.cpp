@@ -326,6 +326,7 @@ private:
         return in;
     }
 
+BOOST_LOCALE_START_CONST_CONDITION
     template<typename ValueType,typename CastedType>
     bool valid(CastedType v) const
     {
@@ -334,7 +335,7 @@ private:
         if(v < 0 && value_limits::is_signed == false)
             return false;
 
-        static const CastedType max_val = value_limits::max();
+        static const CastedType max_val = static_cast<CastedType>(value_limits::max());
 
         if(sizeof(CastedType) > sizeof(ValueType) && v > max_val)
             return false;
@@ -348,6 +349,7 @@ private:
         }
         return true;
     }
+BOOST_LOCALE_END_CONST_CONDITION
 
     icu::Locale loc_;
     std::string enc_;

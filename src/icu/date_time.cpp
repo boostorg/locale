@@ -206,7 +206,7 @@ namespace impl_icu {
             }
             check_and_throw_dt(err);
         }
-        int difference(abstract_calendar const *other_ptr,period::marks::period_mark p) const BOOST_OVERRIDE
+        int difference(abstract_calendar const *other_ptr, period::marks::period_mark m) const BOOST_OVERRIDE
         {
             UErrorCode err=U_ZERO_ERROR;
             double other_time = 0;
@@ -223,11 +223,11 @@ namespace impl_icu {
                 check_and_throw_dt(err);
             }
             else {
-                posix_time p = other_ptr->get_time();
-                other_time = p.seconds * 1000.0 + p.nanoseconds / 1000000.0;
+                posix_time o_time = other_ptr->get_time();
+                other_time = o_time.seconds * 1000.0 + o_time.nanoseconds / 1000000.0;
             }
 
-            int diff = self->fieldDifference(other_time,to_icu(p),err);
+            int diff = self->fieldDifference(other_time,to_icu(m),err);
 
             check_and_throw_dt(err);
             return diff;

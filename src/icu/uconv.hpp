@@ -19,6 +19,12 @@
 #include <memory>
 #include "icu_util.hpp"
 
+#ifdef BOOST_MSVC
+#pragma warning(push)
+#pragma warning(disable:4244) // 'argument' : conversion from 'int'
+#pragma warning(disable:4267) // 'argument' : conversion from 'size_t'
+#endif
+
 namespace boost {
 namespace locale {
 namespace impl_icu {
@@ -312,5 +318,8 @@ namespace impl_icu {
 
 #endif
 
+#ifdef BOOST_MSVC
+#pragma warning(push)
+#endif
 
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
