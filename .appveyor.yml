@@ -52,6 +52,7 @@ environment:
     # B2_THREADING: threading=multi,single
     B2_VARIANT: release
     B2_FLAGS: testing.execute=off
+    B2_DEFINES: BOOST_LOCALE_DISABLE_DEPRECATED_03_WARNING
 
   matrix:
     - FLAVOR: Visual Studio 2008, 2010, 2012
