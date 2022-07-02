@@ -7,10 +7,10 @@
 //
 #include <boost/locale/util.hpp>
 #ifdef BOOST_LOCALE_WITH_ICU
-#include "../src/icu/codecvt.hpp"
+#include "../src/boost/locale/icu/codecvt.hpp"
 #endif
 #if defined(BOOST_LOCALE_WITH_ICONV) && !defined(BOOST_LOCALE_NO_POSIX_BACKEND)
-#include "../src/posix/codecvt.hpp"
+#include "../src/boost/locale/posix/codecvt.hpp"
 #endif
 #if defined(BOOST_NO_CXX11_SMART_PTR) && !BOOST_LOCALE_USE_AUTO_PTR
 #include <boost/locale/hold_ptr.hpp>

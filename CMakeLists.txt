@@ -10,32 +10,32 @@ project(boost_locale VERSION "${BOOST_SUPERPROJECT_VERSION}" LANGUAGES CXX)
 file(GLOB_RECURSE headers include/*.hpp)
 
 add_library(boost_locale
-  src/encoding/codepage.cpp
-  src/encoding/conv.hpp
-  src/encoding/iconv_codepage.ipp
-  src/encoding/uconv_codepage.ipp
-  src/encoding/wconv_codepage.ipp
-  src/shared/date_time.cpp
-  src/shared/format.cpp
-  src/shared/formatting.cpp
-  src/shared/generator.cpp
-  src/shared/ids.cpp
-  src/shared/localization_backend.cpp
-  src/shared/message.cpp
-  src/shared/mo_lambda.cpp
-  src/util/codecvt_converter.cpp
-  src/util/default_locale.cpp
-  src/util/info.cpp
-  src/util/locale_data.cpp
-  src/util/locale_data.hpp
-  src/util/numeric.hpp
-  src/util/timezone.hpp
+  src/boost/locale/encoding/codepage.cpp
+  src/boost/locale/encoding/conv.hpp
+  src/boost/locale/encoding/iconv_codepage.ipp
+  src/boost/locale/encoding/uconv_codepage.ipp
+  src/boost/locale/encoding/wconv_codepage.ipp
+  src/boost/locale/shared/date_time.cpp
+  src/boost/locale/shared/format.cpp
+  src/boost/locale/shared/formatting.cpp
+  src/boost/locale/shared/generator.cpp
+  src/boost/locale/shared/ids.cpp
+  src/boost/locale/shared/localization_backend.cpp
+  src/boost/locale/shared/message.cpp
+  src/boost/locale/shared/mo_lambda.cpp
+  src/boost/locale/util/codecvt_converter.cpp
+  src/boost/locale/util/default_locale.cpp
+  src/boost/locale/util/info.cpp
+  src/boost/locale/util/locale_data.cpp
+  src/boost/locale/util/locale_data.hpp
+  src/boost/locale/util/numeric.hpp
+  src/boost/locale/util/timezone.hpp
   ${headers}
 )
 
 add_library(Boost::locale ALIAS boost_locale)
 
-target_include_directories(boost_locale PUBLIC include)
+target_include_directories(boost_locale PUBLIC include PRIVATE src)
 
 target_link_libraries(boost_locale
   PUBLIC
@@ -90,7 +90,7 @@ if(BOOST_LOCALE_ENABLE_ICONV)
   target_link_libraries(boost_locale PRIVATE Iconv::Iconv)
 
   target_sources(boost_locale PRIVATE
-    src/util/iconv.hpp
+    src/boost/locale/util/iconv.hpp
   )
 endif()
 
@@ -102,24 +102,24 @@ if(BOOST_LOCALE_ENABLE_ICU)
   target_link_libraries(boost_locale PRIVATE ICU::data ICU::i18n ICU::uc)
 
   target_sources(boost_locale PRIVATE
-    src/icu/all_generator.hpp
-    src/icu/boundary.cpp
-    src/icu/cdata.hpp
-    src/icu/codecvt.cpp
-    src/icu/codecvt.hpp
-    src/icu/collator.cpp
-    src/icu/conversion.cpp
-    src/icu/date_time.cpp
-    src/icu/formatter.cpp
-    src/icu/formatter.hpp
-    src/icu/icu_backend.cpp
-    src/icu/icu_backend.hpp
-    src/icu/icu_util.hpp
-    src/icu/numeric.cpp
-    src/icu/predefined_formatters.hpp
-    src/icu/time_zone.cpp
-    src/icu/time_zone.hpp
-    src/icu/uconv.hpp
+    src/boost/locale/icu/all_generator.hpp
+    src/boost/locale/icu/boundary.cpp
+    src/boost/locale/icu/cdata.hpp
+    src/boost/locale/icu/codecvt.cpp
+    src/boost/locale/icu/codecvt.hpp
+    src/boost/locale/icu/collator.cpp
+    src/boost/locale/icu/conversion.cpp
+    src/boost/locale/icu/date_time.cpp
+    src/boost/locale/icu/formatter.cpp
+    src/boost/locale/icu/formatter.hpp
+    src/boost/locale/icu/icu_backend.cpp
+    src/boost/locale/icu/icu_backend.hpp
+    src/boost/locale/icu/icu_util.hpp
+    src/boost/locale/icu/numeric.cpp
+    src/boost/locale/icu/predefined_formatters.hpp
+    src/boost/locale/icu/time_zone.cpp
+    src/boost/locale/icu/time_zone.hpp
+    src/boost/locale/icu/uconv.hpp
   )
 
 endif()
@@ -127,13 +127,13 @@ endif()
 if(BOOST_LOCALE_ENABLE_STD)
 
   target_sources(boost_locale PRIVATE
-    src/std/all_generator.hpp
-    src/std/codecvt.cpp
-    src/std/collate.cpp
-    src/std/converter.cpp
-    src/std/numeric.cpp
-    src/std/std_backend.cpp
-    src/std/std_backend.hpp
+    src/boost/locale/std/all_generator.hpp
+    src/boost/locale/std/codecvt.cpp
+    src/boost/locale/std/collate.cpp
+    src/boost/locale/std/converter.cpp
+    src/boost/locale/std/numeric.cpp
+    src/boost/locale/std/std_backend.cpp
+    src/boost/locale/std/std_backend.hpp
   )
 
 else()
@@ -145,13 +145,13 @@ endif()
 if(BOOST_LOCALE_ENABLE_WINAPI)
 
   target_sources(boost_locale PRIVATE
-    src/win32/all_generator.hpp
-    src/win32/api.hpp
-    src/win32/collate.cpp
-    src/win32/converter.cpp
-    src/win32/numeric.cpp
-    src/win32/win_backend.cpp
-    src/win32/win_backend.hpp
+    src/boost/locale/win32/all_generator.hpp
+    src/boost/locale/win32/api.hpp
+    src/boost/locale/win32/collate.cpp
+    src/boost/locale/win32/converter.cpp
+    src/boost/locale/win32/numeric.cpp
+    src/boost/locale/win32/win_backend.cpp
+    src/boost/locale/win32/win_backend.hpp
   )
 
 else()
@@ -163,8 +163,8 @@ endif()
 if(BOOST_LOCALE_ENABLE_WINAPI OR (BOOST_LOCALE_ENABLE_STD AND WIN32))
 
   target_sources(boost_locale PRIVATE
-    src/win32/lcid.cpp
-    src/win32/lcid.hpp
+    src/boost/locale/win32/lcid.cpp
+    src/boost/locale/win32/lcid.hpp
   )
 
 endif()
@@ -172,14 +172,14 @@ endif()
 if(BOOST_LOCALE_ENABLE_POSIX)
 
   target_sources(boost_locale PRIVATE
-    src/posix/all_generator.hpp
-    src/posix/codecvt.cpp
-    src/posix/codecvt.hpp
-    src/posix/collate.cpp
-    src/posix/converter.cpp
-    src/posix/numeric.cpp
-    src/posix/posix_backend.cpp
-    src/posix/posix_backend.hpp
+    src/boost/locale/posix/all_generator.hpp
+    src/boost/locale/posix/codecvt.cpp
+    src/boost/locale/posix/codecvt.hpp
+    src/boost/locale/posix/collate.cpp
+    src/boost/locale/posix/converter.cpp
+    src/boost/locale/posix/numeric.cpp
+    src/boost/locale/posix/posix_backend.cpp
+    src/boost/locale/posix/posix_backend.hpp
   )
 
 else()
@@ -191,8 +191,8 @@ endif()
 if(BOOST_LOCALE_ENABLE_WINAPI OR BOOST_LOCALE_ENABLE_STD OR BOOST_LOCALE_ENABLE_POSIX)
 
   target_sources(boost_locale PRIVATE
-    src/util/gregorian.cpp
-    src/util/gregorian.hpp
+    src/boost/locale/util/gregorian.cpp
+    src/boost/locale/util/gregorian.hpp
   )
 
 endif()

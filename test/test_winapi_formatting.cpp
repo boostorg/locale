@@ -31,7 +31,7 @@ int main()
 
 #include "test_locale.hpp"
 #include "test_locale_tools.hpp"
-#include "../src/win32/lcid.hpp"
+#include "../src/boost/locale/win32/lcid.hpp"
 
 #define DEBUG_FMT
 

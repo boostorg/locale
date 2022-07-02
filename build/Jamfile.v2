@@ -8,8 +8,10 @@ import os ;
 import toolset ;
 import feature ;
 
+path-constant TOP : .. ;
+
 project /boost/locale
-    : source-location ../src
+    : source-location $(TOP)/src/boost/locale
     ;
 
 # Features
@@ -24,7 +26,7 @@ feature.feature boost.locale.winapi : on off : optional propagated ;
 
 ## iconv
 
-obj has_iconv_libc_obj : ../build/has_iconv.cpp ;
+obj has_iconv_libc_obj : $(TOP)/build/has_iconv.cpp ;
 exe has_iconv : has_iconv_libc_obj ;
 explicit has_iconv ;
 
@@ -39,11 +41,11 @@ lib iconv
 
 explicit iconv ;
 
-obj has_iconv_libc_ext : ../build/has_iconv.cpp iconv ;
+obj has_iconv_libc_ext : $(TOP)/build/has_iconv.cpp iconv ;
 exe has_external_iconv : has_iconv_libc_ext iconv ;
 explicit has_external_iconv ;
 
-exe accepts_shared_option   : ../build/option.cpp
+exe accepts_shared_option   : $(TOP)/build/option.cpp
                             :   <cxxflags>-shared-libstdc++
                                 <cxxflags>-shared-libgcc
                                 <linkflags>-shared-libstdc++
@@ -51,7 +53,7 @@ exe accepts_shared_option   : ../build/option.cpp
                             ;
 
 # Xlocale
-obj has_xlocale_obj : ../build/has_xlocale.cpp ;
+obj has_xlocale_obj : $(TOP)/build/has_xlocale.cpp ;
 exe has_xlocale : has_xlocale_obj ;
 explicit has_xlocale ;
 
@@ -187,8 +189,8 @@ else
 
 }
 
-obj has_icu_obj     : ../build/has_icu_test.cpp : $(ICU_OPTS)   ;
-obj has_icu64_obj   : ../build/has_icu_test.cpp : $(ICU64_OPTS) ;
+obj has_icu_obj     : $(TOP)/build/has_icu_test.cpp : $(ICU_OPTS)   ;
+obj has_icu64_obj   : $(TOP)/build/has_icu_test.cpp : $(ICU64_OPTS) ;
 
 exe has_icu   : has_icu_obj   : $(ICU_OPTS)   ;
 exe has_icu64 : has_icu64_obj : $(ICU64_OPTS) ;
@@ -260,7 +262,7 @@ rule configure-full ( properties * : flags-only )
                 ;
 
             result += <source>icu/$(ICU_SOURCES).cpp
-                      <library>../../thread/build//boost_thread
+                      <library>/boost/thread//boost_thread
                       ;
         }
 
@@ -424,6 +426,7 @@ boost-lib locale
     :
       # Don't link explicitly, not required
       <define>BOOST_THREAD_NO_LIB=1
+      <include>$(TOP)/src
       <threading>multi
       <target-os>windows:<define>_CRT_SECURE_NO_WARNINGS
       <toolset>gcc:<cxxflags>"-Wno-long-long -Wno-deprecated-declarations"
