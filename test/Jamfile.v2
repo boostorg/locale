@@ -14,6 +14,7 @@ project : requirements
     <toolset>gcc-11:<warnings-as-errors>on
     <toolset>clang:<cxxflags>"-Wno-long-long -Wno-error=deprecated-declarations"
     <toolset>clang-5:<warnings-as-errors>on
+    <include>.
     # Make sure we get all defines we need
     # Otherwise we would have problem knowing
     # what backends are actually in use

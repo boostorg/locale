@@ -29,6 +29,7 @@ env:
   B2_CI_VERSION: 1
   B2_VARIANT: debug,release
   B2_LINK: shared,static
+  B2_DEFINES: BOOST_LOCALE_DISABLE_DEPRECATED_03_WARNING
   LCOV_BRANCH_COVERAGE: 0
   CODECOV_NAME: Github Actions
 
@@ -272,6 +273,13 @@ jobs:
       - name: Setup Boost
         run: ci\github\install.bat
 
+      - name: Get ICU
+        shell: bash
+        run: |
+            ICU_ROOT=$PWD/ICU
+            cmake -DICU_ROOT="$ICU_ROOT" -DICU_VERSION=71.1 -P tools/download_icu.cmake
+            echo "path-constant ICU_PATH : $ICU_ROOT ;" >> $BOOST_ROOT/project-config.jam
+
       - name: Run tests
         if: '!matrix.coverage'
         run: ci\build.bat
@@ -384,6 +392,16 @@ jobs:
       - name: Setup Boost
         env: {B2_DONT_BOOTSTRAP: 1}
         run: source ci/github/install.sh
+
+      - name: Get ICU
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+            $ICU_ROOT="$($pwd.Path)\ICU"
+            cmake -DICU_ROOT="$ICU_ROOT" -DICU_VERSION="71.1" -P tools/download_icu.cmake
+            echo "ICU_ROOT=$ICU_ROOT" | Out-File -FilePath $Env:GITHUB_ENV -Append
+            # Make sure shared libs can be found at runtime
+            echo "$ICU_ROOT\bin64" | Out-File -FilePath $Env:GITHUB_PATH -Append
 
       - name: Run CMake tests
         run: |

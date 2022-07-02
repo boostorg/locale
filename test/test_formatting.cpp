@@ -50,7 +50,7 @@ void print_diff(std::string const &l,std::string const &r,int line)
     }
 }
 
-#define TESTEQ(x,y) do { print_diff((x),(y),__LINE__); TEST((x)==(y)); } while(0)
+#define TESTEQ(x,y) print_diff((x),(y),__LINE__); TEST((x)==(y))
 #else
 #define TESTEQ(x,y) TEST((x)==(y))
 #endif
@@ -61,7 +61,8 @@ do{ \
     ss.imbue(loc); \
     ss << manip << value; \
     TESTEQ(ss.str(),to_correct_string<CharType>(expected,loc)); \
-}while(0)
+BOOST_LOCALE_START_CONST_CONDITION                              \
+}while(0) BOOST_LOCALE_END_CONST_CONDITION
 
 #ifndef _LIBCPP_VERSION
 static bool parsing_fails()
@@ -117,7 +118,8 @@ do{                                                             \
         ss >> manip;                                            \
         TEST_THROWS(ss >> v,std::ios_base::failure);            \
     }                                                           \
-}while(0)
+BOOST_LOCALE_START_CONST_CONDITION                              \
+}while(0) BOOST_LOCALE_END_CONST_CONDITION
 
 #define TEST_PAR(manip,type,actual,expected) \
 do{ \
@@ -135,31 +137,36 @@ do{ \
     ss >> manip >> v >> std::skipws >> tmp_c; \
     TESTEQ(v,expected); \
     TEST(tmp_c=='@'); } \
-}while(0)
+BOOST_LOCALE_START_CONST_CONDITION                  \
+}while(0) BOOST_LOCALE_END_CONST_CONDITION
 
 #define TEST_FP1(manip,value_in,str,type,value_out) \
 do { \
     TEST_FMT(manip,value_in,str); \
     TEST_PAR(manip,type,str,value_out); \
-}while(0)
+BOOST_LOCALE_START_CONST_CONDITION                  \
+}while(0) BOOST_LOCALE_END_CONST_CONDITION
 
 #define TEST_FP2(m1,m2,value_in,str,type,value_out) \
 do { \
     TEST_FMT(m1 << m2,value_in,str); \
     TEST_PAR(m1>>m2,type,str,value_out);  \
-}while(0)
+BOOST_LOCALE_START_CONST_CONDITION                  \
+}while(0) BOOST_LOCALE_END_CONST_CONDITION
 
 #define TEST_FP3(m1,m2,m3,value_in,str,type,value_out) \
 do { \
     TEST_FMT(m1 << m2 << m3,value_in,str); \
     TEST_PAR(m1>>m2>>m3,type,str,value_out); \
-}while(0)
+BOOST_LOCALE_START_CONST_CONDITION                  \
+}while(0) BOOST_LOCALE_END_CONST_CONDITION
 
 #define TEST_FP4(m1,m2,m3,m4,value_in,str,type,value_out) \
 do { \
     TEST_FMT(m1 << m2 << m3 << m4,value_in,str); \
     TEST_PAR(m1>>m2>>m3>>m4,type,str,value_out); \
-}while(0)
+BOOST_LOCALE_START_CONST_CONDITION                  \
+}while(0) BOOST_LOCALE_END_CONST_CONDITION
 
 
 #define FORMAT(f,v,exp) \
@@ -174,26 +181,30 @@ do { \
         /*ss << boost::locale::basic_format<CharType>(fmt) % v; */ \
         TESTEQ(ss.str(),to_correct_string<CharType>(exp,loc)); \
         TESTEQ( (boost::locale::basic_format<CharType>(fmt) % v).str(loc),to_correct_string<CharType>(exp,loc)); \
-    } while(0)
+    BOOST_LOCALE_START_CONST_CONDITION                  \
+    }while(0) BOOST_LOCALE_END_CONST_CONDITION
 
 
 #define TEST_MIN_MAX_FMT(type,minval,maxval)    \
     do { \
         TEST_FMT(as::number,std::numeric_limits<type>::min(),minval); \
         TEST_FMT(as::number,std::numeric_limits<type>::max(),maxval); \
-    }while(0)
+    BOOST_LOCALE_START_CONST_CONDITION                                \
+    }while(0) BOOST_LOCALE_END_CONST_CONDITION
 
 #define TEST_MIN_MAX_PAR(type,minval,maxval)    \
     do {\
         TEST_PAR(as::number,type,minval,std::numeric_limits<type>::min()); \
         TEST_PAR(as::number,type,maxval,std::numeric_limits<type>::max()); \
-    }while(0)
+    BOOST_LOCALE_START_CONST_CONDITION                                     \
+    }while(0) BOOST_LOCALE_END_CONST_CONDITION
 
 #define TEST_MIN_MAX(type,minval,maxval)    \
     do { \
         TEST_MIN_MAX_FMT(type,minval,maxval); \
         TEST_MIN_MAX_PAR(type,minval,maxval); \
-    }while(0)
+    BOOST_LOCALE_START_CONST_CONDITION        \
+    }while(0) BOOST_LOCALE_END_CONST_CONDITION
 
 
 #define BOOST_ICU_VER (U_ICU_VERSION_MAJOR_NUM*100 + U_ICU_VERSION_MINOR_NUM)
@@ -226,6 +237,7 @@ void test_manip(std::string e_charset="UTF-8")
     TEST_FMT(as::number << std::left << std::setfill(CharType('_')) << std::setw(6),1534,"1,534_");
 
     // Ranges
+BOOST_LOCALE_START_CONST_CONDITION
     if(sizeof(short) == 2) {
         TEST_MIN_MAX(short,"-32,768","32,767");
         TEST_MIN_MAX(unsigned short,"0","65,535");
@@ -261,6 +273,7 @@ void test_manip(std::string e_charset="UTF-8")
         TEST_NOPAR(as::number,"-1",unsigned long long);
     }
     #endif
+BOOST_LOCALE_END_CONST_CONDITION
 
 
 
@@ -466,10 +479,11 @@ void test_format(std::string charset="UTF-8")
     FORMAT("{1,cur}",1234,"$1,234.00");
     FORMAT("{1,currency}",1234,"$1,234.00");
     if(charset=="UTF-8") {
-        if(U_ICU_VERSION_MAJOR_NUM >=4)
+#if BOOST_ICU_VER >= 400
             FORMAT("{1,cur,locale=de_DE}",10,"10,00\xC2\xA0€");
-        else
+#else
             FORMAT("{1,cur,locale=de_DE}",10,"10,00 €");
+#endif
     }
     #if BOOST_ICU_VER >= 402
     FORMAT("{1,cur=nat}",1234,"$1,234.00");

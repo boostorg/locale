@@ -134,12 +134,14 @@ namespace impl_win {
                 inf_group = true;
         }
         if(!inf_group) {
+BOOST_LOCALE_START_CONST_CONDITION
             if(std::numeric_limits<char>::is_signed) {
                 res.grouping+=std::numeric_limits<char>::min();
             }
             else {
                 res.grouping+=std::numeric_limits<char>::max();
             }
+BOOST_LOCALE_END_CONST_CONDITION
         }
         return res;
     }

@@ -16,6 +16,10 @@
 #include "test_posix_tools.hpp"
 #endif
 
+#if defined(BOOST_MSVC) && BOOST_MSVC < 1700
+#pragma warning(disable : 4428) // universal-character-name encountered in source
+#endif
+
 template<typename Char>
 std::basic_string<Char> to_correct_string(std::string const &e,std::locale /*l*/)
 {

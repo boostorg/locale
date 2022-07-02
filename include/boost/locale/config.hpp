@@ -68,7 +68,7 @@
         BOOST_PRAGMA_MESSAGE("CAUTION: Define BOOST_LOCALE_DISABLE_DEPRECATED_03_WARNING to suppress this message.")
 #endif
 
-#ifdef BOOST_MSVC
+#ifdef _MSC_VER
 // Denote a constant condition, e.g. for if(sizeof(...
 #define BOOST_LOCALE_START_CONST_CONDITION __pragma(warning(push)) __pragma(warning(disable : 4127))
 #define BOOST_LOCALE_END_CONST_CONDITION __pragma(warning(pop))

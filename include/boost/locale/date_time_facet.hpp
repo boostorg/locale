@@ -167,7 +167,7 @@ namespace boost {
             ///
             /// If normalize() is not called after set_value, the behavior is undefined
             ///
-            virtual void set_value(period::marks::period_mark p,int value) = 0;
+            virtual void set_value(period::marks::period_mark m,int value) = 0;
 
             ///
             /// Recalculate all periods after setting them, should be called after use of set_value() function.
@@ -177,7 +177,7 @@ namespace boost {
             ///
             /// Get specific value for period \a p according to a value_type \a v
             ///
-            virtual int get_value(period::marks::period_mark p,value_type v) const = 0;
+            virtual int get_value(period::marks::period_mark m,value_type v) const = 0;
 
             ///
             /// Set current time point
@@ -201,12 +201,12 @@ namespace boost {
             /// Adjust period's \a p value by \a difference items using a update_type \a u.
             /// Note: not all values are adjustable
             ///
-            virtual void adjust_value(period::marks::period_mark p,update_type u,int difference) = 0;
+            virtual void adjust_value(period::marks::period_mark m,update_type u,int difference) = 0;
 
             ///
             /// Calculate the difference between this calendar  and \a other in \a p units
             ///
-            virtual int difference(abstract_calendar const *other,period::marks::period_mark p) const = 0;
+            virtual int difference(abstract_calendar const *other,period::marks::period_mark m) const = 0;
 
             ///
             /// Set time zone, empty - use system

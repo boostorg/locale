@@ -281,6 +281,10 @@ struct utfutf<wchar_t,2> {
         return buf;
     }
 };
+#ifdef BOOST_MSVC
+#pragma warning(push)
+#pragma warning(disable: 4309) // narrowing static_cast warning
+#endif
 template<>
 struct utfutf<wchar_t,4> {
     static wchar_t const *ok(){ return  L"\x67\x72\xfc\xdf\x65\x6e"; }
@@ -290,7 +294,9 @@ struct utfutf<wchar_t,4> {
         return buf;
     }
 };
-
+#ifdef BOOST_MSVC
+#pragma warning(pop)
+#endif
 
 template<typename CharOut,typename CharIn>
 void test_combinations()
