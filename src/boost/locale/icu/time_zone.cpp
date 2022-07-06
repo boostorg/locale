@@ -7,6 +7,7 @@
 //
 #define BOOST_LOCALE_SOURCE
 #include "boost/locale/icu/time_zone.hpp"
+#include "boost/locale/icu/icu_util.hpp"
 #include <boost/locale/hold_ptr.hpp>
 #include <boost/predef/os.h>
 
@@ -20,7 +21,8 @@
 // It is also relevant only for Linux, BSD and Apple (as I see in ICU code)
 //
 
-#if U_ICU_VERSION_MAJOR_NUM == 4 && (U_ICU_VERSION_MINOR_NUM * 100 + U_ICU_VERSION_PATCHLEVEL_NUM) <= 402
+#if BOOST_LOCALE_ICU_VERSION >= 400 && BOOST_LOCALE_ICU_VERSION <= 406 \
+    && (BOOST_LOCALE_ICU_VERSION != 404 || U_ICU_VERSION_PATCHLEVEL_NUM >= 3)
 # if BOOST_OS_LINUX || BOOST_OS_BSD_FREE || defined(__APPLE__)
 #   define BOOST_LOCALE_WORKAROUND_ICU_BUG
 # endif

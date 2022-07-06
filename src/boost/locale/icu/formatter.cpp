@@ -10,22 +10,17 @@
 #include "boost/locale/icu/formatter.hpp"
 #include <boost/locale/info.hpp>
 #include "boost/locale/icu/uconv.hpp"
-
+#include "boost/locale/icu/predefined_formatters.hpp"
+#include "boost/locale/icu/time_zone.hpp"
+#include <boost/core/ignore_unused.hpp>
 
 #include <unicode/numfmt.h>
 #include <unicode/rbnf.h>
 #include <unicode/datefmt.h>
 #include <unicode/smpdtfmt.h>
 #include <unicode/decimfmt.h>
-
 #include <limits>
-
 #include <iostream>
-
-#include "boost/locale/icu/predefined_formatters.hpp"
-#include "boost/locale/icu/time_zone.hpp"
-
-#include <boost/core/ignore_unused.hpp>
 
 #ifdef BOOST_MSVC
 #  pragma warning(disable : 4244) // lose data

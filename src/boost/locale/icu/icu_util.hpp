@@ -7,8 +7,16 @@
 //
 #ifndef BOOST_SRC_ICU_UTIL_HPP
 #define BOOST_SRC_ICU_UTIL_HPP
+
+#include <boost/locale/config.hpp>
+#ifdef BOOST_HAS_STDINT_H
+#include <stdint.h> // Avoid ICU defining e.g. INT8_MIN causing macro redefinition warnings
+#endif
 #include <unicode/utypes.h>
+#include <unicode/uversion.h>
 #include <stdexcept>
+
+#define BOOST_LOCALE_ICU_VERSION (U_ICU_VERSION_MAJOR_NUM * 100 + U_ICU_VERSION_MINOR_NUM)
 
 namespace boost {
 namespace locale {

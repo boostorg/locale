@@ -7,6 +7,9 @@
 //
 #ifndef BOOST_LOCALE_IMPL_ICU_LOCALIZATION_BACKEND_HPP
 #define BOOST_LOCALE_IMPL_ICU_LOCALIZATION_BACKEND_HPP
+
+#include <boost/locale/config.hpp>
+
 namespace boost {
     namespace locale {
         class localization_backend;
