@@ -41,6 +41,7 @@ else()
       detail
       exception
       function_types
+      functional
       fusion
       integer
       intrusive
