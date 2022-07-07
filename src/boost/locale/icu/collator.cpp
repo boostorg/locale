@@ -8,18 +8,20 @@
 #define BOOST_LOCALE_SOURCE
 #include <boost/locale/collator.hpp>
 #include <boost/locale/generator.hpp>
+#include "boost/locale/icu/all_generator.hpp"
+#include "boost/locale/icu/cdata.hpp"
+#include "boost/locale/icu/icu_util.hpp"
+#include "boost/locale/icu/uconv.hpp"
+#include "boost/locale/shared/mo_hash.hpp"
 #include <boost/thread.hpp>
 #include <vector>
 #include <limits>
-
-#include "boost/locale/icu/cdata.hpp"
-#include "boost/locale/icu/all_generator.hpp"
-#include "boost/locale/icu/uconv.hpp"
-#include "boost/locale/shared/mo_hash.hpp"
-
 #include <unicode/coll.h>
-#if U_ICU_VERSION_MAJOR_NUM*100 + U_ICU_VERSION_MINOR_NUM >= 402
+#if BOOST_LOCALE_ICU_VERSION >= 402
+#  define BOOST_LOCALE_WITH_STRINGPIECE 1
 #  include <unicode/stringpiece.h>
+#else
+#  define BOOST_LOCALE_WITH_STRINGPIECE 0
 #endif
 
 #ifdef BOOST_MSVC
@@ -44,7 +46,7 @@ namespace boost {
                     return level;
                 }
 
-                #if U_ICU_VERSION_MAJOR_NUM*100 + U_ICU_VERSION_MINOR_NUM >= 402
+                #if BOOST_LOCALE_WITH_STRINGPIECE
                 int do_utf8_compare(    level_type level,
                                         char const *b1,char const *e1,
                                         char const *b2,char const *e2,
@@ -163,7 +165,7 @@ namespace boost {
             };
 
 
-            #if U_ICU_VERSION_MAJOR_NUM*100 + U_ICU_VERSION_MINOR_NUM >= 402
+            #if BOOST_LOCALE_WITH_STRINGPIECE
             template<>
             int collate_impl<char>::do_real_compare(
                                     level_type level,

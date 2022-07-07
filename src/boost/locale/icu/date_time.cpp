@@ -10,6 +10,11 @@
 #include <boost/locale/date_time_facet.hpp>
 #include <boost/locale/formatting.hpp>
 #include <boost/locale/hold_ptr.hpp>
+#include "boost/locale/icu/all_generator.hpp"
+#include "boost/locale/icu/cdata.hpp"
+#include "boost/locale/icu/icu_util.hpp"
+#include "boost/locale/icu/time_zone.hpp"
+#include "boost/locale/icu/uconv.hpp"
 #include <boost/thread.hpp>
 #include <cmath>
 #include <iostream>
@@ -17,11 +22,6 @@
 #include <unicode/calendar.h>
 #include <unicode/gregocal.h>
 #include <unicode/utypes.h>
-
-#include "boost/locale/icu/all_generator.hpp"
-#include "boost/locale/icu/cdata.hpp"
-#include "boost/locale/icu/time_zone.hpp"
-#include "boost/locale/icu/uconv.hpp"
 
 namespace boost {
 namespace locale {
@@ -70,7 +70,7 @@ namespace impl_icu {
             UErrorCode err=U_ZERO_ERROR;
             calendar_.reset(icu::Calendar::createInstance(dat.locale,err));
             check_and_throw_dt(err);
-            #if U_ICU_VERSION_MAJOR_NUM*100 + U_ICU_VERSION_MINOR_NUM < 402
+            #if BOOST_LOCALE_ICU_VERSION < 402
             // workaround old/invalid data, it should be 4 in general
             calendar_->setMinimalDaysInFirstWeek(4);
             #endif

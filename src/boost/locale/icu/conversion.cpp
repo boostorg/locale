@@ -9,15 +9,16 @@
 #include <boost/locale/conversion.hpp>
 #include "boost/locale/icu/all_generator.hpp"
 #include "boost/locale/icu/cdata.hpp"
+#include "boost/locale/icu/icu_util.hpp"
 #include "boost/locale/icu/uconv.hpp"
 
 #include <unicode/normlzr.h>
 #include <unicode/ustring.h>
 #include <unicode/locid.h>
 #include <unicode/uversion.h>
-#if U_ICU_VERSION_MAJOR_NUM*100 + U_ICU_VERSION_MINOR_NUM >= 308
+#if BOOST_LOCALE_ICU_VERSION >= 308
 #include <unicode/ucasemap.h>
-#define WITH_CASE_MAPS
+#define BOOST_LOCALE_WITH_CASEMAP
 #endif
 #include <vector>
 
@@ -98,7 +99,7 @@ namespace impl_icu {
         std::string encoding_;
     }; // converter_impl
 
-    #ifdef WITH_CASE_MAPS
+    #ifdef BOOST_LOCALE_WITH_CASEMAP
     class raii_casemap {
         raii_casemap(raii_casemap const &);
         void operator = (raii_casemap const&);
@@ -176,13 +177,13 @@ namespace impl_icu {
         raii_casemap map_;
     }; // converter_impl
 
-#endif // WITH_CASE_MAPS
+#endif // BOOST_LOCALE_WITH_CASEMAP
 
     std::locale create_convert(std::locale const &in,cdata const &cd,character_facet_type type)
     {
         switch(type) {
         case char_facet:
-            #ifdef WITH_CASE_MAPS
+            #ifdef BOOST_LOCALE_WITH_CASEMAP
             if(cd.utf8)
                 return std::locale(in,new utf8_converter_impl(cd));
             #endif

@@ -8,12 +8,13 @@
 #ifndef BOOST_LOCALE_PREDEFINED_FORMATTERS_HPP_INCLUDED
 #define BOOST_LOCALE_PREDEFINED_FORMATTERS_HPP_INCLUDED
 
-#include <string>
-#include <memory>
-#include <boost/cstdint.hpp>
-#include <boost/thread.hpp>
 #include <boost/locale/config.hpp>
 #include <boost/locale/hold_ptr.hpp>
+#include "boost/locale/icu/icu_util.hpp"
+#include <boost/cstdint.hpp>
+#include <boost/thread.hpp>
+#include <string>
+#include <memory>
 
 #include <unicode/locid.h>
 #include <unicode/numfmt.h>
@@ -99,28 +100,26 @@ namespace locale {
                 case fmt_sci:
                     ap.reset(icu::NumberFormat::createScientificInstance(locale_,err));
                     break;
-                #if U_ICU_VERSION_MAJOR_NUM*100 + U_ICU_VERSION_MINOR_NUM >= 402
-                    #if U_ICU_VERSION_MAJOR_NUM*100 + U_ICU_VERSION_MINOR_NUM >= 408
+#if BOOST_LOCALE_ICU_VERSION >= 408
                     case fmt_curr_nat:
                         ap.reset(icu::NumberFormat::createInstance(locale_,UNUM_CURRENCY,err));
                         break;
                     case fmt_curr_iso:
                         ap.reset(icu::NumberFormat::createInstance(locale_,UNUM_CURRENCY_ISO,err));
                         break;
-                    #else
+#elif BOOST_LOCALE_ICU_VERSION >= 402
                     case fmt_curr_nat:
                         ap.reset(icu::NumberFormat::createInstance(locale_,icu::NumberFormat::kCurrencyStyle,err));
                         break;
                     case fmt_curr_iso:
                         ap.reset(icu::NumberFormat::createInstance(locale_,icu::NumberFormat::kIsoCurrencyStyle,err));
                         break;
-                    #endif
-                #else
+#else
                 case fmt_curr_nat:
                 case fmt_curr_iso:
                     ap.reset(icu::NumberFormat::createCurrencyInstance(locale_,err));
                     break;
-                #endif
+#endif
                 case fmt_per:
                     ap.reset(icu::NumberFormat::createPercentInstance(locale_,err));
                     break;

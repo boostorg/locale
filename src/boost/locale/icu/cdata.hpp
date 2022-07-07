@@ -8,6 +8,7 @@
 #ifndef BOOST_LOCALE_ICU_CDATA_HPP
 #define BOOST_LOCALE_ICU_CDATA_HPP
 
+#include <boost/locale/config.hpp>
 #include <unicode/locid.h>
 #include <string>
 

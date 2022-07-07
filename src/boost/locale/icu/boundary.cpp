@@ -9,18 +9,16 @@
 #include <boost/locale/boundary.hpp>
 #include <boost/locale/generator.hpp>
 #include <boost/locale/hold_ptr.hpp>
-#include <unicode/uversion.h>
-#if U_ICU_VERSION_MAJOR_NUM*100 + U_ICU_VERSION_MINOR_NUM >= 306
+#include "boost/locale/icu/all_generator.hpp"
+#include "boost/locale/icu/cdata.hpp"
+#include "boost/locale/icu/icu_util.hpp"
+#include "boost/locale/icu/uconv.hpp"
+#if BOOST_LOCALE_ICU_VERSION >= 306
 #include <unicode/utext.h>
 #endif
 #include <unicode/brkiter.h>
 #include <unicode/rbbi.h>
 #include <vector>
-
-#include "boost/locale/icu/cdata.hpp"
-#include "boost/locale/icu/all_generator.hpp"
-#include "boost/locale/icu/icu_util.hpp"
-#include "boost/locale/icu/uconv.hpp"
 
 #ifdef BOOST_MSVC
 #pragma warning(disable:4244) // 'argument' : conversion from 'int'
@@ -143,7 +141,7 @@ index_type do_map(boundary_type t,CharType const *begin,CharType const *end,icu:
     index_type indx;
     hold_ptr<icu::BreakIterator> bi(get_iterator(t,loc));
 
-#if U_ICU_VERSION_MAJOR_NUM*100 + U_ICU_VERSION_MINOR_NUM >= 306
+#if BOOST_LOCALE_ICU_VERSION >= 306
     UErrorCode err=U_ZERO_ERROR;
 BOOST_LOCALE_START_CONST_CONDITION
     if(sizeof(CharType) == 2 || (sizeof(CharType)==1 && encoding=="UTF-8"))

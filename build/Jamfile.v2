@@ -4,9 +4,9 @@
 # http://www.boost.org/LICENSE_1_0.txt.
 
 import configure ;
+import feature ;
 import os ;
 import toolset ;
-import feature ;
 
 path-constant TOP : .. ;
 
@@ -26,8 +26,7 @@ feature.feature boost.locale.winapi : on off : optional propagated ;
 
 ## iconv
 
-obj has_iconv_libc_obj : $(TOP)/build/has_iconv.cpp ;
-exe has_iconv : has_iconv_libc_obj ;
+exe has_iconv : $(TOP)/build/has_iconv.cpp ;
 explicit has_iconv ;
 
 ICONV_PATH = [ modules.peek : ICONV_PATH ] ;
@@ -41,8 +40,7 @@ lib iconv
 
 explicit iconv ;
 
-obj has_iconv_libc_ext : $(TOP)/build/has_iconv.cpp iconv ;
-exe has_external_iconv : has_iconv_libc_ext iconv ;
+exe has_external_iconv : $(TOP)/build/has_iconv.cpp iconv ;
 explicit has_external_iconv ;
 
 exe accepts_shared_option   : $(TOP)/build/option.cpp
@@ -53,8 +51,8 @@ exe accepts_shared_option   : $(TOP)/build/option.cpp
                             ;
 
 # Xlocale
-obj has_xlocale_obj : $(TOP)/build/has_xlocale.cpp ;
-exe has_xlocale : has_xlocale_obj ;
+
+exe has_xlocale : $(TOP)/build/has_xlocale.cpp ;
 explicit has_xlocale ;
 
 #end xlocale
@@ -62,13 +60,21 @@ explicit has_xlocale ;
 
 ICU_PATH =  [ modules.peek : ICU_PATH ] ;
 ICU_LINK =  [ modules.peek : ICU_LINK ] ;
+# Temporary workaround for incompatibility of ICU_LINK with Boost.Regex:
+# Use ICU_LINK_LOCALE instead of ICU_LINK.
+# Note that ICU_LINK and ICU_LINK_LOCALE will be removed in Boost 1.81
+# in favor of a similar solution to Boost.Regex or a B2 module.
+ICU_LINK_LOCALE =  [ modules.peek : ICU_LINK_LOCALE ] ;
 
-if $(ICU_LINK)
+if $(ICU_LINK_LOCALE)
+{
+    ICU_OPTS = <include>$(ICU_PATH)/include <linkflags>$(ICU_LINK_LOCALE) <dll-path>$(ICU_PATH)/bin <runtime-link>shared ;
+    ICU64_OPTS = <include>$(ICU_PATH)/include <linkflags>$(ICU_LINK_LOCALE) <dll-path>$(ICU_PATH)/bin64 <runtime-link>shared ;
+} else if $(ICU_LINK)
 {
     ICU_OPTS = <include>$(ICU_PATH)/include <linkflags>$(ICU_LINK) <dll-path>$(ICU_PATH)/bin <runtime-link>shared ;
     ICU64_OPTS = <include>$(ICU_PATH)/include <linkflags>$(ICU_LINK) <dll-path>$(ICU_PATH)/bin64 <runtime-link>shared ;
-}
-else
+} else
 {
     searched-lib icuuc : :  <name>icuuc
                             <search>$(ICU_PATH)/lib
@@ -186,14 +192,10 @@ else
       <dll-path>$(ICU_PATH)/bin64
         <runtime-link>shared ;
 
-
 }
 
-obj has_icu_obj     : $(TOP)/build/has_icu_test.cpp : $(ICU_OPTS)   ;
-obj has_icu64_obj   : $(TOP)/build/has_icu_test.cpp : $(ICU64_OPTS) ;
-
-exe has_icu   : has_icu_obj   : $(ICU_OPTS)   ;
-exe has_icu64 : has_icu64_obj : $(ICU64_OPTS) ;
+exe has_icu   : $(TOP)/build/has_icu_test.cpp : $(ICU_OPTS)   ;
+exe has_icu64 : $(TOP)/build/has_icu_test.cpp : $(ICU64_OPTS) ;
 
 explicit has_icu has_icu64 ;
 
@@ -209,22 +211,19 @@ rule configure-full ( properties * : flags-only )
 
     local found-iconv ;
 
+    # The system Iconv on Solaris may have bugs, while the GNU Iconv is fine.
+    # So enable by default only if not on Solaris.
     if <boost.locale.iconv>on in $(properties)
-      || ! <boost.locale.iconv> in $(properties:G)
-        && ! <target-os>solaris in $(properties)
+      || ( ! <boost.locale.iconv> in $(properties:G) && ! <target-os>solaris in $(properties) )
     {
         # See if iconv is bundled with standard library.
         if [ configure.builds has_iconv : $(properties) : "iconv (libc)" ]
         {
             found-iconv = true ;
-        }
-        else
+        } else if [ configure.builds has_external_iconv : $(properties) : "iconv (separate)" ]
         {
-            if [ configure.builds has_external_iconv : $(properties) : "iconv (separate)" ]
-            {
-                found-iconv = true ;
-                result += <library>iconv ;
-            }
+            found-iconv = true ;
+            result += <library>iconv ;
         }
     }
     if $(found-iconv)
@@ -240,8 +239,7 @@ rule configure-full ( properties * : flags-only )
         {
             found-icu = true ;
             flags-result += <define>BOOST_LOCALE_WITH_ICU=1 $(ICU_OPTS) ;
-        }
-        else if [ configure.builds has_icu64 : $(properties) : "icu (lib64)" ]
+        } else if [ configure.builds has_icu64 : $(properties) : "icu (lib64)" ]
         {
             found-icu = true ;
             flags-result += <define>BOOST_LOCALE_WITH_ICU=1 $(ICU64_OPTS) ;
@@ -265,7 +263,6 @@ rule configure-full ( properties * : flags-only )
                       <library>/boost/thread//boost_thread
                       ;
         }
-
     }
 
     if ! $(found-iconv) && ! $(found-icu) && ! <target-os>windows in $(properties) && ! <target-os>cygwin in $(properties)
@@ -279,8 +276,7 @@ rule configure-full ( properties * : flags-only )
         if <toolset>sun in $(properties)
         {
             properties += <boost.locale.std>off ;
-        }
-        else
+        } else
         {
             properties += <boost.locale.std>on ;
         }
@@ -289,8 +285,7 @@ rule configure-full ( properties * : flags-only )
     if <boost.locale.std>off in $(properties)
     {
         flags-result += <define>BOOST_LOCALE_NO_STD_BACKEND=1 ;
-    }
-    else
+    } else
     {
         STD_SOURCES =
           codecvt
@@ -304,12 +299,10 @@ rule configure-full ( properties * : flags-only )
 
     if ! <boost.locale.winapi> in $(properties:G)
     {
-        if <target-os>windows in $(properties)
-          || <target-os>cygwin in $(properties)
+        if <target-os>windows in $(properties) || <target-os>cygwin in $(properties)
         {
             properties += <boost.locale.winapi>on ;
-        }
-        else
+        } else
         {
             properties += <boost.locale.winapi>off ;
         }
@@ -329,8 +322,7 @@ rule configure-full ( properties * : flags-only )
     if <boost.locale.winapi>off in $(properties)
     {
         flags-result += <define>BOOST_LOCALE_NO_WINAPI_BACKEND=1 ;
-    }
-    else
+    } else
     {
         WINAPI_SOURCES =
             collate
@@ -354,8 +346,7 @@ rule configure-full ( properties * : flags-only )
             || ( <target-os>freebsd in $(properties) && [ configure.builds has_xlocale : $(properties) : "xlocale supported" ] )
         {
             properties += <boost.locale.posix>on ;
-        }
-        else
+        } else
         {
             properties += <boost.locale.posix>off ;
         }
@@ -364,8 +355,7 @@ rule configure-full ( properties * : flags-only )
     if <boost.locale.posix>off in $(properties)
     {
         flags-result += <define>BOOST_LOCALE_NO_POSIX_BACKEND=1 ;
-    }
-    else
+    } else
     {
         POSIX_SOURCES =
           collate
@@ -385,8 +375,7 @@ rule configure-full ( properties * : flags-only )
     if "$(flags-only)" = "flags"
     {
         return $(flags-result) ;
-    }
-    else
+    } else
     {
         result += $(flags-result) ;
         return $(result) ;

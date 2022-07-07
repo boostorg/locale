@@ -8,6 +8,10 @@
 #ifndef BOOST_LOCALE_IMPL_ICU_GET_TIME_ZONE_HPP
 #define BOOST_LOCALE_IMPL_ICU_GET_TIME_ZONE_HPP
 
+#include <boost/locale/config.hpp>
+#ifdef BOOST_HAS_STDINT_H
+#include <stdint.h> // Avoid ICU defining e.g. INT8_MIN causing macro redefinition warnings
+#endif
 #include <unicode/calendar.h>
 #include <string>
 
