@@ -60,8 +60,17 @@ explicit has_xlocale ;
 
 ICU_PATH =  [ modules.peek : ICU_PATH ] ;
 ICU_LINK =  [ modules.peek : ICU_LINK ] ;
+# Temporary workaround for incompatibility of ICU_LINK with Boost.Regex:
+# Use ICU_LINK_LOCALE instead of ICU_LINK.
+# Note that ICU_LINK and ICU_LINK_LOCALE will be removed in Boost 1.81
+# in favor of a similar solution to Boost.Regex or a B2 module.
+ICU_LINK_LOCALE =  [ modules.peek : ICU_LINK_LOCALE ] ;
 
-if $(ICU_LINK)
+if $(ICU_LINK_LOCALE)
+{
+    ICU_OPTS = <include>$(ICU_PATH)/include <linkflags>$(ICU_LINK_LOCALE) <dll-path>$(ICU_PATH)/bin <runtime-link>shared ;
+    ICU64_OPTS = <include>$(ICU_PATH)/include <linkflags>$(ICU_LINK_LOCALE) <dll-path>$(ICU_PATH)/bin64 <runtime-link>shared ;
+} else if $(ICU_LINK)
 {
     ICU_OPTS = <include>$(ICU_PATH)/include <linkflags>$(ICU_LINK) <dll-path>$(ICU_PATH)/bin <runtime-link>shared ;
     ICU64_OPTS = <include>$(ICU_PATH)/include <linkflags>$(ICU_LINK) <dll-path>$(ICU_PATH)/bin64 <runtime-link>shared ;
