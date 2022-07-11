@@ -451,3 +451,22 @@ jobs:
                 fi
             fi
             ctest --output-on-failure --build-config ${{matrix.build_type}}
+
+  Create_Boost_Documentation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Fetch Boost.CI
+        uses: actions/checkout@v3
+        with:
+          repository: boostorg/boost-ci
+          ref: master
+          path: boost-ci-cloned
+      - name: Get CI scripts folder
+        run: cp -r boost-ci-cloned/ci . && rm -rf boost-ci-cloned
+      - name: Setup Boost
+        run: source ci/github/install.sh
+      - name: Create documentation
+        run: |
+            sudo apt-get install -y doxygen
+            B2_TARGETS=libs/$SELF/doc ci/build.sh
