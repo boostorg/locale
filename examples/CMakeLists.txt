@@ -1,3 +1,7 @@
+# Copyright 2021-2022 Alexander Grund
+# Distributed under the Boost Software License, Version 1.0.
+# https://www.boost.org/LICENSE_1_0.txt
+
 function(boost_locale_add_example name)
   cmake_parse_arguments(PARSE_ARGV 1 ARG "COMPILE_ONLY" "SRC;WORKING_DIRECTORY" "ARGS")
 
