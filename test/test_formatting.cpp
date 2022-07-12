@@ -575,3 +575,4 @@ void test_main(int /*argc*/, char** /*argv*/)
 #endif // NOICU
 
 // boostinspect:noascii
+// boostinspect:nominmax

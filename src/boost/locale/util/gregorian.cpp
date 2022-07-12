@@ -845,4 +845,4 @@ BOOST_LOCALE_END_CONST_CONDITION
 } // locale
 } //boost
 
-
+// boostinspect:nominmax

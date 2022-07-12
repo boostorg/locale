@@ -606,7 +606,4 @@ namespace locale {
 } // locale
 } // boost
 
-
-
-
-
+// boostinspect:nominmax

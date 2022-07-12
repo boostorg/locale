@@ -544,3 +544,4 @@ namespace impl {
 } // boost
 
 #endif
+// boostinspect:nominmax
