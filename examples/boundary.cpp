@@ -6,7 +6,6 @@
 
 #include <boost/locale.hpp>
 #include <iostream>
-#include <cassert>
 #include <ctime>
 
 int main()

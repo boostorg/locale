@@ -6,6 +6,7 @@
 
 #ifndef BOOST_LOCALE_TEST_H
 #define BOOST_LOCALE_TEST_H
+
 #include <boost/locale/config.hpp>
 #include <stdexcept>
 #include <sstream>
@@ -34,7 +35,15 @@ int test_counter=0;
         THROW_IF_TOO_BIG(error_counter++);                                \
         BOOST_LOCALE_START_CONST_CONDITION                                \
     }while(0) BOOST_LOCALE_END_CONST_CONDITION
-#endif
+
+#define TEST_REQUIRE(X)                                                   \
+    do {                                                                  \
+        test_counter++;                                                   \
+        if(X) break;                                                      \
+        std::cerr << "Error in line:" << __LINE__ << " "#X  << std::endl; \
+        throw std::runtime_error("Critical test " #X " failed");          \
+        BOOST_LOCALE_START_CONST_CONDITION                                \
+    }while(0) BOOST_LOCALE_END_CONST_CONDITION
 
 #define TEST_THROWS(X,E)                                                  \
     do {                                                                  \
@@ -125,4 +134,4 @@ BOOST_LOCALE_END_CONST_CONDITION
     return out;
 }
 
-
+#endif
