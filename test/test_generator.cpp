@@ -85,5 +85,5 @@ void test_main(int /*argc*/, char** /*argv*/)
     TEST(std::use_facet<boost::locale::info>(g("en_US.UTF-8")).utf8());
     TEST(!std::use_facet<boost::locale::info>(g("en_US.ISO8859-1")).utf8());
 }
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
+
 // boostinspect:noascii

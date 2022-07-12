@@ -1,5 +1,3 @@
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 filetype=cpp.doxygen
-
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
 //

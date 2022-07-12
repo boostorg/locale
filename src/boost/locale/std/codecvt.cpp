@@ -49,4 +49,3 @@ namespace impl_std {
 } // locale
 } // boost
 
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4

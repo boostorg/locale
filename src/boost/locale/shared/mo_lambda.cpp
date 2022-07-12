@@ -410,5 +410,4 @@ plural_ptr compile(char const *str)
 } // locale
 } // boost
 
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 

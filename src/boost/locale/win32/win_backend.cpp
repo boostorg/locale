@@ -150,4 +150,3 @@ namespace impl_win {
 }  // impl win
 }  // locale
 }  // boost
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4

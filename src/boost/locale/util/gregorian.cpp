@@ -846,4 +846,3 @@ BOOST_LOCALE_END_CONST_CONDITION
 } //boost
 
 
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4

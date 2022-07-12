@@ -161,4 +161,3 @@ std::locale create_convert( std::locale const &in,
 } // namespace impl_std
 } // locale
 } // boost
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4

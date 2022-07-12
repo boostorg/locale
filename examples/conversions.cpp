@@ -38,6 +38,4 @@ int main()
     std::cout << "behavior to unicode subset BMP or ASCII only\n";
 }
 
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
-
 // boostinspect:noascii

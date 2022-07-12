@@ -775,5 +775,4 @@ BOOST_LOCALE_END_CONST_CONDITION
 
     } // locale
 } // boost
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 

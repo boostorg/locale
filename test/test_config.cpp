@@ -133,5 +133,4 @@ int main()
     return EXIT_SUCCESS;
 }
 
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 // boostinspect:noascii
