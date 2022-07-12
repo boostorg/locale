@@ -17,7 +17,6 @@ int main()
 #include <boost/locale/info.hpp>
 #include <boost/locale/localization_backend.hpp>
 #include <iomanip>
-#include <cassert>
 #include <ctime>
 #include <iostream>
 #include <monetary.h>
@@ -180,7 +179,7 @@ void test_main(int /*argc*/, char** /*argv*/)
         else {
             std::locale l1=gen(name);
             lreal=newlocale(LC_ALL_MASK,name.c_str(),0);
-            assert(lreal);
+            TEST_REQUIRE(lreal);
             std::cout << "UTF-8" << std::endl;
 
             test_by_char<char,char>(l1,lreal);
@@ -198,7 +197,7 @@ void test_main(int /*argc*/, char** /*argv*/)
         else {
             std::locale l1=gen(name);
             lreal=newlocale(LC_ALL_MASK,name.c_str(),0);
-            assert(lreal);
+            TEST_REQUIRE(lreal);
             test_by_char<char,char>(l1,lreal);
             std::cout << "Wide UTF-" << sizeof(wchar_t) * 8 << std::endl;
             test_by_char<wchar_t,char>(l1,lreal);
@@ -213,7 +212,7 @@ void test_main(int /*argc*/, char** /*argv*/)
         else {
             std::locale l1=gen(name);
             lreal=newlocale(LC_ALL_MASK,name.c_str(),0);
-            assert(lreal);
+            TEST_REQUIRE(lreal);
             std::cout << "UTF-8" << std::endl;
 
             test_by_char<char,char>(l1,lreal);
@@ -231,7 +230,7 @@ void test_main(int /*argc*/, char** /*argv*/)
         else {
             std::locale l1=gen(name);
             lreal=newlocale(LC_ALL_MASK,name.c_str(),0);
-            assert(lreal);
+            TEST_REQUIRE(lreal);
             test_by_char<char,char>(l1,lreal);
             std::cout << "Wide UTF-" << sizeof(wchar_t) * 8 << std::endl;
             test_by_char<wchar_t,char>(l1,lreal);

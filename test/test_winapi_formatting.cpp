@@ -18,7 +18,6 @@ int main()
 #include <boost/locale/info.hpp>
 #include <boost/locale/localization_backend.hpp>
 #include <iomanip>
-#include <cassert>
 #include <ctime>
 #include <iostream>
 

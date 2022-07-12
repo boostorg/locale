@@ -5,7 +5,8 @@
 // https://www.boost.org/LICENSE_1_0.txt
 
 #include <boost/locale/util.hpp>
-#include <cassert>
+
+#include <boost/assert.hpp>
 #include <iostream>
 
 int main()
@@ -25,8 +26,8 @@ int main()
     if(cvt.get())
     {
         std::cout << "Created..." << std::endl;
-        assert(cvt->is_thread_safe());
-        assert(cvt->max_len() == 4);
+        BOOST_ASSERT(cvt->is_thread_safe());
+        BOOST_ASSERT(cvt->max_len() == 4);
     }else
     {
         std::cout << "Failed creation..." << std::endl;
