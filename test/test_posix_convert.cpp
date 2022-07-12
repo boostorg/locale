@@ -96,7 +96,5 @@ void test_main(int /*argc*/, char** /*argv*/)
 }
 
 #endif // POSIX
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
-
 
 // boostinspect:noascii

@@ -274,4 +274,3 @@ void test_main(int /*argc*/, char** /*argv*/)
     test_char_char();
 }
 ///
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4

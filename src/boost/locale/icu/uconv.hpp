@@ -321,4 +321,3 @@ namespace impl_icu {
 #pragma warning(push)
 #endif
 
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4

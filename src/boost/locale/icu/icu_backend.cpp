@@ -162,4 +162,3 @@ namespace impl_icu {
 }  // impl icu
 }  // locale
 }  // boost
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4

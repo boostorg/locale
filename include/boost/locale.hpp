@@ -23,4 +23,3 @@
 #include <boost/locale/util.hpp>
 
 #endif
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4

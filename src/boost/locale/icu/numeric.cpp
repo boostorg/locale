@@ -424,4 +424,3 @@ std::locale create_parsing(std::locale const &in,cdata const &cd,character_facet
 
 
 
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4

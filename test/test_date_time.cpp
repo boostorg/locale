@@ -291,5 +291,5 @@ BOOST_LOCALE_END_CONST_CONDITION
         } // test
     }   // for loop
 }
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
+
 // boostinspect:noascii

@@ -53,6 +53,3 @@ test-suite "boost_locale_test" :
     [ run test_std_convert.cpp ]
     [ run test_std_formatting.cpp ]
     ;
-
-# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
-

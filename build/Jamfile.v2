@@ -425,5 +425,3 @@ boost-lib locale
       # Meanwhile remove this
       <conditional>@configure
     ;
-
-# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
