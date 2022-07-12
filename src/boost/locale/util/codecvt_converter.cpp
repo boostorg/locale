@@ -374,11 +374,11 @@ namespace util {
             return std::locale(in,new code_converter<char>(PTR_TRANS(cvt)));
         case wchar_t_facet:
             return std::locale(in,new code_converter<wchar_t>(PTR_TRANS(cvt)));
-        #if defined(BOOST_LOCALE_ENABLE_CHAR16_T) && !defined(BOOST_NO_CHAR16_T_CODECVT)
+        #if defined(BOOST_LOCALE_ENABLE_CHAR16_T)
         case char16_t_facet:
             return std::locale(in,new code_converter<char16_t>(PTR_TRANS(cvt)));
         #endif
-        #if defined(BOOST_LOCALE_ENABLE_CHAR32_T) && !defined(BOOST_NO_CHAR32_T_CODECVT)
+        #if defined(BOOST_LOCALE_ENABLE_CHAR32_T)
         case char32_t_facet:
             return std::locale(in,new code_converter<char32_t>(PTR_TRANS(cvt)));
         #endif
@@ -399,11 +399,11 @@ namespace util {
             return std::locale(in,new utf8_codecvt<char>());
         case wchar_t_facet:
             return std::locale(in,new utf8_codecvt<wchar_t>());
-        #if defined(BOOST_LOCALE_ENABLE_CHAR16_T) && !defined(BOOST_NO_CHAR16_T_CODECVT)
+        #if defined(BOOST_LOCALE_ENABLE_CHAR16_T)
         case char16_t_facet:
             return std::locale(in,new utf8_codecvt<char16_t>());
         #endif
-        #if defined(BOOST_LOCALE_ENABLE_CHAR32_T) && !defined(BOOST_NO_CHAR32_T_CODECVT)
+        #if defined(BOOST_LOCALE_ENABLE_CHAR32_T)
         case char32_t_facet:
             return std::locale(in,new utf8_codecvt<char32_t>());
         #endif
@@ -428,11 +428,11 @@ namespace util {
             return std::locale(in,new simple_codecvt<char>(encoding));
         case wchar_t_facet:
             return std::locale(in,new simple_codecvt<wchar_t>(encoding));
-        #if defined(BOOST_LOCALE_ENABLE_CHAR16_T) && !defined(BOOST_NO_CHAR16_T_CODECVT)
+        #if defined(BOOST_LOCALE_ENABLE_CHAR16_T)
         case char16_t_facet:
             return std::locale(in,new simple_codecvt<char16_t>(encoding));
         #endif
-        #if defined(BOOST_LOCALE_ENABLE_CHAR32_T) && !defined(BOOST_NO_CHAR32_T_CODECVT)
+        #if defined(BOOST_LOCALE_ENABLE_CHAR32_T)
         case char32_t_facet:
             return std::locale(in,new simple_codecvt<char32_t>(encoding));
         #endif
