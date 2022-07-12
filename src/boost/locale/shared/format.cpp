@@ -183,3 +183,4 @@ namespace boost {
         }
     }
 }
+// boostinspect:nominmax

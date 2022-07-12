@@ -366,3 +366,4 @@ BOOST_LOCALE_END_CONST_CONDITION
 } // boost
 #endif
 
+// boostinspect:nominmax
