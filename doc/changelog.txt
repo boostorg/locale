@@ -1,15 +1,23 @@
 //
-//  Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2021-2022 Alexander Grund
 //
-//  Distributed under the Boost Software License, Version 1.0. (See
-//  accompanying file LICENSE_1_0.txt or copy at
-//  http://www.boost.org/LICENSE_1_0.txt)
-//
+// Distributed under the Boost Software License, Version 1.0.
+// https://www.boost.org/LICENSE_1_0.txt
 
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 filetype=cpp.doxygen
 /*!
 \page changelog Changelog
 
+- 1.80.0
+    - Deprecated support for C++03 and earlier, C++11 will be required in the next release
+    - Provide `-sICU_LINK_LOCALE` as a temporary replacement for `-sICU_LINK` which is incompatible with Boost.Regex.
+    - `-sICU_LINK_LOCALE` and `-sICU_LINK` are deprecated and will be replaced by `ICU_*_NAME` options to be compatible with Boost.Regex
+    - Fix UB/assertion failure in the ICU `collator` implementation when transforming empty strings
+    - Fix some issues related to visibility of classes in shared libraries (Unix only)
+    - Fix compatibility with C++20 mode
+    - Fix compatibility with `BOOST_USE_WINDOWS_H`
+    - Fix build failures due to missing includes
+    - Handle or suppress many warnings which makes the build log cleaner
 - 1.67.0
     - Added support of unique_ptr interface in addition to C++2003 auto_ptr - in order to support C++2017, now you can use BOOST_LOCALE_HIDE_AUTO_PTR definiton to remove auto_ptr from the interfaces and prevent deprecated watnings
     - Fixed test problem with ICU >60.1
@@ -38,6 +46,5 @@
 - 1.49.0
    - Fixed incorrect use of MultiByteToWideChar in detection of invalid input sequences
 - 1.48.0 - First Release
-
 
 */

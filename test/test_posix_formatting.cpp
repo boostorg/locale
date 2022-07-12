@@ -1,10 +1,9 @@
 //
-//  Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
 //
-//  Distributed under the Boost Software License, Version 1.0. (See
-//  accompanying file LICENSE_1_0.txt or copy at
-//  http://www.boost.org/LICENSE_1_0.txt)
-//
+// Distributed under the Boost Software License, Version 1.0.
+// https://www.boost.org/LICENSE_1_0.txt
+
 #ifdef BOOST_LOCALE_NO_POSIX_BACKEND
 #include <iostream>
 int main()
@@ -18,7 +17,6 @@ int main()
 #include <boost/locale/info.hpp>
 #include <boost/locale/localization_backend.hpp>
 #include <iomanip>
-#include <cassert>
 #include <ctime>
 #include <iostream>
 #include <monetary.h>
@@ -181,7 +179,7 @@ void test_main(int /*argc*/, char** /*argv*/)
         else {
             std::locale l1=gen(name);
             lreal=newlocale(LC_ALL_MASK,name.c_str(),0);
-            assert(lreal);
+            TEST_REQUIRE(lreal);
             std::cout << "UTF-8" << std::endl;
 
             test_by_char<char,char>(l1,lreal);
@@ -199,7 +197,7 @@ void test_main(int /*argc*/, char** /*argv*/)
         else {
             std::locale l1=gen(name);
             lreal=newlocale(LC_ALL_MASK,name.c_str(),0);
-            assert(lreal);
+            TEST_REQUIRE(lreal);
             test_by_char<char,char>(l1,lreal);
             std::cout << "Wide UTF-" << sizeof(wchar_t) * 8 << std::endl;
             test_by_char<wchar_t,char>(l1,lreal);
@@ -214,7 +212,7 @@ void test_main(int /*argc*/, char** /*argv*/)
         else {
             std::locale l1=gen(name);
             lreal=newlocale(LC_ALL_MASK,name.c_str(),0);
-            assert(lreal);
+            TEST_REQUIRE(lreal);
             std::cout << "UTF-8" << std::endl;
 
             test_by_char<char,char>(l1,lreal);
@@ -232,7 +230,7 @@ void test_main(int /*argc*/, char** /*argv*/)
         else {
             std::locale l1=gen(name);
             lreal=newlocale(LC_ALL_MASK,name.c_str(),0);
-            assert(lreal);
+            TEST_REQUIRE(lreal);
             test_by_char<char,char>(l1,lreal);
             std::cout << "Wide UTF-" << sizeof(wchar_t) * 8 << std::endl;
             test_by_char<wchar_t,char>(l1,lreal);
@@ -257,6 +255,5 @@ void test_main(int /*argc*/, char** /*argv*/)
 }
 
 #endif // posix
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 
 // boostinspect:noascii

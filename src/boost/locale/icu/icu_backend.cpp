@@ -1,10 +1,9 @@
 //
-//  Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
 //
-//  Distributed under the Boost Software License, Version 1.0. (See
-//  accompanying file LICENSE_1_0.txt or copy at
-//  http://www.boost.org/LICENSE_1_0.txt)
-//
+// Distributed under the Boost Software License, Version 1.0.
+// https://www.boost.org/LICENSE_1_0.txt
+
 #define BOOST_LOCALE_SOURCE
 #include <boost/locale/localization_backend.hpp>
 #include <boost/locale/gnu_gettext.hpp>
@@ -163,4 +162,3 @@ namespace impl_icu {
 }  // impl icu
 }  // locale
 }  // boost
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4

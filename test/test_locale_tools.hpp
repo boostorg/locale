@@ -1,10 +1,8 @@
 //
-//  Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
 //
-//  Distributed under the Boost Software License, Version 1.0. (See
-//  accompanying file LICENSE_1_0.txt or copy at
-//  http://www.boost.org/LICENSE_1_0.txt)
-//
+// Distributed under the Boost Software License, Version 1.0.
+// https://www.boost.org/LICENSE_1_0.txt
 
 #ifndef BOOST_LOCLAE_TEST_LOCALE_TOOLS_HPP
 #define BOOST_LOCLAE_TEST_LOCALE_TOOLS_HPP
@@ -52,7 +50,7 @@ inline bool test_std_supports_SJIS_codecvt(std::string const &locale_name)
         char const *japan_932 = "\x93\xfa\x96\x7b";
         std::ofstream f("test-siftjis.txt");
         f << japan_932;
-        f.close();		
+        f.close();
     }
     try {
         std::wfstream test;
@@ -152,4 +150,3 @@ char* make4(unsigned v)
 }
 
 #endif
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4

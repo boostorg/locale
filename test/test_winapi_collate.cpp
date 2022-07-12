@@ -1,10 +1,8 @@
 //
-//  Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
 //
-//  Distributed under the Boost Software License, Version 1.0. (See
-//  accompanying file LICENSE_1_0.txt or copy at
-//  http://www.boost.org/LICENSE_1_0.txt)
-//
+// Distributed under the Boost Software License, Version 1.0.
+// https://www.boost.org/LICENSE_1_0.txt
 
 #ifdef BOOST_LOCALE_NO_WINAPI_BACKEND
 #include <iostream>
@@ -118,5 +116,5 @@ void test_main(int /*argc*/, char** /*argv*/)
     test_collate();
 }
 #endif // NO WINAPI
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
+
 // boostinspect:noascii

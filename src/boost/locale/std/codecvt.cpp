@@ -1,10 +1,9 @@
 //
-//  Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
 //
-//  Distributed under the Boost Software License, Version 1.0. (See
-//  accompanying file LICENSE_1_0.txt or copy at
-//  http://www.boost.org/LICENSE_1_0.txt)
-//
+// Distributed under the Boost Software License, Version 1.0.
+// https://www.boost.org/LICENSE_1_0.txt
+
 #define BOOST_LOCALE_SOURCE
 #include "boost/locale/std/all_generator.hpp"
 #include <boost/locale/util.hpp>
@@ -33,11 +32,11 @@ namespace impl_std {
             return codecvt_bychar<char>(in,locale_name);
         case wchar_t_facet:
             return codecvt_bychar<wchar_t>(in,locale_name);
-        #if defined(BOOST_LOCALE_ENABLE_CHAR16_T) && !defined(BOOST_NO_CHAR16_T_CODECVT)
+        #if defined(BOOST_LOCALE_ENABLE_CHAR16_T)
         case char16_t_facet:
             return codecvt_bychar<char16_t>(in,locale_name);
         #endif
-        #if defined(BOOST_LOCALE_ENABLE_CHAR32_T) && !defined(BOOST_NO_CHAR32_T_CODECVT)
+        #if defined(BOOST_LOCALE_ENABLE_CHAR32_T)
         case char32_t_facet:
             return codecvt_bychar<char32_t>(in,locale_name);
         #endif
@@ -50,4 +49,3 @@ namespace impl_std {
 } // locale
 } // boost
 
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4

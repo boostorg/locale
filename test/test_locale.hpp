@@ -1,13 +1,12 @@
 //
-//  Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
 //
-//  Distributed under the Boost Software License, Version 1.0. (See
-//  accompanying file LICENSE_1_0.txt or copy at
-//  http://www.boost.org/LICENSE_1_0.txt)
-//
+// Distributed under the Boost Software License, Version 1.0.
+// https://www.boost.org/LICENSE_1_0.txt
 
 #ifndef BOOST_LOCALE_TEST_H
 #define BOOST_LOCALE_TEST_H
+
 #include <boost/locale/config.hpp>
 #include <stdexcept>
 #include <sstream>
@@ -36,7 +35,15 @@ int test_counter=0;
         THROW_IF_TOO_BIG(error_counter++);                                \
         BOOST_LOCALE_START_CONST_CONDITION                                \
     }while(0) BOOST_LOCALE_END_CONST_CONDITION
-#endif
+
+#define TEST_REQUIRE(X)                                                   \
+    do {                                                                  \
+        test_counter++;                                                   \
+        if(X) break;                                                      \
+        std::cerr << "Error in line:" << __LINE__ << " "#X  << std::endl; \
+        throw std::runtime_error("Critical test " #X " failed");          \
+        BOOST_LOCALE_START_CONST_CONDITION                                \
+    }while(0) BOOST_LOCALE_END_CONST_CONDITION
 
 #define TEST_THROWS(X,E)                                                  \
     do {                                                                  \
@@ -127,5 +134,4 @@ BOOST_LOCALE_END_CONST_CONDITION
     return out;
 }
 
-
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
+#endif

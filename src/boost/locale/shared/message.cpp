@@ -1,10 +1,9 @@
 //
-//  Copyright (c) 2009-2015 Artyom Beilis (Tonkikh)
+// Copyright (c) 2009-2015 Artyom Beilis (Tonkikh)
 //
-//  Distributed under the Boost Software License, Version 1.0. (See
-//  accompanying file LICENSE_1_0.txt or copy at
-//  http://www.boost.org/LICENSE_1_0.txt)
-//
+// Distributed under the Boost Software License, Version 1.0.
+// https://www.boost.org/LICENSE_1_0.txt
+
 #define BOOST_LOCALE_SOURCE
 #define BOOST_DETAIL_NO_CONTAINER_FWD
 
@@ -776,5 +775,4 @@ BOOST_LOCALE_END_CONST_CONDITION
 
     } // locale
 } // boost
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 

@@ -1,10 +1,9 @@
 //
-//  Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
 //
-//  Distributed under the Boost Software License, Version 1.0. (See
-//  accompanying file LICENSE_1_0.txt or copy at
-//  http://www.boost.org/LICENSE_1_0.txt)
-//
+// Distributed under the Boost Software License, Version 1.0.
+// https://www.boost.org/LICENSE_1_0.txt
+
 #ifndef BOOST_LOCALE_COLLATOR_HPP_INCLUDED
 #define BOOST_LOCALE_COLLATOR_HPP_INCLUDED
 
@@ -254,4 +253,3 @@ namespace locale {
 /// \example collate.cpp
 /// Example of using collation functions
 ///
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4

@@ -1,10 +1,8 @@
 //
-//  Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
 //
-//  Distributed under the Boost Software License, Version 1.0. (See
-//  accompanying file LICENSE_1_0.txt or copy at
-//  http://www.boost.org/LICENSE_1_0.txt)
-//
+// Distributed under the Boost Software License, Version 1.0.
+// https://www.boost.org/LICENSE_1_0.txt
 
 #ifdef _MSC_VER
 #define _CRT_SECURE_NO_WARNINGS
@@ -135,5 +133,4 @@ int main()
     return EXIT_SUCCESS;
 }
 
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
 // boostinspect:noascii

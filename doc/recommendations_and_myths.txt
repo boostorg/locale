@@ -1,12 +1,9 @@
 //
-//  Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
 //
-//  Distributed under the Boost Software License, Version 1.0. (See
-//  accompanying file LICENSE_1_0.txt or copy at
-//  http://www.boost.org/LICENSE_1_0.txt)
-//
+// Distributed under the Boost Software License, Version 1.0.
+// https://www.boost.org/LICENSE_1_0.txt
 
-// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 filetype=cpp.doxygen
 /*!
 \page recommendations_and_myths Recommendations and Myths
 
@@ -52,5 +49,3 @@ So UTF-16 can be used for Unicode, in fact ICU and many other applications use U
 you should be very careful and never assume one-code-point == one-utf16-character.
 
 */
-
-
