@@ -277,9 +277,10 @@ jobs:
       - name: Get ICU
         shell: pwsh
         run: |
-            $ICU_ROOT="$($pwd.Path)\ICU"
+            $ICU_ROOT = "$($pwd.Path)\ICU"
             cmake -DICU_ROOT="$ICU_ROOT" -DICU_VERSION="71.1" -P tools/download_icu.cmake
-            echo "path-constant ICU_PATH : $ICU_ROOT ;" | Out-File -FilePath $Env:BOOST_ROOT/project-config.jam -Append
+            Add-Content $Env:BOOST_ROOT/project-config.jam "path-constant ICU_PATH : `"$ICU_ROOT`" ;"
+            Get-Content $Env:BOOST_ROOT/project-config.jam
 
       - name: Run tests
         if: '!matrix.coverage'
@@ -400,9 +401,9 @@ jobs:
         run: |
             $ICU_ROOT="$($pwd.Path)\ICU"
             cmake -DICU_ROOT="$ICU_ROOT" -DICU_VERSION="71.1" -P tools/download_icu.cmake
-            echo "ICU_ROOT=$ICU_ROOT" | Out-File -FilePath $Env:GITHUB_ENV -Append
+            Add-Content $Env:GITHUB_ENV "ICU_ROOT=$ICU_ROOT"
             # Make sure shared libs can be found at runtime
-            echo "$ICU_ROOT\bin64" | Out-File -FilePath $Env:GITHUB_PATH -Append
+            Add-Content $Env:GITHUB_PATH "$ICU_ROOT\bin64"
 
       - name: Run CMake tests
         run: |
