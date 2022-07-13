@@ -275,11 +275,11 @@ jobs:
         run: ci\github\install.bat
 
       - name: Get ICU
-        shell: bash
+        shell: pwsh
         run: |
-            ICU_ROOT=$PWD/ICU
-            cmake -DICU_ROOT="$ICU_ROOT" -DICU_VERSION=71.1 -P tools/download_icu.cmake
-            echo "path-constant ICU_PATH : $ICU_ROOT ;" >> $BOOST_ROOT/project-config.jam
+            $ICU_ROOT="$($pwd.Path)\ICU"
+            cmake -DICU_ROOT="$ICU_ROOT" -DICU_VERSION="71.1" -P tools/download_icu.cmake
+            echo "path-constant ICU_PATH : $ICU_ROOT ;" | Out-File -FilePath $Env:BOOST_ROOT/project-config.jam -Append
 
       - name: Run tests
         if: '!matrix.coverage'
