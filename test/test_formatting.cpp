@@ -32,34 +32,12 @@ int main()
 
 using namespace boost::locale;
 
-//#define TEST_DEBUG
-
-#ifdef TEST_DEBUG
-#undef BOOST_LOCALE_ENABLE_CHAR16_T
-#undef BOOST_LOCALE_ENABLE_CHAR32_T
-template<typename T>
-void print_diff(T const &,T const &,int)
-{
-}
-template<>
-void print_diff(std::string const &l,std::string const &r,int line)
-{
-    if(l!=r) {
-        std::cerr << "----[" << l << "]!=\n----[" << r << " ] in " << line << std::endl;
-    }
-}
-
-#define TESTEQ(x,y) print_diff((x),(y),__LINE__); TEST((x)==(y))
-#else
-#define TESTEQ(x,y) TEST((x)==(y))
-#endif
-
 #define TEST_FMT(manip,value,expected) \
 do{ \
     std::basic_ostringstream<CharType> ss; \
     ss.imbue(loc); \
     ss << manip << value; \
-    TESTEQ(ss.str(),to_correct_string<CharType>(expected,loc)); \
+    TEST_EQ(ss.str(),to_correct_string<CharType>(expected,loc)); \
 BOOST_LOCALE_START_CONST_CONDITION                              \
 }while(0) BOOST_LOCALE_END_CONST_CONDITION
 
@@ -127,14 +105,14 @@ do{ \
     ss.imbue(loc); \
     ss.str(to_correct_string<CharType>(actual,loc)); \
     ss >> manip >> v >> std::ws; \
-    TESTEQ(v,expected); \
+    TEST_EQ(v,expected); \
     TEST(ss.eof()); }\
     {std::basic_istringstream<CharType> ss; \
     ss.imbue(loc); \
     ss.str(to_correct_string<CharType>(std::string(actual)+"@",loc)); \
     CharType tmp_c; \
     ss >> manip >> v >> std::skipws >> tmp_c; \
-    TESTEQ(v,expected); \
+    TEST_EQ(v,expected); \
     TEST(tmp_c=='@'); } \
 BOOST_LOCALE_START_CONST_CONDITION                  \
 }while(0) BOOST_LOCALE_END_CONST_CONDITION
@@ -174,12 +152,12 @@ BOOST_LOCALE_START_CONST_CONDITION                  \
         ss.imbue(loc);  \
         std::basic_string<CharType> fmt = to_correct_string<CharType>(f,loc); \
         ss << boost::locale::basic_format<CharType>(fmt) % v; \
-        TESTEQ(ss.str(),to_correct_string<CharType>(exp,loc)); \
+        TEST_EQ(ss.str(),to_correct_string<CharType>(exp,loc)); \
         ss.str(to_correct_string<CharType>("",loc)); \
         ss << boost::locale::basic_format<CharType>(boost::locale::translate(fmt.c_str())) % v; \
         /*ss << boost::locale::basic_format<CharType>(fmt) % v; */ \
-        TESTEQ(ss.str(),to_correct_string<CharType>(exp,loc)); \
-        TESTEQ( (boost::locale::basic_format<CharType>(fmt) % v).str(loc),to_correct_string<CharType>(exp,loc)); \
+        TEST_EQ(ss.str(),to_correct_string<CharType>(exp,loc)); \
+        TEST_EQ( (boost::locale::basic_format<CharType>(fmt) % v).str(loc),to_correct_string<CharType>(exp,loc)); \
     BOOST_LOCALE_START_CONST_CONDITION                  \
     }while(0) BOOST_LOCALE_END_CONST_CONDITION
 
