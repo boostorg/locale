@@ -205,6 +205,7 @@ message(STATUS "Boost.Locale: "
   "winapi ${BOOST_LOCALE_ENABLE_WINAPI}"
 )
 
+option(BOOST_LOCALE_WERROR "Treat warnings as errors in Boost.Locale" ${BOOST_LOCALE_WERROR})
 if(MSVC)
     set(BOOST_LOCALE_WARNING_OPTIONS /W4)
     if(BOOST_LOCALE_WERROR)
