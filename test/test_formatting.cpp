@@ -32,88 +32,71 @@ int main()
 
 using namespace boost::locale;
 
+template <typename CharType, typename T>
+void test_fmt_impl(std::basic_ostringstream<CharType>& ss, const T& value, const std::basic_string<CharType>& expected, int line)
+{
+    ss << value;
+    test_eq_impl(ss.str(), expected, "", line);
+}
+
+template <typename T, typename CharType>
+void test_parse_impl(std::basic_istringstream<CharType>& ss, const T& expected, int line)
+{
+    T v;
+    ss >> v >> std::ws;
+    test_eq_impl(v, expected, "v == expected", line);
+    test_eq_impl(ss.eof(), true, "ss.eof()", line);
+}
+
+template <typename T, typename CharType>
+void test_parse_at_impl(std::basic_istringstream<CharType>& ss, const T& expected, int line)
+{
+    T v;
+    CharType c_at;
+    ss >> v >> std::skipws >> c_at;
+    test_eq_impl(v, expected, "v == expected", line);
+    test_eq_impl(c_at, '@', "c_at == @", line);
+}
+
+template <typename T, typename CharType>
+void test_parse_fail_impl(std::basic_istringstream<CharType>& ss, int line)
+{
+    T v;
+    ss >> v;
+    test_eq_impl(ss.fail(), true, "ss.fail()", line);
+}
+
 #define TEST_FMT(manip,value,expected) \
 do{ \
     std::basic_ostringstream<CharType> ss; \
     ss.imbue(loc); \
-    ss << manip << value; \
-    TEST_EQ(ss.str(),to_correct_string<CharType>(expected,loc)); \
+    ss << manip; \
+    test_fmt_impl(ss, (value), to_correct_string<CharType>(expected,loc), __LINE__); \
 BOOST_LOCALE_START_CONST_CONDITION                              \
 }while(0) BOOST_LOCALE_END_CONST_CONDITION
 
-#ifndef _LIBCPP_VERSION
-static bool parsing_fails()
-{
-    return true;
-}
-#else
-static bool parsing_fails()
-{
-    static bool checked=false;
-    static bool fails;
-    if(!checked) {
-        try {
-            std::istringstream ss("x");
-            ss.exceptions(std::ios_base::failbit);
-            int x;
-            ss>>x;
-            fails =false;
-        }
-        catch(std::ios_base::failure const &) {
-            fails=true;
-        }
-        catch(...) {
-            fails=false;
-        }
-        checked=true;
-        if(!fails) {
-            std::cerr << "!!! Warning: libc++ library does not throw an exception on failbit !!!\n";
-        }
-    }
-    return fails;
-}
-#endif
-
-
-#define TEST_NOPAR(manip,actual,type)                           \
-do{                                                             \
-    type v;                                                     \
-    std::basic_string<CharType> act=                            \
-        to_correct_string<CharType>(actual,loc);                \
-    {                                                           \
-        std::basic_istringstream<CharType> ss;                  \
-        ss.imbue(loc);                                          \
-        ss.str(act);                                            \
-        ss >> manip >> v ;                                      \
-        TEST(ss.fail());                                        \
-    }                                                           \
-    if(parsing_fails()){                                        \
-        std::basic_istringstream<CharType> ss;                  \
-        ss.imbue(loc);                                          \
-        ss.str(act);                                            \
-        ss.exceptions(std::ios_base::failbit);                  \
-        ss >> manip;                                            \
-        TEST_THROWS(ss >> v,std::ios_base::failure);            \
-    }                                                           \
-BOOST_LOCALE_START_CONST_CONDITION                              \
+#define TEST_NOPAR(manip,actual,type)                \
+do{                                                  \
+    std::basic_istringstream<CharType> ss;           \
+    ss.imbue(loc);                                   \
+    ss.str(to_correct_string<CharType>(actual,loc)); \
+    ss >> manip;                                     \
+    test_parse_fail_impl<type>(ss, __LINE__);        \
+BOOST_LOCALE_START_CONST_CONDITION                   \
 }while(0) BOOST_LOCALE_END_CONST_CONDITION
 
 #define TEST_PAR(manip,type,actual,expected) \
 do{ \
-    type v; \
     {std::basic_istringstream<CharType> ss; \
     ss.imbue(loc); \
     ss.str(to_correct_string<CharType>(actual,loc)); \
-    ss >> manip >> v >> std::ws; \
-    TEST_EQ(v,expected); \
-    TEST(ss.eof()); }\
+    ss >> manip; \
+    test_parse_impl<type>(ss, expected, __LINE__); } \
     {std::basic_istringstream<CharType> ss; \
     ss.imbue(loc); \
     ss.str(to_correct_string<CharType>(std::string(actual)+"@",loc)); \
-    CharType tmp_c; \
-    ss >> manip >> v >> std::skipws >> tmp_c; \
-    TEST_EQ(v,expected); \
-    TEST(tmp_c=='@'); } \
+    ss >> manip; \
+    test_parse_at_impl<type>(ss, expected, __LINE__); } \
 BOOST_LOCALE_START_CONST_CONDITION                  \
 }while(0) BOOST_LOCALE_END_CONST_CONDITION
 
@@ -155,7 +138,6 @@ BOOST_LOCALE_START_CONST_CONDITION                  \
         TEST_EQ(ss.str(),to_correct_string<CharType>(exp,loc)); \
         ss.str(to_correct_string<CharType>("",loc)); \
         ss << boost::locale::basic_format<CharType>(boost::locale::translate(fmt.c_str())) % v; \
-        /*ss << boost::locale::basic_format<CharType>(fmt) % v; */ \
         TEST_EQ(ss.str(),to_correct_string<CharType>(exp,loc)); \
         TEST_EQ( (boost::locale::basic_format<CharType>(fmt) % v).str(loc),to_correct_string<CharType>(exp,loc)); \
     BOOST_LOCALE_START_CONST_CONDITION                  \
@@ -163,25 +145,16 @@ BOOST_LOCALE_START_CONST_CONDITION                  \
 
 
 #define TEST_MIN_MAX_FMT(type,minval,maxval)    \
-    do { \
-        TEST_FMT(as::number,std::numeric_limits<type>::min(),minval); \
-        TEST_FMT(as::number,std::numeric_limits<type>::max(),maxval); \
-    BOOST_LOCALE_START_CONST_CONDITION                                \
-    }while(0) BOOST_LOCALE_END_CONST_CONDITION
+    TEST_FMT(as::number,std::numeric_limits<type>::min(),minval); \
+    TEST_FMT(as::number,std::numeric_limits<type>::max(),maxval)
 
 #define TEST_MIN_MAX_PAR(type,minval,maxval)    \
-    do {\
-        TEST_PAR(as::number,type,minval,std::numeric_limits<type>::min()); \
-        TEST_PAR(as::number,type,maxval,std::numeric_limits<type>::max()); \
-    BOOST_LOCALE_START_CONST_CONDITION                                     \
-    }while(0) BOOST_LOCALE_END_CONST_CONDITION
+    TEST_PAR(as::number,type,minval,std::numeric_limits<type>::min()); \
+    TEST_PAR(as::number,type,maxval,std::numeric_limits<type>::max())
 
 #define TEST_MIN_MAX(type,minval,maxval)    \
-    do { \
-        TEST_MIN_MAX_FMT(type,minval,maxval); \
-        TEST_MIN_MAX_PAR(type,minval,maxval); \
-    BOOST_LOCALE_START_CONST_CONDITION        \
-    }while(0) BOOST_LOCALE_END_CONST_CONDITION
+    TEST_MIN_MAX_FMT(type,minval,maxval); \
+    TEST_MIN_MAX_PAR(type,minval,maxval)
 
 
 #define BOOST_LOCALE_ICU_VERSION (U_ICU_VERSION_MAJOR_NUM * 100 + U_ICU_VERSION_MINOR_NUM)
