@@ -356,7 +356,7 @@ BOOST_LOCALE_END_CONST_CONDITION
     TEST_FMT_PARSE_3_2(as::time,as::time_short ,as::time_zone("GMT+01:00"),a_datetime,"4:33 PM",a_time);
     TEST_FMT_PARSE_3_2(as::time,as::time_medium,as::time_zone("GMT+01:00"),a_datetime,"4:33:13 PM",a_time+a_timesec);
 
-#if U_ICU_VERSION_MAJOR_NUM >= 52
+#if U_ICU_VERSION_MAJOR_NUM >= 51
 #define GMT_P100 "GMT+1"
 #else
 #define GMT_P100 "GMT+01:00"
