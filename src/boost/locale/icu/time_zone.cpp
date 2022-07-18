@@ -54,7 +54,8 @@ namespace boost {
                     return icu::TimeZone::createDefault();
                 }
                 else {
-                    return icu::TimeZone::createTimeZone(time_zone.c_str());
+                    icu::TimeZone* icu_tz = icu::TimeZone::createTimeZone(time_zone.c_str());
+                    return icu_tz;
                 }
             }
 

@@ -330,7 +330,7 @@ BOOST_LOCALE_END_CONST_CONDITION
 
     TEST_PARSE_FAILS(as::date>>as::date_short,"aa/bb/cc",double);
 
-#if BOOST_LOCALE_ICU_VERSION >= 5901
+#if U_ICU_VERSION_MAJOR_NUM >= 52
 #define GMT_FULL "Greenwich Mean Time"
 #else
 #define GMT_FULL "GMT"
