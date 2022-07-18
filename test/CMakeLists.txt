@@ -42,8 +42,3 @@ boost_test(NAME show_config  SOURCES show_config.cpp)
 boost_test(NAME test_message SOURCES test_message.cpp)
 set_target_properties(${PROJECT_NAME}-test_message PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 set_tests_properties(run-${PROJECT_NAME}-test_message PROPERTIES WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
-
-if(BOOST_LOCALE_ENABLE_ICU)
-	set_tests_properties(run-${PROJECT_NAME}-test_boundary PROPERTIES DISABLED True)
-	set_tests_properties(run-${PROJECT_NAME}-test_formatting PROPERTIES DISABLED True)
-endif()
