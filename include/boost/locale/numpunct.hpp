@@ -26,17 +26,17 @@ namespace boost {
         public:
             numpunct_base(size_t refs = 0) : std::numpunct<CharType>(refs) {}
             
-            string_type decimal_point_full() const {
-                return do_decimal_point_full();
+            string_type decimal_point_str() const {
+                return do_decimal_point_str();
             }
 
-            string_type thousands_sep_full() const {
-                return do_thousands_sep_full();
+            string_type thousands_sep_str() const {
+                return do_thousands_sep_str();
             }
 
         protected:
             virtual CharType do_decimal_point() const {
-                string_type dec = do_decimal_point_full();
+                string_type dec = do_decimal_point_str();
                 if (dec.size() > 1) {
                     return '.';
                 } else {
@@ -44,13 +44,13 @@ namespace boost {
                 }
             }
 
-            virtual string_type do_decimal_point_full() const {
+            virtual string_type do_decimal_point_str() const {
                 static const char t[] = ".";
                 return string_type(t, t + sizeof(t) - 1);
             }
 
             virtual CharType do_thousands_sep() const {
-                string_type thous = do_thousands_sep_full();
+                string_type thous = do_thousands_sep_str();
                 if (thous.size() > 1) {
                     return ',';
                 } else {
@@ -58,7 +58,7 @@ namespace boost {
                 }
             }
 
-            virtual string_type do_thousands_sep_full() const {
+            virtual string_type do_thousands_sep_str() const {
                 static const char t[] = ",";
                 return string_type(t, t + sizeof(t) - 1);
             }
