@@ -141,11 +141,11 @@ BOOST_LOCALE_END_CONST_CONDITION
     {
         s2=conv::from_utf(s1,"UTF-8");
     }
-    virtual string_type do_decimal_point_str() const
+    string_type do_decimal_point_str() const BOOST_OVERRIDE
     {
         return decimal_point_;
     }
-    virtual string_type do_thousands_sep_str() const
+    string_type do_thousands_sep_str() const BOOST_OVERRIDE
     {
         return thousands_sep_;
     }

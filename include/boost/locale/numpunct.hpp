@@ -9,10 +9,6 @@
 #ifndef BOOST_LOCALE_NUMPUNCT_HPP_INCLUDED
 #define BOOST_LOCALE_NUMPUNCT_HPP_INCLUDED
 #include <boost/locale/config.hpp>
-#ifdef BOOST_MSVC
-#  pragma warning(push)
-#  pragma warning(disable : 4275 4251 4231 4660)
-#endif
 #include <locale>
 #include <string>
 
@@ -20,7 +16,7 @@ namespace boost {
     namespace locale {
 
         template<typename CharType>
-        class BOOST_LOCALE_DECL numpunct_base : public std::numpunct<CharType>
+        class numpunct_base : public std::numpunct<CharType>
         {
             typedef std::basic_string<CharType> string_type;
         public:
@@ -35,7 +31,7 @@ namespace boost {
             }
 
         protected:
-            virtual CharType do_decimal_point() const {
+            CharType do_decimal_point() const BOOST_OVERRIDE {
                 string_type dec = do_decimal_point_str();
                 if (dec.size() > 1) {
                     return '.';
@@ -49,7 +45,7 @@ namespace boost {
                 return string_type(t, t + sizeof(t) - 1);
             }
 
-            virtual CharType do_thousands_sep() const {
+            CharType do_thousands_sep() const BOOST_OVERRIDE {
                 string_type thous = do_thousands_sep_str();
                 if (thous.size() > 1) {
                     return ',';
@@ -63,18 +59,18 @@ namespace boost {
                 return string_type(t, t + sizeof(t) - 1);
             }
 
-            virtual string_type do_truename() const {
+            virtual string_type do_truename() const BOOST_OVERRIDE {
                 static const char t[] = "true";
                 return string_type(t, t + sizeof(t) - 1);
             }
 
-            virtual string_type do_falsename() const {
+            virtual string_type do_falsename() const BOOST_OVERRIDE {
                 static const char t[] = "false";
                 return string_type(t, t + sizeof(t) - 1);
             }
         };
 
-        template<typename CharType> struct numpunct {};
+        template<typename CharType> struct numpunct;
 
         template<> struct numpunct<char> : numpunct_base<char> {
             numpunct (size_t refs = 0) : numpunct_base<char>(refs) {}

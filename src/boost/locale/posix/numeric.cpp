@@ -423,27 +423,17 @@ public:
     {
         s2=conv::to_utf<wchar_t>(s1,nl_langinfo_l(CODESET,lc));
     }
-    virtual string_type do_decimal_point_str() const
+    string_type do_decimal_point_str() const BOOST_OVERRIDE
     {
         return decimal_point_;
     }
-    virtual string_type do_thousands_sep_str() const
+    string_type do_thousands_sep_str() const BOOST_OVERRIDE
     {
         return thousands_sep_;
     }
     std::string do_grouping() const BOOST_OVERRIDE
     {
         return grouping_;
-    }
-    string_type do_truename() const BOOST_OVERRIDE
-    {
-        static const char t[]="true";
-        return string_type(t,t+sizeof(t)-1);
-    }
-    string_type do_falsename() const BOOST_OVERRIDE
-    {
-        static const char t[]="false";
-        return string_type(t,t+sizeof(t)-1);
     }
 private:
     string_type decimal_point_;

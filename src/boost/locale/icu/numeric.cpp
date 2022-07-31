@@ -381,13 +381,13 @@ public:
         }
     }
 protected:
-    virtual string_type do_decimal_point_str() const {
+    string_type do_decimal_point_str() const BOOST_OVERRIDE {
         return decimal_point_;
     }
-    virtual string_type do_thousands_sep_str() const {
+    string_type do_thousands_sep_str() const BOOST_OVERRIDE {
         return thousands_sep_;
     }
-    virtual std::string do_grouping() const {
+    std::string do_grouping() const BOOST_OVERRIDE {
         return grouping_;
     }
 
