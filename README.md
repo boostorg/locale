@@ -1,4 +1,4 @@
-# Boost.CI
+# Boost.Locale
 
 Part of the [Boost C++ Libraries](http://github.com/boostorg).
 
