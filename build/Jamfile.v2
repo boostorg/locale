@@ -29,7 +29,8 @@ feature.feature boost.locale.winapi : on off : optional propagated ;
 
 ## iconv
 
-exe has_iconv : $(TOP)/build/has_iconv.cpp ;
+obj has_iconv_libc_obj : $(TOP)/build/has_iconv.cpp ;
+exe has_iconv : has_iconv_libc_obj ;
 explicit has_iconv ;
 
 ICONV_PATH = [ modules.peek : ICONV_PATH ] ;
@@ -43,7 +44,8 @@ lib iconv
 
 explicit iconv ;
 
-exe has_external_iconv : $(TOP)/build/has_iconv.cpp iconv ;
+obj has_iconv_libc_ext : $(TOP)/build/has_iconv.cpp iconv ;
+exe has_external_iconv : has_iconv_libc_ext iconv ;
 explicit has_external_iconv ;
 
 exe accepts_shared_option   : $(TOP)/build/option.cpp
