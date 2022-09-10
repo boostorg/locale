@@ -8,7 +8,9 @@
 #define BOOST_LOCALE_TEST_TOOLS_HPP
 
 #include <boost/locale/encoding.hpp>
+#include <cstdio>
 #include <fstream>
+#include <string>
 
 #ifndef BOOST_LOCALE_NO_POSIX_BACKEND
 #include "boostLocale/test/posix_tools.hpp"
@@ -148,5 +150,16 @@ char* make4(unsigned v)
     buf[3] = static_cast<unsigned char>(0x80 | ((v >> 0) & 0x3F));
     return reinterpret_cast<char*>(buf);
 }
+
+class remove_file_on_exit
+{
+    std::string filename_;
+public:
+    explicit remove_file_on_exit(const std::string& filename): filename_(filename){}
+    ~remove_file_on_exit()
+    {
+        std::remove(filename_.c_str());
+    }
+};
 
 #endif
