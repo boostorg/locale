@@ -399,9 +399,9 @@ void word_boundary()
     int zero[25] = {0};
     std::string txt_empty[] = {""};
 
-    std::string txt_simple[] = {" "," ","Hello",",","World","!"," ",""};
-    int        none_simple[] = { 1,  1,      0,  1,      0,  1,  1, 0};
-    int        word_simple[] = { 0,  0,      1,  0,      1,  0,  0, 0};
+    std::string txt_simple[] = {" ","Hello",",","World","!"," ",""};
+    int        none_simple[] = { 1,      0,  1,      0,  1,  1, 0};
+    int        word_simple[] = { 0,      1,  0,      1,  0,  0, 0};
 
     std::string txt_all[]={"10"," ","Hello"," ","Windows7"," ","He22o"," ","平仮名","アヒル",""};
     int        none_all[]={  0,  1,      0,  1,         0,  1,      0,  1,      0,      0,  0};
