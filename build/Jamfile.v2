@@ -28,22 +28,24 @@ feature.feature boost.locale.winapi : on off : optional propagated ;
 # Configuration of libraries
 
 ## iconv
+# Iconv support may be builtin (i.e. in libc)
 
 exe has_iconv : $(TOP)/build/has_iconv.cpp ;
 explicit has_iconv ;
 
 ICONV_PATH = [ modules.peek : ICONV_PATH ] ;
 
-lib iconv
-  :
+# There may also be an external iconv library
+lib iconv :
   : <search>$(ICONV_PATH)/lib <link>shared <runtime-link>shared
-  :
-  : <include>$(ICONV_PATH)/include
+  : : <include>$(ICONV_PATH)/include
   ;
 
 explicit iconv ;
 
-exe has_external_iconv : $(TOP)/build/has_iconv.cpp iconv ;
+# Separate pair of obj & exe rules so the CPP file is built with the iconv include path
+obj has_external_iconv_obj : $(TOP)/build/has_iconv.cpp iconv ;
+exe has_external_iconv : has_external_iconv_obj iconv ;
 explicit has_external_iconv ;
 
 exe accepts_shared_option   : $(TOP)/build/option.cpp
@@ -204,8 +206,10 @@ if $(ICU_LINK)
 
 }
 
-exe has_icu   : $(TOP)/build/has_icu_test.cpp : $(ICU_OPTS)   ;
-exe has_icu64 : $(TOP)/build/has_icu_test.cpp : $(ICU64_OPTS) ;
+exe has_icu       : $(TOP)/build/has_icu_test.cpp : $(ICU_OPTS)   ;
+# Similar but build&link with 64bit options
+obj has_icu64_obj : $(TOP)/build/has_icu_test.cpp : $(ICU64_OPTS) ;
+exe has_icu64 : has_icu64_obj : $(ICU64_OPTS) ;
 
 explicit has_icu has_icu64 ;
 
