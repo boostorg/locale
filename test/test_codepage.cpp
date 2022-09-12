@@ -125,7 +125,7 @@ void test_for_char()
         std::cout << "    Testing codepoints above 0xFFFF" << std::endl;
         std::cout << "      Single U+2008A" << std::endl;
         test_ok<Char>("\xf0\xa0\x82\x8a",g("en_US.UTF-8")); // U+2008A
-        std::cout << "      Single U+2008A withing text" << std::endl;
+        std::cout << "      Single U+2008A within text" << std::endl;
         test_ok<Char>("abc\"\xf0\xa0\x82\x8a\"",g("en_US.UTF-8")); // U+2008A
         std::string one = "\xf0\xa0\x82\x8a";
         std::string res;

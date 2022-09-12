@@ -140,7 +140,7 @@ namespace impl_icu {
         void normalize() BOOST_OVERRIDE
         {
             // Can't call complete() explicitly (protected)
-            // calling get wich calls complete
+            // calling get which calls complete
             UErrorCode code=U_ZERO_ERROR;
             calendar_->get(UCAL_YEAR,code);
             check_and_throw_dt(code);
