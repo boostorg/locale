@@ -21,7 +21,7 @@
 #include <unicode/uversion.h>
 #endif
 
-#include "test_locale_tools.hpp"
+#include "boostLocale/test/tools.hpp"
 
 char const *env(char const *s)
 {

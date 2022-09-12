@@ -26,8 +26,8 @@ int main()
 #endif
 #include <windows.h>
 
-#include "test_locale.hpp"
-#include "test_locale_tools.hpp"
+#include "boostLocale/test/unit_test.hpp"
+#include "boostLocale/test/tools.hpp"
 #include "../src/boost/locale/win32/lcid.hpp"
 
 #define DEBUG_FMT

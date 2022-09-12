@@ -4,8 +4,8 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#ifndef BOOST_LOCLAE_TEST_LOCALE_POSIX_TOOLS_HPP
-#define BOOST_LOCLAE_TEST_LOCALE_POSIX_TOOLS_HPP
+#ifndef BOOST_LOCALE_TEST_POSIX_TOOLS_HPP
+#define BOOST_LOCALE_TEST_POSIX_TOOLS_HPP
 
 #include <clocale>
 #include <string>

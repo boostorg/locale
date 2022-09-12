@@ -9,7 +9,7 @@
 #include <boost/locale/formatting.hpp>
 #include <boost/locale/localization_backend.hpp>
 #include <iomanip>
-#include "test_locale.hpp"
+#include "boostLocale/test/unit_test.hpp"
 
 #ifdef BOOST_LOCALE_WITH_ICU
 #include <unicode/uversion.h>

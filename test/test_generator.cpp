@@ -8,7 +8,7 @@
 #include <boost/locale/info.hpp>
 #include <boost/locale/message.hpp>
 #include <iomanip>
-#include "test_locale.hpp"
+#include "boostLocale/test/unit_test.hpp"
 
 
 bool has_message(std::locale const &l)

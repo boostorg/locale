@@ -4,14 +4,14 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#ifndef BOOST_LOCLAE_TEST_LOCALE_TOOLS_HPP
-#define BOOST_LOCLAE_TEST_LOCALE_TOOLS_HPP
+#ifndef BOOST_LOCALE_TEST_TOOLS_HPP
+#define BOOST_LOCALE_TEST_TOOLS_HPP
 
 #include <boost/locale/encoding.hpp>
 #include <fstream>
 
 #ifndef BOOST_LOCALE_NO_POSIX_BACKEND
-#include "test_posix_tools.hpp"
+#include "boostLocale/test/posix_tools.hpp"
 #endif
 
 #if defined(BOOST_MSVC) && BOOST_MSVC < 1700

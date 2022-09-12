@@ -27,8 +27,8 @@ int main()
 #include <sstream>
 #include <unicode/uversion.h>
 
-#include "test_locale.hpp"
-#include "test_locale_tools.hpp"
+#include "boostLocale/test/unit_test.hpp"
+#include "boostLocale/test/tools.hpp"
 
 using namespace boost::locale;
 

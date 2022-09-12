@@ -25,8 +25,8 @@
 #include <windows.h>
 #endif
 
-#include "test_locale.hpp"
-#include "test_locale_tools.hpp"
+#include "boostLocale/test/unit_test.hpp"
+#include "boostLocale/test/tools.hpp"
 
 bool test_iso;
 bool test_iso_8859_8 = true;

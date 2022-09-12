@@ -12,7 +12,7 @@
 #include <memory.h>
 #include <wchar.h>
 #define BOOST_LOCALE_ERROR_LIMIT -1
-#include "test_locale.hpp"
+#include "boostLocale/test/unit_test.hpp"
 
 #if defined(BOOST_MSVC) && BOOST_MSVC < 1700
 #pragma warning(disable : 4428) // universal-character-name encountered in source

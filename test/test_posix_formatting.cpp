@@ -22,8 +22,8 @@ int main()
 #include <monetary.h>
 #include <langinfo.h>
 
-#include "test_locale.hpp"
-#include "test_locale_tools.hpp"
+#include "boostLocale/test/unit_test.hpp"
+#include "boostLocale/test/tools.hpp"
 
 //#define DEBUG_FMT
 

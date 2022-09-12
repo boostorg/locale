@@ -4,8 +4,8 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#ifndef BOOST_LOCALE_TEST_H
-#define BOOST_LOCALE_TEST_H
+#ifndef BOOST_LOCALE_UNIT_TEST_HPP
+#define BOOST_LOCALE_UNIT_TEST_HPP
 
 #include <boost/locale/config.hpp>
 #include <stdexcept>
