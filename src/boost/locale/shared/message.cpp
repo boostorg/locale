@@ -21,7 +21,6 @@
 #include <boost/locale/encoding.hpp>
 #include <boost/locale/gnu_gettext.hpp>
 #include <boost/locale/hold_ptr.hpp>
-#include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/version.hpp>
 #include <algorithm>
@@ -29,6 +28,7 @@
 #include <cstring>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <vector>
 
 #include "boost/locale/shared/mo_hash.hpp"
@@ -619,7 +619,7 @@ namespace boost {
                     key_conversion_required_ =  sizeof(CharType) == 1
                                                 && compare_encodings(locale_encoding,key_encoding)!=0;
 
-                    boost::shared_ptr<mo_file> mo;
+                    std::shared_ptr<mo_file> mo;
 
                     if(callback) {
                         std::vector<char> vfile = callback(file_name,locale_encoding);
@@ -731,8 +731,8 @@ BOOST_LOCALE_END_CONST_CONDITION
                 }
 
                 catalogs_set_type catalogs_;
-                std::vector<boost::shared_ptr<mo_file> > mo_catalogs_;
-                std::vector<boost::shared_ptr<lambda::plural> > plural_forms_;
+                std::vector<std::shared_ptr<mo_file> > mo_catalogs_;
+                std::vector<std::shared_ptr<lambda::plural> > plural_forms_;
                 domains_map_type domains_;
 
                 std::string locale_encoding_;

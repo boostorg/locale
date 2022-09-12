@@ -14,12 +14,12 @@
 #include <boost/assert.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/iterator/iterator_facade.hpp>
-#include <boost/shared_ptr.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <algorithm>
 #include <iostream>
 #include <iterator>
 #include <locale>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -145,7 +145,7 @@ namespace boost {
                     }
 
                 private:
-                    boost::shared_ptr<index_type> index_;
+                    std::shared_ptr<index_type> index_;
                     base_iterator begin_,end_;
                 };
 

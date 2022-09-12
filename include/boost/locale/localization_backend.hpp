@@ -99,19 +99,19 @@ namespace boost {
             ///
             ~localization_backend_manager();
 
-            #if BOOST_LOCALE_USE_AUTO_PTR
             ///
             /// Create new localization backend according to current settings.
             ///
-            std::auto_ptr<localization_backend> get() const;
+            std::unique_ptr<localization_backend> get() const;
+            BOOST_LOCALE_DEPRECATED("This function is deprecated, use 'get()' instead") inline
+                std::unique_ptr<localization_backend> get_unique_ptr() const { return get(); }
 
             ///
             /// Add new backend to the manager, each backend should be uniquely defined by its name.
             ///
             /// This library provides: "icu", "posix", "winapi" and "std" backends.
             ///
-            void add_backend(std::string const &name,std::auto_ptr<localization_backend> backend);
-            #endif
+            void add_backend(std::string const &name,std::unique_ptr<localization_backend> backend);
 
             ///
             /// Create new localization backend according to current settings. Ownership is passed to caller
@@ -124,19 +124,6 @@ namespace boost {
             /// This library provides: "icu", "posix", "winapi" and "std" backends.
             ///
             void adopt_backend(std::string const &name,localization_backend *backend);
-            #ifndef BOOST_NO_CXX11_SMART_PTR
-            ///
-            /// Create new localization backend according to current settings.
-            ///
-            std::unique_ptr<localization_backend> get_unique_ptr() const;
-
-            ///
-            /// Add new backend to the manager, each backend should be uniquely defined by its name.
-            ///
-            /// This library provides: "icu", "posix", "winapi" and "std" backends.
-            ///
-            void add_backend(std::string const &name,std::unique_ptr<localization_backend> backend);
-            #endif
 
             ///
             /// Clear backend

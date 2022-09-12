@@ -100,7 +100,7 @@ namespace impl_posix {
             }
 
             *tmp_p = tmp;
-            lc_ = boost::shared_ptr<locale_t>(tmp_p,free_locale_by_ptr);
+            lc_ = std::shared_ptr<locale_t>(tmp_p,free_locale_by_ptr);
         }
 
         std::locale install(std::locale const &base,
@@ -169,7 +169,7 @@ namespace impl_posix {
         std::string real_id_;
 
         bool invalid_;
-        boost::shared_ptr<locale_t> lc_;
+        std::shared_ptr<locale_t> lc_;
     };
 
     localization_backend *create_localization_backend()

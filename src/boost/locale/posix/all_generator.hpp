@@ -8,9 +8,9 @@
 #define BOOST_LOCALE_IMPL_POSIX_ALL_GENERATOR_HPP
 
 #include <boost/locale/generator.hpp>
-#include <boost/shared_ptr.hpp>
 #include <clocale>
 #include <locale>
+#include <memory>
 
 #ifdef __APPLE__
 #include <xlocale.h>
@@ -21,19 +21,19 @@ namespace boost {
         namespace impl_posix {
 
             std::locale create_convert( std::locale const &in,
-                                        boost::shared_ptr<locale_t> lc,
+                                        std::shared_ptr<locale_t> lc,
                                         character_facet_type type);
 
             std::locale create_collate( std::locale const &in,
-                                        boost::shared_ptr<locale_t> lc,
+                                        std::shared_ptr<locale_t> lc,
                                         character_facet_type type);
 
             std::locale create_formatting(  std::locale const &in,
-                                            boost::shared_ptr<locale_t> lc,
+                                            std::shared_ptr<locale_t> lc,
                                             character_facet_type type);
 
             std::locale create_parsing( std::locale const &in,
-                                        boost::shared_ptr<locale_t> lc,
+                                        std::shared_ptr<locale_t> lc,
                                         character_facet_type type);
             std::locale create_codecvt( std::locale const &in,
                                         std::string const &encoding,

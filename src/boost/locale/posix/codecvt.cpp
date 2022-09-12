@@ -9,7 +9,6 @@
 #include <boost/locale/encoding.hpp>
 #include <boost/locale/hold_ptr.hpp>
 #include <boost/locale/util.hpp>
-#include <boost/shared_ptr.hpp>
 #include <algorithm>
 #include <cerrno>
 #include <stdexcept>
@@ -48,7 +47,7 @@ namespace impl_posix {
                     uint32_t obuf[2] = {illegal,illegal};
                     char *out = reinterpret_cast<char *>(obuf);
                     size_t outsize = 8;
-                    // Basic sigle codepoint conversion
+                    // Basic single codepoint conversion
                     call_iconv(d,&in,&insize,&out,&outsize);
                     if(insize == 0 && outsize == 0 && obuf[1] == 0) {
                         first_byte_table.push_back(obuf[0]);
@@ -64,7 +63,7 @@ namespace impl_posix {
                     size_t res = call_iconv(d,&in,&insize,&out,&outsize);
 
                     // Now if this single byte starts a sequence we add incomplete
-                    // to know to ask that we need two bytes, othewise it may only be
+                    // to know to ask that we need two bytes, otherwise it may only be
                     // illegal
 
                     uint32_t point;
@@ -203,7 +202,7 @@ namespace impl_posix {
         }
 
     private:
-        boost::shared_ptr<std::vector<uint32_t> > first_byte_table_;
+        std::shared_ptr<std::vector<uint32_t> > first_byte_table_;
         std::string encoding_;
         iconv_t to_utf_;
         iconv_t from_utf_;
@@ -216,7 +215,7 @@ namespace impl_posix {
             cvt.reset(new mb2_iconv_converter(encoding));
         }
         catch(std::exception const &e) {
-            // Nothing to do, just retrun empty cvt
+            // Nothing to do, just return empty cvt
         }
         return cvt.release();
     }
