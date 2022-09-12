@@ -46,25 +46,18 @@
 #define BOOST_LOCALE_USE_AUTO_PTR 1
 #endif
 
-// Check for C++11 features that will be used in Boost 1.81
-// If you are using Boost.Locale and REALLY require it to keep
-// supporting C++03/C++98 please comment with a detailed description
-// of your use case and reasoning why using C++11 is not possible in
-// https://github.com/boostorg/locale/issues/90
-#if !defined(BOOST_LOCALE_DISABLE_DEPRECATED_03_WARNING) && ( \
-     defined(BOOST_NO_CXX11_DEFAULTED_FUNCTIONS) || \
-     defined(BOOST_NO_CXX11_DEFAULTED_MOVES) || \
-     defined(BOOST_NO_CXX11_HDR_FUNCTIONAL) || \
-     defined(BOOST_NO_CXX11_HDR_TYPE_TRAITS) || \
-     defined(BOOST_NO_CXX11_NOEXCEPT) || \
-     defined(BOOST_NO_CXX11_OVERRIDE) || \
-     defined(BOOST_NO_CXX11_RVALUE_REFERENCES) || \
-     defined(BOOST_NO_CXX11_SMART_PTR) || \
-     defined(BOOST_NO_CXX11_STATIC_ASSERT) \
-    )
-        #include <boost/config/pragma_message.hpp>
-        BOOST_PRAGMA_MESSAGE("CAUTION: Boost.Locale support for C++03 is deprecated. C++11 will be required from Boost 1.81 onwards.")
-        BOOST_PRAGMA_MESSAGE("CAUTION: Define BOOST_LOCALE_DISABLE_DEPRECATED_03_WARNING to suppress this message.")
+// Check for some C++11 features to provide easier checks for what is missing
+// shortly after the requirement of C++11 in Boost 1.81
+#if defined(BOOST_NO_CXX11_DEFAULTED_FUNCTIONS) || \
+    defined(BOOST_NO_CXX11_DEFAULTED_MOVES) || \
+    defined(BOOST_NO_CXX11_HDR_FUNCTIONAL) || \
+    defined(BOOST_NO_CXX11_HDR_TYPE_TRAITS) || \
+    defined(BOOST_NO_CXX11_NOEXCEPT) || \
+    defined(BOOST_NO_CXX11_OVERRIDE) || \
+    defined(BOOST_NO_CXX11_RVALUE_REFERENCES) || \
+    defined(BOOST_NO_CXX11_SMART_PTR) || \
+    defined(BOOST_NO_CXX11_STATIC_ASSERT)
+        #error "Boost.Locale requires C++11 since Boost 1.81."
 #endif
 
 #ifdef _MSC_VER
