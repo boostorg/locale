@@ -197,6 +197,15 @@ if(BOOST_LOCALE_ENABLE_WINAPI OR BOOST_LOCALE_ENABLE_STD OR BOOST_LOCALE_ENABLE_
 
 endif()
 
+get_target_property(sources boost_locale SOURCES)
+set(sources_src ${sources})
+list(FILTER sources_src INCLUDE REGEX "^src/")
+set(sources_inc ${sources})
+list(FILTER sources_inc EXCLUDE REGEX "^src/")
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/src/boost/locale" PREFIX "sources" FILES ${sources_src})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/include/boost/locale" PREFIX "headers" FILES ${sources_inc})
+source_group("headers" FILES "include/boost/locale.hpp")
+
 message(STATUS "Boost.Locale: "
   "iconv ${BOOST_LOCALE_ENABLE_ICONV}, "
   "ICU ${BOOST_LOCALE_ENABLE_ICU}, "
@@ -205,6 +214,7 @@ message(STATUS "Boost.Locale: "
   "winapi ${BOOST_LOCALE_ENABLE_WINAPI}"
 )
 
+option(BOOST_LOCALE_WERROR "Treat warnings as errors in Boost.Locale" ${BOOST_LOCALE_WERROR})
 if(MSVC)
     set(BOOST_LOCALE_WARNING_OPTIONS /W4)
     if(BOOST_LOCALE_WERROR)

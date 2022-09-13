@@ -14,13 +14,19 @@
 #include <boost/thread.hpp>
 #include <string>
 #include <memory>
-
+#ifdef BOOST_MSVC
+#  pragma warning(push)
+#  pragma warning(disable: 4251) // "identifier" : class "type" needs to have dll-interface...
+#endif
 #include <unicode/locid.h>
 #include <unicode/numfmt.h>
 #include <unicode/rbnf.h>
 #include <unicode/datefmt.h>
 #include <unicode/smpdtfmt.h>
 #include <unicode/decimfmt.h>
+#ifdef BOOST_MSVC
+#  pragma warning(pop)
+#endif
 
 namespace boost {
 namespace locale {

@@ -16,7 +16,7 @@ int main()
 #include <boost/locale/generator.hpp>
 #include <boost/locale/localization_backend.hpp>
 #include <iomanip>
-#include "test_locale.hpp"
+#include "boostLocale/test/unit_test.hpp"
 
 
 template<typename Char>

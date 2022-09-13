@@ -209,7 +209,7 @@ namespace util {
                     break;
                 case day_of_week_in_month:  ///< Original number of the day of the week in month. (1st sunday, 2nd sunday etc)
                 case week_of_year:          ///< The week number in the year, 4 is the minimal number of days to be in month
-                case week_of_month:         ///< The week number withing current month
+                case week_of_month:         ///< The week number within current month
                     {
                         normalize();
                         int current_week = get_value(m,current);
@@ -269,18 +269,16 @@ namespace util {
 
             int get_week_number(int day,int wday) const
             {
-                ///
-                /// This is the number of days that are considered withing
+                /// This is the number of days that are considered within
                 /// period such that the week belongs there
-                ///
                 static const int days_in_full_week = 4;
 
 
-                // Alaways use local week start
+                // Always use local week start
                 int current_dow = (wday - first_day_of_week_ + 7) % 7;
                 // Calculate local week day of Jan 1st.
                 int first_week_day = (current_dow + 700 - day) % 7;
-                    // adding something big devidable by 7
+                    // adding something big dividable by 7
 
                 int start_of_period_in_weeks;
                 if(first_week_day < days_in_full_week) {
@@ -504,7 +502,7 @@ BOOST_LOCALE_END_CONST_CONDITION
                         }
                     }
                     break;
-                case week_of_month:              ///< The week number withing current month
+                case week_of_month:              ///< The week number within current month
                     switch(v) {
                     case absolute_minimum:
                     case greatest_minimum:
@@ -541,8 +539,8 @@ BOOST_LOCALE_END_CONST_CONDITION
                         return 4;
                     case actual_maximum:
                         if(tm_.tm_mon == 1 && !is_leap(tm_.tm_year + 1900)) {
-                            // only in february in non leap year is 28 days, the rest
-                            // conver more then 4 weeks
+                            // only february in non leap year is 28 days, the rest
+                            // has more then 4 weeks
                             return 4;
                         }
                         return 5;
@@ -638,7 +636,7 @@ BOOST_LOCALE_END_CONST_CONDITION
                             tm_updated_.tm_sec += difference;
                             break;
                         case week_of_year:               ///< The week number in the year
-                        case week_of_month:              ///< The week number withing current month
+                        case week_of_month:              ///< The week number within current month
                         case day_of_week_in_month:       ///< Original number of the day of the week in month.
                             tm_updated_.tm_mday +=difference * 7;
                             break;

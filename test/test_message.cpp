@@ -9,8 +9,8 @@
 #include <boost/locale/message.hpp>
 #include <boost/locale/gnu_gettext.hpp>
 #include <boost/locale/encoding.hpp>
-#include "test_locale.hpp"
-#include "test_locale_tools.hpp"
+#include "boostLocale/test/unit_test.hpp"
+#include "boostLocale/test/tools.hpp"
 #include <fstream>
 #include <vector>
 

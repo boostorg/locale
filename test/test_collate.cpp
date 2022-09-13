@@ -15,7 +15,7 @@ int main()
 #include <boost/locale/collator.hpp>
 #include <boost/locale/generator.hpp>
 #include <iomanip>
-#include "test_locale.hpp"
+#include "boostLocale/test/unit_test.hpp"
 
 
 template<typename Char>

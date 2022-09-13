@@ -588,7 +588,7 @@ namespace boost {
         public:
 
             ///
-            /// Dafault constructor, uses default calendar initialized date_time object to current time.
+            /// Default constructor, uses default calendar initialized date_time object to current time.
             ///
             /// \note throws std::bad_cast if the global locale does not have \ref calendar_facet facet installed
             ///
@@ -831,7 +831,7 @@ namespace boost {
             void swap(date_time &other);
 
             ///
-            /// calculate the distance from this date_time to \a other in terms of perios \a f
+            /// calculate the distance from this date_time to \a other in terms of periods \a f
             ///
             int difference(date_time const &other,period::period_type f) const;
 

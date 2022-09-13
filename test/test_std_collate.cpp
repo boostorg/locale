@@ -18,8 +18,8 @@ int main()
 #include <boost/locale/generator.hpp>
 #include <boost/locale/info.hpp>
 #include <iomanip>
-#include "test_locale.hpp"
-#include "test_locale_tools.hpp"
+#include "boostLocale/test/unit_test.hpp"
+#include "boostLocale/test/tools.hpp"
 #include <iostream>
 
 int get_sign(int x)
