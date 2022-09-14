@@ -28,18 +28,14 @@ namespace impl_posix {
 
     class posix_localization_backend : public localization_backend {
     public:
-        posix_localization_backend() :
-            invalid_(true)
-        {
-        }
-        posix_localization_backend(posix_localization_backend const &other) :
+        posix_localization_backend(): invalid_(true) {}
+        posix_localization_backend(posix_localization_backend const &other):
             localization_backend(),
             paths_(other.paths_),
             domains_(other.domains_),
             locale_id_(other.locale_id_),
             invalid_(true)
-        {
-        }
+        {}
         posix_localization_backend *clone() const override
         {
             return new posix_localization_backend(*this);

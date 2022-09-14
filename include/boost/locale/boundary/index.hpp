@@ -124,9 +124,7 @@ namespace boost {
                         index_->swap(idx);
                     }
 
-                    mapping()
-                    {
-                    }
+                    mapping(){}
 
                     index_type const &index() const
                     {
@@ -162,18 +160,17 @@ namespace boost {
                     typedef mapping<base_iterator> mapping_type;
                     typedef segment<base_iterator> segment_type;
 
-                    segment_index_iterator() : current_(0,0),map_(0)
-                    {
-                    }
+                    segment_index_iterator(): current_(0,0),map_(0), mask_(0), full_select_(false)
+                    {}
 
-                    segment_index_iterator(base_iterator p,mapping_type const *map,rule_type mask,bool full_select) :
+                    segment_index_iterator(base_iterator p,mapping_type const *map,rule_type mask,bool full_select):
                         map_(map),
                         mask_(mask),
                         full_select_(full_select)
                     {
                         set(p);
                     }
-                    segment_index_iterator(bool is_begin,mapping_type const *map,rule_type mask,bool full_select) :
+                    segment_index_iterator(bool is_begin,mapping_type const *map,rule_type mask,bool full_select):
                         map_(map),
                         mask_(mask),
                         full_select_(full_select)
@@ -273,14 +270,14 @@ namespace boost {
 
                         if(full_select_) {
                             while(current_.first > 0) {
-                                current_.first --;
+                                current_.first--;
                                 if(valid_offset(current_.first))
                                     break;
                             }
                         }
                         else {
                             if(current_.first > 0)
-                                current_.first --;
+                                current_.first--;
                         }
                         value_.first = map_->begin();
                         std::advance(value_.first,get_offset(current_.first));
@@ -352,11 +349,10 @@ namespace boost {
                     typedef mapping<base_iterator> mapping_type;
                     typedef boundary_point<base_iterator> boundary_point_type;
 
-                    boundary_point_index_iterator() : current_(0),map_(0)
-                    {
-                    }
+                    boundary_point_index_iterator(): current_(0),map_(0),mask_(0)
+                    {}
 
-                    boundary_point_index_iterator(bool is_begin,mapping_type const *map,rule_type mask) :
+                    boundary_point_index_iterator(bool is_begin,mapping_type const *map,rule_type mask):
                         map_(map),
                         mask_(mask)
                     {
@@ -365,7 +361,7 @@ namespace boost {
                         else
                             set_end();
                     }
-                    boundary_point_index_iterator(base_iterator p,mapping_type const *map,rule_type mask) :
+                    boundary_point_index_iterator(base_iterator p,mapping_type const *map,rule_type mask):
                         map_(map),
                         mask_(mask)
                     {
@@ -596,9 +592,8 @@ namespace boost {
                 /// calling \ref begin(), \ref end() or \ref find() member functions would lead to undefined
                 /// behavior
                 ///
-                segment_index() : mask_(0xFFFFFFFFu),full_select_(false)
-                {
-                }
+                segment_index(): mask_(0xFFFFFFFFu),full_select_(false)
+                {}
                 ///
                 /// Create a segment_index for %boundary analysis \ref boundary_type "type" of the text
                 /// in range [begin,end) using a rule \a mask for locale \a loc.
@@ -612,8 +607,7 @@ namespace boost {
                         map_(type,begin,end,loc),
                         mask_(mask),
                         full_select_(false)
-                {
-                }
+                {}
                 ///
                 /// Create a segment_index for %boundary analysis \ref boundary_type "type" of the text
                 /// in range [begin,end) selecting all possible segments (full mask) for locale \a loc.
@@ -626,8 +620,7 @@ namespace boost {
                         map_(type,begin,end,loc),
                         mask_(0xFFFFFFFFu),
                         full_select_(false)
-                {
-                }
+                {}
 
                 ///
                 /// Create a segment_index from a \ref boundary_point_index. It copies all indexing information
@@ -865,9 +858,8 @@ namespace boost {
                 /// calling \ref begin(), \ref end() or \ref find() member functions would lead to undefined
                 /// behavior
                 ///
-                boundary_point_index() : mask_(0xFFFFFFFFu)
-                {
-                }
+                boundary_point_index(): mask_(0xFFFFFFFFu)
+                {}
 
                 ///
                 /// Create a segment_index for %boundary analysis \ref boundary_type "type" of the text
@@ -881,8 +873,7 @@ namespace boost {
                     :
                         map_(type,begin,end,loc),
                         mask_(mask)
-                {
-                }
+                {}
                 ///
                 /// Create a segment_index for %boundary analysis \ref boundary_type "type" of the text
                 /// in range [begin,end) selecting all possible %boundary points (full mask) for locale \a loc.
@@ -894,8 +885,7 @@ namespace boost {
                     :
                         map_(type,begin,end,loc),
                         mask_(0xFFFFFFFFu)
-                {
-                }
+                {}
 
                 ///
                 /// Create a boundary_point_index from a \ref segment_index. It copies all indexing information
@@ -1002,19 +992,17 @@ namespace boost {
 
             /// \cond INTERNAL
             template<typename BaseIterator>
-            segment_index<BaseIterator>::segment_index(boundary_point_index<BaseIterator> const &other) :
+            segment_index<BaseIterator>::segment_index(boundary_point_index<BaseIterator> const &other):
                 map_(other.map_),
                 mask_(0xFFFFFFFFu),
                 full_select_(false)
-            {
-            }
+            {}
 
             template<typename BaseIterator>
-            boundary_point_index<BaseIterator>::boundary_point_index(segment_index<BaseIterator> const &other) :
+            boundary_point_index<BaseIterator>::boundary_point_index(segment_index<BaseIterator> const &other):
                 map_(other.map_),
                 mask_(0xFFFFFFFFu)
-            {
-            }
+            {}
 
             template<typename BaseIterator>
             segment_index<BaseIterator> const &segment_index<BaseIterator>::operator=(boundary_point_index<BaseIterator> const &other)

@@ -61,11 +61,7 @@ namespace impl_icu {
         typedef CharType char_type;
         typedef std::basic_string<char_type> string_type;
 
-        converter_impl(cdata const &d) :
-            locale_(d.locale),
-            encoding_(d.encoding)
-        {
-        }
+        converter_impl(cdata const &d): locale_(d.locale), encoding_(d.encoding) {}
 
         string_type convert(converter_base::conversion_type how, char_type const* begin, char_type const* end, int flags = 0) const override
         {
@@ -103,7 +99,7 @@ namespace impl_icu {
         raii_casemap(raii_casemap const &);
         void operator = (raii_casemap const&);
     public:
-        raii_casemap(std::string const &locale_id) :
+        raii_casemap(std::string const &locale_id):
             map_(0)
         {
             UErrorCode err=U_ZERO_ERROR;
@@ -137,11 +133,7 @@ namespace impl_icu {
     class utf8_converter_impl : public converter<char> {
     public:
 
-        utf8_converter_impl(cdata const &d) :
-            locale_id_(d.locale.getName()),
-            map_(locale_id_)
-        {
-        }
+        utf8_converter_impl(cdata const &d): locale_id_(d.locale.getName()), map_(locale_id_) {}
 
         std::string convert(converter_base::conversion_type how,char const *begin,char const *end,int flags = 0) const override
         {

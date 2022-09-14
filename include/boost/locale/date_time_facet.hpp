@@ -71,9 +71,7 @@ namespace boost {
                 ///
                 /// Create a period of specific type, default is invalid.
                 ///
-                period_type(marks::period_mark m = marks::invalid) : mark_(m)
-                {
-                }
+                period_type(marks::period_mark m = marks::invalid): mark_(m) {}
 
                 ///
                 /// Get the value of marks::period_mark it was created with.
@@ -232,9 +230,7 @@ namespace boost {
             ///
             /// Basic constructor
             ///
-            calendar_facet(size_t refs = 0) : std::locale::facet(refs)
-            {
-            }
+            calendar_facet(size_t refs = 0): std::locale::facet(refs) {}
             ///
             /// Create a new calendar that points to current point of time.
             ///

@@ -19,11 +19,7 @@ namespace impl_win {
 
 class utf8_collator : public collator<char> {
 public:
-    utf8_collator(winlocale lc,size_t refs = 0) :
-        collator<char>(refs),
-        lc_(lc)
-    {
-    }
+    utf8_collator(winlocale lc,size_t refs = 0): collator<char>(refs), lc_(lc) {}
     int do_compare(collator_base::level_type level,char const *lb,char const *le,char const *rb,char const *re) const override
     {
         std::wstring l=conv::to_utf<wchar_t>(lb,le,"UTF-8");
@@ -70,11 +66,7 @@ private:
 class utf16_collator : public collator<wchar_t> {
 public:
     typedef std::collate<wchar_t> wfacet;
-    utf16_collator(winlocale lc,size_t refs = 0) :
-        collator<wchar_t>(refs),
-        lc_(lc)
-    {
-    }
+    utf16_collator(winlocale lc,size_t refs = 0): collator<wchar_t>(refs), lc_(lc) {}
     int do_compare(collator_base::level_type level,wchar_t const *lb,wchar_t const *le,wchar_t const *rb,wchar_t const *re) const override
     {
         return wcscoll_l(level,lb,le,rb,re,lc_);

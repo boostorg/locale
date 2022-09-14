@@ -31,20 +31,15 @@ namespace impl_std {
 
     class std_localization_backend : public localization_backend {
     public:
-        std_localization_backend() :
-            invalid_(true),
-            use_ansi_encoding_(false)
-        {
-        }
-        std_localization_backend(std_localization_backend const &other) :
+        std_localization_backend(): invalid_(true), use_ansi_encoding_(false) {}
+        std_localization_backend(std_localization_backend const &other):
             localization_backend(),
             paths_(other.paths_),
             domains_(other.domains_),
             locale_id_(other.locale_id_),
             invalid_(true),
             use_ansi_encoding_(other.use_ansi_encoding_)
-        {
-        }
+        {}
         std_localization_backend *clone() const override
         {
             return new std_localization_backend(*this);

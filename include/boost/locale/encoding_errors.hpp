@@ -28,7 +28,7 @@ namespace boost {
             ///
             class BOOST_SYMBOL_VISIBLE conversion_error : public std::runtime_error {
             public:
-                conversion_error() : std::runtime_error("Conversion failed") {}
+                conversion_error(): std::runtime_error("Conversion failed") {}
             };
 
             ///
@@ -39,10 +39,9 @@ namespace boost {
             public:
 
                 /// Create an error for charset \a charset
-                invalid_charset_error(std::string charset) :
+                invalid_charset_error(std::string charset):
                     std::runtime_error("Invalid or unsupported charset:" + charset)
-                {
-                }
+                {}
             };
 
 

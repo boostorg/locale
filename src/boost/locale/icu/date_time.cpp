@@ -259,11 +259,7 @@ namespace impl_icu {
 
     class icu_calendar_facet : public calendar_facet  {
     public:
-        icu_calendar_facet(cdata const &d,size_t refs = 0) :
-            calendar_facet(refs),
-            data_(d)
-        {
-        }
+        icu_calendar_facet(cdata const &d,size_t refs = 0): calendar_facet(refs), data_(d) {}
         abstract_calendar *create_calendar() const override
         {
             return new calendar_impl(data_);

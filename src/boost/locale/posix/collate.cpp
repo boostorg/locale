@@ -57,11 +57,10 @@ class collator : public std::collate<CharType> {
 public:
     typedef CharType char_type;
     typedef std::basic_string<char_type> string_type;
-    collator(std::shared_ptr<locale_t> l,size_t refs = 0) :
+    collator(std::shared_ptr<locale_t> l,size_t refs = 0):
         std::collate<CharType>(refs),
         lc_(std::move(l))
-    {
-    }
+    {}
 
     int do_compare(char_type const *lb,char_type const *le,char_type const *rb,char_type const *re) const override
     {

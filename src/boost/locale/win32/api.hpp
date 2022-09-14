@@ -71,10 +71,7 @@ namespace impl_win {
 
     class winlocale{
     public:
-        winlocale() :
-            lcid(0)
-        {
-        }
+        winlocale(): lcid(0) {}
 
         winlocale(std::string const &name)
         {

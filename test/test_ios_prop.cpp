@@ -12,7 +12,7 @@
 int counter=0;
 int imbued=0;
 struct propery {
-    propery(int xx=-1) : x(xx) { counter ++; }
+    propery(int xx=-1): x(xx) { counter ++; }
     propery(propery const &other) { counter++; x=other.x; }
     propery const &operator=(propery const &other) {
         x=other.x;

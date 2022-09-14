@@ -129,7 +129,7 @@ namespace boundary {
         ///
         /// Default constructor
         ///
-        segment() {}
+        segment(): rule_(0) {}
         ///
         /// Create a segment using two iterators and a rule that represents this point
         ///
@@ -148,7 +148,7 @@ namespace boundary {
         ///
         /// Set the end of the range
         ///
-         void end(iterator const &v)
+        void end(iterator const &v)
         {
             this->second = v;
         }

@@ -51,11 +51,7 @@ public:
     typedef std::basic_string<CharType> string_type;
     typedef CharType char_type;
 
-    num_format(winlocale const &lc,size_t refs = 0) :
-        util::base_num_format<CharType>(refs),
-        lc_(lc)
-    {
-    }
+    num_format(winlocale const &lc,size_t refs = 0): util::base_num_format<CharType>(refs), lc_(lc) {}
 private:
 
     iter_type do_format_currency(bool /*intl*/,iter_type out,std::ios_base &ios,char_type fill,long double val) const override
@@ -87,11 +83,7 @@ private:
 template<typename CharType>
 class time_put_win : public std::time_put<CharType> {
 public:
-    time_put_win(winlocale const &lc, size_t refs = 0) :
-        std::time_put<CharType>(refs),
-        lc_(lc)
-    {
-    }
+    time_put_win(winlocale const &lc, size_t refs = 0): std::time_put<CharType>(refs), lc_(lc) {}
 
     typedef typename std::time_put<CharType>::iter_type iter_type;
     typedef CharType char_type;
@@ -116,7 +108,7 @@ template<typename CharType>
 class num_punct_win : public std::numpunct<CharType> {
 public:
     typedef std::basic_string<CharType> string_type;
-    num_punct_win(winlocale const &lc,size_t refs = 0) :
+    num_punct_win(winlocale const &lc,size_t refs = 0):
         std::numpunct<CharType>(refs)
     {
         numeric_info np = wcsnumformat_l(lc) ;

@@ -17,7 +17,7 @@ bool has_message(std::locale const &l)
 }
 
 struct test_facet : public std::locale::facet {
-    test_facet() : std::locale::facet(0) {}
+    test_facet(): std::locale::facet(0) {}
     static std::locale::id id;
 };
 

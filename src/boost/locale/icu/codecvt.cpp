@@ -27,7 +27,7 @@ namespace impl_icu {
     class uconv_converter : public util::base_converter {
     public:
 
-        uconv_converter(std::string const &encoding) :
+        uconv_converter(std::string const &encoding):
             encoding_(encoding)
         {
             UErrorCode err=U_ZERO_ERROR;

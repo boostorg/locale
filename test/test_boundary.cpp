@@ -26,8 +26,7 @@ int main()
 
 template<typename Char>
 void print_str(std::basic_string<Char> const &/*s*/)
-{
-}
+{}
 
 template<>
 void print_str<char>(std::basic_string<char> const &s)

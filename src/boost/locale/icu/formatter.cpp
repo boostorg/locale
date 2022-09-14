@@ -84,11 +84,7 @@ namespace locale {
                 return do_parse(str,value);
             }
 
-            number_format(icu::NumberFormat *fmt,std::string codepage) :
-                cvt_(codepage),
-                icu_fmt_(fmt)
-            {
-            }
+            number_format(icu::NumberFormat *fmt,std::string codepage): cvt_(codepage), icu_fmt_(fmt) {}
 
         private:
 
@@ -177,7 +173,7 @@ namespace locale {
                 return do_parse(str,value);
             }
 
-            date_format(icu::DateFormat *fmt,bool transfer_owneship,std::string codepage) :
+            date_format(icu::DateFormat *fmt,bool transfer_owneship,std::string codepage):
                 cvt_(codepage)
             {
                 if(transfer_owneship) {

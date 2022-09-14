@@ -14,15 +14,10 @@
 namespace boost {
     namespace locale {
 
-        ios_info::string_set::string_set() :
-            type(0),
-            size(0),
-            ptr(0)
-        {
-        }
+        ios_info::string_set::string_set(): type(0), size(0), ptr(0) { }
         ios_info::string_set::~string_set()
         {
-            delete [] ptr;
+            delete[] ptr;
         }
         ios_info::string_set::string_set(string_set const &other)
         {
@@ -57,16 +52,14 @@ namespace boost {
 
         struct ios_info::data {};
 
-        ios_info::ios_info() :
+        ios_info::ios_info():
             flags_(0),
             domain_id_(0),
             d(0)
         {
             time_zone_ = time_zone::global();
         }
-        ios_info::~ios_info()
-        {
-        }
+        ios_info::~ios_info() {}
 
         ios_info::ios_info(ios_info const &other)
         {
@@ -161,9 +154,7 @@ namespace boost {
             return impl::ios_prop<ios_info>::get(ios);
         }
 
-        void ios_info::on_imbue()
-        {
-        }
+        void ios_info::on_imbue() {}
 
         namespace {
             struct initializer {

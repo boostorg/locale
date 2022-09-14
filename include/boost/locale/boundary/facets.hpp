@@ -40,20 +40,15 @@ namespace boost {
                 ///
                 /// Create empty break point at beginning
                 ///
-                break_info() :
-                    offset(0),
-                    rule(0)
-                {
-                }
+                break_info(): offset(0), rule(0) {}
                 ///
                 /// Create empty break point at offset v.
                 /// it is useful for order comparison with other points.
                 ///
-                break_info(size_t v) :
+                break_info(size_t v):
                     offset(v),
                     rule(0)
-                {
-                }
+                {}
 
                 ///
                 /// Offset from the beginning of the text where a break occurs.
@@ -98,9 +93,8 @@ namespace boost {
                 ///
                 /// Default constructor typical for facets
                 ///
-                boundary_indexing(size_t refs=0) : std::locale::facet(refs)
-                {
-                }
+                boundary_indexing(size_t refs=0): std::locale::facet(refs)
+                {}
                 ///
                 /// Create index for boundary type \a t for text in range [begin,end)
                 ///
@@ -124,9 +118,8 @@ namespace boost {
             template<>
             class BOOST_LOCALE_DECL boundary_indexing<char> : public std::locale::facet {
             public:
-                boundary_indexing(size_t refs=0) : std::locale::facet(refs)
-                {
-                }
+                boundary_indexing(size_t refs=0): std::locale::facet(refs)
+                {}
                 ~boundary_indexing();
                 virtual index_type map(boundary_type t,char const *begin,char const *end) const = 0;
                 static std::locale::id id;
@@ -138,9 +131,8 @@ namespace boost {
             template<>
             class BOOST_LOCALE_DECL boundary_indexing<wchar_t> : public std::locale::facet {
             public:
-                boundary_indexing(size_t refs=0) : std::locale::facet(refs)
-                {
-                }
+                boundary_indexing(size_t refs=0): std::locale::facet(refs)
+                {}
                 ~boundary_indexing();
                 virtual index_type map(boundary_type t,wchar_t const *begin,wchar_t const *end) const = 0;
 
@@ -154,9 +146,8 @@ namespace boost {
             template<>
             class BOOST_LOCALE_DECL boundary_indexing<char16_t> : public std::locale::facet {
             public:
-                boundary_indexing(size_t refs=0) : std::locale::facet(refs)
-                {
-                }
+                boundary_indexing(size_t refs=0): std::locale::facet(refs)
+                {}
                 ~boundary_indexing();
                 virtual index_type map(boundary_type t,char16_t const *begin,char16_t const *end) const = 0;
                 static std::locale::id id;
@@ -170,9 +161,8 @@ namespace boost {
             template<>
             class BOOST_LOCALE_DECL boundary_indexing<char32_t> : public std::locale::facet {
             public:
-                boundary_indexing(size_t refs=0) : std::locale::facet(refs)
-                {
-                }
+                boundary_indexing(size_t refs=0): std::locale::facet(refs)
+                {}
                 ~boundary_indexing();
                 virtual index_type map(boundary_type t,char32_t const *begin,char32_t const *end) const = 0;
                 static std::locale::id id;

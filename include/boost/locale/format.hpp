@@ -38,17 +38,15 @@ namespace boost {
                 typedef std::basic_ostream<CharType> stream_type;
                 typedef void (*writer_type)(stream_type &output,void const *ptr);
 
-                formattible() :
+                formattible():
                     pointer_(0),
                     writer_(&formattible::void_write)
-                {
-                }
+                {}
 
-                formattible(formattible const &other) :
+                formattible(formattible const &other):
                     pointer_(other.pointer_),
                     writer_(other.writer_)
-                {
-                }
+                {}
 
                 formattible const &operator=(formattible const &other)
                 {
@@ -216,22 +214,20 @@ namespace boost {
             ///
             /// Create a format class for \a format_string
             ///
-            basic_format(string_type format_string) :
+            basic_format(string_type format_string):
                 format_(format_string),
                 translate_(false),
                 parameters_count_(0)
-            {
-            }
+            {}
             ///
             /// Create a format class using message \a trans. The message if translated first according
             /// to the rules of target locale and then interpreted as format string
             ///
-            basic_format(message_type const &trans) :
+            basic_format(message_type const &trans):
                 message_(trans),
                 translate_(true),
                 parameters_count_(0)
-            {
-            }
+            {}
 
             ///
             /// Add new parameter to format list. The object should be a type
@@ -275,11 +271,7 @@ namespace boost {
 
             class format_guard {
             public:
-                format_guard(details::format_parser &fmt) :
-                    fmt_(&fmt),
-                    restored_(false)
-                {
-                }
+                format_guard(details::format_parser &fmt): fmt_(&fmt), restored_(false) {}
                 void restore()
                 {
                     if(restored_)
@@ -292,8 +284,7 @@ namespace boost {
                     try {
                         restore();
                     }
-                    catch(...) {
-                    }
+                    catch(...) {}
                 }
             private:
                 details::format_parser *fmt_;

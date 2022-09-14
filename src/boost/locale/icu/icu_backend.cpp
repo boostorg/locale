@@ -22,20 +22,15 @@ namespace locale {
 namespace impl_icu {
     class icu_localization_backend : public localization_backend {
     public:
-        icu_localization_backend() :
-            invalid_(true),
-            use_ansi_encoding_(false)
-        {
-        }
-        icu_localization_backend(icu_localization_backend const &other) :
+        icu_localization_backend(): invalid_(true), use_ansi_encoding_(false) {}
+        icu_localization_backend(icu_localization_backend const &other):
             localization_backend(),
             paths_(other.paths_),
             domains_(other.domains_),
             locale_id_(other.locale_id_),
             invalid_(true),
             use_ansi_encoding_(other.use_ansi_encoding_)
-        {
-        }
+        {}
         icu_localization_backend *clone() const override
         {
             return new icu_localization_backend(*this);

@@ -17,14 +17,13 @@
 namespace boost {
     namespace locale {
         struct generator::data {
-            data(localization_backend_manager const &mgr)  :
+            data(localization_backend_manager const &mgr):
                 cats(all_categories),
                 chars(all_characters),
                 caching_enabled(false),
                 use_ansi_encoding(false),
                 backend_manager(mgr)
-            {
-            }
+            {}
 
             typedef std::map<std::string,std::locale> cached_type;
             mutable cached_type cached;
@@ -45,17 +44,13 @@ namespace boost {
 
         };
 
-        generator::generator(localization_backend_manager const &mgr) :
+        generator::generator(localization_backend_manager const &mgr):
             d(new generator::data(mgr))
-        {
-        }
-        generator::generator() :
+        {}
+        generator::generator():
             d(new generator::data(localization_backend_manager::global()))
-        {
-        }
-        generator::~generator()
-        {
-        }
+        {}
+        generator::~generator() = default;
 
         locale_category_type generator::categories() const
         {

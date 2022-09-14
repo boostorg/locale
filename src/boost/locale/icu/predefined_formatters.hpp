@@ -37,7 +37,7 @@ namespace locale {
 
             static std::locale::id id;
 
-            icu_formatters_cache(icu::Locale const &locale) :
+            icu_formatters_cache(icu::Locale const &locale):
                 locale_(locale)
             {
 

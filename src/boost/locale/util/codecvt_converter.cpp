@@ -146,10 +146,7 @@ namespace util {
     class simple_converter : public base_converter {
     public:
 
-        simple_converter(std::string const &encoding) :
-            cvt_(encoding)
-        {
-        }
+        simple_converter(std::string const &encoding): cvt_(encoding) {}
 
         int max_len() const override
         {
@@ -182,11 +179,10 @@ namespace util {
     {
     public:
 
-        simple_codecvt(std::string const &encoding,size_t refs = 0) :
+        simple_codecvt(std::string const &encoding,size_t refs = 0):
             generic_codecvt<CharType,simple_codecvt<CharType> >(refs),
             cvt_(encoding)
-        {
-        }
+        {}
 
         struct state_type {};
         static state_type initial_state(generic_codecvt_base::initial_convertion_state /* unused */)
@@ -293,7 +289,7 @@ namespace util {
         typedef std::unique_ptr<base_converter> base_converter_ptr;
         typedef base_converter_ptr state_type;
 
-        code_converter(base_converter_ptr cvt,size_t refs = 0) :
+        code_converter(base_converter_ptr cvt,size_t refs = 0):
             generic_codecvt<CharType,code_converter<CharType> >(refs),
             cvt_(std::move(cvt))
         {

@@ -31,11 +31,10 @@ public:
     typedef CharType char_type;
     typedef std::basic_string<char_type> string_type;
     typedef std::ctype<char_type> ctype_type;
-    std_converter(std::locale const &base,size_t refs = 0) :
+    std_converter(std::locale const &base,size_t refs = 0):
         converter<CharType>(refs),
         base_(base)
-    {
-    }
+    {}
     string_type convert(converter_base::conversion_type how,char_type const *begin,char_type const *end,int /*flags*/ = 0) const override
     {
         switch(how) {
@@ -66,11 +65,10 @@ class utf8_converter : public converter<char> {
 public:
     typedef std::ctype<char> ctype_type;
     typedef std::ctype<wchar_t> wctype_type;
-    utf8_converter(std::locale const &base,size_t refs = 0) :
+    utf8_converter(std::locale const &base,size_t refs = 0):
         converter<char>(refs),
         base_(base)
-    {
-    }
+    {}
     std::string convert(converter_base::conversion_type how,char const *begin,char const *end,int /*flags*/ = 0) const override
     {
         switch(how) {

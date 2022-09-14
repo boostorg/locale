@@ -86,8 +86,8 @@ void test_main(int /*argc*/, char** /*argv*/)
             date_time time_point = year(1970) + february() + day(5);
 
             ss << as::ftime("%Y-%m-%d")<< time_point;
-
             TEST_EQ(ss.str(), "1970-02-05");
+
             time_point = 3 * hour_12() + 1 * am_pm() + 33 * minute() + 13 * second();
             ss.str("");
             ss << as::ftime("%Y-%m-%d %H:%M:%S") << time_point;
@@ -171,7 +171,7 @@ void test_main(int /*argc*/, char** /*argv*/)
                 TEST_EQ(time_point.get(era()), 0);
                 TEST_EQ(time_point.get(year()), 4);
             }
-            
+
             time_point = tp_5_feb_1970_153313;
             TEST_EQ(time_point.get(month()), 1);
             TEST_EQ(time_point.get(day()), 5);

@@ -63,9 +63,7 @@ namespace boost {
             ///
             /// Default constructor
             ///
-            message_format(size_t refs = 0) : base_message_format<CharType>(refs)
-            {
-            }
+            message_format(size_t refs = 0): base_message_format<CharType>(refs) {}
 
             ///
             /// This function returns a pointer to the string for a message defined by a \a context
@@ -177,25 +175,13 @@ namespace boost {
             ///
             /// Create default empty message
             ///
-            basic_message() :
-                n_(0),
-                c_id_(0),
-                c_context_(0),
-                c_plural_(0)
-            {
-            }
+            basic_message(): n_(0), c_id_(0), c_context_(0), c_plural_(0) {}
 
             ///
             /// Create a simple message from 0 terminated string. The string should exist
             /// until the message is destroyed. Generally useful with static constant strings
             ///
-            explicit basic_message(char_type const *id) :
-                n_(0),
-                c_id_(id),
-                c_context_(0),
-                c_plural_(0)
-            {
-            }
+            explicit basic_message(char_type const *id): n_(0), c_id_(id), c_context_(0), c_plural_(0) {}
 
             ///
             /// Create a simple plural form message from 0 terminated strings. The strings should exist
@@ -203,26 +189,24 @@ namespace boost {
             ///
             /// \a n is the number, \a single and \a plural are singular and plural forms of the message
             ///
-            explicit basic_message(char_type const *single,char_type const *plural,int n) :
+            explicit basic_message(char_type const *single,char_type const *plural,int n):
                 n_(n),
                 c_id_(single),
                 c_context_(0),
                 c_plural_(plural)
-            {
-            }
+            {}
 
             ///
             /// Create a simple message from 0 terminated strings, with context
             /// information. The string should exist
             /// until the message is destroyed. Generally useful with static constant strings
             ///
-            explicit basic_message(char_type const *context,char_type const *id) :
+            explicit basic_message(char_type const *context,char_type const *id):
                 n_(0),
                 c_id_(id),
                 c_context_(context),
                 c_plural_(0)
-            {
-            }
+            {}
 
             ///
             /// Create a simple plural form message from 0 terminated strings, with context. The strings should exist
@@ -230,61 +214,57 @@ namespace boost {
             ///
             /// \a n is the number, \a single and \a plural are singular and plural forms of the message
             ///
-            explicit basic_message(char_type const *context,char_type const *single,char_type const *plural,int n) :
+            explicit basic_message(char_type const *context,char_type const *single,char_type const *plural,int n):
                 n_(n),
                 c_id_(single),
                 c_context_(context),
                 c_plural_(plural)
-            {
-            }
+            {}
 
 
             ///
             /// Create a simple message from a string.
             ///
-            explicit basic_message(string_type const &id) :
+            explicit basic_message(string_type const &id):
                 n_(0),
                 c_id_(0),
                 c_context_(0),
                 c_plural_(0),
                 id_(id)
-            {
-            }
+            {}
 
             ///
             /// Create a simple plural form message from strings.
             ///
             /// \a n is the number, \a single and \a plural are single and plural forms of the message
             ///
-            explicit basic_message(string_type const &single,string_type const &plural,int number) :
+            explicit basic_message(string_type const &single,string_type const &plural,int number):
                 n_(number),
                 c_id_(0),
                 c_context_(0),
                 c_plural_(0),
                 id_(single),
                 plural_(plural)
-            {
-            }
+            {}
 
             ///
             /// Create a simple message from a string with context.
             ///
-            explicit basic_message(string_type const &context,string_type const &id) :
+            explicit basic_message(string_type const &context,string_type const &id):
                 n_(0),
                 c_id_(0),
                 c_context_(0),
                 c_plural_(0),
                 id_(id),
                 context_(context)
-            {
-            }
+            {}
 
             ///
             /// Create a simple plural form message from strings.
             ///
             /// \a n is the number, \a single and \a plural are single and plural forms of the message
             ///
-            explicit basic_message(string_type const &context,string_type const &single,string_type const &plural,int number) :
+            explicit basic_message(string_type const &context,string_type const &single,string_type const &plural,int number):
                 n_(number),
                 c_id_(0),
                 c_context_(0),
@@ -292,13 +272,12 @@ namespace boost {
                 id_(single),
                 context_(context),
                 plural_(plural)
-            {
-            }
+            {}
 
             ///
             /// Copy an object
             ///
-            basic_message(basic_message const &other) :
+            basic_message(basic_message const &other):
                 n_(other.n_),
                 c_id_(other.c_id_),
                 c_context_(other.c_context_),
@@ -306,8 +285,7 @@ namespace boost {
                 id_(other.id_),
                 context_(other.context_),
                 plural_(other.plural_)
-            {
-            }
+            {}
 
             ///
             /// Assign other message object to this one
@@ -463,7 +441,7 @@ namespace boost {
                 }
 
                 if(!translated) {
-                    char_type const *msg = plural ? ( n_ == 1 ? id : plural) : id;
+                    char_type const *msg = plural ? ( n_ == 1 ? id : plural): id;
 
                     if(facet) {
                         translated = facet->convert(msg,buffer);
@@ -706,18 +684,14 @@ namespace boost {
         template<>
         struct BOOST_LOCALE_DECL base_message_format<char> : public std::locale::facet
         {
-            base_message_format(size_t refs = 0) : std::locale::facet(refs)
-            {
-            }
+            base_message_format(size_t refs = 0): std::locale::facet(refs) {}
             static std::locale::id id;
         };
 
         template<>
         struct BOOST_LOCALE_DECL base_message_format<wchar_t> : public std::locale::facet
         {
-            base_message_format(size_t refs = 0) : std::locale::facet(refs)
-            {
-            }
+            base_message_format(size_t refs = 0): std::locale::facet(refs) {}
             static std::locale::id id;
         };
 
@@ -726,9 +700,7 @@ namespace boost {
         template<>
         struct BOOST_LOCALE_DECL base_message_format<char16_t> : public std::locale::facet
         {
-            base_message_format(size_t refs = 0) : std::locale::facet(refs)
-            {
-            }
+            base_message_format(size_t refs = 0): std::locale::facet(refs) {}
             static std::locale::id id;
         };
 
@@ -739,9 +711,7 @@ namespace boost {
         template<>
         struct BOOST_LOCALE_DECL base_message_format<char32_t> : public std::locale::facet
         {
-            base_message_format(size_t refs = 0) : std::locale::facet(refs)
-            {
-            }
+            base_message_format(size_t refs = 0): std::locale::facet(refs) {}
             static std::locale::id id;
         };
 

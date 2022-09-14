@@ -74,7 +74,7 @@ namespace impl_icu {
             return cvt.go(str.getBuffer(),str.length(),max_len_);
         }
 
-        icu_std_converter(std::string charset,cpcvt_type cvt_type = cvt_skip) :
+        icu_std_converter(std::string charset,cpcvt_type cvt_type = cvt_skip):
             charset_(charset),
             cvt_type_(cvt_type)
         {
@@ -230,10 +230,7 @@ namespace impl_icu {
             return n;
         }
 
-        icu_std_converter(std::string /*charset*/,cpcvt_type mode=cvt_skip) :
-            mode_(mode)
-        {
-        }
+        icu_std_converter(std::string /*charset*/,cpcvt_type mode=cvt_skip): mode_(mode) {}
     private:
         cpcvt_type mode_;
 
@@ -303,10 +300,7 @@ namespace impl_icu {
             return str.countChar32(from_u,n);
         }
 
-        icu_std_converter(std::string /*charset*/,cpcvt_type mode=cvt_skip) :
-            mode_(mode)
-        {
-        }
+        icu_std_converter(std::string /*charset*/,cpcvt_type mode=cvt_skip): mode_(mode) {}
     private:
         cpcvt_type mode_;
 

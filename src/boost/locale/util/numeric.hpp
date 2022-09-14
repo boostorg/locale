@@ -68,12 +68,8 @@ public:
     typedef std::basic_string<CharType> string_type;
     typedef CharType char_type;
 
-    base_num_format(size_t refs = 0) :
-        std::num_put<CharType>(refs)
-    {
-    }
+    base_num_format(size_t refs = 0): std::num_put<CharType>(refs) {}
 protected:
-
 
     iter_type do_put (iter_type out, std::ios_base &ios, char_type fill, long val) const override
     {
@@ -253,10 +249,7 @@ template<typename CharType>
 class base_num_parse : public std::num_get<CharType>
 {
 public:
-    base_num_parse(size_t refs = 0) :
-        std::num_get<CharType>(refs)
-    {
-    }
+    base_num_parse(size_t refs = 0): std::num_get<CharType>(refs) {}
 protected:
     typedef typename std::num_get<CharType>::iter_type iter_type;
     typedef std::basic_string<CharType> string_type;

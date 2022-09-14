@@ -18,11 +18,10 @@ namespace impl_std {
 class utf8_collator_from_wide : public std::collate<char> {
 public:
     typedef std::collate<wchar_t> wfacet;
-    utf8_collator_from_wide(std::locale const &base,size_t refs = 0) :
+    utf8_collator_from_wide(std::locale const &base,size_t refs = 0):
         std::collate<char>(refs),
         base_(base)
-    {
-    }
+    {}
     int do_compare(char const *lb,char const *le,char const *rb,char const *re) const override
     {
         std::wstring l=conv::to_utf<wchar_t>(lb,le,"UTF-8");

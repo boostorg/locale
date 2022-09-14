@@ -62,7 +62,7 @@ public:
 /// public:
 ///
 ///     /* Standard codecvt constructor */
-///     latin1_codecvt(size_t refs = 0) : boost::locale::generic_codecvt<CharType,latin1_codecvt<CharType> >(refs)
+///     latin1_codecvt(size_t refs = 0): boost::locale::generic_codecvt<CharType,latin1_codecvt<CharType> >(refs)
 ///     {
 ///     }
 ///
@@ -109,7 +109,7 @@ public:
 /// public:
 ///
 ///     /* Standard codecvt constructor */
-///     icu_codecvt(std::string const &name,refs = 0) :
+///     icu_codecvt(std::string const &name,refs = 0):
 ///         boost::locale::generic_codecvt<CharType,latin1_codecvt<CharType> >(refs)
 ///     { ... }
 ///
@@ -152,10 +152,7 @@ public:
 
     typedef CharType uchar;
 
-    generic_codecvt(size_t refs = 0) :
-        std::codecvt<CharType,char,std::mbstate_t>(refs)
-    {
-    }
+    generic_codecvt(size_t refs = 0): std::codecvt<CharType,char,std::mbstate_t>(refs) {}
     CodecvtImpl const &implementation() const
     {
         return *static_cast<CodecvtImpl const *>(this);
@@ -449,10 +446,7 @@ class generic_codecvt<CharType,CodecvtImpl,4> : public std::codecvt<CharType,cha
 public:
     typedef CharType uchar;
 
-    generic_codecvt(size_t refs = 0) :
-        std::codecvt<CharType,char,std::mbstate_t>(refs)
-    {
-    }
+    generic_codecvt(size_t refs = 0): std::codecvt<CharType,char,std::mbstate_t>(refs) {}
 
     CodecvtImpl const &implementation() const
     {
@@ -655,9 +649,7 @@ public:
         return *static_cast<CodecvtImpl const *>(this);
     }
 
-    generic_codecvt(size_t refs = 0) :  std::codecvt<char,char,std::mbstate_t>(refs)
-    {
-    }
+    generic_codecvt(size_t refs = 0):  std::codecvt<char,char,std::mbstate_t>(refs) {}
 };
 
 } // locale

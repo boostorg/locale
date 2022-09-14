@@ -117,12 +117,11 @@ public:
     typedef formatter<CharType> formatter_type;
     typedef hold_ptr<formatter_type> formatter_ptr;
 
-    num_format(cdata const &d,size_t refs = 0) :
+    num_format(cdata const &d,size_t refs = 0):
         std::num_put<CharType>(refs),
         loc_(d.locale),
         enc_(d.encoding)
-    {
-    }
+    {}
 protected:
 
 
@@ -206,12 +205,11 @@ template<typename CharType>
 class num_parse : public std::num_get<CharType>, protected num_base
 {
 public:
-    num_parse(cdata const &d,size_t refs = 0) :
+    num_parse(cdata const &d,size_t refs = 0):
         std::num_get<CharType>(refs),
         loc_(d.locale),
         enc_(d.encoding)
-    {
-    }
+    {}
 protected:
     typedef typename std::num_get<CharType>::iter_type iter_type;
     typedef std::basic_string<CharType> string_type;

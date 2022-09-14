@@ -24,11 +24,10 @@ namespace impl_std {
 template<typename CharType>
 class time_put_from_base : public std::time_put<CharType> {
 public:
-    time_put_from_base(std::locale const &base, size_t refs = 0) :
+    time_put_from_base(std::locale const &base, size_t refs = 0):
         std::time_put<CharType>(refs),
         base_(base)
-    {
-    }
+    {}
     typedef typename std::time_put<CharType>::iter_type iter_type;
 
     iter_type do_put(iter_type out,std::ios_base &/*ios*/,CharType fill,std::tm const *tm,char format,char modifier) const override
@@ -43,11 +42,10 @@ private:
 
 class utf8_time_put_from_wide : public std::time_put<char> {
 public:
-    utf8_time_put_from_wide(std::locale const &base, size_t refs = 0) :
+    utf8_time_put_from_wide(std::locale const &base, size_t refs = 0):
         std::time_put<char>(refs),
         base_(base)
-    {
-    }
+    {}
     iter_type do_put(iter_type out,std::ios_base &/*ios*/,char fill,std::tm const *tm,char format,char modifier = 0) const override
     {
         std::basic_ostringstream<wchar_t> wtmps;
@@ -66,7 +64,7 @@ private:
 
 class utf8_numpunct_from_wide : public std::numpunct<char> {
 public:
-    utf8_numpunct_from_wide(std::locale const &base,size_t refs = 0) : std::numpunct<char>(refs)
+    utf8_numpunct_from_wide(std::locale const &base,size_t refs = 0): std::numpunct<char>(refs)
     {
         typedef std::numpunct<wchar_t> wfacet_type;
         wfacet_type const &wfacet = std::use_facet<wfacet_type>(base);
@@ -136,7 +134,7 @@ private:
 template<bool Intl>
 class utf8_moneypunct_from_wide : public std::moneypunct<char,Intl> {
 public:
-    utf8_moneypunct_from_wide(std::locale const &base,size_t refs = 0) : std::moneypunct<char,Intl>(refs)
+    utf8_moneypunct_from_wide(std::locale const &base,size_t refs = 0): std::moneypunct<char,Intl>(refs)
     {
         typedef std::moneypunct<wchar_t,Intl> wfacet_type;
         wfacet_type const &wfacet = std::use_facet<wfacet_type>(base);
@@ -235,10 +233,7 @@ private:
 class utf8_numpunct : public std::numpunct_byname<char> {
 public:
     typedef std::numpunct_byname<char> base_type;
-    utf8_numpunct(char const *name,size_t refs = 0) :
-        std::numpunct_byname<char>(name,refs)
-    {
-    }
+    utf8_numpunct(char const *name,size_t refs = 0): std::numpunct_byname<char>(name,refs) {}
     char do_thousands_sep() const override
     {
         unsigned char bs = base_type::do_thousands_sep();
@@ -263,10 +258,7 @@ template<bool Intl>
 class utf8_moneypunct : public std::moneypunct_byname<char,Intl> {
 public:
     typedef std::moneypunct_byname<char,Intl> base_type;
-    utf8_moneypunct(char const *name,size_t refs = 0) :
-        std::moneypunct_byname<char,Intl>(name,refs)
-    {
-    }
+    utf8_moneypunct(char const *name,size_t refs = 0): std::moneypunct_byname<char,Intl>(name,refs) {}
     char do_thousands_sep() const override
     {
         unsigned char bs = base_type::do_thousands_sep();

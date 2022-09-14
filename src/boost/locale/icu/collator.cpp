@@ -121,13 +121,8 @@ namespace boost {
                     return gnu_gettext::pj_winberger_hash_function(reinterpret_cast<char *>(&tmp.front()));
                 }
 
-                collate_impl(cdata const &d) :
-                    cvt_(d.encoding),
-                    locale_(d.locale),
-                    is_utf8_(d.utf8)
-                {
+                collate_impl(cdata const &d): cvt_(d.encoding), locale_(d.locale), is_utf8_(d.utf8) {}
 
-                }
                 icu::Collator *get_collator(level_type ilevel) const
                 {
                     int l = limit(ilevel);

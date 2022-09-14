@@ -31,10 +31,7 @@ namespace { // anon
 
     struct unary : public plural
     {
-        unary(plural_ptr ptr) :
-            op1(ptr)
-        {
-        }
+        unary(plural_ptr ptr): op1(ptr) {}
     protected:
         plural_ptr op1;
     };
@@ -42,21 +39,14 @@ namespace { // anon
 
     struct binary : public plural
     {
-        binary(plural_ptr p1,plural_ptr p2) :
-            op1(p1),
-            op2(p2)
-        {
-        }
+        binary(plural_ptr p1,plural_ptr p2): op1(p1), op2(p2) {}
     protected:
         plural_ptr op1,op2;
     };
 
     struct number : public plural
     {
-        number(int v) :
-            val(v)
-        {
-        }
+        number(int v): val(v) {}
         int operator()(int /*n*/) const override
         {
             return val;
@@ -72,9 +62,7 @@ namespace { // anon
 
     #define UNOP(name,oper)                         \
     struct name: public unary {                     \
-        name(plural_ptr op) : unary(op)             \
-        {                                           \
-        };                                          \
+        name(plural_ptr op): unary(op) {}          \
         int operator()(int n) const override  \
         {                                           \
             return oper (*op1)(n);                  \
@@ -89,10 +77,9 @@ namespace { // anon
     #define BINOP(name,oper)                        \
     struct name : public binary                     \
     {                                               \
-        name(plural_ptr p1,plural_ptr p2) :         \
+        name(plural_ptr p1,plural_ptr p2):         \
             binary(p1,p2)                           \
-        {                                           \
-        }                                           \
+        {}                                          \
                                                     \
         int operator()(int n) const override \
         {                                           \
@@ -108,10 +95,9 @@ namespace { // anon
 
     #define BINOPD(name,oper)                       \
     struct name : public binary {                   \
-        name(plural_ptr p1,plural_ptr p2) :         \
+        name(plural_ptr p1,plural_ptr p2):         \
             binary(p1,p2)                           \
-        {                                           \
-        }                                           \
+        {}                                          \
         int operator()(int n) const override  \
         {                                           \
             int v1=(*op1)(n);                       \
@@ -171,12 +157,11 @@ namespace { // anon
     static int level1[]={1,OR};
 
     struct conditional : public plural {
-        conditional(plural_ptr p1,plural_ptr p2,plural_ptr p3) :
+        conditional(plural_ptr p1,plural_ptr p2,plural_ptr p3):
              op1(p1),
              op2(p2),
              op3(p3)
-        {
-        }
+        {}
         int operator()(int n) const override
         {
             return (*op1)(n) ? (*op2)(n) : (*op3)(n);
@@ -300,7 +285,7 @@ namespace { // anon
     class parser {
     public:
 
-        parser(tokenizer &tin) : t(tin) {};
+        parser(tokenizer &tin): t(tin) {};
 
         plural_ptr compile()
         {

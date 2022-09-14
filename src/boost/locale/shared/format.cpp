@@ -26,7 +26,7 @@ namespace boost {
                 void (*imbuer)(void *,std::locale const &);
             };
 
-            format_parser::format_parser(std::ios_base &ios,void *cookie,void (*imbuer)(void *,std::locale const &)) :
+            format_parser::format_parser(std::ios_base &ios,void *cookie,void (*imbuer)(void *,std::locale const &)):
                 ios_(ios),
                 d(new data)
             {
@@ -45,9 +45,7 @@ namespace boost {
                 d->imbuer(d->cookie,l);
             }
 
-            format_parser::~format_parser()
-            {
-            }
+            format_parser::~format_parser() {}
 
             void format_parser::restore()
             {

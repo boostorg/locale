@@ -22,7 +22,7 @@ namespace util {
 
     class simple_info : public info {
     public:
-        simple_info(std::string const &name,size_t refs = 0) :
+        simple_info(std::string const &name,size_t refs = 0):
             info(refs),
             name_(name)
         {

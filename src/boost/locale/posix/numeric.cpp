@@ -47,11 +47,10 @@ public:
     typedef std::basic_string<CharType> string_type;
     typedef CharType char_type;
 
-    num_format(std::shared_ptr<locale_t> lc,size_t refs = 0) :
+    num_format(std::shared_ptr<locale_t> lc,size_t refs = 0):
         util::base_num_format<CharType>(refs),
         lc_(std::move(lc))
-    {
-    }
+    {}
 protected:
 
     iter_type do_format_currency(bool intl,iter_type out,std::ios_base &/*ios*/,char_type /*fill*/,long double val) const override
@@ -151,11 +150,10 @@ struct ftime_traits<wchar_t> {
 template<typename CharType>
 class time_put_posix : public std::time_put<CharType> {
 public:
-    time_put_posix(std::shared_ptr<locale_t> lc, size_t refs = 0) :
+    time_put_posix(std::shared_ptr<locale_t> lc, size_t refs = 0):
         std::time_put<CharType>(refs),
         lc_(std::move(lc))
-    {
-    }
+    {}
     typedef typename std::time_put<CharType>::iter_type iter_type;
     typedef CharType char_type;
     typedef std::basic_string<char_type> string_type;
@@ -377,10 +375,7 @@ struct basic_numpunct {
     std::string grouping;
     std::string thousands_sep;
     std::string decimal_point;
-    basic_numpunct() :
-        decimal_point(".")
-    {
-    }
+    basic_numpunct(): decimal_point(".") {}
     basic_numpunct(locale_t lc)
     {
     #if defined(__APPLE__) || defined(__FreeBSD__)
@@ -402,7 +397,7 @@ template<typename CharType>
 class num_punct_posix : public std::numpunct<CharType> {
 public:
     typedef std::basic_string<CharType> string_type;
-    num_punct_posix(locale_t lc,size_t refs = 0) :
+    num_punct_posix(locale_t lc,size_t refs = 0):
         std::numpunct<CharType>(refs)
     {
         basic_numpunct np(lc);

@@ -148,9 +148,7 @@ namespace locale {
         ///
         /// constructor of the collator object
         ///
-        collator(size_t refs = 0) : std::collate<CharType>(refs)
-        {
-        }
+        collator(size_t refs = 0): std::collate<CharType>(refs) {}
 
         ///
         /// This function is used to override default collation function that does not take in account collation level.
@@ -217,11 +215,10 @@ namespace locale {
         ///
         /// \note throws std::bad_cast if l does not have \ref collator facet installed
         ///
-        comparator(std::locale const &l=std::locale(),collator_base::level_type level=default_level) :
+        comparator(std::locale const &l=std::locale(),collator_base::level_type level=default_level):
             locale_(l),
             level_(level)
-        {
-        }
+        {}
 
         ///
         /// Compare two strings -- equivalent to return left < right according to collation rules

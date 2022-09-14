@@ -32,11 +32,7 @@ namespace gnu_gettext {
     /// ignore gettext catalogs that use a charset different from \a encoding.
     ///
     struct messages_info {
-        messages_info() :
-            language("C"),
-            locale_category("LC_MESSAGES")
-        {
-        }
+        messages_info(): language("C"), locale_category("LC_MESSAGES") {}
 
         std::string language;   ///< The language we load the catalog for, like "ru", "en", "de"
         std::string country;    ///< The country we load the catalog for, like "US", "IL"

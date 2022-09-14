@@ -22,11 +22,7 @@ namespace impl_win {
 class utf16_converter : public converter<wchar_t>
 {
 public:
-    utf16_converter(winlocale const &lc,size_t refs = 0) :
-        converter<wchar_t>(refs),
-        lc_(lc)
-    {
-    }
+    utf16_converter(winlocale const &lc,size_t refs = 0): converter<wchar_t>(refs), lc_(lc) {}
     std::wstring convert(converter_base::conversion_type how,wchar_t const *begin,wchar_t const *end,int flags = 0) const override
     {
         switch(how) {
@@ -48,11 +44,7 @@ private:
 
 class utf8_converter : public converter<char> {
 public:
-    utf8_converter(winlocale const &lc,size_t refs = 0) :
-        converter<char>(refs),
-        lc_(lc)
-    {
-    }
+    utf8_converter(winlocale const &lc,size_t refs = 0): converter<char>(refs), lc_(lc) {}
     std::string convert(converter_base::conversion_type how,char const *begin,char const *end,int flags = 0) const override
     {
         std::wstring tmp = conv::to_utf<wchar_t>(begin,end,"UTF-8");

@@ -38,7 +38,7 @@ namespace boost {
             ///
             /// Constructor of date_time_error class
             ///
-            date_time_error(std::string const &e) : std::runtime_error(e) {}
+            date_time_error(std::string const &e): std::runtime_error(e) {}
         };
 
 
@@ -66,7 +66,7 @@ namespace boost {
             ///
             /// Constructor that creates date_time_period from period_type \a f and a value \a v -- default 1.
             ///
-            date_time_period(period::period_type f=period::period_type(),int v=1) : type(f), value(v) {}
+            date_time_period(period::period_type f=period::period_type(),int v=1): type(f), value(v) {}
         };
 
         namespace period {
@@ -376,9 +376,7 @@ namespace boost {
             ///
             /// Default constructor - empty set
             ///
-            date_time_period_set()
-            {
-            }
+            date_time_period_set(){}
             ///
             /// Create a set of single period with value 1
             ///
@@ -937,11 +935,10 @@ namespace boost {
             /// Create an object were \a first represents earlier point on time line and \a second is later
             /// point.
             ///
-            date_time_duration(date_time const &first,date_time const &second) :
+            date_time_duration(date_time const &first,date_time const &second):
                 s_(first),
                 e_(second)
-            {
-            }
+            {}
 
             ///
             /// find a difference in terms of period_type \a f

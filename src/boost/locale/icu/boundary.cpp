@@ -189,11 +189,7 @@ BOOST_LOCALE_END_CONST_CONDITION
 template<typename CharType>
 class boundary_indexing_impl : public boundary_indexing<CharType> {
 public:
-    boundary_indexing_impl(cdata const &data) :
-        locale_(data.locale),
-        encoding_(data.encoding)
-    {
-    }
+    boundary_indexing_impl(cdata const &data): locale_(data.locale), encoding_(data.encoding) {}
     index_type map(boundary_type t,CharType const *begin,CharType const *end) const
     {
         return do_map<CharType>(t,begin,end,locale_,encoding_);

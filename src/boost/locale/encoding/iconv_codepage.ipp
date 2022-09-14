@@ -21,9 +21,7 @@ class iconverter_base {
 public:
 
     iconverter_base() :
-    cvt_((iconv_t)(-1))
-    {
-    }
+    cvt_((iconv_t)(-1)) {}
 
     ~iconverter_base()
     {

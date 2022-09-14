@@ -257,12 +257,7 @@ namespace impl {
 
     class wconv_between : public converter_between {
     public:
-        wconv_between() :
-            how_(skip),
-            to_code_page_ (-1),
-            from_code_page_ ( -1)
-        {
-        }
+        wconv_between() : how_(skip), to_code_page_(-1), from_code_page_(-1) {}
         bool open(char const *to_charset,char const *from_charset,method_type how) override
         {
             how_ = how;
@@ -359,11 +354,7 @@ namespace impl {
 
         typedef std::basic_string<char_type> string_type;
 
-        wconv_to_utf() :
-            how_(skip),
-            code_page_(-1)
-        {
-        }
+        wconv_to_utf() : how_(skip), code_page_(-1) {}
 
         bool open(char const *charset,method_type how) override
         {
@@ -397,11 +388,7 @@ namespace impl {
 
         typedef std::basic_string<char_type> string_type;
 
-        wconv_from_utf() :
-            how_(skip),
-            code_page_(-1)
-        {
-        }
+        wconv_from_utf() : how_(skip), code_page_(-1) {}
 
         bool open(char const *charset,method_type how) override
         {
@@ -461,11 +448,7 @@ namespace impl {
 
         typedef std::basic_string<char_type> string_type;
 
-        wconv_to_utf() :
-            how_(skip),
-            code_page_(-1)
-        {
-        }
+        wconv_to_utf() : how_(skip), code_page_(-1) {}
 
         bool open(char const *charset,method_type how) override
         {
@@ -499,11 +482,7 @@ namespace impl {
 
         typedef std::basic_string<char_type> string_type;
 
-        wconv_from_utf() :
-            how_(skip),
-            code_page_(-1)
-        {
-        }
+        wconv_from_utf() : how_(skip), code_page_(-1) {}
 
         bool open(char const *charset,method_type how) override
         {

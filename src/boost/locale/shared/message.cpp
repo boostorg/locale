@@ -49,10 +49,7 @@ namespace boost {
 
                 FILE *file;
 
-                c_file() :
-                    file(0)
-                {
-                }
+                c_file(): file(0){}
                 ~c_file()
                 {
                     close();
@@ -107,7 +104,7 @@ namespace boost {
             public:
                 typedef std::pair<char const *,char const *> pair_type;
 
-                mo_file(std::vector<char> &file) :
+                mo_file(std::vector<char> &file):
                     native_byteorder_(true),
                     size_(0)
                 {
@@ -115,7 +112,7 @@ namespace boost {
                     init();
                 }
 
-                mo_file(FILE *file) :
+                mo_file(FILE *file):
                     native_byteorder_(true),
                     size_(0)
                 {
@@ -318,10 +315,7 @@ namespace boost {
             template<typename CharType>
             class converter {
             public:
-                converter(std::string /*out_enc*/,std::string in_enc) :
-                    in_(in_enc)
-                {
-                }
+                converter(std::string /*out_enc*/,std::string in_enc): in_(in_enc) {}
 
                 std::basic_string<CharType> operator()(char const *begin,char const *end)
                 {
@@ -335,11 +329,7 @@ namespace boost {
             template<>
             class converter<char> {
             public:
-                converter(std::string out_enc,std::string in_enc) :
-                    out_(out_enc),
-                    in_(in_enc)
-                {
-                }
+                converter(std::string out_enc,std::string in_enc): out_(out_enc), in_(in_enc) {}
 
                 std::string operator()(char const *begin,char const *end)
                 {
@@ -356,7 +346,7 @@ namespace boost {
                 typedef std::basic_string<char_type> string_type;
 
 
-                message_key(string_type const &c = string_type()) :
+                message_key(string_type const &c = string_type()):
                     c_context_(0),
                     c_key_(0)
                 {
@@ -369,7 +359,7 @@ namespace boost {
                         key_ = c.substr(pos+1);
                     }
                 }
-                message_key(char_type const *c,char_type const *k) :
+                message_key(char_type const *c,char_type const *k):
                     c_key_(k)
                 {
                     static const char_type empty = 0;

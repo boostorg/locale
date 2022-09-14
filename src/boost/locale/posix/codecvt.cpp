@@ -28,7 +28,7 @@ namespace impl_posix {
     class mb2_iconv_converter : public util::base_converter {
     public:
 
-        mb2_iconv_converter(std::string const &encoding) :
+        mb2_iconv_converter(std::string const &encoding):
             encoding_(encoding),
             to_utf_((iconv_t)(-1)),
             from_utf_((iconv_t)(-1))
@@ -85,13 +85,12 @@ namespace impl_posix {
             first_byte_table_->swap(first_byte_table);
         }
 
-        mb2_iconv_converter(mb2_iconv_converter const &other) :
+        mb2_iconv_converter(mb2_iconv_converter const &other):
             first_byte_table_(other.first_byte_table_),
             encoding_(other.encoding_),
             to_utf_((iconv_t)(-1)),
             from_utf_((iconv_t)(-1))
-        {
-        }
+        {}
 
         ~mb2_iconv_converter()
         {

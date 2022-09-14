@@ -820,11 +820,10 @@ BOOST_LOCALE_END_CONST_CONDITION
 
     class gregorian_facet : public calendar_facet {
     public:
-        gregorian_facet(std::string const &terr,size_t refs = 0) :
+        gregorian_facet(std::string const &terr,size_t refs = 0):
             calendar_facet(refs),
             terr_(terr)
-        {
-        }
+        {}
         abstract_calendar *create_calendar() const override
         {
             return create_gregorian_calendar(terr_);
