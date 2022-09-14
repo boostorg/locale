@@ -4,10 +4,15 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include <boost/locale/date_time.hpp>
 #include <boost/locale/generator.hpp>
 #include <boost/locale/formatting.hpp>
 #include <boost/locale/localization_backend.hpp>
+#include <ctime>
 #include <iomanip>
 #include "boostLocale/test/unit_test.hpp"
 
@@ -288,6 +293,40 @@ BOOST_LOCALE_END_CONST_CONDITION
             TEST_EQ(time_point.get(year()), 2011);
             TEST_EQ(time_point.get(month()), 1); // february
             TEST_EQ(time_point.get(day()), 5);
+
+            // Default constructed time_point
+            {
+                const time_t current_time = std::time(0);
+                const tm current_time_gmt = *std::gmtime(&current_time);
+                date_time time_point_default;
+                date_time time_point_1970 = year(1970) + february() + day(5);
+                // Defaults to current time, i.e. different than a date in 1970
+                TEST(time_point_default != time_point_1970);
+
+                TEST_EQ(time_point_default.get(year()), current_time_gmt.tm_year + 1900);
+                TEST_EQ(time_point_default.get(month()), current_time_gmt.tm_mon);
+                TEST_EQ(time_point_default.get(day()), current_time_gmt.tm_mday);
+                TEST_EQ(time_point_default.get(hour()), current_time_gmt.tm_hour);
+                TEST_EQ(time_point_default.get(minute()), current_time_gmt.tm_min);
+                TEST_EQ(time_point_default.get(second()), current_time_gmt.tm_sec);
+
+                // Uses the current global timezone
+                time_zone::global("GMT");
+                date_time tp_gmt;
+                time_zone::global("GMT+01:00");
+                date_time tp_gmt1;
+                // Both refer to the same point in time (i.e. comparison ignores timezones)
+                TEST(tp_gmt == tp_gmt1);
+
+                // But getting the hour shows the difference of 1 hour
+                const int gmt_h = tp_gmt.get(hour());
+                // Handle overflow to next day
+                const int expected_gmt1_h = (gmt_h == tp_gmt.maximum(hour())) ? tp_gmt.minimum(hour()) : gmt_h + 1;
+                TEST_EQ(expected_gmt1_h, tp_gmt1.get(hour()));
+                // Adding the hour automatically handles the overflow, so this works too
+                tp_gmt += hour();
+                TEST_EQ(tp_gmt.get(hour()), tp_gmt1.get(hour()));
+            }
 
         } // test
     }   // for loop
