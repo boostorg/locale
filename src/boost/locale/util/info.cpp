@@ -28,7 +28,7 @@ namespace util {
         {
             d.parse(name);
         }
-        std::string get_string_property(string_propery v) const BOOST_OVERRIDE
+        std::string get_string_property(string_propery v) const override
         {
             switch(v) {
             case language_property:
@@ -46,7 +46,7 @@ namespace util {
             };
         }
 
-        int get_integer_property(integer_property v) const BOOST_OVERRIDE
+        int get_integer_property(integer_property v) const override
         {
             switch(v) {
             case utf8_property:

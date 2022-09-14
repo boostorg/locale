@@ -40,12 +40,12 @@ namespace impl_posix {
             invalid_(true)
         {
         }
-        posix_localization_backend *clone() const BOOST_OVERRIDE
+        posix_localization_backend *clone() const override
         {
             return new posix_localization_backend(*this);
         }
 
-        void set_option(std::string const &name,std::string const &value) BOOST_OVERRIDE
+        void set_option(std::string const &name,std::string const &value) override
         {
             invalid_ = true;
             if(name=="locale")
@@ -56,7 +56,7 @@ namespace impl_posix {
                 domains_.push_back(value);
 
         }
-        void clear_options() BOOST_OVERRIDE
+        void clear_options() override
         {
             invalid_ = true;
             locale_id_.clear();
@@ -105,7 +105,7 @@ namespace impl_posix {
 
         std::locale install(std::locale const &base,
                             locale_category_type category,
-                            character_facet_type type = nochar_facet) BOOST_OVERRIDE
+                            character_facet_type type = nochar_facet) override
         {
             prepare_data();
 

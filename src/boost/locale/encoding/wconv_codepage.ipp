@@ -263,7 +263,7 @@ namespace impl {
             from_code_page_ ( -1)
         {
         }
-        bool open(char const *to_charset,char const *from_charset,method_type how) BOOST_OVERRIDE
+        bool open(char const *to_charset,char const *from_charset,method_type how) override
         {
             how_ = how;
             to_code_page_ = encoding_to_windows_codepage(to_charset);
@@ -272,7 +272,7 @@ namespace impl {
                 return false;
             return true;
         }
-        std::string convert(char const *begin,char const *end) BOOST_OVERRIDE
+        std::string convert(char const *begin,char const *end) override
         {
             if(to_code_page_ == 65001 && from_code_page_ == 65001)
                 return utf_to_utf<char>(begin,end,how_);
@@ -325,11 +325,11 @@ namespace impl {
     template<>
     class wconv_to_utf<char, 1> : public converter_to_utf<char> {
     public:
-        bool open(char const *cs,method_type how) BOOST_OVERRIDE
+        bool open(char const *cs,method_type how) override
         {
             return cvt.open("UTF-8",cs,how);
         }
-        std::string convert(char const *begin,char const *end) BOOST_OVERRIDE
+        std::string convert(char const *begin,char const *end) override
         {
             return cvt.convert(begin,end);
         }
@@ -340,11 +340,11 @@ namespace impl {
     template<>
     class wconv_from_utf<char, 1> : public converter_from_utf<char> {
     public:
-        bool open(char const *cs,method_type how) BOOST_OVERRIDE
+        bool open(char const *cs,method_type how) override
         {
             return cvt.open(cs,"UTF-8",how);
         }
-        std::string convert(char const *begin,char const *end) BOOST_OVERRIDE
+        std::string convert(char const *begin,char const *end) override
         {
             return cvt.convert(begin,end);
         }
@@ -365,14 +365,14 @@ namespace impl {
         {
         }
 
-        bool open(char const *charset,method_type how) BOOST_OVERRIDE
+        bool open(char const *charset,method_type how) override
         {
             how_ = how;
             code_page_ = encoding_to_windows_codepage(charset);
             return code_page_ != -1;
         }
 
-        string_type convert(char const *begin,char const *end) BOOST_OVERRIDE
+        string_type convert(char const *begin,char const *end) override
         {
             if(code_page_ == 65001) {
                 return utf_to_utf<char_type>(begin,end,how_);
@@ -403,14 +403,14 @@ namespace impl {
         {
         }
 
-        bool open(char const *charset,method_type how) BOOST_OVERRIDE
+        bool open(char const *charset,method_type how) override
         {
             how_ = how;
             code_page_ = encoding_to_windows_codepage(charset);
             return code_page_ != -1;
         }
 
-        std::string convert(CharType const *begin,CharType const *end) BOOST_OVERRIDE
+        std::string convert(CharType const *begin,CharType const *end) override
         {
             if(code_page_ == 65001) {
                 return utf_to_utf<char>(begin,end,how_);
@@ -467,14 +467,14 @@ namespace impl {
         {
         }
 
-        bool open(char const *charset,method_type how) BOOST_OVERRIDE
+        bool open(char const *charset,method_type how) override
         {
             how_ = how;
             code_page_ = encoding_to_windows_codepage(charset);
             return code_page_ != -1;
         }
 
-        string_type convert(char const *begin,char const *end) BOOST_OVERRIDE
+        string_type convert(char const *begin,char const *end) override
         {
             if(code_page_ == 65001) {
                 return utf_to_utf<char_type>(begin,end,how_);
@@ -505,14 +505,14 @@ namespace impl {
         {
         }
 
-        bool open(char const *charset,method_type how) BOOST_OVERRIDE
+        bool open(char const *charset,method_type how) override
         {
             how_ = how;
             code_page_ = encoding_to_windows_codepage(charset);
             return code_page_ != -1;
         }
 
-        std::string convert(CharType const *begin,CharType const *end) BOOST_OVERRIDE
+        std::string convert(CharType const *begin,CharType const *end) override
         {
             if(code_page_ == 65001) {
                 return utf_to_utf<char>(begin,end,how_);

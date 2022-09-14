@@ -157,7 +157,7 @@ namespace locale {
         /// Uses primary level
         ///
         int do_compare( char_type const *b1,char_type const *e1,
-                        char_type const *b2,char_type const *e2) const BOOST_OVERRIDE
+                        char_type const *b2,char_type const *e2) const override
         {
             return do_compare(identical,b1,e1,b2,e2);
         }
@@ -165,7 +165,7 @@ namespace locale {
         /// This function is used to override default collation function that does not take in account collation level.
         /// Uses primary level
         ///
-        string_type do_transform(char_type const *b,char_type const *e) const BOOST_OVERRIDE
+        string_type do_transform(char_type const *b,char_type const *e) const override
         {
             return do_transform(identical,b,e);
         }
@@ -173,7 +173,7 @@ namespace locale {
         /// This function is used to override default collation function that does not take in account collation level.
         /// Uses primary level
         ///
-        long do_hash(char_type const *b,char_type const *e) const BOOST_OVERRIDE
+        long do_hash(char_type const *b,char_type const *e) const override
         {
             return do_hash(identical,b,e);
         }

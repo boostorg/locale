@@ -495,12 +495,12 @@ namespace boost {
 
                 typedef std::pair<CharType const *,CharType const *> pair_type;
 
-                char_type const *get(int domain_id,char_type const *context,char_type const *in_id) const BOOST_OVERRIDE
+                char_type const *get(int domain_id,char_type const *context,char_type const *in_id) const override
                 {
                     return get_string(domain_id,context,in_id).first;
                 }
 
-                char_type const *get(int domain_id,char_type const *context,char_type const *single_id,int n) const BOOST_OVERRIDE
+                char_type const *get(int domain_id,char_type const *context,char_type const *single_id,int n) const override
                 {
                     pair_type ptr = get_string(domain_id,context,single_id);
                     if(!ptr.first)
@@ -523,7 +523,7 @@ namespace boost {
                     return p;
                 }
 
-                int domain(std::string const &domain) const BOOST_OVERRIDE
+                int domain(std::string const &domain) const override
                 {
                     domains_map_type::const_iterator p=domains_.find(domain);
                     if(p==domains_.end())
@@ -579,7 +579,7 @@ namespace boost {
                     }
                 }
 
-                char_type const *convert(char_type const *msg,string_type &buffer) const BOOST_OVERRIDE
+                char_type const *convert(char_type const *msg,string_type &buffer) const override
                 {
                     return runtime_conversion<char_type>(msg,buffer,key_conversion_required_,locale_encoding_,key_encoding_);
                 }

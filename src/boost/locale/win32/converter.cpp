@@ -27,7 +27,7 @@ public:
         lc_(lc)
     {
     }
-    std::wstring convert(converter_base::conversion_type how,wchar_t const *begin,wchar_t const *end,int flags = 0) const BOOST_OVERRIDE
+    std::wstring convert(converter_base::conversion_type how,wchar_t const *begin,wchar_t const *end,int flags = 0) const override
     {
         switch(how) {
         case converter_base::upper_case:
@@ -53,7 +53,7 @@ public:
         lc_(lc)
     {
     }
-    std::string convert(converter_base::conversion_type how,char const *begin,char const *end,int flags = 0) const BOOST_OVERRIDE
+    std::string convert(converter_base::conversion_type how,char const *begin,char const *end,int flags = 0) const override
     {
         std::wstring tmp = conv::to_utf<wchar_t>(begin,end,"UTF-8");
         wchar_t const *wb=tmp.c_str();

@@ -36,7 +36,7 @@ namespace impl_win {
             invalid_(true)
         {
         }
-        winapi_localization_backend *clone() const BOOST_OVERRIDE
+        winapi_localization_backend *clone() const override
         {
             return new winapi_localization_backend(*this);
         }
@@ -83,7 +83,7 @@ namespace impl_win {
 
         std::locale install(std::locale const &base,
                                     locale_category_type category,
-                                    character_facet_type type = nochar_facet) BOOST_OVERRIDE
+                                    character_facet_type type = nochar_facet) override
         {
             prepare_data();
 

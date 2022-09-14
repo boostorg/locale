@@ -54,7 +54,7 @@ public:
     }
 protected:
 
-    iter_type do_format_currency(bool intl,iter_type out,std::ios_base &/*ios*/,char_type /*fill*/,long double val) const BOOST_OVERRIDE
+    iter_type do_format_currency(bool intl,iter_type out,std::ios_base &/*ios*/,char_type /*fill*/,long double val) const override
     {
         char buf[4]={};
         char const *format = intl ? "%i" : "%n";
@@ -160,7 +160,7 @@ public:
     typedef CharType char_type;
     typedef std::basic_string<char_type> string_type;
 
-    iter_type do_put(iter_type out,std::ios_base &/*ios*/,CharType /*fill*/,std::tm const *tm,char format,char modifier) const BOOST_OVERRIDE
+    iter_type do_put(iter_type out,std::ios_base &/*ios*/,CharType /*fill*/,std::tm const *tm,char format,char modifier) const override
     {
         char_type fmt[4] = { '%' , modifier != 0 ? modifier : format , modifier == 0 ? '\0' : format };
         string_type res = ftime_traits<char_type>::ftime(fmt,tm,*lc_);
@@ -422,24 +422,24 @@ public:
     {
         s2=conv::to_utf<wchar_t>(s1,nl_langinfo_l(CODESET,lc));
     }
-    CharType do_decimal_point() const BOOST_OVERRIDE
+    CharType do_decimal_point() const override
     {
         return *decimal_point_.c_str();
     }
-    CharType do_thousands_sep() const BOOST_OVERRIDE
+    CharType do_thousands_sep() const override
     {
         return *thousands_sep_.c_str();
     }
-    std::string do_grouping() const BOOST_OVERRIDE
+    std::string do_grouping() const override
     {
         return grouping_;
     }
-    string_type do_truename() const BOOST_OVERRIDE
+    string_type do_truename() const override
     {
         static const char t[]="true";
         return string_type(t,t+sizeof(t)-1);
     }
-    string_type do_falsename() const BOOST_OVERRIDE
+    string_type do_falsename() const override
     {
         static const char t[]="false";
         return string_type(t,t+sizeof(t)-1);

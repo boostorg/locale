@@ -32,22 +32,22 @@ namespace util {
 
     class utf8_converter  : public base_converter {
     public:
-        int max_len() const BOOST_OVERRIDE
+        int max_len() const override
         {
             return 4;
         }
 
-        utf8_converter *clone() const BOOST_OVERRIDE
+        utf8_converter *clone() const override
         {
             return new utf8_converter();
         }
 
-        bool is_thread_safe() const BOOST_OVERRIDE
+        bool is_thread_safe() const override
         {
             return true;
         }
 
-        uint32_t to_unicode(char const *&begin,char const *end) BOOST_OVERRIDE
+        uint32_t to_unicode(char const *&begin,char const *end) override
         {
             char const *p=begin;
 
@@ -63,7 +63,7 @@ namespace util {
             return c;
         }
 
-        uint32_t from_unicode(uint32_t u,char *begin,char const *end) BOOST_OVERRIDE
+        uint32_t from_unicode(uint32_t u,char *begin,char const *end) override
         {
             if(!utf::is_valid_codepoint(u))
                 return illegal;
@@ -151,25 +151,25 @@ namespace util {
         {
         }
 
-        int max_len() const BOOST_OVERRIDE
+        int max_len() const override
         {
             return 1;
         }
 
-        bool is_thread_safe() const BOOST_OVERRIDE
+        bool is_thread_safe() const override
         {
             return true;
         }
-        base_converter *clone() const BOOST_OVERRIDE
+        base_converter *clone() const override
         {
            return new simple_converter(*this);
         }
 
-        uint32_t to_unicode(char const *&begin,char const *end) BOOST_OVERRIDE
+        uint32_t to_unicode(char const *&begin,char const *end) override
         {
             return cvt_.to_unicode(begin,end);
         }
-        uint32_t from_unicode(uint32_t u,char *begin,char const *end) BOOST_OVERRIDE
+        uint32_t from_unicode(uint32_t u,char *begin,char const *end) override
         {
             return cvt_.from_unicode(u,begin,end);
         }

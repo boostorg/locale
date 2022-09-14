@@ -115,21 +115,21 @@ namespace boost {
                         backends_[i].reset(backends[i]->clone());
                     }
                 }
-                actual_backend *clone() const BOOST_OVERRIDE
+                actual_backend *clone() const override
                 {
                     return new actual_backend(backends_,index_);
                 }
-                void set_option(std::string const &name,std::string const &value) BOOST_OVERRIDE
+                void set_option(std::string const &name,std::string const &value) override
                 {
                     for(unsigned i=0;i<backends_.size();i++)
                         backends_[i]->set_option(name,value);
                 }
-                void clear_options() BOOST_OVERRIDE
+                void clear_options() override
                 {
                     for(unsigned i=0;i<backends_.size();i++)
                         backends_[i]->clear_options();
                 }
-                std::locale install(std::locale const &l,locale_category_type category,character_facet_type type = nochar_facet) BOOST_OVERRIDE
+                std::locale install(std::locale const &l,locale_category_type category,character_facet_type type = nochar_facet) override
                 {
                     int id;
                     unsigned v;

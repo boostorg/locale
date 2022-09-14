@@ -65,7 +65,7 @@ public:
         lc_(std::move(lc))
     {
     }
-    string_type convert(converter_base::conversion_type how,char_type const *begin,char_type const *end,int /*flags*/ = 0) const BOOST_OVERRIDE
+    string_type convert(converter_base::conversion_type how,char_type const *begin,char_type const *end,int /*flags*/ = 0) const override
     {
         switch(how) {
         case converter_base::upper_case:
@@ -102,7 +102,7 @@ public:
         lc_(std::move(lc))
     {
     }
-    std::string convert(converter_base::conversion_type how,char const *begin,char const *end,int /*flags*/ = 0) const BOOST_OVERRIDE
+    std::string convert(converter_base::conversion_type how,char const *begin,char const *end,int /*flags*/ = 0) const override
     {
         switch(how) {
         case upper_case:
