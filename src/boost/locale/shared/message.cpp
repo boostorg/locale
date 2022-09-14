@@ -368,7 +368,7 @@ namespace boost {
                     else
                         c_context_ = &empty;
                 }
-                bool operator < (message_key const &other) const
+                bool operator<(message_key const &other) const
                 {
                     int cc = compare(context(),other.context());
                     if(cc != 0)

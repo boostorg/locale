@@ -643,7 +643,7 @@ namespace boost {
                 ///
                 /// \note \ref rule() flags are not copied
                 ///
-                segment_index const &operator = (boundary_point_index<base_iterator> const &);
+                segment_index& operator=(boundary_point_index<base_iterator> const &);
 
 
                 ///
@@ -908,7 +908,7 @@ namespace boost {
                 ///
                 /// \note \ref rule() flags are not copied
                 ///
-                boundary_point_index const &operator=(segment_index<base_iterator> const &other);
+                boundary_point_index& operator=(segment_index<base_iterator> const &other);
 
                 ///
                 /// Create a new index for %boundary analysis \ref boundary_type "type" of the text
@@ -1005,14 +1005,14 @@ namespace boost {
             {}
 
             template<typename BaseIterator>
-            segment_index<BaseIterator> const &segment_index<BaseIterator>::operator=(boundary_point_index<BaseIterator> const &other)
+            segment_index<BaseIterator>& segment_index<BaseIterator>::operator=(boundary_point_index<BaseIterator> const &other)
             {
                 map_ = other.map_;
                 return *this;
             }
 
             template<typename BaseIterator>
-            boundary_point_index<BaseIterator> const &boundary_point_index<BaseIterator>::operator=(segment_index<BaseIterator> const &other)
+            boundary_point_index<BaseIterator>& boundary_point_index<BaseIterator>::operator=(segment_index<BaseIterator> const &other)
             {
                 map_ = other.map_;
                 return *this;

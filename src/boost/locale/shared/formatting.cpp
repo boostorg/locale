@@ -41,12 +41,9 @@ namespace boost {
             std::swap(ptr,other.ptr);
         }
 
-        ios_info::string_set const &ios_info::string_set::operator=(string_set const &other)
+        ios_info::string_set& ios_info::string_set::operator=(string_set other)
         {
-            if(this!=&other) {
-                string_set tmp(other);
-                swap(tmp);
-            }
+            swap(other);
             return *this;
         }
 
@@ -70,7 +67,7 @@ namespace boost {
         }
 
 
-        ios_info const &ios_info::operator=(ios_info const &other)
+        ios_info& ios_info::operator=(ios_info const &other)
         {
             if(this!=&other) {
                 flags_ = other.flags_;

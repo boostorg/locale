@@ -290,13 +290,9 @@ namespace boost {
             ///
             /// Assign other message object to this one
             ///
-            basic_message const &operator=(basic_message const &other)
+            basic_message& operator=(basic_message other)
             {
-                if(this==&other) {
-                    return *this;
-                }
-                basic_message tmp(other);
-                swap(tmp);
+                swap(other);
                 return *this;
             }
 
@@ -490,7 +486,7 @@ namespace boost {
         /// Translate message \a msg and write it to stream
         ///
         template<typename CharType>
-        std::basic_ostream<CharType> &operator<<(std::basic_ostream<CharType> &out,basic_message<CharType> const &msg)
+        std::basic_ostream<CharType>& operator<<(std::basic_ostream<CharType> &out,basic_message<CharType> const &msg)
         {
             msg.write(out);
             return out;
@@ -730,7 +726,7 @@ namespace boost {
                     std::string domain_id;
                 };
                 template<typename CharType>
-                std::basic_ostream<CharType> &operator<<(std::basic_ostream<CharType> &out, set_domain const &dom)
+                std::basic_ostream<CharType>& operator<<(std::basic_ostream<CharType> &out, set_domain const &dom)
                 {
                     int id = std::use_facet<message_format<CharType> >(out.getloc()).domain(dom.domain_id);
                     ios_info::get(out).domain_id(id);

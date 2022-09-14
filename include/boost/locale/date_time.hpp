@@ -420,7 +420,7 @@ namespace boost {
             ///
             /// Get item at position \a n the set, n should be in range [0,size)
             ///
-            date_time_period const &operator[](size_t n) const
+            date_time_period const & operator[](size_t n) const
             {
                 if(n >= size())
                     throw std::out_of_range("Invalid index to date_time_period");
@@ -508,7 +508,7 @@ namespace boost {
             ///
             /// assign calendar
             ///
-            calendar const &operator=(calendar const &other);
+            calendar& operator=(calendar const &other);
 
             ///
             /// Get minimum value for period f, For example for period::day it is 1.
@@ -602,7 +602,7 @@ namespace boost {
             ///
             /// assign the date_time
             ///
-            date_time const &operator=(date_time const &other);
+            date_time& operator=(date_time const &other);
             ~date_time();
 
             ///
@@ -635,7 +635,7 @@ namespace boost {
             ///
             /// assign values to various periods in set \a f
             ///
-            date_time const &operator=(date_time_period_set const &f);
+            date_time& operator=(date_time_period_set const &f);
 
             ///
             /// set specific period \a f value to \a v
@@ -673,14 +673,14 @@ namespace boost {
             ///
             /// add single period f to the current date_time
             ///
-            date_time const &operator+=(period::period_type f)
+            date_time& operator+=(period::period_type f)
             {
                 return *this+=date_time_period(f);
             }
             ///
             /// subtract single period f from the current date_time
             ///
-            date_time const &operator-=(period::period_type f)
+            date_time& operator-=(period::period_type f)
             {
                 return *this-=date_time_period(f);
             }
@@ -704,14 +704,14 @@ namespace boost {
             ///
             /// roll forward a date by single period f.
             ///
-            date_time const &operator<<=(period::period_type f)
+            date_time& operator<<=(period::period_type f)
             {
                 return *this <<= date_time_period(f);
             }
             ///
             /// roll backward a date by single period f.
             ///
-            date_time const &operator>>=(period::period_type f)
+            date_time& operator>>=(period::period_type f)
             {
                 return *this >>= date_time_period(f);
             }
@@ -727,11 +727,11 @@ namespace boost {
             ///
             /// add date_time_period to the current date_time
             ///
-            date_time const &operator+=(date_time_period const &v);
+            date_time& operator+=(date_time_period const &v);
             ///
             /// subtract date_time_period from the current date_time
             ///
-            date_time const &operator-=(date_time_period const &v);
+            date_time& operator-=(date_time_period const &v);
 
             ///
             /// roll current date_time forward by date_time_period v
@@ -744,11 +744,11 @@ namespace boost {
             ///
             /// roll current date_time forward by date_time_period v
             ///
-            date_time const &operator<<=(date_time_period const &v);
+            date_time& operator<<=(date_time_period const &v);
             ///
             /// roll current date_time backward by date_time_period v
             ///
-            date_time const &operator>>=(date_time_period const &v);
+            date_time& operator>>=(date_time_period const &v);
 
             ///
             /// add date_time_period_set v to the current date_time
@@ -761,11 +761,11 @@ namespace boost {
             ///
             /// add date_time_period_set v to the current date_time
             ///
-            date_time const &operator+=(date_time_period_set const &v);
+            date_time& operator+=(date_time_period_set const &v);
             ///
             /// subtract date_time_period_set v from the current date_time
             ///
-            date_time const &operator-=(date_time_period_set const &v);
+            date_time& operator-=(date_time_period_set const &v);
 
             ///
             /// roll current date_time forward by date_time_period_set v
@@ -778,11 +778,11 @@ namespace boost {
             ///
             /// roll current date_time forward by date_time_period_set v
             ///
-            date_time const &operator<<=(date_time_period_set const &v);
+            date_time& operator<<=(date_time_period_set const &v);
             ///
             /// roll current date_time backward by date_time_period_set v
             ///
-            date_time const &operator>>=(date_time_period_set const &v);
+            date_time& operator>>=(date_time_period_set const &v);
 
             ///
             /// Get POSIX time
@@ -866,7 +866,7 @@ namespace boost {
         /// The output may be Year:5770 Full Date:Jan 1, 2010
         ///
         template<typename CharType>
-        std::basic_ostream<CharType> &operator<<(std::basic_ostream<CharType> &out,date_time const &t)
+        std::basic_ostream<CharType>& operator<<(std::basic_ostream<CharType> &out,date_time const &t)
         {
             double time_point = t.time();
             uint64_t display_flags = ios_info::get(out).display_flags();
@@ -893,7 +893,7 @@ namespace boost {
         /// This function uses locale, calendar and time zone of the source stream \a in.
         ///
         template<typename CharType>
-        std::basic_istream<CharType> &operator>>(std::basic_istream<CharType> &in,date_time &t)
+        std::basic_istream<CharType>& operator>>(std::basic_istream<CharType> &in,date_time &t)
         {
             double v;
             uint64_t display_flags = ios_info::get(in).display_flags();
@@ -951,7 +951,7 @@ namespace boost {
             ///
             /// Syntactic sugar for get(f)
             ///
-            int operator / (period::period_type f) const
+            int operator/ (period::period_type f) const
             {
                 return start().difference(end(),f);
             }

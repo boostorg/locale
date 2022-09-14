@@ -48,7 +48,7 @@ namespace boost {
                     writer_(other.writer_)
                 {}
 
-                formattible const &operator=(formattible const &other)
+                formattible& operator=(formattible const &other)
                 {
                     if(this != &other) {
                         pointer_=other.pointer_;
@@ -65,13 +65,13 @@ namespace boost {
                 }
 
                 template<typename Type>
-                formattible const &operator=(Type const &other)
+                formattible& operator=(Type const &other)
                 {
                     *this = formattible(other);
                     return *this;
                 }
 
-                friend stream_type &operator<<(stream_type &out,formattible const &fmt)
+                friend stream_type& operator<<(stream_type &out,formattible const &fmt)
                 {
                     fmt.writer_(out,fmt.pointer_);
                     return out;
@@ -234,7 +234,7 @@ namespace boost {
             /// with defined expression out << object where \c out is \c std::basic_ostream.
             ///
             template<typename Formattible>
-            basic_format &operator % (Formattible const &object)
+            basic_format& operator%(Formattible const &object)
             {
                 add(formattible_type(object));
                 return *this;
@@ -447,7 +447,7 @@ namespace boost {
         /// This operator actually causes actual text formatting. It uses the locale of \a out stream
         ///
         template<typename CharType>
-        std::basic_ostream<CharType> &operator<<(std::basic_ostream<CharType> &out,basic_format<CharType> const &fmt)
+        std::basic_ostream<CharType>& operator<<(std::basic_ostream<CharType> &out,basic_format<CharType> const &fmt)
         {
             fmt.write(out);
             return out;

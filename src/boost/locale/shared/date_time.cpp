@@ -67,13 +67,11 @@ calendar::calendar(calendar const &other):
     impl_(other.impl_->clone())
 {}
 
-calendar const &calendar::operator = (calendar const &other)
+calendar& calendar::operator=(calendar const &other)
 {
-    if(this !=&other) {
-        impl_.reset(other.impl_->clone());
-        locale_ = other.locale_;
-        tz_ = other.tz_;
-    }
+    impl_.reset(other.impl_->clone());
+    locale_ = other.locale_;
+    tz_ = other.tz_;
     return *this;
 }
 
@@ -150,12 +148,9 @@ date_time::date_time(date_time const &other,date_time_period_set const &s)
     impl_->normalize();
 }
 
-date_time const &date_time::operator = (date_time const &other)
+date_time& date_time::operator=(date_time const &other)
 {
-    if(this != &other) {
-        date_time tmp(other);
-        swap(tmp);
-    }
+    impl_.reset(other.impl_->clone());
     return *this;
 }
 
@@ -199,7 +194,7 @@ date_time::date_time(date_time_period_set const &s,calendar const &cal):
     impl_->normalize();
 }
 
-date_time const &date_time::operator=(date_time_period_set const &s)
+date_time& date_time::operator=(date_time_period_set const &s)
 {
     for(unsigned i=0;i<s.size();i++)
         impl_->set_value(s[i].type.mark(),s[i].value);
@@ -246,25 +241,25 @@ date_time date_time::operator>>(date_time_period const &v) const
     return tmp;
 }
 
-date_time const &date_time::operator+=(date_time_period const &v)
+date_time& date_time::operator+=(date_time_period const &v)
 {
     impl_->adjust_value(v.type.mark(),abstract_calendar::move,v.value);
     return *this;
 }
 
-date_time const &date_time::operator-=(date_time_period const &v)
+date_time& date_time::operator-=(date_time_period const &v)
 {
     impl_->adjust_value(v.type.mark(),abstract_calendar::move,-v.value);
     return *this;
 }
 
-date_time const &date_time::operator<<=(date_time_period const &v)
+date_time& date_time::operator<<=(date_time_period const &v)
 {
     impl_->adjust_value(v.type.mark(),abstract_calendar::roll,v.value);
     return *this;
 }
 
-date_time const &date_time::operator>>=(date_time_period const &v)
+date_time& date_time::operator>>=(date_time_period const &v)
 {
     impl_->adjust_value(v.type.mark(),abstract_calendar::roll,-v.value);
     return *this;
@@ -299,7 +294,7 @@ date_time date_time::operator>>(date_time_period_set const &v) const
     return tmp;
 }
 
-date_time const &date_time::operator+=(date_time_period_set const &v)
+date_time& date_time::operator+=(date_time_period_set const &v)
 {
     for(unsigned i=0;i<v.size();i++) {
         *this+=v[i];
@@ -307,7 +302,7 @@ date_time const &date_time::operator+=(date_time_period_set const &v)
     return *this;
 }
 
-date_time const &date_time::operator-=(date_time_period_set const &v)
+date_time& date_time::operator-=(date_time_period_set const &v)
 {
     for(unsigned i=0;i<v.size();i++) {
         *this-=v[i];
@@ -315,7 +310,7 @@ date_time const &date_time::operator-=(date_time_period_set const &v)
     return *this;
 }
 
-date_time const &date_time::operator<<=(date_time_period_set const &v)
+date_time& date_time::operator<<=(date_time_period_set const &v)
 {
     for(unsigned i=0;i<v.size();i++) {
         *this <<= v[i];
@@ -323,7 +318,7 @@ date_time const &date_time::operator<<=(date_time_period_set const &v)
     return *this;
 }
 
-date_time const &date_time::operator>>=(date_time_period_set const &v)
+date_time& date_time::operator>>=(date_time_period_set const &v)
 {
     for(unsigned i=0;i<v.size();i++) {
         *this >>= v[i];
