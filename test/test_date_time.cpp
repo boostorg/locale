@@ -192,14 +192,73 @@ void test_main(int /*argc*/, char** /*argv*/)
             TEST_EQ( (time_point + 2* month()- (time_point+month())) / day(), 31);
             TEST_EQ( day(time_point + 2* month()- (time_point+month())), 31);
 
-            time_point = tp_5_feb_1970_153313;
-            TEST_EQ_FMT( time_point + hour(), "1970-02-05 16:33:13");
-            TEST_EQ_FMT( time_point - hour(2), "1970-02-05 13:33:13");
-            TEST_EQ_FMT( time_point >> minute(), "1970-02-05 15:32:13");
-            TEST_EQ_FMT( time_point << second(), "1970-02-05 15:33:14");
+            // To subtract from the year, don't use 1970 which may be the lowest possible year
+            const date_time tp_5_april_1990_153313 = (date_time(tp_5_feb_1970_153313) = (year(1990) + april()));
+            TEST_EQ_FMT(tp_5_april_1990_153313, "1990-04-05 15:33:13");
+            // Test each period
+            TEST_EQ_FMT(tp_5_april_1990_153313 + year(2), "1992-04-05 15:33:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 << year(2), "1992-04-05 15:33:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 - year(10), "1980-04-05 15:33:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 >> year(10), "1980-04-05 15:33:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 + month(2), "1990-06-05 15:33:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 << month(2), "1990-06-05 15:33:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 - month(1), "1990-03-05 15:33:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 >> month(1), "1990-03-05 15:33:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 + day(2), "1990-04-07 15:33:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 << day(2), "1990-04-07 15:33:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 - day(3), "1990-04-02 15:33:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 >> day(3), "1990-04-02 15:33:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 + hour(2), "1990-04-05 17:33:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 << hour(2), "1990-04-05 17:33:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 - hour(3), "1990-04-05 12:33:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 >> hour(3), "1990-04-05 12:33:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 + minute(2), "1990-04-05 15:35:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 << minute(2), "1990-04-05 15:35:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 - minute(3), "1990-04-05 15:30:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 >> minute(3), "1990-04-05 15:30:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 + second(2), "1990-04-05 15:33:15");
+            TEST_EQ_FMT(tp_5_april_1990_153313 << second(2), "1990-04-05 15:33:15");
+            TEST_EQ_FMT(tp_5_april_1990_153313 - second(2), "1990-04-05 15:33:11");
+            TEST_EQ_FMT(tp_5_april_1990_153313 >> second(2), "1990-04-05 15:33:11");
+            // Difference between add and roll: The latter only changes the given field
+            // So this tests what happens when going over/under the bound for each field
+            TEST_EQ_FMT(tp_5_april_1990_153313 + month(12 + 2), "1991-06-05 15:33:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 << month(12 + 2), "1990-06-05 15:33:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 - month(12 * 3 + 1), "1987-03-05 15:33:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 >> month(12 * 3 + 1), "1990-03-05 15:33:13");
+            // Check that possible int overflows get handled
+            TEST_EQ_FMT(tp_5_april_1990_153313 >> month((std::numeric_limits<int>::max() / 12) * 12), "1990-04-05 15:33:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 << month((std::numeric_limits<int>::max() / 12) * 12), "1990-04-05 15:33:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 + day(30 + 2), "1990-05-07 15:33:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 << day(30 + 2), "1990-04-07 15:33:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 - day(10), "1990-03-26 15:33:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 >> day(10), "1990-04-25 15:33:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 + hour(24 * 3 + 2), "1990-04-08 17:33:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 << hour(24 * 3 + 2), "1990-04-05 17:33:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 - hour(24 * 5 + 3), "1990-03-31 12:33:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 >> hour(24 * 5 + 3), "1990-04-05 12:33:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 + minute(60 * 5 + 3), "1990-04-05 20:36:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 << minute(60 * 5 + 3), "1990-04-05 15:36:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 - minute(60 * 5 + 3), "1990-04-05 10:30:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 >> minute(60 * 5 + 3), "1990-04-05 15:30:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 + second(60 * 3 + 2), "1990-04-05 15:36:15");
+            TEST_EQ_FMT(tp_5_april_1990_153313 << second(60 * 3 + 2), "1990-04-05 15:33:15");
+            TEST_EQ_FMT(tp_5_april_1990_153313 - second(60 * 5 + 2), "1990-04-05 15:28:11");
+            TEST_EQ_FMT(tp_5_april_1990_153313 >> second(60 * 5 + 2), "1990-04-05 15:33:11");
 
-            TEST(time_point == time_point);
-            TEST(!(time_point != time_point));
+            // Add a set of periods
+            TEST_EQ_FMT(tp_5_feb_1970_153313 << (year(2) + month(3) - day(1) + hour(5) + minute(7) + second(9)), "1972-05-04 20:40:22");
+            TEST_EQ_FMT(tp_5_feb_1970_153313 + (year(2) + month(3) - day(1) + hour(5) + minute(7) + second(9)), "1972-05-04 20:40:22");
+            // std calendar can't go below 1970
+            time_point = tp_5_feb_1970_153313;
+            time_point = year(1972) + july();
+            TEST_EQ_FMT(time_point, "1972-07-05 15:33:13");
+            TEST_EQ_FMT(time_point >> (year(2) + month(3) - day(11) + hour(5) + minute(7) + second(9)), "1970-04-16 10:26:04");
+            TEST_EQ_FMT(time_point - (year(2) + month(3) - day(11) + hour(5) + minute(7) + second(9)), "1970-04-16 10:26:04");
+
+            time_point = tp_5_feb_1970_153313;
+            TEST(time_point == tp_5_feb_1970_153313);
+            TEST(!(time_point != tp_5_feb_1970_153313));
             TEST_EQ(time_point.get(hour()), 15);
             TEST_EQ(time_point/hour(), 15);
             TEST(time_point+year() != time_point);
