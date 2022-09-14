@@ -17,10 +17,8 @@ else()
       # Primary dependencies
       assert
       config
-      function
       iterator
       thread
-      unordered
       predef
 
       # Secondary dependencies

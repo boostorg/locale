@@ -21,7 +21,6 @@
 #include <boost/locale/encoding.hpp>
 #include <boost/locale/gnu_gettext.hpp>
 #include <boost/locale/hold_ptr.hpp>
-#include <boost/unordered_map.hpp>
 #include <boost/version.hpp>
 #include <algorithm>
 #include <cstdio>
@@ -29,6 +28,7 @@
 #include <iostream>
 #include <map>
 #include <memory>
+#include <unordered_map>
 #include <vector>
 
 #include "boost/locale/shared/mo_hash.hpp"
@@ -488,7 +488,7 @@ namespace boost {
                 typedef CharType char_type;
                 typedef std::basic_string<CharType> string_type;
                 typedef message_key<CharType> key_type;
-                typedef boost::unordered_map<key_type,string_type,hash_function<CharType> > catalog_type;
+                typedef std::unordered_map<key_type,string_type,hash_function<CharType> > catalog_type;
                 typedef std::vector<catalog_type> catalogs_set_type;
                 typedef std::map<std::string,int> domains_map_type;
             public:

@@ -42,11 +42,9 @@ target_link_libraries(boost_locale
   PUBLIC
     Boost::assert
     Boost::config
-    Boost::function
     Boost::iterator
   PRIVATE
     Boost::thread
-    Boost::unordered
     Boost::predef
 )
 
