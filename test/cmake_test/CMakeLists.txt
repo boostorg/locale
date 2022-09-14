@@ -17,9 +17,10 @@ else()
       # Primary dependencies
       assert
       config
+      core
       iterator
-      thread
       predef
+      thread
 
       # Secondary dependencies
       algorithm
@@ -32,12 +33,12 @@ else()
       container
       container_hash
       conversion
-      core
       date_time
       detail
       exception
-      function_types
       functional
+      function
+      function_types
       fusion
       integer
       intrusive
@@ -53,12 +54,16 @@ else()
       ratio
       rational
       regex
+      smart_ptr
+      static_assert
       system
       throw_exception
       tokenizer
       tuple
       type_index
       typeof
+      type_traits
+      unordered
       utility
       variant2
       winapi

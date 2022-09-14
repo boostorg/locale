@@ -44,8 +44,9 @@ target_link_libraries(boost_locale
     Boost::config
     Boost::iterator
   PRIVATE
-    Boost::thread
+    Boost::core
     Boost::predef
+    Boost::thread
 )
 
 target_compile_definitions(boost_locale
