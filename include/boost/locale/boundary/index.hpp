@@ -11,7 +11,6 @@
 #include <boost/locale/boundary/facets.hpp>
 #include <boost/locale/boundary/segment.hpp>
 #include <boost/locale/boundary/boundary_point.hpp>
-#include <boost/assert.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 #include <algorithm>
