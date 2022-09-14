@@ -58,7 +58,7 @@ public:
     }
 private:
 
-    iter_type do_format_currency(bool /*intl*/,iter_type out,std::ios_base &ios,char_type fill,long double val) const BOOST_OVERRIDE
+    iter_type do_format_currency(bool /*intl*/,iter_type out,std::ios_base &ios,char_type fill,long double val) const override
     {
         if(lc_.is_c()) {
             std::locale loc = ios.getloc();
@@ -102,7 +102,7 @@ public:
                       CharType /*fill*/,
                       std::tm const *tm,
                       char format,
-                      char /*modifier*/) const BOOST_OVERRIDE
+                      char /*modifier*/) const override
     {
         return write_it(out,wcsftime_l(format,tm,lc_));
     }
@@ -144,24 +144,24 @@ BOOST_LOCALE_END_CONST_CONDITION
     {
         s2=conv::from_utf(s1,"UTF-8");
     }
-    CharType do_decimal_point() const BOOST_OVERRIDE
+    CharType do_decimal_point() const override
     {
         return *decimal_point_.c_str();
     }
-    CharType do_thousands_sep() const BOOST_OVERRIDE
+    CharType do_thousands_sep() const override
     {
         return *thousands_sep_.c_str();
     }
-    std::string do_grouping() const BOOST_OVERRIDE
+    std::string do_grouping() const override
     {
         return grouping_;
     }
-    string_type do_truename() const BOOST_OVERRIDE
+    string_type do_truename() const override
     {
         static const char t[]="true";
         return string_type(t,t+sizeof(t)-1);
     }
-    string_type do_falsename() const BOOST_OVERRIDE
+    string_type do_falsename() const override
     {
         static const char t[]="false";
         return string_type(t,t+sizeof(t)-1);

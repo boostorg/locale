@@ -32,22 +32,22 @@ namespace util {
 
     class utf8_converter  : public base_converter {
     public:
-        int max_len() const BOOST_OVERRIDE
+        int max_len() const override
         {
             return 4;
         }
 
-        utf8_converter *clone() const BOOST_OVERRIDE
+        utf8_converter *clone() const override
         {
             return new utf8_converter();
         }
 
-        bool is_thread_safe() const BOOST_OVERRIDE
+        bool is_thread_safe() const override
         {
             return true;
         }
 
-        uint32_t to_unicode(char const *&begin,char const *end) BOOST_OVERRIDE
+        uint32_t to_unicode(char const *&begin,char const *end) override
         {
             char const *p=begin;
 
@@ -63,7 +63,7 @@ namespace util {
             return c;
         }
 
-        uint32_t from_unicode(uint32_t u,char *begin,char const *end) BOOST_OVERRIDE
+        uint32_t from_unicode(uint32_t u,char *begin,char const *end) override
         {
             if(!utf::is_valid_codepoint(u))
                 return illegal;
@@ -151,25 +151,25 @@ namespace util {
         {
         }
 
-        int max_len() const BOOST_OVERRIDE
+        int max_len() const override
         {
             return 1;
         }
 
-        bool is_thread_safe() const BOOST_OVERRIDE
+        bool is_thread_safe() const override
         {
             return true;
         }
-        base_converter *clone() const BOOST_OVERRIDE
+        base_converter *clone() const override
         {
            return new simple_converter(*this);
         }
 
-        uint32_t to_unicode(char const *&begin,char const *end) BOOST_OVERRIDE
+        uint32_t to_unicode(char const *&begin,char const *end) override
         {
             return cvt_.to_unicode(begin,end);
         }
-        uint32_t from_unicode(uint32_t u,char *begin,char const *end) BOOST_OVERRIDE
+        uint32_t from_unicode(uint32_t u,char *begin,char const *end) override
         {
             return cvt_.from_unicode(u,begin,end);
         }
@@ -261,38 +261,18 @@ namespace util {
                         compare_strings);
     }
 
-    #if BOOST_LOCALE_USE_AUTO_PTR
-    std::auto_ptr<base_converter> create_utf8_converter()
+    std::unique_ptr<base_converter> create_utf8_converter()
     {
-        std::auto_ptr<base_converter> res(create_utf8_converter_new_ptr());
-        return res;
+        return std::unique_ptr<base_converter>(create_utf8_converter_new_ptr());
     }
-    std::auto_ptr<base_converter> create_simple_converter(std::string const &encoding)
+    std::unique_ptr<base_converter> create_simple_converter(std::string const &encoding)
     {
-        std::auto_ptr<base_converter> res(create_simple_converter_new_ptr(encoding));
-        return res;
-    }
-    std::locale create_codecvt(std::locale const &in,std::auto_ptr<base_converter> cvt,character_facet_type type)
-    {
-        return create_codecvt_from_pointer(in,cvt.release(),type);
-    }
-    #endif
-    #ifndef BOOST_NO_CXX11_SMART_PTR
-    std::unique_ptr<base_converter> create_utf8_converter_unique_ptr()
-    {
-        std::unique_ptr<base_converter> res(create_utf8_converter_new_ptr());
-        return res;
-    }
-    std::unique_ptr<base_converter> create_simple_converter_unique_ptr(std::string const &encoding)
-    {
-        std::unique_ptr<base_converter> res(create_simple_converter_new_ptr(encoding));
-        return res;
+        return std::unique_ptr<base_converter>(create_simple_converter_new_ptr(encoding));
     }
     std::locale create_codecvt(std::locale const &in,std::unique_ptr<base_converter> cvt,character_facet_type type)
     {
         return create_codecvt_from_pointer(in,cvt.release(),type);
     }
-    #endif
 
     base_converter *create_simple_converter_new_ptr(std::string const &encoding)
     {
@@ -310,18 +290,12 @@ namespace util {
     class code_converter : public generic_codecvt<CharType,code_converter<CharType> >
     {
     public:
-        #ifndef BOOST_NO_CXX11_SMART_PTR
         typedef std::unique_ptr<base_converter> base_converter_ptr;
-        #define PTR_TRANS(x) std::move((x))
-        #else
-        typedef std::auto_ptr<base_converter> base_converter_ptr;
-        #define PTR_TRANS(x) (x)
-        #endif
         typedef base_converter_ptr state_type;
 
         code_converter(base_converter_ptr cvt,size_t refs = 0) :
             generic_codecvt<CharType,code_converter<CharType> >(refs),
-            cvt_(PTR_TRANS(cvt))
+            cvt_(std::move(cvt))
         {
             max_len_ = cvt_->max_len();
             thread_safe_ = cvt_->is_thread_safe();
@@ -371,16 +345,16 @@ namespace util {
             cvt.reset(new base_converter());
         switch(type) {
         case char_facet:
-            return std::locale(in,new code_converter<char>(PTR_TRANS(cvt)));
+            return std::locale(in,new code_converter<char>(std::move(cvt)));
         case wchar_t_facet:
-            return std::locale(in,new code_converter<wchar_t>(PTR_TRANS(cvt)));
+            return std::locale(in,new code_converter<wchar_t>(std::move(cvt)));
         #if defined(BOOST_LOCALE_ENABLE_CHAR16_T)
         case char16_t_facet:
-            return std::locale(in,new code_converter<char16_t>(PTR_TRANS(cvt)));
+            return std::locale(in,new code_converter<char16_t>(std::move(cvt)));
         #endif
         #if defined(BOOST_LOCALE_ENABLE_CHAR32_T)
         case char32_t_facet:
-            return std::locale(in,new code_converter<char32_t>(PTR_TRANS(cvt)));
+            return std::locale(in,new code_converter<char32_t>(std::move(cvt)));
         #endif
         default:
             return in;

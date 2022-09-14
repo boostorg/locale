@@ -5,6 +5,7 @@
 # Distributed under the Boost Software License, Version 1.0.
 # https://www.boost.org/LICENSE_1_0.txt.
 
+import config : requires ;
 import configure ;
 import feature ;
 import os ;
@@ -411,6 +412,19 @@ rule configure-flags ( properties * )
 
 alias build_flags : : : : <conditional>@configure-flags ;
 
+local cxx_requirements = [ requires
+      cxx11_auto_declarations
+      cxx11_defaulted_functions
+      cxx11_defaulted_moves
+      cxx11_hdr_functional
+      cxx11_hdr_type_traits
+      cxx11_noexcept
+      cxx11_override
+      cxx11_rvalue_references
+      cxx11_smart_ptr
+      cxx11_static_assert
+    ] ;
+
 boost-lib locale
     :
       encoding/codepage.cpp
@@ -427,13 +441,13 @@ boost-lib locale
       util/info.cpp
       util/locale_data.cpp
     :
+      $(cxx_requirements)
       # Don't link explicitly, not required
       <define>BOOST_THREAD_NO_LIB=1
       <include>$(TOP)/src
       <threading>multi
       <target-os>windows:<define>_CRT_SECURE_NO_WARNINGS
-      <toolset>gcc:<cxxflags>"-Wno-long-long -Wno-deprecated-declarations"
-      <toolset>clang:<cxxflags>"-Wno-long-long -Wno-deprecated-declarations"
       # Meanwhile remove this
       <conditional>@configure
+    : : $(cxx_requirements)
     ;

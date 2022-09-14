@@ -9,7 +9,6 @@
 #include <boost/locale/generator.hpp>
 #include <boost/locale/conversion.hpp>
 #include <boost/locale/encoding.hpp>
-#include <boost/shared_ptr.hpp>
 #include <cctype>
 #include <cstring>
 #include <langinfo.h>
@@ -61,12 +60,12 @@ public:
     typedef CharType char_type;
     typedef std::basic_string<char_type> string_type;
     typedef std::ctype<char_type> ctype_type;
-    std_converter(boost::shared_ptr<locale_t> lc,size_t refs = 0) :
+    std_converter(std::shared_ptr<locale_t> lc,size_t refs = 0) :
         converter<CharType>(refs),
-        lc_(lc)
+        lc_(std::move(lc))
     {
     }
-    string_type convert(converter_base::conversion_type how,char_type const *begin,char_type const *end,int /*flags*/ = 0) const BOOST_OVERRIDE
+    string_type convert(converter_base::conversion_type how,char_type const *begin,char_type const *end,int /*flags*/ = 0) const override
     {
         switch(how) {
         case converter_base::upper_case:
@@ -93,17 +92,17 @@ public:
         }
     }
 private:
-    boost::shared_ptr<locale_t> lc_;
+    std::shared_ptr<locale_t> lc_;
 };
 
 class utf8_converter : public converter<char> {
 public:
-    utf8_converter(boost::shared_ptr<locale_t> lc,size_t refs = 0) :
+    utf8_converter(std::shared_ptr<locale_t> lc,size_t refs = 0) :
         converter<char>(refs),
-        lc_(lc)
+        lc_(std::move(lc))
     {
     }
-    std::string convert(converter_base::conversion_type how,char const *begin,char const *end,int /*flags*/ = 0) const BOOST_OVERRIDE
+    std::string convert(converter_base::conversion_type how,char const *begin,char const *end,int /*flags*/ = 0) const override
     {
         switch(how) {
         case upper_case:
@@ -131,11 +130,11 @@ public:
         }
     }
 private:
-    boost::shared_ptr<locale_t> lc_;
+    std::shared_ptr<locale_t> lc_;
 };
 
 std::locale create_convert( std::locale const &in,
-                            boost::shared_ptr<locale_t> lc,
+                            std::shared_ptr<locale_t> lc,
                             character_facet_type type)
 {
         switch(type) {
@@ -146,12 +145,12 @@ std::locale create_convert( std::locale const &in,
                     if('A'<=encoding[i] && encoding[i]<='Z')
                         encoding[i]=encoding[i]-'A'+'a';
                 if(encoding=="utf-8" || encoding=="utf8" || encoding=="utf_8") {
-                    return std::locale(in,new utf8_converter(lc));
+                    return std::locale(in,new utf8_converter(std::move(lc)));
                 }
-                return std::locale(in,new std_converter<char>(lc));
+                return std::locale(in,new std_converter<char>(std::move(lc)));
             }
         case wchar_t_facet:
-            return std::locale(in,new std_converter<wchar_t>(lc));
+            return std::locale(in,new std_converter<wchar_t>(std::move(lc)));
         default:
             return in;
         }

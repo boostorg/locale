@@ -8,7 +8,6 @@
 #include <boost/locale/generator.hpp>
 #include <boost/locale/encoding.hpp>
 #include <boost/locale/localization_backend.hpp>
-#include <boost/shared_ptr.hpp>
 #include <boost/thread/locks.hpp>
 #include <boost/thread/mutex.hpp>
 #include <algorithm>

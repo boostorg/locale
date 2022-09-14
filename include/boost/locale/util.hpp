@@ -12,9 +12,7 @@
 #include <boost/assert.hpp>
 #include <boost/cstdint.hpp>
 #include <locale>
-#ifndef BOOST_NO_CXX11_SMART_PTR
 #include <memory>
-#endif
 #include <typeinfo>
 
 namespace boost {
@@ -172,51 +170,23 @@ namespace util {
         }
     };
 
-    #if BOOST_LOCALE_USE_AUTO_PTR
     ///
     /// This function creates a \a base_converter that can be used for conversion between UTF-8 and
     /// unicode code points
     ///
-    BOOST_LOCALE_DECL std::auto_ptr<base_converter> create_utf8_converter();
+    BOOST_LOCALE_DECL std::unique_ptr<base_converter> create_utf8_converter();
+    BOOST_LOCALE_DEPRECATED("This function is deprecated, use 'create_utf8_converter()'")
+        inline std::unique_ptr<base_converter> create_utf8_converter_unique_ptr() { return create_utf8_converter(); }
     ///
     /// This function creates a \a base_converter that can be used for conversion between single byte
     /// character encodings like ISO-8859-1, koi8-r, windows-1255 and Unicode code points,
     ///
-    /// If \a encoding is not supported, empty pointer is returned. You should check if
-    /// std::auto_ptr<base_converter>::get() != 0
+    /// If \a encoding is not supported, empty pointer is returned.
+    /// So you should check whether the returned pointer is valid/non-NULL
     ///
-    BOOST_LOCALE_DECL std::auto_ptr<base_converter> create_simple_converter(std::string const &encoding);
-
-
-    ///
-    /// Install codecvt facet into locale \a in and return new locale that is based on \a in and uses new
-    /// facet.
-    ///
-    /// codecvt facet would convert between narrow and wide/char16_t/char32_t encodings using \a cvt converter.
-    /// If \a cvt is null pointer, always failure conversion would be used that fails on every first input or output.
-    ///
-    /// Note: the codecvt facet handles both UTF-16 and UTF-32 wide encodings, it knows to break and join
-    /// Unicode code-points above 0xFFFF to and from surrogate pairs correctly. \a cvt should be unaware
-    /// of wide encoding type
-    ///
-    BOOST_LOCALE_DECL
-    std::locale create_codecvt(std::locale const &in,std::auto_ptr<base_converter> cvt,character_facet_type type);
-    #endif
-
-    #ifndef BOOST_NO_CXX11_SMART_PTR
-    ///
-    /// This function creates a \a base_converter that can be used for conversion between UTF-8 and
-    /// unicode code points
-    ///
-    BOOST_LOCALE_DECL std::unique_ptr<base_converter> create_utf8_converter_unique_ptr();
-    ///
-    /// This function creates a \a base_converter that can be used for conversion between single byte
-    /// character encodings like ISO-8859-1, koi8-r, windows-1255 and Unicode code points,
-    ///
-    /// If \a encoding is not supported, empty pointer is returned. You should check if
-    /// std::unique_ptr<base_converter>::get() != 0
-    ///
-    BOOST_LOCALE_DECL std::unique_ptr<base_converter> create_simple_converter_unique_ptr(std::string const &encoding);
+    BOOST_LOCALE_DECL std::unique_ptr<base_converter> create_simple_converter(std::string const &encoding);
+    BOOST_LOCALE_DEPRECATED("This function is deprecated, use 'create_simple_converter()'")
+        inline std::unique_ptr<base_converter> create_simple_converter_unique_ptr(std::string const& encoding) { return create_simple_converter(encoding); }
 
     ///
     /// Install codecvt facet into locale \a in and return new locale that is based on \a in and uses new
@@ -231,7 +201,6 @@ namespace util {
     ///
     BOOST_LOCALE_DECL
     std::locale create_codecvt(std::locale const &in,std::unique_ptr<base_converter> cvt,character_facet_type type);
-    #endif
 
     ///
     /// This function creates a \a base_converter that can be used for conversion between UTF-8 and
@@ -243,7 +212,7 @@ namespace util {
     /// character encodings like ISO-8859-1, koi8-r, windows-1255 and Unicode code points,
     ///
     /// If \a encoding is not supported, empty pointer is returned. You should check if
-    /// std::unique_ptr<base_converter>::get() != 0
+    /// the returned pointer is NULL.
     ///
     BOOST_LOCALE_DECL base_converter *create_simple_converter_new_ptr(std::string const &encoding);
 

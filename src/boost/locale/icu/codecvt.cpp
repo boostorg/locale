@@ -52,17 +52,17 @@ namespace impl_icu {
             ucnv_close(cvt_);
         }
 
-        bool is_thread_safe() const BOOST_OVERRIDE
+        bool is_thread_safe() const override
         {
             return false;
         }
 
-        uconv_converter *clone() const BOOST_OVERRIDE
+        uconv_converter *clone() const override
         {
             return new uconv_converter(encoding_);
         }
 
-        uint32_t to_unicode(char const *&begin,char const *end) BOOST_OVERRIDE
+        uint32_t to_unicode(char const *&begin,char const *end) override
         {
             UErrorCode err=U_ZERO_ERROR;
             char const *tmp = begin;
@@ -79,7 +79,7 @@ namespace impl_icu {
             return c;
         }
 
-        uint32_t from_unicode(uint32_t u,char *begin,char const *end) BOOST_OVERRIDE
+        uint32_t from_unicode(uint32_t u,char *begin,char const *end) override
         {
             UChar code_point[2]={0};
             int len;
@@ -105,7 +105,7 @@ namespace impl_icu {
             return olen;
         }
 
-        int max_len() const BOOST_OVERRIDE
+        int max_len() const override
         {
             return max_len_;
         }

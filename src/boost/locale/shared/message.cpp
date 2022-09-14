@@ -21,14 +21,14 @@
 #include <boost/locale/encoding.hpp>
 #include <boost/locale/gnu_gettext.hpp>
 #include <boost/locale/hold_ptr.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/unordered_map.hpp>
 #include <boost/version.hpp>
 #include <algorithm>
 #include <cstdio>
 #include <cstring>
 #include <iostream>
 #include <map>
+#include <memory>
+#include <unordered_map>
 #include <vector>
 
 #include "boost/locale/shared/mo_hash.hpp"
@@ -488,19 +488,19 @@ namespace boost {
                 typedef CharType char_type;
                 typedef std::basic_string<CharType> string_type;
                 typedef message_key<CharType> key_type;
-                typedef boost::unordered_map<key_type,string_type,hash_function<CharType> > catalog_type;
+                typedef std::unordered_map<key_type,string_type,hash_function<CharType> > catalog_type;
                 typedef std::vector<catalog_type> catalogs_set_type;
                 typedef std::map<std::string,int> domains_map_type;
             public:
 
                 typedef std::pair<CharType const *,CharType const *> pair_type;
 
-                char_type const *get(int domain_id,char_type const *context,char_type const *in_id) const BOOST_OVERRIDE
+                char_type const *get(int domain_id,char_type const *context,char_type const *in_id) const override
                 {
                     return get_string(domain_id,context,in_id).first;
                 }
 
-                char_type const *get(int domain_id,char_type const *context,char_type const *single_id,int n) const BOOST_OVERRIDE
+                char_type const *get(int domain_id,char_type const *context,char_type const *single_id,int n) const override
                 {
                     pair_type ptr = get_string(domain_id,context,single_id);
                     if(!ptr.first)
@@ -523,7 +523,7 @@ namespace boost {
                     return p;
                 }
 
-                int domain(std::string const &domain) const BOOST_OVERRIDE
+                int domain(std::string const &domain) const override
                 {
                     domains_map_type::const_iterator p=domains_.find(domain);
                     if(p==domains_.end())
@@ -531,7 +531,7 @@ namespace boost {
                     return p->second;
                 }
 
-                mo_message(messages_info const &inf)
+                mo_message(messages_info const &inf): key_conversion_required_(false)
                 {
                     std::string language = inf.language;
                     std::string variant = inf.variant;
@@ -579,7 +579,7 @@ namespace boost {
                     }
                 }
 
-                char_type const *convert(char_type const *msg,string_type &buffer) const BOOST_OVERRIDE
+                char_type const *convert(char_type const *msg,string_type &buffer) const override
                 {
                     return runtime_conversion<char_type>(msg,buffer,key_conversion_required_,locale_encoding_,key_encoding_);
                 }
@@ -619,7 +619,7 @@ namespace boost {
                     key_conversion_required_ =  sizeof(CharType) == 1
                                                 && compare_encodings(locale_encoding,key_encoding)!=0;
 
-                    boost::shared_ptr<mo_file> mo;
+                    std::shared_ptr<mo_file> mo;
 
                     if(callback) {
                         std::vector<char> vfile = callback(file_name,locale_encoding);
@@ -731,8 +731,8 @@ BOOST_LOCALE_END_CONST_CONDITION
                 }
 
                 catalogs_set_type catalogs_;
-                std::vector<boost::shared_ptr<mo_file> > mo_catalogs_;
-                std::vector<boost::shared_ptr<lambda::plural> > plural_forms_;
+                std::vector<std::shared_ptr<mo_file> > mo_catalogs_;
+                std::vector<std::shared_ptr<lambda::plural> > plural_forms_;
                 domains_map_type domains_;
 
                 std::string locale_encoding_;

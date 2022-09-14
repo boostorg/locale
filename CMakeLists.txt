@@ -36,20 +36,17 @@ add_library(boost_locale
 add_library(Boost::locale ALIAS boost_locale)
 
 target_include_directories(boost_locale PUBLIC include PRIVATE src)
+target_compile_features(boost_locale PUBLIC cxx_std_11)
 
 target_link_libraries(boost_locale
   PUBLIC
     Boost::assert
     Boost::config
-    Boost::function
     Boost::iterator
-    Boost::smart_ptr
-    Boost::static_assert
-    Boost::type_traits
   PRIVATE
-    Boost::thread
-    Boost::unordered
+    Boost::core
     Boost::predef
+    Boost::thread
 )
 
 target_compile_definitions(boost_locale

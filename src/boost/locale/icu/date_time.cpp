@@ -81,17 +81,17 @@ namespace impl_icu {
             encoding_ = other.encoding_;
         }
 
-        calendar_impl *clone() const BOOST_OVERRIDE
+        calendar_impl *clone() const override
         {
             return new calendar_impl(*this);
         }
 
-        void set_value(period::marks::period_mark p,int value) BOOST_OVERRIDE
+        void set_value(period::marks::period_mark p,int value) override
         {
             calendar_->set(to_icu(p),int32_t(value));
         }
 
-        int get_value(period::marks::period_mark p,value_type type) const BOOST_OVERRIDE
+        int get_value(period::marks::period_mark p,value_type type) const override
         {
             UErrorCode err=U_ZERO_ERROR;
             int v=0;
@@ -130,14 +130,14 @@ namespace impl_icu {
             return v;
         }
 
-        void set_time(posix_time const &p) BOOST_OVERRIDE
+        void set_time(posix_time const &p) override
         {
             double utime = p.seconds * 1000.0 + p.nanoseconds / 1000000.0;
             UErrorCode code=U_ZERO_ERROR;
             calendar_->setTime(utime,code);
             check_and_throw_dt(code);
         }
-        void normalize() BOOST_OVERRIDE
+        void normalize() override
         {
             // Can't call complete() explicitly (protected)
             // calling get which calls complete
@@ -145,7 +145,7 @@ namespace impl_icu {
             calendar_->get(UCAL_YEAR,code);
             check_and_throw_dt(code);
         }
-        posix_time get_time() const BOOST_OVERRIDE
+        posix_time get_time() const override
         {
 
             UErrorCode code=U_ZERO_ERROR;
@@ -164,7 +164,7 @@ namespace impl_icu {
                 res.nanoseconds = 999999999;
             return res;
         }
-        void set_option(calendar_option_type opt,int /*v*/) BOOST_OVERRIDE
+        void set_option(calendar_option_type opt,int /*v*/) override
         {
             switch(opt) {
             case is_gregorian:
@@ -175,7 +175,7 @@ namespace impl_icu {
                 ;
             }
         }
-        int get_option(calendar_option_type opt) const BOOST_OVERRIDE
+        int get_option(calendar_option_type opt) const override
         {
             switch(opt) {
             case is_gregorian:
@@ -192,7 +192,7 @@ namespace impl_icu {
                 return 0;
             }
         }
-        void adjust_value(period::marks::period_mark p,update_type u,int difference) BOOST_OVERRIDE
+        void adjust_value(period::marks::period_mark p,update_type u,int difference) override
         {
             UErrorCode err=U_ZERO_ERROR;
             switch(u) {
@@ -205,7 +205,7 @@ namespace impl_icu {
             }
             check_and_throw_dt(err);
         }
-        int difference(abstract_calendar const *other_ptr, period::marks::period_mark m) const BOOST_OVERRIDE
+        int difference(abstract_calendar const *other_ptr, period::marks::period_mark m) const override
         {
             UErrorCode err=U_ZERO_ERROR;
             double other_time = 0;
@@ -231,18 +231,18 @@ namespace impl_icu {
             check_and_throw_dt(err);
             return diff;
         }
-        void set_timezone(std::string const &tz) BOOST_OVERRIDE
+        void set_timezone(std::string const &tz) override
         {
             calendar_->adoptTimeZone(get_time_zone(tz));
         }
-        std::string get_timezone() const BOOST_OVERRIDE
+        std::string get_timezone() const override
         {
             icu::UnicodeString tz;
             calendar_->getTimeZone().getID(tz);
             icu_std_converter<char> cvt(encoding_);
             return cvt.std(tz);
         }
-        bool same(abstract_calendar const *other) const BOOST_OVERRIDE
+        bool same(abstract_calendar const *other) const override
         {
             calendar_impl const *oc=dynamic_cast<calendar_impl const *>(other);
             if(!oc)
@@ -264,7 +264,7 @@ namespace impl_icu {
             data_(d)
         {
         }
-        abstract_calendar *create_calendar() const BOOST_OVERRIDE
+        abstract_calendar *create_calendar() const override
         {
             return new calendar_impl(data_);
         }

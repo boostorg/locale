@@ -11,11 +11,10 @@
 #if defined(BOOST_LOCALE_WITH_ICONV) && !defined(BOOST_LOCALE_NO_POSIX_BACKEND)
 #include "../src/boost/locale/posix/codecvt.hpp"
 #endif
-#if defined(BOOST_NO_CXX11_SMART_PTR) && !BOOST_LOCALE_USE_AUTO_PTR
-#include <boost/locale/hold_ptr.hpp>
-#endif
 
 #include <cstring>
+#include <iostream>
+
 #include "boostLocale/test/unit_test.hpp"
 #include "boostLocale/test/tools.hpp"
 
@@ -92,14 +91,7 @@ void test_main(int /*argc*/, char** /*argv*/)
     std::cout << "Test UTF-8\n";
     std::cout << "- From UTF-8" << std::endl;
 
-
-    #ifndef BOOST_NO_CXX11_SMART_PTR
-    std::unique_ptr<base_converter> cvt = create_utf8_converter_unique_ptr();
-    #elif BOOST_LOCALE_USE_AUTO_PTR
-    std::auto_ptr<base_converter> cvt = create_utf8_converter();
-    #else
-    boost::locale::hold_ptr<base_converter> cvt(create_utf8_converter_new_ptr());
-    #endif
+    std::unique_ptr<base_converter> cvt = create_utf8_converter();
 
     TEST(cvt.get());
     TEST(cvt->is_thread_safe());
@@ -231,13 +223,7 @@ void test_main(int /*argc*/, char** /*argv*/)
 
     std::cout << "Test windows-1255" << std::endl;
 
-    #ifndef BOOST_NO_CXX11_SMART_PTR
-    cvt = create_simple_converter_unique_ptr("windows-1255");
-    #elif BOOST_LOCALE_USE_AUTO_PTR
     cvt = create_simple_converter("windows-1255");
-    #else
-    cvt.reset(create_simple_converter_new_ptr("windows-1255"));
-    #endif
 
     TEST(cvt.get());
     TEST(cvt->is_thread_safe());

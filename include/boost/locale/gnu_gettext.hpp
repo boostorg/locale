@@ -8,8 +8,8 @@
 #define BOOST_LOCLAE_GNU_GETTEXT_HPP
 
 #include <boost/locale/message.hpp>
-#include <boost/function.hpp>
 #include <stdexcept>
+#include <functional>
 #include <vector>
 
 namespace boost {
@@ -111,7 +111,7 @@ namespace gnu_gettext {
         /// \note The user should support only the encodings the locales are created for. So if the user
         /// uses only one encoding or the file system is encoding agnostic, he may ignore the \a encoding parameter.
         ///
-        typedef function<
+        typedef std::function<
                     std::vector<char>(
                         std::string const &file_name,
                         std::string const &encoding

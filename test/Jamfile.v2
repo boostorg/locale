@@ -5,19 +5,23 @@
 # Distributed under the Boost Software License, Version 1.0.
 # https://www.boost.org/LICENSE_1_0.txt
 
+import config : requires ;
+
 project : requirements
     <library>/boost/locale//boost_locale
     <warnings>extra
     <toolset>msvc:<warnings-as-errors>on
-    <toolset>gcc:<cxxflags>"-Wno-long-long -Wno-error=deprecated-declarations"
     <toolset>gcc-11:<warnings-as-errors>on
-    <toolset>clang:<cxxflags>"-Wno-long-long -Wno-error=deprecated-declarations"
     <toolset>clang-5:<warnings-as-errors>on
     <include>.
     # Make sure we get all defines we need
     # Otherwise we would have problem knowing
     # what backends are actually in use
     <use>../build//build_flags
+    [ requires
+      cxx11_char16_t
+      cxx11_char32_t
+    ]
   ;
 
 # Configuration Information

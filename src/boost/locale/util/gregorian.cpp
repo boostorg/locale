@@ -154,7 +154,7 @@ namespace util {
             ///
             /// Make a polymorphic copy of the calendar
             ///
-            gregorian_calendar *clone() const BOOST_OVERRIDE
+            gregorian_calendar *clone() const override
             {
                 return new gregorian_calendar(*this);
             }
@@ -162,7 +162,7 @@ namespace util {
             ///
             /// Set specific \a value for period \a p, note not all values are settable.
             ///
-            void set_value(period::marks::period_mark m,int value) BOOST_OVERRIDE
+            void set_value(period::marks::period_mark m,int value) override
             {
                 using namespace period::marks;
                 switch(m) {
@@ -224,7 +224,7 @@ namespace util {
                 normalized_ = false;
             }
 
-            void normalize() BOOST_OVERRIDE
+            void normalize() override
             {
                 if(!normalized_) {
                     std::tm val = tm_updated_;
@@ -296,7 +296,7 @@ namespace util {
             ///
             /// Get specific value for period \a p according to a value_type \a v
             ///
-            int get_value(period::marks::period_mark m,value_type v) const BOOST_OVERRIDE
+            int get_value(period::marks::period_mark m,value_type v) const override
             {
                 using namespace period::marks;
                 switch(m) {
@@ -559,11 +559,11 @@ BOOST_LOCALE_END_CONST_CONDITION
             ///
             /// Set current time point
             ///
-            void set_time(posix_time const &p) BOOST_OVERRIDE
+            void set_time(posix_time const &p) override
             {
                 from_time(static_cast<std::time_t>(p.seconds));
             }
-            posix_time get_time() const BOOST_OVERRIDE
+            posix_time get_time() const override
             {
                 posix_time pt = { time_, 0};
                 return pt;
@@ -572,7 +572,7 @@ BOOST_LOCALE_END_CONST_CONDITION
             ///
             /// Set option for calendar, for future use
             ///
-            void set_option(calendar_option_type opt,int /*v*/) BOOST_OVERRIDE
+            void set_option(calendar_option_type opt,int /*v*/) override
             {
                 switch(opt) {
                 case is_gregorian:
@@ -586,7 +586,7 @@ BOOST_LOCALE_END_CONST_CONDITION
             ///
             /// Get option for calendar, currently only check if it is Gregorian calendar
             ///
-            int get_option(calendar_option_type opt) const BOOST_OVERRIDE
+            int get_option(calendar_option_type opt) const override
             {
                 switch(opt) {
                 case is_gregorian:
@@ -602,7 +602,7 @@ BOOST_LOCALE_END_CONST_CONDITION
             /// Adjust period's \a p value by \a difference items using a update_type \a u.
             /// Note: not all values are adjustable
             ///
-            void adjust_value(period::marks::period_mark m,update_type u,int difference) BOOST_OVERRIDE
+            void adjust_value(period::marks::period_mark m,update_type u,int difference) override
             {
                 switch(u) {
                 case move:
@@ -690,7 +690,7 @@ BOOST_LOCALE_END_CONST_CONDITION
             ///
             /// Calculate the difference between this calendar  and \a other in \a p units
             ///
-            int difference(abstract_calendar const *other_cal,period::marks::period_mark m) const BOOST_OVERRIDE
+            int difference(abstract_calendar const *other_cal,period::marks::period_mark m) const override
             {
                 hold_ptr<gregorian_calendar> keeper;
                 gregorian_calendar const *other = dynamic_cast<gregorian_calendar const *>(other_cal);
@@ -752,7 +752,7 @@ BOOST_LOCALE_END_CONST_CONDITION
             ///
             /// Set time zone, empty - use system
             ///
-            void set_timezone(std::string const &tz) BOOST_OVERRIDE
+            void set_timezone(std::string const &tz) override
             {
                 if(tz.empty()) {
                     is_local_ = true;
@@ -765,12 +765,12 @@ BOOST_LOCALE_END_CONST_CONDITION
                 from_time(time_);
                 time_zone_name_ = tz;
             }
-            std::string get_timezone() const BOOST_OVERRIDE
+            std::string get_timezone() const override
             {
                 return time_zone_name_;
             }
 
-            bool same(abstract_calendar const *other) const BOOST_OVERRIDE
+            bool same(abstract_calendar const *other) const override
             {
                 gregorian_calendar const *gcal = dynamic_cast<gregorian_calendar const *>(other);
                 if(!gcal)
@@ -825,7 +825,7 @@ BOOST_LOCALE_END_CONST_CONDITION
             terr_(terr)
         {
         }
-        abstract_calendar *create_calendar() const BOOST_OVERRIDE
+        abstract_calendar *create_calendar() const override
         {
             return create_gregorian_calendar(terr_);
         }
