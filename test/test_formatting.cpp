@@ -213,7 +213,6 @@ BOOST_LOCALE_START_CONST_CONDITION
         TEST_MIN_MAX_FMT(unsigned long,"0","18446744073709551615"); // Unsupported range by icu - ensure fallback
         TEST_NOPAR(as::number,"-1",unsigned long);
     }
-    #ifndef BOOST_NO_LONG_LONG
     if(sizeof(long long)==8) {
         TEST_MIN_MAX(long long,"-9,223,372,036,854,775,808","9,223,372,036,854,775,807");
         // we can't really parse this as ICU does not support this range, only format
@@ -222,7 +221,6 @@ BOOST_LOCALE_START_CONST_CONDITION
         TEST_FMT(as::number,9223372036854775808ULL,"9223372036854775808"); // Unsupported range by icu - ensure fallback
         TEST_NOPAR(as::number,"-1",unsigned long long);
     }
-    #endif
 BOOST_LOCALE_END_CONST_CONDITION
 
 

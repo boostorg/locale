@@ -92,7 +92,6 @@ protected:
         return do_real_put(out,ios,fill,val);
     }
 
-    #ifndef BOOST_NO_LONG_LONG
     iter_type do_put (iter_type out, std::ios_base &ios, char_type fill, long long val) const BOOST_OVERRIDE
     {
         return do_real_put(out,ios,fill,val);
@@ -101,12 +100,8 @@ protected:
     {
         return do_real_put(out,ios,fill,val);
     }
-    #endif
-
 
 private:
-
-
 
     template<typename ValueType>
     iter_type do_real_put (iter_type out, std::ios_base &ios, char_type fill, ValueType val) const
@@ -302,7 +297,6 @@ protected:
         return do_real_get(in,end,ios,err,val);
     }
 
-    #ifndef BOOST_NO_LONG_LONG
     iter_type do_get (iter_type in, iter_type end, std::ios_base &ios,std::ios_base::iostate &err,long long &val) const BOOST_OVERRIDE
     {
         return do_real_get(in,end,ios,err,val);
@@ -312,8 +306,6 @@ protected:
     {
         return do_real_get(in,end,ios,err,val);
     }
-
-    #endif
 
 private:
 
