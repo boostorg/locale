@@ -531,7 +531,7 @@ namespace boost {
                     return p->second;
                 }
 
-                mo_message(messages_info const &inf)
+                mo_message(messages_info const &inf): key_conversion_required_(false)
                 {
                     std::string language = inf.language;
                     std::string variant = inf.variant;
