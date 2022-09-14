@@ -37,7 +37,6 @@ boost::uint16_t const *u16_seq(boost::uint16_t a,boost::uint16_t b)
     return buf;
 }
 
-#ifndef BOOST_NO_CXX11_CHAR16_T
 char16_t const* c16_seq(boost::uint16_t a)
 {
     static char16_t buf[2];
@@ -45,8 +44,7 @@ char16_t const* c16_seq(boost::uint16_t a)
     buf[1] = 0;
     return buf;
 }
-#endif
-#ifndef BOOST_NO_CXX11_CHAR32_T
+
 char32_t const* c32_seq(boost::uint32_t a)
 {
     static char32_t buf[2];
@@ -54,8 +52,6 @@ char32_t const* c32_seq(boost::uint32_t a)
     buf[1] = 0;
     return buf;
 }
-#endif
-
 
 // Get end of C-String, i.e. the NULL byte
 template<typename CharType>
@@ -225,7 +221,6 @@ void test_utf16()
     test_from_utf(u16_seq(0xD800), incomplete);
     test_from_utf(u16_seq(0xDBFF), incomplete);
 
-#ifndef BOOST_NO_CXX11_CHAR16_T
     std::cout << "-- Test char16_t" << std::endl;
 #if BOOST_WORKAROUND(BOOST_GCC_VERSION, < 50000)
     test_valid_utf(u"\x0010", 0x10);
@@ -238,7 +233,6 @@ void test_utf16()
     test_valid_utf(u"\U0010FFFF", 0x10FFFF);
     test_from_utf(c16_seq(0xDFFF), illegal);
     test_from_utf(c16_seq(0xDC00), illegal);
-#endif
 }
 
 void test_utf32()
@@ -261,7 +255,6 @@ void test_utf32()
     std::cout << "-- Incomplete" << std::endl;
     test_from_utf(u32_seq(0), incomplete);
 
-#ifndef BOOST_NO_CXX11_CHAR32_T
     std::cout << "-- Test char32_t" << std::endl;
 #if BOOST_WORKAROUND(BOOST_GCC_VERSION, < 50000)
     test_valid_utf(U"\x0010", 0x10);
@@ -276,7 +269,6 @@ void test_utf32()
     test_from_utf(c32_seq(0xDFFF), illegal);
     test_from_utf(c32_seq(0xDC00), illegal);
     test_from_utf(c32_seq(0x110000), illegal);
-#endif
 }
 
 void test_main(int /*argc*/, char** /*argv*/)

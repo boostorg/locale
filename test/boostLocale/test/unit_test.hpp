@@ -177,12 +177,8 @@ std::string to_string_char_impl(const Char c)
 }
 
 std::string to_string(const wchar_t c) { return to_string_char_impl(c); }
-#ifndef BOOST_NO_CXX11_CHAR16_T
 std::string to_string(const char16_t c) { return to_string_char_impl(c); }
-#endif
-#ifndef BOOST_NO_CXX11_CHAR32_T
 std::string to_string(const char32_t c) { return to_string_char_impl(c); }
-#endif
 
 template<typename T, typename U>
 void test_eq_impl(T const& l, U const& r, const char* expr, int line)
