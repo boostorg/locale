@@ -9,7 +9,6 @@
 
 #include <boost/locale/utf.hpp>
 #include <boost/cstdint.hpp>
-#include <boost/static_assert.hpp>
 #include <locale>
 
 namespace boost {
@@ -19,7 +18,7 @@ namespace locale {
 //
 // Make sure that mbstate can keep 16 bit of UTF-16 sequence
 //
-BOOST_STATIC_ASSERT(sizeof(std::mbstate_t)>=2);
+static_assert(sizeof(std::mbstate_t)>=2, "std::mbstate_t is to small");
 #endif
 
 #if defined(_MSC_VER) && _MSC_VER < 1700

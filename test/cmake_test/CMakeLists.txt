@@ -19,11 +19,10 @@ else()
       config
       function
       iterator
-      smart_ptr
-      static_assert
       type_traits
       thread
       unordered
+      predef
 
       # Secondary dependencies
       algorithm
@@ -52,7 +51,6 @@ else()
       mpl
       numeric/conversion
       optional
-      predef
       preprocessor
       range
       ratio

@@ -6,7 +6,6 @@
 
 #include <boost/locale/utf.hpp>
 #include <boost/detail/workaround.hpp>
-#include <boost/static_assert.hpp>
 #include <cstring>
 #include "boostLocale/test/unit_test.hpp"
 #include "boostLocale/test/tools.hpp"
@@ -75,7 +74,7 @@ void test_from_utf(CharType const * const s,unsigned codepoint)
 
     typedef utf_traits<CharType> tr;
 
-    BOOST_STATIC_ASSERT(tr::max_width == 4 / sizeof(CharType));
+    static_assert(tr::max_width == 4 / sizeof(CharType), "Wrong max_width");
 
     TEST(tr::template decode<CharType const *>(cur,end) == codepoint);
 
