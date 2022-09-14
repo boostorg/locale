@@ -14,7 +14,6 @@
 #include <boost/assert.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/iterator/iterator_facade.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <algorithm>
 #include <iostream>
 #include <iterator>
@@ -22,6 +21,7 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <type_traits>
 #include <vector>
 
 #ifdef BOOST_MSVC
@@ -59,12 +59,12 @@ namespace boost {
                 template<typename CharType,typename SomeIteratorType>
                 struct linear_iterator_traits {
                     static const bool is_linear =
-                        is_same<SomeIteratorType,CharType*>::value
-                        || is_same<SomeIteratorType,CharType const*>::value
-                        || is_same<SomeIteratorType,typename std::basic_string<CharType>::iterator>::value
-                        || is_same<SomeIteratorType,typename std::basic_string<CharType>::const_iterator>::value
-                        || is_same<SomeIteratorType,typename std::vector<CharType>::iterator>::value
-                        || is_same<SomeIteratorType,typename std::vector<CharType>::const_iterator>::value
+                        std::is_same<SomeIteratorType,CharType*>::value
+                        || std::is_same<SomeIteratorType,CharType const*>::value
+                        || std::is_same<SomeIteratorType,typename std::basic_string<CharType>::iterator>::value
+                        || std::is_same<SomeIteratorType,typename std::basic_string<CharType>::const_iterator>::value
+                        || std::is_same<SomeIteratorType,typename std::vector<CharType>::iterator>::value
+                        || std::is_same<SomeIteratorType,typename std::vector<CharType>::const_iterator>::value
                         ;
                 };
 

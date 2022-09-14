@@ -19,7 +19,6 @@ else()
       config
       function
       iterator
-      type_traits
       thread
       unordered
       predef

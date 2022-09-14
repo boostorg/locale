@@ -44,7 +44,6 @@ target_link_libraries(boost_locale
     Boost::config
     Boost::function
     Boost::iterator
-    Boost::type_traits
   PRIVATE
     Boost::thread
     Boost::unordered
