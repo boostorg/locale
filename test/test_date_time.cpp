@@ -63,9 +63,14 @@ void test_main(int /*argc*/, char** /*argv*/)
 
             std::locale::global(loc);
 
-            std::string tz("GMT");
+            const std::string tz = "GMT";
             time_zone::global(tz);
-            calendar cal(loc,tz);
+            // A call returns the old tz
+            TEST_EQ(time_zone::global("GMT+01:00"), tz);
+            TEST_EQ(time_zone::global(tz), "GMT+01:00");
+            calendar cal(loc, tz);
+            TEST(cal.get_locale() == loc);
+            TEST(cal.get_time_zone() == tz);
 
             TEST(calendar() == cal);
             TEST(calendar(loc) == cal);
@@ -79,6 +84,7 @@ void test_main(int /*argc*/, char** /*argv*/)
             TEST_EQ(cal.greatest_minimum(day()), 1);
             TEST_EQ(cal.least_maximum(day()), 28);
             TEST_EQ(cal.maximum(day()), 31);
+            TEST(cal.is_gregorian());
 
             TEST_EQ(calendar(g("ar_EG.UTF-8")).first_day_of_week(), 7);
             TEST_EQ(calendar(g("he_IL.UTF-8")).first_day_of_week(), 1);
