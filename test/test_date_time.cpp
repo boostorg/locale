@@ -94,22 +94,64 @@ void test_main(int /*argc*/, char** /*argv*/)
             ss.imbue(loc);
             ss << boost::locale::as::time_zone(tz);
 
-            date_time time_point = year(1970) + february() + day(5);
-
-            ss << as::ftime("%Y-%m-%d")<< time_point;
-            TEST_EQ(ss.str(), "1970-02-05");
-
-            time_point = 3 * hour_12() + 1 * am_pm() + 33 * minute() + 13 * second();
-            ss.str("");
-            ss << as::ftime("%Y-%m-%d %H:%M:%S") << time_point;
-            TEST_EQ( ss.str(), "1970-02-05 15:33:13"); ss.str("");
-
             const time_t one_h = 60 * 60;
             const time_t a_date = 24 * one_h * (31+4); // Feb 5th
             const time_t a_time = 15 * one_h + 60 * 33 + 13; // 15:33:13
             const time_t a_datetime = a_date + a_time;
 
             const date_time tp_5_feb_1970_153313 = date_time(a_datetime); /// 5th Feb 1970 15:33:13
+            ss << as::ftime("%Y-%m-%d");
+            TEST_EQ_FMT(tp_5_feb_1970_153313, "1970-02-05");
+            ss << as::ftime("%Y-%m-%d %H:%M:%S");
+            TEST_EQ_FMT(tp_5_feb_1970_153313, "1970-02-05 15:33:13");
+
+            // Test set()
+            date_time time_point = tp_5_feb_1970_153313;
+            time_point.set(year(), 1990);
+            TEST_EQ_FMT(time_point, "1990-02-05 15:33:13");
+            time_point.set(month(), 5);
+            TEST_EQ_FMT(time_point, "1990-06-05 15:33:13");
+            time_point.set(day(), 9);
+            TEST_EQ_FMT(time_point, "1990-06-09 15:33:13");
+            time_point.set(hour(), 11);
+            TEST_EQ_FMT(time_point, "1990-06-09 11:33:13");
+            time_point.set(minute(), 42);
+            TEST_EQ_FMT(time_point, "1990-06-09 11:42:13");
+            time_point.set(second(), 24);
+            TEST_EQ_FMT(time_point, "1990-06-09 11:42:24");
+            time_point.set(am_pm(), 1);
+            TEST_EQ_FMT(time_point, "1990-06-09 23:42:24");
+            // Overflow day of month
+            time_point.set(day(), time_point.maximum(day()) + 1);
+            TEST_EQ_FMT(time_point, "1990-07-01 23:42:24");
+
+            // Same via assignment
+            time_point = tp_5_feb_1970_153313;
+            time_point = year(1990);
+            TEST_EQ_FMT(time_point, "1990-02-05 15:33:13");
+            time_point = month(5);
+            TEST_EQ_FMT(time_point, "1990-06-05 15:33:13");
+            time_point = day(9);
+            TEST_EQ_FMT(time_point, "1990-06-09 15:33:13");
+            time_point = hour(11);
+            TEST_EQ_FMT(time_point, "1990-06-09 11:33:13");
+            time_point = minute(42);
+            TEST_EQ_FMT(time_point, "1990-06-09 11:42:13");
+            time_point = second(24);
+            TEST_EQ_FMT(time_point, "1990-06-09 11:42:24");
+            time_point = am_pm(1);
+            TEST_EQ_FMT(time_point, "1990-06-09 23:42:24");
+            // Overflow day of month
+            time_point = day(time_point.maximum(day()) + 1);
+            TEST_EQ_FMT(time_point, "1990-07-01 23:42:24");
+            // All at once
+            time_point = year(1989) + month(2) + day(5) + hour(7) + minute(9) + second(11);
+            TEST_EQ_FMT(time_point, "1989-03-05 07:09:11");
+            // Partials:
+            time_point = year(1970) + february() + day(5);
+            TEST_EQ_FMT(time_point, "1970-02-05 07:09:11");
+            time_point = 3 * hour_12() + 1 * am_pm() + 33 * minute() + 13 * second();
+            TEST_EQ_FMT(time_point, "1970-02-05 15:33:13");
 
             time_point = tp_5_feb_1970_153313;
             time_point += hour();
