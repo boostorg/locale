@@ -14,6 +14,7 @@
 #include <boost/locale/localization_backend.hpp>
 #include <ctime>
 #include <iomanip>
+#include <limits>
 #include "boostLocale/test/unit_test.hpp"
 
 #ifdef BOOST_LOCALE_WITH_ICU
@@ -227,8 +228,9 @@ void test_main(int /*argc*/, char** /*argv*/)
             TEST_EQ_FMT(tp_5_april_1990_153313 - month(12 * 3 + 1), "1987-03-05 15:33:13");
             TEST_EQ_FMT(tp_5_april_1990_153313 >> month(12 * 3 + 1), "1990-03-05 15:33:13");
             // Check that possible int overflows get handled
-            TEST_EQ_FMT(tp_5_april_1990_153313 >> month((std::numeric_limits<int>::max() / 12) * 12), "1990-04-05 15:33:13");
-            TEST_EQ_FMT(tp_5_april_1990_153313 << month((std::numeric_limits<int>::max() / 12) * 12), "1990-04-05 15:33:13");
+            const int max_full_years_in_months = (std::numeric_limits<int>::max() / 12) * 12;
+            TEST_EQ_FMT(tp_5_april_1990_153313 >> month(max_full_years_in_months), "1990-04-05 15:33:13");
+            TEST_EQ_FMT(tp_5_april_1990_153313 << month(max_full_years_in_months), "1990-04-05 15:33:13");
             TEST_EQ_FMT(tp_5_april_1990_153313 + day(30 + 2), "1990-05-07 15:33:13");
             TEST_EQ_FMT(tp_5_april_1990_153313 << day(30 + 2), "1990-04-07 15:33:13");
             TEST_EQ_FMT(tp_5_april_1990_153313 - day(10), "1990-03-26 15:33:13");
