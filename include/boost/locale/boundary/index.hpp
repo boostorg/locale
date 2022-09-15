@@ -83,9 +83,8 @@ namespace boost {
                         //
                         // Optimize for most common cases
                         //
-                        // C++0x requires that string is continious in memory and all known
-                        // string implementations
-                        // do this because of c_str() support.
+                        // C++11 requires that string is continuous in memory and all known
+                        // string implementations do this because of c_str() support.
                         //
 
                         if(linear_iterator_traits<char_type,IteratorType>::is_linear && b!=e)

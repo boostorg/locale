@@ -36,7 +36,7 @@ Provided Features:
 -   Character set conversion.
 -   Transparent support for 8-bit character sets like Latin1
 -   Support for \c char and \c wchar_t
--   Experimental support for C++0x \c char16_t and \c char32_t
+-   Experimental support for C++11 \c char16_t and \c char32_t
     strings and streams.
 
 Boost.Locale enhances and unifies the standard library's API

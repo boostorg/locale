@@ -31,8 +31,8 @@ namespace boost {
         static const uint32_t nochar_facet    = 0;        ///< Unspecified character category for character independent facets
         static const uint32_t char_facet      = 1 << 0;   ///< 8-bit character facets
         static const uint32_t wchar_t_facet   = 1 << 1;   ///< wide character facets
-        static const uint32_t char16_t_facet  = 1 << 2;   ///< C++0x char16_t facets
-        static const uint32_t char32_t_facet  = 1 << 3;   ///< C++0x char32_t facets
+        static const uint32_t char16_t_facet  = 1 << 2;   ///< C++11 char16_t facets
+        static const uint32_t char32_t_facet  = 1 << 3;   ///< C++11 char32_t facets
 
         static const uint32_t character_first_facet = char_facet;  ///< First facet specific for character type
         static const uint32_t character_last_facet = char32_t_facet; ///< Last facet specific for character type
