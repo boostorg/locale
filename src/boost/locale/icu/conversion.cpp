@@ -96,11 +96,11 @@ namespace impl_icu {
 
     #ifdef BOOST_LOCALE_WITH_CASEMAP
     class raii_casemap {
-        raii_casemap(raii_casemap const &);
-        void operator = (raii_casemap const&);
     public:
-        raii_casemap(std::string const &locale_id):
-            map_(0)
+        raii_casemap(raii_casemap const&) = delete;
+        void operator=(raii_casemap const&) = delete;
+
+        raii_casemap(std::string const &locale_id): map_(0)
         {
             UErrorCode err=U_ZERO_ERROR;
             map_ = ucasemap_open(locale_id.c_str(),0,&err);

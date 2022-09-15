@@ -10,6 +10,7 @@
 #include <boost/locale/date_time.hpp>
 #include <boost/locale/hold_ptr.hpp>
 #include "boost/locale/util/timezone.hpp"
+#include <boost/assert.hpp>
 #include <algorithm>
 #include <cstdlib>
 #include <ctime>
@@ -323,7 +324,7 @@ BOOST_LOCALE_START_CONST_CONDITION
                         if(sizeof(std::time_t) == 4)
                             return 2038; // Y2K38 - maximal with 32 bit time_t
                         else
-                            return std::numeric_limits<int>::max();
+                            return std::numeric_limits<int>::max() / 365; // Reasonably large but we can still get the days without overflowing
 BOOST_LOCALE_END_CONST_CONDITION
                     case current:
                         return tm_.tm_year + 1900;
@@ -648,19 +649,21 @@ BOOST_LOCALE_END_CONST_CONDITION
                     }
                     break;
                 case roll:
-                    { // roll
-                        int cur_min = get_value(m,actual_minimum);
-                        int cur_max = get_value(m,actual_maximum);
-                        int max_diff = cur_max - cur_min + 1;
-                        if(max_diff > 0) {
-                            int value = get_value(m,current);
-                            int addon = 0;
-                            if(difference < 0)
-                                addon = ((-difference/max_diff) + 1) * max_diff;
-                            value = (value - cur_min + difference + addon) % max_diff + cur_min;
-                            set_value(m,value);
-                            normalize();
-                        }
+                    {
+                        const int cur_min = get_value(m,actual_minimum);
+                        const int cur_max = get_value(m,actual_maximum);
+                        BOOST_ASSERT(cur_max >= cur_min);
+                        const int range = cur_max - cur_min + 1;
+                        int value = get_value(m,current) - cur_min;
+                        BOOST_ASSERT(value >= 0 && value < range);
+                        BOOST_ASSERT_MSG(difference <= std::numeric_limits<int>::max(), "Input is to large");
+                        value = (value + difference) % range;
+                        // If the sum above was negative the result of the modulo operation "can" be negative too.
+                        if(value < 0)
+                            value += range;
+                        BOOST_ASSERT(value >= 0 && value < range);
+                        set_value(m,value + cur_min);
+                        normalize();
                     }
                 default:
                     ;

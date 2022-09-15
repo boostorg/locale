@@ -31,10 +31,8 @@
 namespace boost {
     namespace locale {
         class localization_backend_manager::impl {
-            void operator = (impl const &);
         public:
-            impl(impl const &other):
-                default_backends_(other.default_backends_)
+            impl(impl const &other): default_backends_(other.default_backends_)
             {
                 for(all_backends_type::const_iterator p=other.all_backends_.begin();p!=other.all_backends_.end();++p) {
                     all_backends_type::value_type v;
@@ -44,6 +42,8 @@ namespace boost {
                 }
             }
             impl(): default_backends_(32,-1) {}
+
+            impl& operator=(impl const&) = delete;
 
             localization_backend *create() const
             {
@@ -162,7 +162,7 @@ namespace boost {
             pimpl_(new impl(*other.pimpl_))
         {}
 
-        localization_backend_manager const &localization_backend_manager::operator = (localization_backend_manager const &other)
+        localization_backend_manager& localization_backend_manager::operator=(localization_backend_manager const &other)
         {
             pimpl_.reset(new impl(*other.pimpl_));
             return *this;

@@ -92,7 +92,7 @@ namespace boost {
             ///
             /// Assign localization_backend_manager
             ///
-            localization_backend_manager const &operator=(localization_backend_manager const &);
+            localization_backend_manager& operator=(localization_backend_manager const &);
 
             ///
             /// Destructor

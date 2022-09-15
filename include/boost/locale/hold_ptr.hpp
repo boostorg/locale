@@ -17,8 +17,6 @@ namespace locale {
     ///
     template<typename T>
     class hold_ptr {
-        hold_ptr(hold_ptr const &other); // non copyable
-        hold_ptr const &operator=(hold_ptr const &other); // non assignable
     public:
         ///
         /// Create new empty pointer
@@ -37,6 +35,10 @@ namespace locale {
             delete ptr_;
         }
 
+        // Non-copyable
+        hold_ptr(hold_ptr const&) = delete;
+        hold_ptr& operator=(hold_ptr const&) = delete;
+
         ///
         /// Get a const pointer to the object
         ///
@@ -49,15 +51,15 @@ namespace locale {
         ///
         /// Get a const reference to the object
         ///
-        T const &operator *() const { return *ptr_; }
+        T const & operator*() const { return *ptr_; }
         ///
         /// Get a mutable reference to the object
         ///
-        T &operator *() { return *ptr_; }
+        T & operator*() { return *ptr_; }
         ///
         /// Get a const pointer to the object
         ///
-        T const *operator->() const { return ptr_; }
+        T const * operator->() const { return ptr_; }
         ///
         /// Get a mutable pointer to the object
         ///

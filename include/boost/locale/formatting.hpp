@@ -102,7 +102,7 @@ namespace boost {
 
             ios_info();
             ios_info(ios_info const &);
-            ios_info const &operator=(ios_info const &);
+            ios_info& operator=(ios_info const &);
             ~ios_info();
 
             /// \endcond
@@ -221,7 +221,7 @@ namespace boost {
                 string_set();
                 ~string_set();
                 string_set(string_set const &other);
-                string_set const &operator=(string_set const &other);
+                string_set& operator=(string_set other);
                 void swap(string_set &other);
 
                 template<typename Char>
@@ -502,14 +502,14 @@ namespace boost {
                 };
 
                 template<typename CharType>
-                std::basic_ostream<CharType> &operator<<(std::basic_ostream<CharType> &out,add_ftime<CharType> const &fmt)
+                std::basic_ostream<CharType>& operator<<(std::basic_ostream<CharType> &out,add_ftime<CharType> const &fmt)
                 {
                     fmt.apply(out);
                     return out;
                 }
 
                 template<typename CharType>
-                std::basic_istream<CharType> &operator>>(std::basic_istream<CharType> &in,add_ftime<CharType> const &fmt)
+                std::basic_istream<CharType>& operator>>(std::basic_istream<CharType> &in,add_ftime<CharType> const &fmt)
                 {
                     fmt.apply(in);
                     return in;
@@ -589,14 +589,14 @@ namespace boost {
                     std::string id;
                 };
                 template<typename CharType>
-                std::basic_ostream<CharType> &operator<<(std::basic_ostream<CharType> &out,set_timezone const &fmt)
+                std::basic_ostream<CharType>& operator<<(std::basic_ostream<CharType> &out,set_timezone const &fmt)
                 {
                     ios_info::get(out).time_zone(fmt.id);
                     return out;
                 }
 
                 template<typename CharType>
-                std::basic_istream<CharType> &operator>>(std::basic_istream<CharType> &in,set_timezone const &fmt)
+                std::basic_istream<CharType>& operator>>(std::basic_istream<CharType> &in,set_timezone const &fmt)
                 {
                     ios_info::get(in).time_zone(fmt.id);
                     return in;
