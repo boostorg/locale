@@ -188,11 +188,6 @@ void test_main(int /*argc*/, char** /*argv*/)
             TEST_EQ((time_point >> month()) / month(), 0);
             TEST_EQ(time_point / month(), 1);
 
-            TEST_EQ( (time_point + 2 * hour() - time_point) / minute(), 120);
-            TEST_EQ( (time_point + month()- time_point) / day(), 28);
-            TEST_EQ( (time_point + 2* month()- (time_point+month())) / day(), 31);
-            TEST_EQ( day(time_point + 2* month()- (time_point+month())), 31);
-
             // To subtract from the year, don't use 1970 which may be the lowest possible year
             const date_time tp_5_april_1990_153313 = (date_time(tp_5_feb_1970_153313) = (year(1990) + april()));
             TEST_EQ_FMT(tp_5_april_1990_153313, "1990-04-05 15:33:13");
@@ -363,19 +358,6 @@ BOOST_LOCALE_END_CONST_CONDITION
             TEST_EQ(date_time(year() * 1984 + february() + day()).get(week_of_year()),5);
             TEST_EQ(time_point.get(week_of_month()), 1);
 
-            // Make sure we don't get year() < 1970 so the test would
-            // work on windows where mktime supports positive time_t
-            // only
-            time_point = year() * 2010;
-
-            TEST_EQ((time_point + year() *1 - hour() * 1 - time_point) / year(), 0);
-            TEST_EQ((time_point + year() *1 - time_point) / year(), 1);
-            TEST_EQ((time_point + year() *1 + hour() * 1 - time_point) / year(), 1);
-            TEST_EQ((time_point - year() *1 + hour() * 1 - time_point) / year(), 0);
-            TEST_EQ((time_point - year() *1 - time_point) / year(), -1);
-            TEST_EQ((time_point - year() *1 - hour() * 1 - time_point) / year(), -1);
-
-
             time_point.time(24*3600. * 2);
 
             time_point = year() * 2011;
@@ -402,6 +384,36 @@ BOOST_LOCALE_END_CONST_CONDITION
             TEST_EQ(time_point.get(year()), 2011);
             TEST_EQ(time_point.get(month()), 1); // february
             TEST_EQ(time_point.get(day()), 5);
+
+            // Difference
+            TEST_EQ(time_point.difference(time_point + second(3), second()), 3);
+            TEST_EQ(time_point.difference(time_point - minute(5), minute()), -5);
+            TEST_EQ(time_point.difference(time_point - minute(5), second()), -5 * 60);
+            TEST_EQ(time_point.difference(time_point + minute(5) - hour(3), hour()), -2);
+            TEST_EQ(time_point.difference(time_point + day(42) - hour(3), day()), 41);
+            TEST_EQ(time_point.difference(time_point + day(7 * 13) - hour(3), week_of_year()), 12);
+            TEST_EQ(time_point.difference(time_point + day(456), day()), 456);
+            TEST_EQ(time_point.difference(time_point + day(456), year()), 1);
+            // Same for subtracting timepoints, i.e. syntactic sugar for the above
+            TEST_EQ(((time_point + second(3)) - time_point) / second(), 3);
+            TEST_EQ(((time_point - minute(5)) - time_point) / minute(), -5);
+            TEST_EQ(((time_point - minute(5)) - time_point) / second(), -5 * 60);
+            TEST_EQ(((time_point + minute(5) - hour(3)) - time_point) / hour(), -2);
+            TEST_EQ(((time_point + day(42) - hour(3)) - time_point) / day(), 41);
+            TEST_EQ(((time_point + day(7 * 13) - hour(3)) - time_point) / week_of_year(), 12);
+            TEST_EQ(((time_point + day(456)) - time_point) / day(), 456);
+            TEST_EQ(((time_point + day(456)) - time_point) / year(), 1);
+
+            TEST_EQ((time_point + 2 * hour() - time_point) / minute(), 120);
+            TEST_EQ((time_point + month() - time_point) / day(), 28);
+            TEST_EQ((time_point + 2 * month() - (time_point + month())) / day(), 31);
+            TEST_EQ(day(time_point + 2 * month() - (time_point + month())), 31);
+            TEST_EQ((time_point + year() * 1 - hour() * 1 - time_point) / year(), 0);
+            TEST_EQ((time_point + year() * 1 - time_point) / year(), 1);
+            TEST_EQ((time_point + year() * 1 + hour() * 1 - time_point) / year(), 1);
+            TEST_EQ((time_point - year() * 1 + hour() * 1 - time_point) / year(), 0);
+            TEST_EQ((time_point - year() * 1 - time_point) / year(), -1);
+            TEST_EQ((time_point - year() * 1 - hour() * 1 - time_point) / year(), -1);
 
             // Default constructed time_point
             {
