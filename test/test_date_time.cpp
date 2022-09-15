@@ -437,7 +437,9 @@ BOOST_LOCALE_END_CONST_CONDITION
                 time_zone::global("GMT+01:00");
                 date_time tp_gmt1;
                 // Both refer to the same point in time (i.e. comparison ignores timezones)
-                TEST(tp_gmt == tp_gmt1);
+                // Unless the system clock resolution is high enough to detect that the 2 instances
+                // are not created in the exact same second
+                TEST((tp_gmt == tp_gmt1) || (tp_gmt1 - tp_gmt) / second() < 5);
 
                 // But getting the hour shows the difference of 1 hour
                 const int gmt_h = tp_gmt.get(hour());
