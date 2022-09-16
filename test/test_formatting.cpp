@@ -17,6 +17,7 @@ int main()
 #endif
 
 #include <boost/locale/date_time.hpp>
+#include <boost/locale/encoding_utf.hpp>
 #include <boost/locale/format.hpp>
 #include <boost/locale/formatting.hpp>
 #include <boost/locale/generator.hpp>
@@ -25,13 +26,39 @@ int main()
 #include <limits>
 #include <sstream>
 #include <unicode/uversion.h>
+#include <unicode/numfmt.h>
 
 #include "boostLocale/test/unit_test.hpp"
 #include "boostLocale/test/tools.hpp"
 
-using namespace boost::locale;
+#define BOOST_LOCALE_ICU_VERSION (U_ICU_VERSION_MAJOR_NUM * 100 + U_ICU_VERSION_MINOR_NUM)
+#define BOOST_LOCALE_ICU_VERSION_EXACT (BOOST_LOCALE_ICU_VERSION  * 100 + U_ICU_VERSION_PATCHLEVEL_NUM)
+
+// Currency style changes between ICU versions, so get "real" value from ICU
+#if BOOST_LOCALE_ICU_VERSION >= 402
 
 const std::string test_locale_name = "en_US";
+
+std::string get_icu_currency_iso(const double value)
+{
+    icu::Locale locale = icu::Locale::createCanonical(test_locale_name.c_str());
+    UErrorCode err = U_ZERO_ERROR;
+#if BOOST_LOCALE_ICU_VERSION >= 408
+    auto styleIso = UNUM_CURRENCY_ISO;
+#else
+    auto styleIso = icu::NumberFormat::kIsoCurrencyStyle;
+#endif
+    boost::locale::hold_ptr<icu::NumberFormat> fmt(icu::NumberFormat::createInstance(locale, styleIso, err));
+    TEST_REQUIRE(U_SUCCESS(err) && fmt.get());
+
+    icu::UnicodeString tmp;
+    fmt->format(value, tmp);
+    return boost::locale::conv::utf_to_utf<char>(tmp.getBuffer(), tmp.getBuffer() + tmp.length());
+}
+
+#endif
+
+using namespace boost::locale;
 
 template <typename CharType, typename T>
 void test_fmt_impl(std::basic_ostringstream<CharType>& ss, const T& value, const std::basic_string<CharType>& expected, int line)
@@ -187,9 +214,6 @@ BOOST_LOCALE_START_CONST_CONDITION                  \
     TEST_MIN_MAX_PARSE(type,minval,maxval)
 
 
-#define BOOST_LOCALE_ICU_VERSION (U_ICU_VERSION_MAJOR_NUM * 100 + U_ICU_VERSION_MINOR_NUM)
-#define BOOST_LOCALE_ICU_VERSION_EXACT (BOOST_LOCALE_ICU_VERSION  * 100 + U_ICU_VERSION_PATCHLEVEL_NUM)
-
 bool short_parsing_fails()
 {
     static bool fails = false;
@@ -209,7 +233,7 @@ template<typename CharType>
 void test_manip(std::string e_charset="UTF-8")
 {
     boost::locale::generator g;
-    std::locale loc=g("en_US."+e_charset);
+    std::locale loc=g(test_locale_name + "." + e_charset);
 
     TEST_FMT_PARSE_1(as::posix,1200.1,"1200.1");
     TEST_FMT_PARSE_1(as::number,1200.1,"1,200.1");
@@ -281,8 +305,8 @@ BOOST_LOCALE_END_CONST_CONDITION
     #if BOOST_LOCALE_ICU_VERSION >= 402
     TEST_FMT_PARSE_2(as::currency,as::currency_national,1345,"$1,345.00");
     TEST_FMT_PARSE_2(as::currency,as::currency_national,1345.34,"$1,345.34");
-    TEST_FMT_PARSE_2(as::currency,as::currency_iso,1345,"USD1,345.00");
-    TEST_FMT_PARSE_2(as::currency,as::currency_iso,1345.34,"USD1,345.34");
+    TEST_FMT_PARSE_2(as::currency,as::currency_iso,1345,get_icu_currency_iso(1345));
+    TEST_FMT_PARSE_2(as::currency,as::currency_iso,1345.34,get_icu_currency_iso(1345.34));
     #endif
     TEST_FMT_PARSE_1(as::spellout,10,"ten");
     #if 402 <= BOOST_LOCALE_ICU_VERSION && BOOST_LOCALE_ICU_VERSION < 408
@@ -466,7 +490,7 @@ void test_format_class(std::string charset="UTF-8")
     #if BOOST_LOCALE_ICU_VERSION >= 402
     TEST_FORMAT_CLS("{1,cur=nat}",1234,"$1,234.00");
     TEST_FORMAT_CLS("{1,cur=national}",1234,"$1,234.00");
-    TEST_FORMAT_CLS("{1,cur=iso}",1234,"USD1,234.00");
+    TEST_FORMAT_CLS("{1,cur=iso}",1234,get_icu_currency_iso(1234));
     #endif
     TEST_FORMAT_CLS("{1,spell}",10,"ten");
     TEST_FORMAT_CLS("{1,spellout}",10,"ten");
