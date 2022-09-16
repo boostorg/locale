@@ -86,16 +86,17 @@ do{                                                  \
 BOOST_LOCALE_START_CONST_CONDITION                   \
 }while(0) BOOST_LOCALE_END_CONST_CONDITION
 
-#define TEST_PARSE(manip,actual,expected) \
+#define TEST_PARSE(manip,value,expected) \
 do{ \
+    const auto str_value = to_correct_string<CharType>(value,loc); \
     {std::basic_istringstream<CharType> ss; \
     ss.imbue(loc); \
-    ss.str(to_correct_string<CharType>(actual,loc)); \
+    ss.str(str_value); \
     ss >> manip; \
     test_parse_impl(ss, expected, __LINE__); } \
     {std::basic_istringstream<CharType> ss; \
     ss.imbue(loc); \
-    ss.str(to_correct_string<CharType>(std::string(actual)+"@",loc)); \
+    ss.str(str_value + CharType('@')); \
     ss >> manip; \
     test_parse_at_impl(ss, expected, __LINE__); } \
 BOOST_LOCALE_START_CONST_CONDITION                  \
@@ -103,50 +104,57 @@ BOOST_LOCALE_START_CONST_CONDITION                  \
 
 #define TEST_FMT_PARSE_1(manip,value_in,value_str) \
 do { \
-    TEST_FMT(  manip,value_in,value_str); \
-    TEST_PARSE(manip,value_str,value_in); \
+    const std::string value_str_ = value_str; \
+    TEST_FMT(  manip,value_in,value_str_); \
+    TEST_PARSE(manip,value_str_,value_in); \
 BOOST_LOCALE_START_CONST_CONDITION                  \
 }while(0) BOOST_LOCALE_END_CONST_CONDITION
 
 #define TEST_FMT_PARSE_2(m1,m2,value_in,value_str) \
 do { \
-    TEST_FMT(  m1 << m2,value_in,value_str); \
-    TEST_PARSE(m1 >> m2,value_str,value_in);  \
+    const std::string value_str_ = value_str; \
+    TEST_FMT(  m1 << m2,value_in,value_str_); \
+    TEST_PARSE(m1 >> m2,value_str_,value_in);  \
 BOOST_LOCALE_START_CONST_CONDITION                  \
 }while(0) BOOST_LOCALE_END_CONST_CONDITION
 
 #define TEST_FMT_PARSE_2_2(m1,m2,value_in,value_str,value_parsed) \
 do { \
-    TEST_FMT(  m1 << m2,value_in,value_str); \
-    TEST_PARSE(m1 >> m2,value_str,value_parsed);  \
+    const std::string value_str_ = value_str; \
+    TEST_FMT(  m1 << m2,value_in,value_str_); \
+    TEST_PARSE(m1 >> m2,value_str_,value_parsed);  \
 BOOST_LOCALE_START_CONST_CONDITION                  \
 }while(0) BOOST_LOCALE_END_CONST_CONDITION
 
 #define TEST_FMT_PARSE_3(m1,m2,m3,value_in,value_str) \
 do { \
-    TEST_FMT(  m1 << m2 << m3,value_in,value_str); \
-    TEST_PARSE(m1 >> m2 >> m3,value_str,value_in); \
+    const std::string value_str_ = value_str; \
+    TEST_FMT(  m1 << m2 << m3,value_in,value_str_); \
+    TEST_PARSE(m1 >> m2 >> m3,value_str_,value_in); \
 BOOST_LOCALE_START_CONST_CONDITION                  \
 }while(0) BOOST_LOCALE_END_CONST_CONDITION
 
 #define TEST_FMT_PARSE_3_2(m1,m2,m3,value_in,value_str,value_parsed) \
 do { \
-    TEST_FMT(  m1 << m2 << m3,value_in,value_str); \
-    TEST_PARSE(m1 >> m2 >> m3,value_str,value_parsed); \
+    const std::string value_str_ = value_str; \
+    TEST_FMT(  m1 << m2 << m3,value_in,value_str_); \
+    TEST_PARSE(m1 >> m2 >> m3,value_str_,value_parsed); \
 BOOST_LOCALE_START_CONST_CONDITION                  \
 }while(0) BOOST_LOCALE_END_CONST_CONDITION
 
 #define TEST_FMT_PARSE_4(m1,m2,m3,m4,value_in,value_str) \
 do { \
-    TEST_FMT(  m1 << m2 << m3 << m4,value_in,value_str); \
-    TEST_PARSE(m1 >> m2 >> m3 >> m4,value_str,value_in); \
+    const std::string value_str_ = value_str; \
+    TEST_FMT(  m1 << m2 << m3 << m4,value_in,value_str_); \
+    TEST_PARSE(m1 >> m2 >> m3 >> m4,value_str_,value_in); \
 BOOST_LOCALE_START_CONST_CONDITION                  \
 }while(0) BOOST_LOCALE_END_CONST_CONDITION
 
 #define TEST_FMT_PARSE_4_2(m1,m2,m3,m4,value_in,value_str,value_parsed) \
 do { \
-    TEST_FMT(  m1 << m2 << m3 << m4,value_in,value_str); \
-    TEST_PARSE(m1 >> m2 >> m3 >> m4,value_str,value_parsed); \
+    const std::string value_str_ = value_str; \
+    TEST_FMT(  m1 << m2 << m3 << m4,value_in,value_str_); \
+    TEST_PARSE(m1 >> m2 >> m3 >> m4,value_str_,value_parsed); \
 BOOST_LOCALE_START_CONST_CONDITION                  \
 }while(0) BOOST_LOCALE_END_CONST_CONDITION
 
@@ -154,8 +162,8 @@ BOOST_LOCALE_START_CONST_CONDITION                  \
     do{\
         std::basic_ostringstream<CharType> ss; \
         ss.imbue(loc);  \
-        std::basic_string<CharType> fmt = to_correct_string<CharType>(fmt_string,loc); \
-        std::basic_string<CharType> expected = to_correct_string<CharType>(expected_str,loc); \
+        const std::basic_string<CharType> fmt = to_correct_string<CharType>(fmt_string,loc); \
+        const std::basic_string<CharType> expected = to_correct_string<CharType>(expected_str,loc); \
         ss << boost::locale::basic_format<CharType>(fmt) % fmt_expression; \
         TEST_EQ(ss.str(), expected); \
         ss.str(std::basic_string<CharType>()); \
