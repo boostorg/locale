@@ -71,22 +71,19 @@ void test_char()
         test_one<CharType>(l, "a", "a", 0);
     }
 
-    std::string name;
-
     #if defined(_LIBCPP_VERSION) && (defined(__APPLE__) || defined(__FreeBSD__))
     std::cout << "- Collation is broken on this OS's standard C++ library, skipping\n";
     #else
-    std::string names[] = { "en_US.UTF-8", "en_US.ISO8859-1" };
-    for(unsigned i=0;i<sizeof(names)/sizeof(names[0]);i++) {
-        name = get_std_name(names[i]);
-        if(!name.empty()) {
-            std::cout << "- Testing " << name << std::endl;
-            std::locale l=gen(name);
+    for(const std::string name: { "en_US.UTF-8", "en_US.ISO8859-1" }) {
+        const std::string std_name = get_std_name(name);
+        if(!std_name.empty()) {
+            std::cout << "- Testing " << std_name << std::endl;
+            std::locale l=gen(std_name);
             test_one<CharType>(l,"a","ç",-1);
             test_one<CharType>(l,"ç","d",-1);
         }
         else {
-            std::cout << "- " << names[i] << " not supported, skipping" << std::endl;
+            std::cout << "- " << name << " not supported, skipping" << std::endl;
         }
     }
     #endif

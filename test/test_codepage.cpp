@@ -431,7 +431,7 @@ void test_main(int /*argc*/, char** /*argv*/)
             ja_jp_shiftjis = get_std_name("ja_JP.SJIS");
             if(!ja_jp_shiftjis.empty() && !test_std_supports_SJIS_codecvt(ja_jp_shiftjis))
             {
-                std::cout << "Warning: detected unproper support of " << ja_jp_shiftjis << " locale, disableling it" << std::endl;
+                std::cout << "Warning: detected unproper support of " << ja_jp_shiftjis << " locale, disabling it" << std::endl;
                 ja_jp_shiftjis = "";
             }
         }
@@ -445,7 +445,7 @@ void test_main(int /*argc*/, char** /*argv*/)
 
         test_iso = true;
         if(bname=="std" && (he_il_8bit.empty() || en_us_8bit.empty())) {
-            std::cout << "no iso locales availible, passing" << std::endl;
+            std::cout << "no ISO locales available, passing" << std::endl;
             test_iso = false;
         }
         test_sjis = true;

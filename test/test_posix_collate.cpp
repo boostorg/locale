@@ -73,17 +73,15 @@ void test_char()
 
 
     #if !defined(__APPLE__) && !defined(__FreeBSD__)
-    std::string names[] = { "en_US.UTF-8", "en_US.ISO8859-1" };
-    for(unsigned i=0;i<sizeof(names)/sizeof(names[0]);i++) {
-        if(have_locale(names[i])) {
-            name = names[i];
-            std::cout << "- Testing " << name << std::endl;
-            std::locale l=gen(name);
+    for(const std::string locale_name: { "en_US.UTF-8", "en_US.ISO8859-1" }) {
+        if(have_locale(locale_name)) {
+            std::cout << "- Testing " << locale_name << std::endl;
+            std::locale l=gen(locale_name);
             test_one<CharType>(l,"a","ç",-1);
             test_one<CharType>(l,"ç","d",-1);
         }
         else {
-            std::cout << "- " << names[i] << " not supported, skipping" << std::endl;
+            std::cout << "- " << locale_name << " not supported, skipping" << std::endl;
         }
     }
     #else

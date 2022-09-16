@@ -30,25 +30,19 @@ int main()
 #include "boostLocale/test/tools.hpp"
 #include "../src/boost/locale/win32/lcid.hpp"
 
-#define DEBUG_FMT
-
 bool equal(std::string const &s1,std::wstring const &s2)
 {
     bool res = s1 == boost::locale::conv::from_utf(s2,"UTF-8");
-    #ifdef DEBUG_FMT
     if(!res)
         std::cout << "[" << s1 << "]!=[" << boost::locale::conv::from_utf(s2,"UTF-8") << "]\n";
-    #endif
     return res;
 }
 
 bool equal(std::wstring const &s1,std::wstring const &s2)
 {
     bool res = s1 == s2;
-    #ifdef DEBUG_FMT
     if(!res)
         std::cout << "[" << boost::locale::conv::from_utf(s1,"UTF-8") << "]!=[" << boost::locale::conv::from_utf(s2,"UTF-8") << "]\n";
-    #endif
     return res;
 }
 
@@ -56,20 +50,16 @@ bool equal(std::wstring const &s1,std::wstring const &s2)
 bool equal(std::string const &s1,std::string const &s2)
 {
     bool res = s1 == s2;
-    #ifdef DEBUG_FMT
     if(!res)
         std::cout << "[" << s1 << "]!=[" << s2 << "]\n";
-    #endif
     return res;
 }
 
 bool equal(std::wstring const &s1,std::string const &s2)
 {
     bool res = s1 == boost::locale::conv::to_utf<wchar_t>(s2,"UTF-8");
-    #ifdef DEBUG_FMT
     if(!res)
         std::cout << "[" << boost::locale::conv::from_utf(s1,"UTF-8") << "]!=[" << s2 << "]\n";
-    #endif
     return res;
 
 }
@@ -228,12 +218,10 @@ void test_main(int /*argc*/, char** /*argv*/)
     mgr.select("winapi");
     boost::locale::localization_backend_manager::global(mgr);
     boost::locale::generator gen;
-    std::string name;
-    std::string names[] = { "en_US.UTF-8", "he_IL.UTF-8", "ru_RU.UTF-8" };
-    int lcids[] = { 0x0409, 0x040D ,0x0419 };
 
-    for(unsigned i=0;i<sizeof(names)/sizeof(names[9]);i++) {
-        name = names[i];
+    for(const auto& name_lcid : {std::make_pair("en_US.UTF-8", 0x0409), std::make_pair("he_IL.UTF-8", 0x040D), std::make_pair("ru_RU.UTF-8", 0x0419)})
+    {
+        const std::string name = name_lcid.first;
         std::cout << "- " << name << " locale" << std::endl;
         if(boost::locale::impl_win::locale_to_lcid(name) == 0) {
             std::cout << "-- not supported, skipping" << std::endl;
@@ -241,9 +229,9 @@ void test_main(int /*argc*/, char** /*argv*/)
         }
         std::locale l1=gen(name);
         std::cout << "-- UTF-8" << std::endl;
-        test_by_char<char>(l1,name,lcids[i]);
+        test_by_char<char>(l1,name, name_lcid.second);
         std::cout << "-- UTF-16" << std::endl;
-        test_by_char<wchar_t>(l1,name,lcids[i]);
+        test_by_char<wchar_t>(l1,name,name_lcid.second);
     }
     std::cout << "- Testing strftime" << std::endl;
     test_date_time(gen("en_US.UTF-8"));

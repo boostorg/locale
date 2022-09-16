@@ -163,92 +163,40 @@ void test_by_char(std::locale const &l,locale_t lreal)
 
 void test_main(int /*argc*/, char** /*argv*/)
 {
-    locale_holder lreal;
     boost::locale::localization_backend_manager mgr = boost::locale::localization_backend_manager::global();
     mgr.select("posix");
     boost::locale::localization_backend_manager::global(mgr);
     boost::locale::generator gen;
-    std::string name;
-
+    for(const std::string locale_name : {"en_US.UTF-8", "en_US.ISO8859-1", "he_IL.UTF-8", "he_IL.ISO8859-8"})
     {
-        std::cout << "en_US.UTF locale" << std::endl;
-        name="en_US.UTF-8";
-        if(!have_locale(name)) {
-            std::cout << "en_US.UTF-8 not supported" << std::endl;
-        }
-        else {
-            std::locale l1=gen(name);
-            lreal=newlocale(LC_ALL_MASK,name.c_str(),0);
-            TEST_REQUIRE(lreal);
+        std::cout << locale_name << " locale" << std::endl;
+        if(!have_locale(locale_name))
+        {
+            std::cout << locale_name << " not supported" << std::endl;
+        } else
+        {
+            std::locale generated_locale=gen(locale_name);
+            locale_holder real_locale(newlocale(LC_ALL_MASK,locale_name.c_str(),0));
+            TEST_REQUIRE(real_locale);
+
             std::cout << "UTF-8" << std::endl;
-
-            test_by_char<char,char>(l1,lreal);
-
-            std::cout << "Wide UTF-" << sizeof(wchar_t) * 8 << std::endl;
-            test_by_char<wchar_t,char>(l1,lreal);
-        }
-    }
-    {
-        std::cout << "en_US.Latin-1 locale" << std::endl;
-        std::string name = "en_US.ISO8859-1";
-        if(!have_locale(name)) {
-            std::cout << "en_US.ISO8859-8 not supported" << std::endl;
-        }
-        else {
-            std::locale l1=gen(name);
-            lreal=newlocale(LC_ALL_MASK,name.c_str(),0);
-            TEST_REQUIRE(lreal);
-            test_by_char<char,char>(l1,lreal);
-            std::cout << "Wide UTF-" << sizeof(wchar_t) * 8 << std::endl;
-            test_by_char<wchar_t,char>(l1,lreal);
-        }
-    }
-    {
-        std::cout << "he_IL.UTF locale" << std::endl;
-        name="he_IL.UTF-8";
-        if(!have_locale(name)) {
-            std::cout << name << " not supported" << std::endl;
-        }
-        else {
-            std::locale l1=gen(name);
-            lreal=newlocale(LC_ALL_MASK,name.c_str(),0);
-            TEST_REQUIRE(lreal);
-            std::cout << "UTF-8" << std::endl;
-
-            test_by_char<char,char>(l1,lreal);
+            test_by_char<char,char>(generated_locale,real_locale);
 
             std::cout << "Wide UTF-" << sizeof(wchar_t) * 8 << std::endl;
-            test_by_char<wchar_t,char>(l1,lreal);
-        }
-    }
-    {
-        std::cout << "he_IL.ISO locale" << std::endl;
-        std::string name = "he_IL.ISO8859-8";
-        if(!have_locale(name)) {
-            std::cout << name << " not supported" << std::endl;
-        }
-        else {
-            std::locale l1=gen(name);
-            lreal=newlocale(LC_ALL_MASK,name.c_str(),0);
-            TEST_REQUIRE(lreal);
-            test_by_char<char,char>(l1,lreal);
-            std::cout << "Wide UTF-" << sizeof(wchar_t) * 8 << std::endl;
-            test_by_char<wchar_t,char>(l1,lreal);
+            test_by_char<wchar_t,char>(generated_locale,real_locale);
         }
     }
     {
         std::cout << "Testing UTF-8 punct issues" << std::endl;
-        std::string name = "ru_RU.UTF-8";
-        if(!have_locale(name)) {
-            std::cout << "- No russian locale" << std::endl;
-        }
-        else {
-            std::locale l1=gen(name);
+        const std::string locale_name = "ru_RU.UTF-8";
+        if(!have_locale(locale_name))
+        {
+            std::cout << "- No Russian locale" << std::endl;
+        } else {
             std::ostringstream ss;
-            ss.imbue(l1);
-            ss << std::setprecision(10) ;
-            ss << boost::locale::as::number << 12345.45;
-            std::string v=ss.str();
+            ss.imbue(gen(locale_name));
+            ss << std::setprecision(10) << boost::locale::as::number << 12345.45;
+            const std::string v=ss.str();
             TEST(v == "12345,45" || v == "12 345,45" || v=="12.345,45");
         }
     }
