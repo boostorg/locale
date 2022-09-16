@@ -417,11 +417,11 @@ BOOST_LOCALE_END_CONST_CONDITION
 
             // Default constructed time_point
             {
+                date_time time_point_default;
                 const time_t current_time = std::time(0);
                 const tm current_time_gmt = *std::gmtime(&current_time);
-                date_time time_point_default;
-                date_time time_point_1970 = year(1970) + february() + day(5);
                 // Defaults to current time, i.e. different than a date in 1970
+                date_time time_point_1970 = year(1970) + february() + day(5);
                 TEST(time_point_default != time_point_1970);
 
                 TEST_EQ(time_point_default.get(year()), current_time_gmt.tm_year + 1900);
@@ -429,7 +429,6 @@ BOOST_LOCALE_END_CONST_CONDITION
                 TEST_EQ(time_point_default.get(day()), current_time_gmt.tm_mday);
                 TEST_EQ(time_point_default.get(hour()), current_time_gmt.tm_hour);
                 TEST_EQ(time_point_default.get(minute()), current_time_gmt.tm_min);
-                TEST_EQ(time_point_default.get(second()), current_time_gmt.tm_sec);
 
                 // Uses the current global timezone
                 time_zone::global("GMT");
