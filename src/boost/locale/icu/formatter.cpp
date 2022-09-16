@@ -198,19 +198,26 @@ namespace locale {
                     return 0;
                 double date = udate / 1000.0;
                 typedef std::numeric_limits<ValueType> limits_type;
-                if(date > limits_type::max() || date < limits_type::min())
+                // Explicit cast to double to avoid warnings changing value (e.g. for INT64_MAX -> double)
+                if(date > static_cast<double>(limits_type::max()) || date < static_cast<double>(limits_type::min()))
                     return 0;
                 size_t cut = cvt_.cut(tmp,str.data(),str.data()+str.size(),pp.getIndex());
                 if(cut==0)
                     return 0;
-                value=static_cast<ValueType>(date);
+                // Handle the edge case where the double is slightly out of range and hence the cast would be UB
+                // by rounding to the min/max values
+                if(date == static_cast<double>(limits_type::max()))
+                    value = limits_type::max();
+                else if(date == static_cast<double>(limits_type::min()))
+                    value = limits_type::min();
+                else
+                    value = static_cast<ValueType>(date);
                 return cut;
-
             }
 
             string_type do_format(double value,size_t &codepoints) const
             {
-                UDate date = value * 1000.0; /// UDate is time_t in miliseconds
+                UDate date = value * 1000.0; /// UDate is time_t in milliseconds
                 icu::UnicodeString tmp;
                 icu_fmt_->format(date,tmp);
                 codepoints=tmp.countChar32();
