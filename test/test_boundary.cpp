@@ -421,9 +421,9 @@ void word_boundary()
     run_word<char>(all3,none3,zero,word3,zero,zero,g("en_US.UTF-8"));
 
     std::cout << " char Shift-JIS" << std::endl;
-    run_word<char>(all1,none1,num1,word1,kana1,ideo1,g("ja_JP.Shift-JIS"));
-    run_word<char>(all2,zero,zero,zero,zero,zero,g("ja_JP.Shift-JIS"));
-    run_word<char>(all3,none3,zero,word3,zero,zero,g("ja_JP.Shift-JIS"));
+    run_word<char>(all1,none1,num1,word1,kana1,ideo1,g("ja_JP.SJIS"));
+    run_word<char>(all2,zero,zero,zero,zero,zero,g("ja_JP.SJIS"));
+    run_word<char>(all3,none3,zero,word3,zero,zero,g("ja_JP.SJIS"));
 
     std::cout << " wchar_t" << std::endl;
     run_word<wchar_t>(all1,none1,num1,word1,kana1,ideo1,g("ja_JP.UTF-8"));
