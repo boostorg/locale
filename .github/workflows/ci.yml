@@ -110,7 +110,7 @@ jobs:
                 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys E1DD270288B4E6030699E45FA1715D88E1DF1F24
                 for i in {1..${NET_RETRY_COUNT:-3}}; do sudo -E add-apt-repository -y ppa:git-core/ppa && break || sleep 10; done
                 apt-get -o Acquire::Retries=$NET_RETRY_COUNT update
-                apt-get -o Acquire::Retries=$NET_RETRY_COUNT install -y g++ python libpython-dev git
+                apt-get -o Acquire::Retries=$NET_RETRY_COUNT install -y g++ python libpython-dev git locales
             fi
             # For jobs not compatible with ccache, use "ccache: no" in the matrix
             if [[ "${{ matrix.ccache }}" == "no" ]]; then
@@ -193,6 +193,37 @@ jobs:
           echo "BDDE_EDITION=${{ matrix.edition }}" >> ${GITHUB_ENV}
           echo "BDDE_ARCH=${{ matrix.arch }}" >> ${GITHUB_ENV}
           echo "B2_WRAPPER=bdde" >> ${GITHUB_ENV}
+
+      - name: Install locales
+        if: startsWith(matrix.os, 'ubuntu')
+        run: |
+          locales=$(locale -a)
+          echo "Installed locales: $locales"
+          function gen_locale() {
+            if ! { echo "$locales" | grep -q "$1" || echo "$locales" | grep -q "${1/UTF-8/utf8}"; }; then
+              echo "Adding locale $1"
+              sudo locale-gen "${1%.iso*}";
+            fi
+          }
+
+          gen_locale en_US.UTF-8 # Assumed to be there by tests
+          # Used by various tests
+          gen_locale he_IL.UTF-8
+          gen_locale ru_RU.UTF-8
+          gen_locale ja_JP.UTF-8
+          # ISO locales used by some tests
+          gen_locale en_US.iso88591
+          gen_locale he_IL.iso88598
+          # Used by test_boundary
+          if ! echo "$locales" | grep -q "ja_JP.sjis"; then
+            echo "Creating ja_JP.sjis"
+            if [ -n "${{matrix.container}}" ]; then
+              sudo localedef -f SHIFT_JIS -i ja_JP ja_JP.sjis
+            else
+              sudo localedef --no-warnings=ascii -f SHIFT_JIS -i ja_JP ja_JP.sjis
+            fi
+          fi
+          echo "Installed locales: $(locale -a)"
 
       - name: Setup Boost
         env:
