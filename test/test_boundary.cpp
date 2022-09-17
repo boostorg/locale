@@ -40,7 +40,7 @@ namespace lb = boost::locale::boundary;
 template<typename Char,typename Iterator>
 void test_word_container(Iterator begin,Iterator end,
     std::vector<size_t> const &ipos,
-    std::vector<int> const &imasks,
+    std::vector<unsigned> const &imasks,
     std::vector<std::basic_string<Char> > const &ichunks,
     std::locale l,
     lb::boundary_type bt=lb::word
@@ -54,7 +54,7 @@ void test_word_container(Iterator begin,Iterator end,
             + ((sm & 8 ) != 0) * 0xF000
             + ((sm & 16) != 0) * 0xF0000;
 
-        std::vector<int> masks;
+        std::vector<unsigned> masks;
         std::vector<size_t> pos;
         std::vector<unsigned> bmasks;
         std::basic_string<Char> empty_chunk;
@@ -98,30 +98,31 @@ void test_word_container(Iterator begin,Iterator end,
                 unsigned i=0;
                 iter_type p;
                 map.full_select(false);
-                for(p=map.begin();p!=map.end();++p,i++) {
-                    TEST(p->str()==chunks[i]);
-                    TEST(p->rule() == unsigned(masks[i]));
+                for(p=map.begin(); p!=map.end(); ++p, i++) {
+                    TEST_REQUIRE(i < chunks.size());
+                    TEST_EQ(p->str(), chunks[i]);
+                    TEST_EQ(p->rule(), masks[i]);
                 }
 
-                TEST(chunks.size() == i);
+                TEST_EQ(i, chunks.size());
                 for(;;) {
                     if(p==map.begin()) {
-                        TEST(i==0);
+                        TEST_EQ(i, 0u);
                         break;
                     }
                     else {
-                        --p;
-                        TEST(p->str()==chunks[--i]);
-                        TEST(p->rule() == unsigned(masks[i]));
+                        --p, --i;
+                        TEST_EQ(p->str(), chunks[i]);
+                        TEST_EQ(p->rule(), masks[i]);
                     }
                 }
                 for(i=0,p=map.end();i<chunks.size();i++){
                     --p;
                     size_t index = chunks.size() - i - 1;
-                    TEST(p->str()==chunks[index]);
-                    TEST(p->rule() == unsigned(masks[index]));
+                    TEST_EQ(p->str(), chunks[index]);
+                    TEST_EQ(p->rule(),  unsigned(masks[index]));
                 }
-                TEST(p==map.begin());
+                TEST(p == map.begin());
             }
 
             {
@@ -129,8 +130,8 @@ void test_word_container(Iterator begin,Iterator end,
                 iter_type p;
                 map.full_select(true);
                 for(p=map.begin();p!=map.end();++p,i++) {
-                    TEST(p->str()==fchunks[i]);
-                    TEST(p->rule() == unsigned(masks[i]));
+                    TEST_EQ(p->str(), fchunks[i]);
+                    TEST_EQ(p->rule(), masks[i]);
                 }
 
                 TEST(chunks.size() == i);
@@ -146,16 +147,16 @@ void test_word_container(Iterator begin,Iterator end,
                             print_str(p->str());
                             print_str(fchunks[i-1]);
                         }
-                        TEST(p->str()==fchunks[--i]);
-                        TEST(p->rule() == unsigned(masks[i]));
+                        TEST_EQ(p->str(), fchunks[--i]);
+                        TEST_EQ(p->rule(), masks[i]);
                     }
                 }
 
                 for(i=0,p=map.end();i<chunks.size();i++){
                     --p;
                     size_t index = chunks.size() - i - 1u;
-                    TEST(p->str()==fchunks[index]);
-                    TEST(p->rule() == unsigned(masks[index]));
+                    TEST_EQ(p->str(), fchunks[index]);
+                    TEST_EQ(p->rule(), unsigned(masks[index]));
                 }
                 TEST(p==map.begin());
             }
@@ -174,8 +175,8 @@ void test_word_container(Iterator begin,Iterator end,
                         TEST(p==map.end());
                     }
                     else {
-                        TEST(p->str()==chunks[chunk_ptr]);
-                        TEST(p->rule()==unsigned(masks[chunk_ptr]));
+                        TEST_EQ(p->str(), chunks[chunk_ptr]);
+                        TEST_EQ(p->rule(), unsigned(masks[chunk_ptr]));
                     }
                 }
             }
@@ -193,8 +194,8 @@ void test_word_container(Iterator begin,Iterator end,
                         TEST(p==map.end());
                     }
                     else {
-                        TEST(p->str()==fchunks[chunk_ptr]);
-                        TEST(p->rule()==unsigned(masks[chunk_ptr]));
+                        TEST_EQ(p->str(), fchunks[chunk_ptr]);
+                        TEST_EQ(p->rule(), unsigned(masks[chunk_ptr]));
                     }
                 }
             }
@@ -211,7 +212,7 @@ void test_word_container(Iterator begin,Iterator end,
             iter_type p;
             for(p=map.begin();p!=map.end();++p,i++) {
                 TEST(p->iterator()==iters[i]);
-                TEST(p->rule()==bmasks[i]);
+                TEST_EQ(p->rule(), bmasks[i]);
             }
 
             TEST(iters.size() == i);
@@ -246,7 +247,7 @@ void test_word_container(Iterator begin,Iterator end,
                     typename bi_type::iterator p;
                     for(p=bi.begin();p!=bi.end();++p,i++) {
                         TEST(p->iterator()==iters[i]);
-                        TEST(p->rule()==bmasks[i]);
+                        TEST_EQ(p->rule(), bmasks[i]);
                     }
                 }
                 {
@@ -257,7 +258,7 @@ void test_word_container(Iterator begin,Iterator end,
                     typename bi_type::iterator p;
                     for(p=bi.begin();p!=bi.end();++p,i++) {
                         TEST(p->iterator()==iters[i]);
-                        TEST(p->rule()==bmasks[i]);
+                        TEST_EQ(p->rule(), bmasks[i]);
                     }
                 }
                 // boundary_point to bound
@@ -269,7 +270,7 @@ void test_word_container(Iterator begin,Iterator end,
                     typename bi_type::iterator p;
                     for(p=bi.begin();p!=bi.end();++p,i++) {
                         TEST(p->iterator()==iters[i]);
-                        TEST(p->rule()==bmasks[i]);
+                        TEST_EQ(p->rule(), bmasks[i]);
                     }
                 }
                 {
@@ -279,7 +280,7 @@ void test_word_container(Iterator begin,Iterator end,
                     typename bi_type::iterator p;
                     for(p=bi.begin();p!=bi.end();++p,i++) {
                         TEST(p->iterator()==iters[i]);
-                        TEST(p->rule()==bmasks[i]);
+                        TEST_EQ(p->rule(), bmasks[i]);
                     }
                 }
             }
@@ -292,7 +293,7 @@ void test_word_container(Iterator begin,Iterator end,
                     typename ti_type::iterator p;
                     for(p=ti.begin();p!=ti.end();++p,i++) {
                         TEST(p->str()==chunks[i]);
-                        TEST(p->rule()==unsigned(masks[i]));
+                        TEST_EQ(p->rule(), masks[i]);
                     }
                 }
                 {
@@ -302,8 +303,8 @@ void test_word_container(Iterator begin,Iterator end,
                     unsigned i=0;
                     typename ti_type::iterator p;
                     for(p=ti.begin();p!=ti.end();++p,i++) {
-                        TEST(p->str()==chunks[i]);
-                        TEST(p->rule()==unsigned(masks[i]));
+                        TEST_EQ(p->str(), chunks[i]);
+                        TEST_EQ(p->rule(), masks[i]);
                     }
                 }
                 ti_type ti_2(bt,begin,end,l);
@@ -313,8 +314,8 @@ void test_word_container(Iterator begin,Iterator end,
                     unsigned i=0;
                     typename ti_type::iterator p;
                     for(p=ti.begin();p!=ti.end();++p,i++) {
-                        TEST(p->str()==chunks[i]);
-                        TEST(p->rule()==unsigned(masks[i]));
+                        TEST_EQ(p->str(), chunks[i]);
+                        TEST_EQ(p->rule(), masks[i]);
                     }
                 }
                 {
@@ -323,8 +324,8 @@ void test_word_container(Iterator begin,Iterator end,
                     unsigned i=0;
                     typename ti_type::iterator p;
                     for(p=ti.begin();p!=ti.end();++p,i++) {
-                        TEST(p->str()==chunks[i]);
-                        TEST(p->rule()==unsigned(masks[i]));
+                        TEST_EQ(p->str(), chunks[i]);
+                        TEST_EQ(p->rule(), masks[i]);
                     }
                 }
             }
@@ -334,22 +335,24 @@ void test_word_container(Iterator begin,Iterator end,
 }
 
 template<typename Char>
-void run_word(std::string *original,int *none,int *num,int *word,int *kana,int *ideo,std::locale l,lb::boundary_type b=lb::word)
+void run_word(std::string *original,
+              const int *none, const int *num, const int *word, const int *kana, const int *ideo,
+              std::locale l, lb::boundary_type b=lb::word)
 {
     std::vector<size_t> pos;
     std::vector<std::basic_string<Char> > chunks;
-    std::vector<int> masks;
+    std::vector<unsigned> masks;
     std::basic_string<Char> test_string;
     for(int i=0;!original[i].empty();i++) {
         chunks.push_back(to_correct_string<Char>(original[i],l));
         test_string+=chunks.back();
         pos.push_back(test_string.size());
         masks.push_back(
-              ( none ? none[i]*15 : 0)
-            | ( num  ? ((num[i]*15)  << 4) : 0)
-            | ( word ? ((word[i]*15) << 8) : 0)
-            | ( kana ? ((kana[i]*15) << 12) : 0)
-            | ( ideo ? ((ideo[i]*15) << 16) : 0)
+              (none && none[i] ? 0xFu : 0u)
+            | (num  && num[i]  ? 0xF0u : 0u)
+            | (word && word[i] ? 0xF00u : 0u)
+            | (kana && kana[i] ? 0xF000u : 0u)
+            | (ideo && ideo[i] ? 0xF0000u : 0u)
         );
     }
 
@@ -393,55 +396,62 @@ void test_boundaries(std::string *all,int *first,int *second,lb::boundary_type t
 void word_boundary()
 {
     boost::locale::generator g;
-    //std::string all1[]={"10"," ","Hello"," ","Windows7"," ","平仮名","ひらがな","ヒラガナ",""};
-    //std::string all1[]={"10"," ","Hello"," ","Windows7"," ","平仮名","ひん","アヒル",""};
-    std::string all1[]={"10"," ","Hello"," ","Windows7"," ","平仮名","アヒル",""};
-    int        none1[]={ 0,   1,      0,  1,         0,   1,      0,         0,          0};
-    int         num1[]={ 1,   0,      0,  0,         1,   0,      0 ,        0 ,         0};
-    int        word1[]={ 0,   0,      1,  0,         1,   0,      0 ,        0 ,         0};
-#if U_ICU_VERSION_MAJOR_NUM >= 50
-    int        kana1[]={ 0,   0,      0,  0,         0,   0,      0,         0 ,         0};
-    int        ideo1[]={ 0,   0,      0,  0,         0,   0,      1,         1 ,         1};
+    int zero[25] = {0};
+    std::string txt_empty[] = {""};
+
+    std::string txt_simple[] = {" "," ","Hello",",","World","!"," ",""};
+    int        none_simple[] = { 1,  1,      0,  1,      0,  1,  1, 0};
+    int        word_simple[] = { 0,  0,      1,  0,      1,  0,  0, 0};
+
+    std::string txt_all[]={"10"," ","Hello"," ","Windows7"," ","He22o"," ","平仮名","アヒル",""};
+    int        none_all[]={  0,  1,      0,  1,         0,  1,      0,  1,      0,      0,  0};
+#if U_ICU_VERSION_MAJOR_NUM >= 62
+    // ICU 62+ returns only the number classification if there is a number at the boundary
+    int         num_all[]={  1,  0,      0,  0,         1,  0,      0,  0,      0,      0,  0};
+    int        word_all[]={  0,  0,      1,  0,         0,  0,      1,  0,      0,      0,  0};
 #else
-    int        kana1[]={ 0,   0,      0,  0,         0,   0,      0,         1 ,         1};
-    int        ideo1[]={ 0,   0,      0,  0,         0,   0,      1,         0 ,         0};
+    // ICU < 62 combines the word and number classification if there is a number at the boundary
+    int         num_all[]={  1,  0,      0,  0,         1,  0,      0,  0,      0,      0,  0};
+    int        word_all[]={  0,  0,      1,  0,         1,  0,      1,  0,      0,      0,  0};
+#endif
+#if U_ICU_VERSION_MAJOR_NUM >= 50
+    int        kana_all[]={  0,  0,      0,  0,         0,  0,      0,  0,      0,      0,  0};
+    int        ideo_all[]={  0,  0,      0,  0,         0,  0,      0,  0,      1,      1,  1};
+#else
+    int        kana_all[]={  0,  0,      0,  0,         0,  0,      0,  0,      0,      1,  1};
+    int        ideo_all[]={  0,  0,      0,  0,         0,  0,      0,  0,      1,      0,  0};
 #endif
 
-
-    int zero[25]={0};
-    std::string all2[]={""};
-
-    std::string all3[]={" "," ","Hello",",","World","!"," ",""};
-    int        none3[]={ 1,  1,      0,  1,      0,   1,  1, 0};
-    int        word3[]={ 0,  0,      1,  0,      1,   0,  0, 0};
-
     std::cout << " char UTF-8" << std::endl;
-    run_word<char>(all1,none1,num1,word1,kana1,ideo1,g("ja_JP.UTF-8"));
-    run_word<char>(all2,zero,zero,zero,zero,zero,g("en_US.UTF-8"));
-    run_word<char>(all3,none3,zero,word3,zero,zero,g("en_US.UTF-8"));
+    const std::locale utf8_en_locale = g("en_US.UTF-8");
+    const std::locale utf8_jp_locale = g("ja_JP.UTF-8");
+    run_word<char>(txt_empty, zero, zero, zero, zero, zero, utf8_en_locale);
+    run_word<char>(txt_simple, none_simple, zero, word_simple, zero, zero, utf8_en_locale);
+    run_word<char>(txt_all, none_all, num_all, word_all, kana_all, ideo_all, utf8_jp_locale);
 
     std::cout << " char Shift-JIS" << std::endl;
-    run_word<char>(all1,none1,num1,word1,kana1,ideo1,g("ja_JP.SJIS"));
-    run_word<char>(all2,zero,zero,zero,zero,zero,g("ja_JP.SJIS"));
-    run_word<char>(all3,none3,zero,word3,zero,zero,g("ja_JP.SJIS"));
+    const std::locale sjis_jp_locale = g("ja_JP.SJIS");
+    run_word<char>(txt_empty, zero, zero, zero, zero, zero, sjis_jp_locale);
+    run_word<char>(txt_simple, none_simple, zero, word_simple, zero, zero, sjis_jp_locale);
+    run_word<char>(txt_all, none_all, num_all, word_all, kana_all, ideo_all, sjis_jp_locale);
 
     std::cout << " wchar_t" << std::endl;
-    run_word<wchar_t>(all1,none1,num1,word1,kana1,ideo1,g("ja_JP.UTF-8"));
-    run_word<wchar_t>(all2,zero,zero,zero,zero,zero,g("en_US.UTF-8"));
-    run_word<wchar_t>(all3,none3,zero,word3,zero,zero,g("en_US.UTF-8"));
+    run_word<wchar_t>(txt_empty, zero, zero, zero, zero, zero, utf8_en_locale);
+    run_word<wchar_t>(txt_simple, none_simple, zero, word_simple, zero, zero, utf8_en_locale);
+    run_word<wchar_t>(txt_all, none_all, num_all, word_all, kana_all, ideo_all, utf8_jp_locale);
 
     #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
     std::cout << " char16_t" << std::endl;
-    run_word<char16_t>(all1,none1,num1,word1,kana1,ideo1,g("ja_JP.UTF-8"));
-    run_word<char16_t>(all2,zero,zero,zero,zero,zero,g("en_US.UTF-8"));
-    run_word<char16_t>(all3,none3,zero,word3,zero,zero,g("en_US.UTF-8"));
+    run_word<char16_t>(txt_empty, zero, zero, zero, zero, zero, g("ja_JP.UTF-8"));
+    run_word<char16_t>(txt_simple, none_simple, zero, word_simple, zero, zero, utf8_en_locale);
+    run_word<char16_t>(txt_all, none_all, num_all, word_all, kana_all, ideo_all, utf8_jp_locale);
     #endif
 
     #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
     std::cout << " char32_t" << std::endl;
-    run_word<char32_t>(all1,none1,num1,word1,kana1,ideo1,g("ja_JP.UTF-8"));
-    run_word<char32_t>(all2,zero,zero,zero,zero,zero,g("en_US.UTF-8"));
-    run_word<char32_t>(all3,none3,zero,word3,zero,zero,g("en_US.UTF-8"));
+    run_word<char32_t>(txt_empty, zero, zero, zero, zero, zero, g("ja_JP.UTF-8"));
+    run_word<char32_t>(txt_simple, none_simple, zero, word_simple, zero, zero, utf8_en_locale);
+    run_word<char32_t>(txt_all, none_all, num_all, word_all, kana_all, ideo_all, utf8_jp_locale);
     #endif
 }
 void test_op_one_side(std::string const &sl,std::string const &sr,int val)
