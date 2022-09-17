@@ -76,7 +76,7 @@ namespace util {
 
     void locale_data::parse_from_encoding(std::string const &locale_name)
     {
-        size_t end = locale_name.find_first_of("@");
+        size_t end = locale_name.find_first_of('@');
         std::string tmp = locale_name.substr(0,end);
         if(tmp.empty())
             return;
