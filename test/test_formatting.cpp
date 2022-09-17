@@ -24,39 +24,59 @@ int main()
 #include <iomanip>
 #include <iostream>
 #include <limits>
+#include <memory>
 #include <sstream>
 #include <unicode/uversion.h>
 #include <unicode/numfmt.h>
 
+#include "../src/boost/locale/icu/time_zone.hpp"
 #include "boostLocale/test/unit_test.hpp"
 #include "boostLocale/test/tools.hpp"
 
 #define BOOST_LOCALE_ICU_VERSION (U_ICU_VERSION_MAJOR_NUM * 100 + U_ICU_VERSION_MINOR_NUM)
 #define BOOST_LOCALE_ICU_VERSION_EXACT (BOOST_LOCALE_ICU_VERSION  * 100 + U_ICU_VERSION_PATCHLEVEL_NUM)
 
+const std::string test_locale_name = "en_US";
+
+const icu::Locale& get_icu_test_locale()
+{
+    static icu::Locale locale = icu::Locale::createCanonical(test_locale_name.c_str());
+    return locale;
+}
+
+std::string from_icu_string(const icu::UnicodeString& str)
+{
+    return boost::locale::conv::utf_to_utf<char>(str.getBuffer(), str.getBuffer() + str.length());
+}
+
 // Currency style changes between ICU versions, so get "real" value from ICU
 #if BOOST_LOCALE_ICU_VERSION >= 402
 
-const std::string test_locale_name = "en_US";
-
 std::string get_icu_currency_iso(const double value)
 {
-    icu::Locale locale = icu::Locale::createCanonical(test_locale_name.c_str());
-    UErrorCode err = U_ZERO_ERROR;
 #if BOOST_LOCALE_ICU_VERSION >= 408
     auto styleIso = UNUM_CURRENCY_ISO;
 #else
     auto styleIso = icu::NumberFormat::kIsoCurrencyStyle;
 #endif
-    boost::locale::hold_ptr<icu::NumberFormat> fmt(icu::NumberFormat::createInstance(locale, styleIso, err));
+    UErrorCode err = U_ZERO_ERROR;
+    std::unique_ptr<icu::NumberFormat> fmt(icu::NumberFormat::createInstance(get_icu_test_locale(), styleIso, err));
     TEST_REQUIRE(U_SUCCESS(err) && fmt.get());
 
     icu::UnicodeString tmp;
-    fmt->format(value, tmp);
-    return boost::locale::conv::utf_to_utf<char>(tmp.getBuffer(), tmp.getBuffer() + tmp.length());
+    return from_icu_string(fmt->format(value, tmp));
 }
 
 #endif
+
+std::string get_icu_full_gmt_name()
+{
+    icu::UnicodeString tmp;
+    return from_icu_string(icu::TimeZone::getGMT()->getDisplayName(get_icu_test_locale(), tmp));
+}
+
+// This changes between ICU versions, i.e. "GMT" or "Greenwich Mean Time"
+const std::string icu_full_gmt_name = get_icu_full_gmt_name();
 
 using namespace boost::locale;
 
@@ -330,12 +350,6 @@ BOOST_LOCALE_END_CONST_CONDITION
 
     TEST_PARSE_FAILS(as::date>>as::date_short,"aa/bb/cc",double);
 
-#if U_ICU_VERSION_MAJOR_NUM >= 52
-#define GMT_FULL "Greenwich Mean Time"
-#else
-#define GMT_FULL "GMT"
-#endif
-
     TEST_FMT_PARSE_2_2(as::time,                as::gmt,a_datetime,"3:33:13 PM",a_time+a_timesec);
     TEST_FMT_PARSE_3_2(as::time,as::time_short ,as::gmt,a_datetime,"3:33 PM",a_time);
     TEST_FMT_PARSE_3_2(as::time,as::time_medium,as::gmt,a_datetime,"3:33:13 PM",a_time+a_timesec);
@@ -343,7 +357,7 @@ BOOST_LOCALE_END_CONST_CONDITION
         TEST_FMT_PARSE_3_2(as::time,as::time_long  ,as::gmt,a_datetime,"3:33:13 PM GMT",a_time+a_timesec);
         #if BOOST_LOCALE_ICU_VERSION_EXACT != 40800
             // know bug #8675
-            TEST_FMT_PARSE_3_2(as::time,as::time_full  ,as::gmt,a_datetime,"3:33:13 PM " GMT_FULL,a_time+a_timesec);
+            TEST_FMT_PARSE_3_2(as::time,as::time_full  ,as::gmt,a_datetime,"3:33:13 PM " + icu_full_gmt_name,a_time+a_timesec);
         #endif
     #else
         TEST_FMT_PARSE_3_2(as::time,as::time_long  ,as::gmt,a_datetime,"3:33:13 PM GMT+00:00",a_time+a_timesec);
@@ -385,7 +399,7 @@ BOOST_LOCALE_END_CONST_CONDITION
     TEST_FMT_PARSE_4(as::datetime,as::date_long  ,as::time_long  ,as::gmt,a_datetime,"February 5, 1970" ICUAT " 3:33:13 PM GMT");
         #if BOOST_LOCALE_ICU_VERSION_EXACT != 40800
             // know bug #8675
-            TEST_FMT_PARSE_4(as::datetime,as::date_full  ,as::time_full  ,as::gmt,a_datetime,"Thursday, February 5, 1970" ICUAT " 3:33:13 PM " GMT_FULL);
+            TEST_FMT_PARSE_4(as::datetime,as::date_full  ,as::time_full  ,as::gmt,a_datetime,"Thursday, February 5, 1970" ICUAT " 3:33:13 PM " + icu_full_gmt_name);
         #endif
     #else
     TEST_FMT_PARSE_4(as::datetime,as::date_long  ,as::time_long  ,as::gmt,a_datetime,"February 5, 1970" PERIOD " 3:33:13 PM GMT+00:00");
@@ -412,27 +426,19 @@ BOOST_LOCALE_END_CONST_CONDITION
 
     std::string result[]= {
         "Thu","Thursday","Feb","February",  // aAbB
-        #if BOOST_LOCALE_ICU_VERSION >= 408
-        "Thursday, February 5, 1970" ICUAT  " 3:33:13 PM " GMT_FULL, // c
-        #else
-        "Thursday, February 5, 1970 3:33:13 PM GMT+00:00", // c
-        #endif
+        "Thursday, February 5, 1970" ICUAT " 3:33:13 PM " + icu_full_gmt_name, // c
         "05","5","Feb", // deh
         "15","03","36","02", // HIjm
         "33","\n","PM", "03:33:13 PM",// Mnpr
         "15:33","13","\t","15:33:13", // RStT
         "Feb 5, 1970","3:33:13 PM","70","1970", // xXyY
-        #if BOOST_LOCALE_ICU_VERSION >= 408
-        GMT_FULL // Z
-        #else
-        "GMT+00:00" // Z
-        #endif
+        icu_full_gmt_name // Z
         ,"%" }; // %
 
     for(unsigned i=0;i<marks.size();i++) {
         format_string.clear();
         format_string+=static_cast<CharType>('%');
-        format_string+=static_cast<CharType>(marks[i]);
+        format_string += static_cast<CharType>(marks[i]);
         TEST_FMT(as::ftime(format_string) << as::gmt,a_datetime,result[i]);
     }
 
