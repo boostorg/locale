@@ -409,57 +409,61 @@ BOOST_LOCALE_END_CONST_CONDITION
     time_t now=time(0);
     time_t lnow = now + 3600 * 4;
     char local_time_str[256];
-    std::string format="%H:%M:%S";
+    const std::string format="%H:%M:%S";
     std::basic_string<CharType> format_string(format.begin(),format.end());
     strftime(local_time_str,sizeof(local_time_str),format.c_str(),gmtime(&lnow));
     TEST_FMT(as::ftime(format_string),now,local_time_str);
     TEST_FMT(as::ftime(format_string) << as::gmt << as::local_time,now,local_time_str);
 
-    std::string marks =
-        "aAbB"
-        "cdeh"
-        "HIjm"
-        "Mnpr"
-        "RStT"
-        "xXyY"
-        "Z%";
+    const std::pair<char, std::string> mark_test_cases[] = {
+        std::make_pair('a', "Thu"),
+        std::make_pair('A', "Thursday"),
+        std::make_pair('b', "Feb"),
+        std::make_pair('B', "February"),
+        std::make_pair('c', "Thursday, February 5, 1970" ICUAT " 3:33:13 PM " + icu_full_gmt_name),
+        std::make_pair('d', "05"),
+        std::make_pair('e', "5"),
+        std::make_pair('h', "Feb"),
+        std::make_pair('H', "15"),
+        std::make_pair('I', "03"),
+        std::make_pair('j', "36"),
+        std::make_pair('m', "02"),
+        std::make_pair('M', "33"),
+        std::make_pair('n', "\n"),
+        std::make_pair('p', "PM"),
+        std::make_pair('r', "03:33:13 PM"),
+        std::make_pair('R', "15:33"),
+        std::make_pair('S', "13"),
+        std::make_pair('t', "\t"),
+        std::make_pair('T', "15:33:13"),
+        std::make_pair('x', "Feb 5, 1970"),
+        std::make_pair('X', "3:33:13 PM"),
+        std::make_pair('y', "70"),
+        std::make_pair('Y', "1970"),
+        std::make_pair('Z', icu_full_gmt_name),
+        std::make_pair('%', "%"),
+    };
 
-    std::string result[]= {
-        "Thu","Thursday","Feb","February",  // aAbB
-        "Thursday, February 5, 1970" ICUAT " 3:33:13 PM " + icu_full_gmt_name, // c
-        "05","5","Feb", // deh
-        "15","03","36","02", // HIjm
-        "33","\n","PM", "03:33:13 PM",// Mnpr
-        "15:33","13","\t","15:33:13", // RStT
-        "Feb 5, 1970","3:33:13 PM","70","1970", // xXyY
-        icu_full_gmt_name // Z
-        ,"%" }; // %
-
-    for(unsigned i=0;i<marks.size();i++) {
+    for(const auto& mark_result: mark_test_cases) {
         format_string.clear();
-        format_string+=static_cast<CharType>('%');
-        format_string += static_cast<CharType>(marks[i]);
-        TEST_FMT(as::ftime(format_string) << as::gmt,a_datetime,result[i]);
+        format_string += static_cast<CharType>('%');
+        format_string += static_cast<CharType>(mark_result.first);
+        std::cout << "Test: %" << mark_result.first << "\n";
+        TEST_FMT(as::ftime(format_string) << as::gmt,a_datetime, mark_result.second);
     }
 
-    std::string sample_f[]={
-        "Now is %A, %H o'clo''ck ' or not ' ",
-        "'test %H'",
-        "%H'",
-        "'%H'"
-    };
-    std::string expected_f[] = {
-        "Now is Thursday, 15 o'clo''ck ' or not ' ",
-        "'test 15'",
-        "15'",
-        "'15'"
+    const std::pair<std::string, std::string> format_string_test_cases[] = {
+        std::make_pair("Now is %A, %H o'clo''ck ' or not ' ", "Now is Thursday, 15 o'clo''ck ' or not ' "),
+        std::make_pair("'test %H'", "'test 15'"),
+        std::make_pair("%H'", "15'"),
+        std::make_pair("'%H'","'15'"),
     };
 
-    for(unsigned i=0;i<sizeof(sample_f)/sizeof(sample_f[0]);i++) {
-        format_string.assign(sample_f[i].begin(),sample_f[i].end());
-        TEST_FMT(as::ftime(format_string) << as::gmt,a_datetime,expected_f[i]);
+    for(const auto& test_case: format_string_test_cases) {
+        format_string.assign(test_case.first.begin(), test_case.first.end());
+        std::cout << "Test: '" << test_case.first << "'\n";
+        TEST_FMT(as::ftime(format_string) << as::gmt,a_datetime,test_case.second);
     }
-
 }
 
 template<typename CharType>
