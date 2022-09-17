@@ -68,45 +68,36 @@ public:
     typedef std::basic_string<CharType> string_type;
     typedef CharType char_type;
 
-    base_num_format(size_t refs = 0) :
-        std::num_put<CharType>(refs)
-    {
-    }
+    base_num_format(size_t refs = 0): std::num_put<CharType>(refs) {}
 protected:
 
+    iter_type do_put (iter_type out, std::ios_base &ios, char_type fill, long val) const override
+    {
+        return do_real_put(out,ios,fill,val);
+    }
+    iter_type do_put (iter_type out, std::ios_base &ios, char_type fill, unsigned long val) const override
+    {
+        return do_real_put(out,ios,fill,val);
+    }
+    iter_type do_put (iter_type out, std::ios_base &ios, char_type fill, double val) const override
+    {
+        return do_real_put(out,ios,fill,val);
+    }
+    iter_type do_put (iter_type out, std::ios_base &ios, char_type fill, long double val) const override
+    {
+        return do_real_put(out,ios,fill,val);
+    }
 
-    iter_type do_put (iter_type out, std::ios_base &ios, char_type fill, long val) const BOOST_OVERRIDE
+    iter_type do_put (iter_type out, std::ios_base &ios, char_type fill, long long val) const override
     {
         return do_real_put(out,ios,fill,val);
     }
-    iter_type do_put (iter_type out, std::ios_base &ios, char_type fill, unsigned long val) const BOOST_OVERRIDE
+    iter_type do_put (iter_type out, std::ios_base &ios, char_type fill, unsigned long long val) const override
     {
         return do_real_put(out,ios,fill,val);
     }
-    iter_type do_put (iter_type out, std::ios_base &ios, char_type fill, double val) const BOOST_OVERRIDE
-    {
-        return do_real_put(out,ios,fill,val);
-    }
-    iter_type do_put (iter_type out, std::ios_base &ios, char_type fill, long double val) const BOOST_OVERRIDE
-    {
-        return do_real_put(out,ios,fill,val);
-    }
-
-    #ifndef BOOST_NO_LONG_LONG
-    iter_type do_put (iter_type out, std::ios_base &ios, char_type fill, long long val) const BOOST_OVERRIDE
-    {
-        return do_real_put(out,ios,fill,val);
-    }
-    iter_type do_put (iter_type out, std::ios_base &ios, char_type fill, unsigned long long val) const BOOST_OVERRIDE
-    {
-        return do_real_put(out,ios,fill,val);
-    }
-    #endif
-
 
 private:
-
-
 
     template<typename ValueType>
     iter_type do_real_put (iter_type out, std::ios_base &ios, char_type fill, ValueType val) const
@@ -258,62 +249,56 @@ template<typename CharType>
 class base_num_parse : public std::num_get<CharType>
 {
 public:
-    base_num_parse(size_t refs = 0) :
-        std::num_get<CharType>(refs)
-    {
-    }
+    base_num_parse(size_t refs = 0): std::num_get<CharType>(refs) {}
 protected:
     typedef typename std::num_get<CharType>::iter_type iter_type;
     typedef std::basic_string<CharType> string_type;
     typedef CharType char_type;
 
-    iter_type do_get(iter_type in, iter_type end, std::ios_base &ios,std::ios_base::iostate &err,long &val) const BOOST_OVERRIDE
+    iter_type do_get(iter_type in, iter_type end, std::ios_base &ios,std::ios_base::iostate &err,long &val) const override
     {
         return do_real_get(in,end,ios,err,val);
     }
 
-    iter_type do_get(iter_type in, iter_type end, std::ios_base &ios,std::ios_base::iostate &err,unsigned short &val) const BOOST_OVERRIDE
+    iter_type do_get(iter_type in, iter_type end, std::ios_base &ios,std::ios_base::iostate &err,unsigned short &val) const override
     {
         return do_real_get(in,end,ios,err,val);
     }
 
-    iter_type do_get(iter_type in, iter_type end, std::ios_base &ios,std::ios_base::iostate &err,unsigned int &val) const BOOST_OVERRIDE
+    iter_type do_get(iter_type in, iter_type end, std::ios_base &ios,std::ios_base::iostate &err,unsigned int &val) const override
     {
         return do_real_get(in,end,ios,err,val);
     }
 
-    iter_type do_get(iter_type in, iter_type end, std::ios_base &ios,std::ios_base::iostate &err,unsigned long &val) const BOOST_OVERRIDE
+    iter_type do_get(iter_type in, iter_type end, std::ios_base &ios,std::ios_base::iostate &err,unsigned long &val) const override
     {
         return do_real_get(in,end,ios,err,val);
     }
 
-    iter_type do_get(iter_type in, iter_type end, std::ios_base &ios,std::ios_base::iostate &err,float &val) const BOOST_OVERRIDE
+    iter_type do_get(iter_type in, iter_type end, std::ios_base &ios,std::ios_base::iostate &err,float &val) const override
     {
         return do_real_get(in,end,ios,err,val);
     }
 
-    iter_type do_get(iter_type in, iter_type end, std::ios_base &ios,std::ios_base::iostate &err,double &val) const BOOST_OVERRIDE
+    iter_type do_get(iter_type in, iter_type end, std::ios_base &ios,std::ios_base::iostate &err,double &val) const override
     {
         return do_real_get(in,end,ios,err,val);
     }
 
-    iter_type do_get (iter_type in, iter_type end, std::ios_base &ios,std::ios_base::iostate &err,long double &val) const BOOST_OVERRIDE
+    iter_type do_get (iter_type in, iter_type end, std::ios_base &ios,std::ios_base::iostate &err,long double &val) const override
     {
         return do_real_get(in,end,ios,err,val);
     }
 
-    #ifndef BOOST_NO_LONG_LONG
-    iter_type do_get (iter_type in, iter_type end, std::ios_base &ios,std::ios_base::iostate &err,long long &val) const BOOST_OVERRIDE
+    iter_type do_get (iter_type in, iter_type end, std::ios_base &ios,std::ios_base::iostate &err,long long &val) const override
     {
         return do_real_get(in,end,ios,err,val);
     }
 
-    iter_type do_get (iter_type in, iter_type end, std::ios_base &ios,std::ios_base::iostate &err,unsigned long long &val) const BOOST_OVERRIDE
+    iter_type do_get (iter_type in, iter_type end, std::ios_base &ios,std::ios_base::iostate &err,unsigned long long &val) const override
     {
         return do_real_get(in,end,ios,err,val);
     }
-
-    #endif
 
 private:
 

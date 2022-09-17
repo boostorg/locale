@@ -25,8 +25,8 @@
 #include <windows.h>
 #endif
 
-#include "test_locale.hpp"
-#include "test_locale_tools.hpp"
+#include "boostLocale/test/unit_test.hpp"
+#include "boostLocale/test/tools.hpp"
 
 bool test_iso;
 bool test_iso_8859_8 = true;
@@ -50,67 +50,77 @@ std::basic_string<Char> read_file(std::basic_istream<Char> &in)
 
 
 template<typename Char>
-void test_ok(std::string file,std::locale const &l,std::basic_string<Char> cmp=std::basic_string<Char>())
+void test_ok(std::string const& content,std::locale const &l,std::basic_string<Char> cmp=std::basic_string<Char>())
 {
-    if(cmp.empty())
-        cmp=to<Char>(file);
-    std::ofstream test("testi.txt");
-    test << file;
-    test.close();
     typedef std::basic_fstream<Char> stream_type;
+    if(cmp.empty())
+        cmp = to<Char>(content);
 
-    stream_type f1("testi.txt",stream_type::in);
-    f1.imbue(l);
-    TEST(read_file<Char>(f1) == cmp);
-    f1.close();
+    {
+        remove_file_on_exit _("testi.txt");
+        {
+            std::ofstream testi("testi.txt");
+            testi << content;
+        }
+        stream_type testi("testi.txt", stream_type::in);
+        testi.imbue(l);
+        TEST(read_file<Char>(testi) == cmp);
+    }
 
-    stream_type f2("testo.txt",stream_type::out);
-    f2.imbue(l);
-    f2 << cmp;
-    f2.close();
-
-    std::ifstream testo("testo.txt");
-    TEST(read_file<char>(testo) == file);
+    {
+        remove_file_on_exit _("testo.txt");
+        {
+            stream_type testo("testo.txt", stream_type::out);
+            testo.imbue(l);
+            testo << cmp;
+        }
+        std::ifstream testo("testo.txt");
+        TEST(read_file<char>(testo) == content);
+    }
 }
 
 template<typename Char>
-void test_rfail(std::string file,std::locale const &l,int pos)
+void test_rfail(std::string const& content,std::locale const &l,int pos)
 {
-    std::ofstream test("testi.txt");
-    test << file;
-    test.close();
+    remove_file_on_exit _("testi.txt");
+    {
+        std::ofstream f("testi.txt");
+        f << content;
+    }
+
     typedef std::basic_fstream<Char> stream_type;
 
-    stream_type f1("testi.txt",stream_type::in);
-    f1.imbue(l);
+    stream_type f("testi.txt",stream_type::in);
+    f.imbue(l);
     Char c;
     for(int i=0;i<pos;i++) {
-        f1.get(c);
-        if(f1.fail()) { // failed before as detected errors at forward;
+        f.get(c);
+        if(f.fail()) { // failed before as detected errors at forward;
             return;
         }
-        TEST(f1);
+        TEST(f);
     }
-    // if the pos above suceed, at this point
+    // if the pos above succeed, at this point
     // it MUST fail
-    TEST(f1.get(c).fail());
+    TEST(f.get(c).fail());
 }
 
 template<typename Char>
-void test_wfail(std::string file,std::locale const &l,int pos)
+void test_wfail(std::string const& content,std::locale const &l,int pos)
 {
     typedef std::basic_fstream<Char> stream_type;
-    stream_type f1("testo.txt",stream_type::out);
-    f1.imbue(l);
-    std::basic_string<Char> out=to<Char>(file);
+    remove_file_on_exit _("testo.txt");
+    stream_type f("testo.txt",stream_type::out);
+    f.imbue(l);
+    std::basic_string<Char> out=to<Char>(content);
     int i;
     for(i=0;i<pos;i++) {
-        f1 << out.at(i);
-        f1 << std::flush;
-        TEST(f1.good());
+        f << out.at(i);
+        f << std::flush;
+        TEST(f.good());
     }
-    f1 << out.at(i);
-    TEST(f1.fail() || (f1 << std::flush).fail());
+    f << out.at(i);
+    TEST(f.fail() || (f << std::flush).fail());
 }
 
 
@@ -125,7 +135,7 @@ void test_for_char()
         std::cout << "    Testing codepoints above 0xFFFF" << std::endl;
         std::cout << "      Single U+2008A" << std::endl;
         test_ok<Char>("\xf0\xa0\x82\x8a",g("en_US.UTF-8")); // U+2008A
-        std::cout << "      Single U+2008A withing text" << std::endl;
+        std::cout << "      Single U+2008A within text" << std::endl;
         test_ok<Char>("abc\"\xf0\xa0\x82\x8a\"",g("en_US.UTF-8")); // U+2008A
         std::string one = "\xf0\xa0\x82\x8a";
         std::string res;
@@ -421,7 +431,7 @@ void test_main(int /*argc*/, char** /*argv*/)
             ja_jp_shiftjis = get_std_name("ja_JP.SJIS");
             if(!ja_jp_shiftjis.empty() && !test_std_supports_SJIS_codecvt(ja_jp_shiftjis))
             {
-                std::cout << "Warning: detected unproper support of " << ja_jp_shiftjis << " locale, disableling it" << std::endl;
+                std::cout << "Warning: detected unproper support of " << ja_jp_shiftjis << " locale, disabling it" << std::endl;
                 ja_jp_shiftjis = "";
             }
         }
@@ -435,7 +445,7 @@ void test_main(int /*argc*/, char** /*argv*/)
 
         test_iso = true;
         if(bname=="std" && (he_il_8bit.empty() || en_us_8bit.empty())) {
-            std::cout << "no iso locales availible, passing" << std::endl;
+            std::cout << "no ISO locales available, passing" << std::endl;
             test_iso = false;
         }
         test_sjis = true;

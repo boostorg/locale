@@ -18,24 +18,23 @@ namespace impl_std {
 class utf8_collator_from_wide : public std::collate<char> {
 public:
     typedef std::collate<wchar_t> wfacet;
-    utf8_collator_from_wide(std::locale const &base,size_t refs = 0) :
+    utf8_collator_from_wide(std::locale const &base,size_t refs = 0):
         std::collate<char>(refs),
         base_(base)
-    {
-    }
-    int do_compare(char const *lb,char const *le,char const *rb,char const *re) const BOOST_OVERRIDE
+    {}
+    int do_compare(char const *lb,char const *le,char const *rb,char const *re) const override
     {
         std::wstring l=conv::to_utf<wchar_t>(lb,le,"UTF-8");
         std::wstring r=conv::to_utf<wchar_t>(rb,re,"UTF-8");
         return std::use_facet<wfacet>(base_).compare(   l.c_str(),l.c_str()+l.size(),
                                                         r.c_str(),r.c_str()+r.size());
     }
-    long do_hash(char const *b,char const *e) const BOOST_OVERRIDE
+    long do_hash(char const *b,char const *e) const override
     {
         std::wstring tmp=conv::to_utf<wchar_t>(b,e,"UTF-8");
         return std::use_facet<wfacet>(base_).hash(tmp.c_str(),tmp.c_str()+tmp.size());
     }
-    std::string do_transform(char const *b,char const *e) const BOOST_OVERRIDE
+    std::string do_transform(char const *b,char const *e) const override
     {
         std::wstring tmp=conv::to_utf<wchar_t>(b,e,"UTF-8");
         std::wstring wkey =

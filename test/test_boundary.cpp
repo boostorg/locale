@@ -16,8 +16,8 @@ int main()
 
 #include <boost/locale/boundary.hpp>
 #include <boost/locale/generator.hpp>
-#include "test_locale.hpp"
-#include "test_locale_tools.hpp"
+#include "boostLocale/test/unit_test.hpp"
+#include "boostLocale/test/tools.hpp"
 #include <list>
 #include <unicode/uversion.h>
 #include <vector>
@@ -26,8 +26,7 @@ int main()
 
 template<typename Char>
 void print_str(std::basic_string<Char> const &/*s*/)
-{
-}
+{}
 
 template<>
 void print_str<char>(std::basic_string<char> const &s)
@@ -422,9 +421,9 @@ void word_boundary()
     run_word<char>(all3,none3,zero,word3,zero,zero,g("en_US.UTF-8"));
 
     std::cout << " char Shift-JIS" << std::endl;
-    run_word<char>(all1,none1,num1,word1,kana1,ideo1,g("ja_JP.Shift-JIS"));
-    run_word<char>(all2,zero,zero,zero,zero,zero,g("ja_JP.Shift-JIS"));
-    run_word<char>(all3,none3,zero,word3,zero,zero,g("ja_JP.Shift-JIS"));
+    run_word<char>(all1,none1,num1,word1,kana1,ideo1,g("ja_JP.SJIS"));
+    run_word<char>(all2,zero,zero,zero,zero,zero,g("ja_JP.SJIS"));
+    run_word<char>(all3,none3,zero,word3,zero,zero,g("ja_JP.SJIS"));
 
     std::cout << " wchar_t" << std::endl;
     run_word<wchar_t>(all1,none1,num1,word1,kana1,ideo1,g("ja_JP.UTF-8"));

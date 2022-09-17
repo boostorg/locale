@@ -24,19 +24,15 @@ namespace impl_win {
 
     class winapi_localization_backend : public localization_backend {
     public:
-        winapi_localization_backend() :
-            invalid_(true)
-        {
-        }
-        winapi_localization_backend(winapi_localization_backend const &other) :
+        winapi_localization_backend(): invalid_(true) {}
+        winapi_localization_backend(winapi_localization_backend const &other):
             localization_backend(),
             paths_(other.paths_),
             domains_(other.domains_),
             locale_id_(other.locale_id_),
             invalid_(true)
-        {
-        }
-        winapi_localization_backend *clone() const BOOST_OVERRIDE
+        {}
+        winapi_localization_backend *clone() const override
         {
             return new winapi_localization_backend(*this);
         }
@@ -83,7 +79,7 @@ namespace impl_win {
 
         std::locale install(std::locale const &base,
                                     locale_category_type category,
-                                    character_facet_type type = nochar_facet) BOOST_OVERRIDE
+                                    character_facet_type type = nochar_facet) override
         {
             prepare_data();
 

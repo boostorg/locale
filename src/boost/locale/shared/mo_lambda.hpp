@@ -8,7 +8,7 @@
 #define BOOST_SRC_LOCALE_MO_LAMBDA_HPP_INCLUDED
 
 #include <boost/locale/config.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace boost {
     namespace locale {
@@ -22,7 +22,7 @@ namespace boost {
                     virtual ~plural() {}
                 };
 
-                typedef boost::shared_ptr<plural> plural_ptr;
+                typedef std::shared_ptr<plural> plural_ptr;
 
                 plural_ptr compile(char const *c_expression);
 

@@ -43,14 +43,14 @@ namespace locale {
             typedef CharType char_type;
             typedef std::basic_string<CharType> string_type;
 
-            string_type format(double value,size_t &code_points) const BOOST_OVERRIDE
+            string_type format(double value,size_t &code_points) const override
             {
                 icu::UnicodeString tmp;
                 icu_fmt_->format(value,tmp);
                 code_points=tmp.countChar32();
                 return cvt_.std(tmp);
             }
-            string_type format(int64_t value,size_t &code_points) const BOOST_OVERRIDE
+            string_type format(int64_t value,size_t &code_points) const override
             {
                 icu::UnicodeString tmp;
                 icu_fmt_->format(static_cast< ::int64_t>(value),tmp);
@@ -58,7 +58,7 @@ namespace locale {
                 return cvt_.std(tmp);
             }
 
-            string_type format(int32_t value,size_t &code_points) const BOOST_OVERRIDE
+            string_type format(int32_t value,size_t &code_points) const override
             {
                 icu::UnicodeString tmp;
                 #ifdef __SUNPRO_CC
@@ -70,25 +70,21 @@ namespace locale {
                 return cvt_.std(tmp);
             }
 
-            size_t parse(string_type const &str,double &value) const BOOST_OVERRIDE
+            size_t parse(string_type const &str,double &value) const override
             {
                 return do_parse(str,value);
             }
 
-            size_t parse(string_type const &str,int64_t &value) const BOOST_OVERRIDE
+            size_t parse(string_type const &str,int64_t &value) const override
             {
                 return do_parse(str,value);
             }
-            size_t parse(string_type const &str,int32_t &value) const BOOST_OVERRIDE
+            size_t parse(string_type const &str,int32_t &value) const override
             {
                 return do_parse(str,value);
             }
 
-            number_format(icu::NumberFormat *fmt,std::string codepage) :
-                cvt_(codepage),
-                icu_fmt_(fmt)
-            {
-            }
+            number_format(icu::NumberFormat *fmt,std::string codepage): cvt_(codepage), icu_fmt_(fmt) {}
 
         private:
 
@@ -150,34 +146,34 @@ namespace locale {
             typedef CharType char_type;
             typedef std::basic_string<CharType> string_type;
 
-            string_type format(double value,size_t &code_points) const BOOST_OVERRIDE
+            string_type format(double value,size_t &code_points) const override
             {
                 return do_format(value,code_points);
             }
-            string_type format(int64_t value,size_t &code_points) const BOOST_OVERRIDE
-            {
-                return do_format(value,code_points);
-            }
-
-            string_type format(int32_t value,size_t &code_points) const BOOST_OVERRIDE
+            string_type format(int64_t value,size_t &code_points) const override
             {
                 return do_format(value,code_points);
             }
 
-            size_t parse(string_type const &str,double &value) const BOOST_OVERRIDE
+            string_type format(int32_t value,size_t &code_points) const override
+            {
+                return do_format(value,code_points);
+            }
+
+            size_t parse(string_type const &str,double &value) const override
             {
                 return do_parse(str,value);
             }
-            size_t parse(string_type const &str,int64_t &value) const BOOST_OVERRIDE
+            size_t parse(string_type const &str,int64_t &value) const override
             {
                 return do_parse(str,value);
             }
-            size_t parse(string_type const &str,int32_t &value) const BOOST_OVERRIDE
+            size_t parse(string_type const &str,int32_t &value) const override
             {
                 return do_parse(str,value);
             }
 
-            date_format(icu::DateFormat *fmt,bool transfer_owneship,std::string codepage) :
+            date_format(icu::DateFormat *fmt,bool transfer_owneship,std::string codepage):
                 cvt_(codepage)
             {
                 if(transfer_owneship) {
@@ -202,19 +198,26 @@ namespace locale {
                     return 0;
                 double date = udate / 1000.0;
                 typedef std::numeric_limits<ValueType> limits_type;
-                if(date > limits_type::max() || date < limits_type::min())
+                // Explicit cast to double to avoid warnings changing value (e.g. for INT64_MAX -> double)
+                if(date > static_cast<double>(limits_type::max()) || date < static_cast<double>(limits_type::min()))
                     return 0;
                 size_t cut = cvt_.cut(tmp,str.data(),str.data()+str.size(),pp.getIndex());
                 if(cut==0)
                     return 0;
-                value=static_cast<ValueType>(date);
+                // Handle the edge case where the double is slightly out of range and hence the cast would be UB
+                // by rounding to the min/max values
+                if(date == static_cast<double>(limits_type::max()))
+                    value = limits_type::max();
+                else if(date == static_cast<double>(limits_type::min()))
+                    value = limits_type::min();
+                else
+                    value = static_cast<ValueType>(date);
                 return cut;
-
             }
 
             string_type do_format(double value,size_t &codepoints) const
             {
-                UDate date = value * 1000.0; /// UDate is time_t in miliseconds
+                UDate date = value * 1000.0; /// UDate is time_t in milliseconds
                 icu::UnicodeString tmp;
                 icu_fmt_->format(date,tmp);
                 codepoints=tmp.countChar32();

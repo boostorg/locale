@@ -4,8 +4,8 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#ifndef BOOST_LOCLAE_TEST_LOCALE_POSIX_TOOLS_HPP
-#define BOOST_LOCLAE_TEST_LOCALE_POSIX_TOOLS_HPP
+#ifndef BOOST_LOCALE_TEST_POSIX_TOOLS_HPP
+#define BOOST_LOCALE_TEST_POSIX_TOOLS_HPP
 
 #include <clocale>
 #include <string>
@@ -27,8 +27,6 @@ inline bool have_locale(std::string const &name)
 class locale_holder
 {
     locale_t l_;
-    locale_holder(const locale_holder&);
-    locale_holder& operator=(const locale_holder&);
     void reset(const locale_t l = 0)
     {
         if(l_)
@@ -38,8 +36,10 @@ class locale_holder
 public:
     explicit locale_holder(locale_t l = 0): l_(l) {}
     ~locale_holder() { reset(); }
-    operator locale_t() const { return l_; }
+    locale_holder(const locale_holder&) = delete;
+    locale_holder& operator=(const locale_holder&) = delete;
     locale_holder& operator=(locale_t l) { reset(l); return *this; }
+    operator locale_t() const { return l_; }
 };
 
 #endif

@@ -8,7 +8,7 @@
 #include <boost/locale/info.hpp>
 #include <boost/locale/message.hpp>
 #include <iomanip>
-#include "test_locale.hpp"
+#include "boostLocale/test/unit_test.hpp"
 
 
 bool has_message(std::locale const &l)
@@ -17,7 +17,7 @@ bool has_message(std::locale const &l)
 }
 
 struct test_facet : public std::locale::facet {
-    test_facet() : std::locale::facet(0) {}
+    test_facet(): std::locale::facet(0) {}
     static std::locale::id id;
 };
 

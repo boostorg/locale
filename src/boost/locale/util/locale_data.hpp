@@ -15,12 +15,7 @@ namespace boost {
 
             class locale_data {
             public:
-                locale_data() :
-                    language("C"),
-                    encoding("us-ascii"),
-                    utf8(false)
-                {
-                }
+                locale_data(): language("C"), encoding("us-ascii"), utf8(false) {}
 
                 std::string language;
                 std::string country;

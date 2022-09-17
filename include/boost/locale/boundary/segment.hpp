@@ -129,7 +129,7 @@ namespace boundary {
         ///
         /// Default constructor
         ///
-        segment() {}
+        segment(): rule_(0) {}
         ///
         /// Create a segment using two iterators and a rule that represents this point
         ///
@@ -148,7 +148,7 @@ namespace boundary {
         ///
         /// Set the end of the range
         ///
-         void end(iterator const &v)
+        void end(iterator const &v)
         {
             this->second = v;
         }
@@ -172,7 +172,7 @@ namespace boundary {
         /// Convert the range to a string automatically
         ///
         template <class T, class A>
-        operator std::basic_string<char_type, T, A> ()const
+        operator std::basic_string<char_type, T, A>() const
         {
             return std::basic_string<char_type, T, A>(this->first, this->second);
         }
@@ -459,7 +459,7 @@ namespace boundary {
     /// Write the segment to the stream character by character
     ///
     template<typename CharType,typename TraitsType,typename Iterator>
-    std::basic_ostream<CharType,TraitsType> &operator<<(
+    std::basic_ostream<CharType,TraitsType>& operator<<(
             std::basic_ostream<CharType,TraitsType> &out,
             segment<Iterator> const &tok)
     {

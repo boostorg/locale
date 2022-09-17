@@ -38,19 +38,17 @@ namespace boost {
                 typedef std::basic_ostream<CharType> stream_type;
                 typedef void (*writer_type)(stream_type &output,void const *ptr);
 
-                formattible() :
+                formattible():
                     pointer_(0),
                     writer_(&formattible::void_write)
-                {
-                }
+                {}
 
-                formattible(formattible const &other) :
+                formattible(formattible const &other):
                     pointer_(other.pointer_),
                     writer_(other.writer_)
-                {
-                }
+                {}
 
-                formattible const &operator=(formattible const &other)
+                formattible& operator=(formattible const &other)
                 {
                     if(this != &other) {
                         pointer_=other.pointer_;
@@ -67,13 +65,13 @@ namespace boost {
                 }
 
                 template<typename Type>
-                formattible const &operator=(Type const &other)
+                formattible& operator=(Type const &other)
                 {
                     *this = formattible(other);
                     return *this;
                 }
 
-                friend stream_type &operator<<(stream_type &out,formattible const &fmt)
+                friend stream_type& operator<<(stream_type &out,formattible const &fmt)
                 {
                     fmt.writer_(out,fmt.pointer_);
                     return out;
@@ -216,29 +214,27 @@ namespace boost {
             ///
             /// Create a format class for \a format_string
             ///
-            basic_format(string_type format_string) :
+            basic_format(string_type format_string):
                 format_(format_string),
                 translate_(false),
                 parameters_count_(0)
-            {
-            }
+            {}
             ///
             /// Create a format class using message \a trans. The message if translated first according
             /// to the rules of target locale and then interpreted as format string
             ///
-            basic_format(message_type const &trans) :
+            basic_format(message_type const &trans):
                 message_(trans),
                 translate_(true),
                 parameters_count_(0)
-            {
-            }
+            {}
 
             ///
             /// Add new parameter to format list. The object should be a type
             /// with defined expression out << object where \c out is \c std::basic_ostream.
             ///
             template<typename Formattible>
-            basic_format &operator % (Formattible const &object)
+            basic_format& operator%(Formattible const &object)
             {
                 add(formattible_type(object));
                 return *this;
@@ -275,11 +271,7 @@ namespace boost {
 
             class format_guard {
             public:
-                format_guard(details::format_parser &fmt) :
-                    fmt_(&fmt),
-                    restored_(false)
-                {
-                }
+                format_guard(details::format_parser &fmt): fmt_(&fmt), restored_(false) {}
                 void restore()
                 {
                     if(restored_)
@@ -292,8 +284,7 @@ namespace boost {
                     try {
                         restore();
                     }
-                    catch(...) {
-                    }
+                    catch(...) {}
                 }
             private:
                 details::format_parser *fmt_;
@@ -456,7 +447,7 @@ namespace boost {
         /// This operator actually causes actual text formatting. It uses the locale of \a out stream
         ///
         template<typename CharType>
-        std::basic_ostream<CharType> &operator<<(std::basic_ostream<CharType> &out,basic_format<CharType> const &fmt)
+        std::basic_ostream<CharType>& operator<<(std::basic_ostream<CharType> &out,basic_format<CharType> const &fmt)
         {
             fmt.write(out);
             return out;

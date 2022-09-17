@@ -52,14 +52,10 @@ public:
     typedef std::basic_string<CharType> string_type;
     typedef CharType char_type;
 
-    num_format(winlocale const &lc,size_t refs = 0) :
-        util::base_num_format<CharType>(refs),
-        lc_(lc)
-    {
-    }
+    num_format(winlocale const &lc,size_t refs = 0): util::base_num_format<CharType>(refs), lc_(lc) {}
 private:
 
-    iter_type do_format_currency(bool /*intl*/,iter_type out,std::ios_base &ios,char_type fill,long double val) const BOOST_OVERRIDE
+    iter_type do_format_currency(bool /*intl*/,iter_type out,std::ios_base &ios,char_type fill,long double val) const override
     {
         if(lc_.is_c()) {
             std::locale loc = ios.getloc();
@@ -88,11 +84,7 @@ private:
 template<typename CharType>
 class time_put_win : public std::time_put<CharType> {
 public:
-    time_put_win(winlocale const &lc, size_t refs = 0) :
-        std::time_put<CharType>(refs),
-        lc_(lc)
-    {
-    }
+    time_put_win(winlocale const &lc, size_t refs = 0): std::time_put<CharType>(refs), lc_(lc) {}
 
     typedef typename std::time_put<CharType>::iter_type iter_type;
     typedef CharType char_type;
@@ -103,7 +95,7 @@ public:
                       CharType /*fill*/,
                       std::tm const *tm,
                       char format,
-                      char /*modifier*/) const BOOST_OVERRIDE
+                      char /*modifier*/) const override
     {
         return write_it(out,wcsftime_l(format,tm,lc_));
     }
@@ -149,7 +141,7 @@ BOOST_LOCALE_END_CONST_CONDITION
     {
         return thousands_sep_;
     }
-    std::string do_grouping() const BOOST_OVERRIDE
+    std::string do_grouping() const override
     {
         return grouping_;
     }

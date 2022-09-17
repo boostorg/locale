@@ -9,7 +9,6 @@
 #include <boost/locale/encoding.hpp>
 #include <boost/locale/hold_ptr.hpp>
 #include <boost/locale/util.hpp>
-#include <boost/shared_ptr.hpp>
 #include <algorithm>
 #include <cerrno>
 #include <stdexcept>
@@ -29,7 +28,7 @@ namespace impl_posix {
     class mb2_iconv_converter : public util::base_converter {
     public:
 
-        mb2_iconv_converter(std::string const &encoding) :
+        mb2_iconv_converter(std::string const &encoding):
             encoding_(encoding),
             to_utf_((iconv_t)(-1)),
             from_utf_((iconv_t)(-1))
@@ -48,7 +47,7 @@ namespace impl_posix {
                     uint32_t obuf[2] = {illegal,illegal};
                     char *out = reinterpret_cast<char *>(obuf);
                     size_t outsize = 8;
-                    // Basic sigle codepoint conversion
+                    // Basic single codepoint conversion
                     call_iconv(d,&in,&insize,&out,&outsize);
                     if(insize == 0 && outsize == 0 && obuf[1] == 0) {
                         first_byte_table.push_back(obuf[0]);
@@ -64,7 +63,7 @@ namespace impl_posix {
                     size_t res = call_iconv(d,&in,&insize,&out,&outsize);
 
                     // Now if this single byte starts a sequence we add incomplete
-                    // to know to ask that we need two bytes, othewise it may only be
+                    // to know to ask that we need two bytes, otherwise it may only be
                     // illegal
 
                     uint32_t point;
@@ -86,13 +85,12 @@ namespace impl_posix {
             first_byte_table_->swap(first_byte_table);
         }
 
-        mb2_iconv_converter(mb2_iconv_converter const &other) :
+        mb2_iconv_converter(mb2_iconv_converter const &other):
             first_byte_table_(other.first_byte_table_),
             encoding_(other.encoding_),
             to_utf_((iconv_t)(-1)),
             from_utf_((iconv_t)(-1))
-        {
-        }
+        {}
 
         ~mb2_iconv_converter()
         {
@@ -102,17 +100,17 @@ namespace impl_posix {
                 iconv_close(from_utf_);
         }
 
-        bool is_thread_safe() const BOOST_OVERRIDE
+        bool is_thread_safe() const override
         {
             return false;
         }
 
-        mb2_iconv_converter *clone() const BOOST_OVERRIDE
+        mb2_iconv_converter *clone() const override
         {
             return new mb2_iconv_converter(*this);
         }
 
-        uint32_t to_unicode(char const *&begin,char const *end) BOOST_OVERRIDE
+        uint32_t to_unicode(char const *&begin,char const *end) override
         {
             if(begin == end)
                 return incomplete;
@@ -146,7 +144,7 @@ namespace impl_posix {
             return illegal;
         }
 
-        uint32_t from_unicode(uint32_t cp,char *begin,char const *end) BOOST_OVERRIDE
+        uint32_t from_unicode(uint32_t cp,char *begin,char const *end) override
         {
             if(cp == 0) {
                 if(begin!=end) {
@@ -197,34 +195,32 @@ namespace impl_posix {
                 return "UTF-32BE";
         }
 
-        int max_len() const BOOST_OVERRIDE
+        int max_len() const override
         {
             return 2;
         }
 
     private:
-        boost::shared_ptr<std::vector<uint32_t> > first_byte_table_;
+        std::shared_ptr<std::vector<uint32_t> > first_byte_table_;
         std::string encoding_;
         iconv_t to_utf_;
         iconv_t from_utf_;
     };
 
-    util::base_converter *create_iconv_converter(std::string const &encoding)
+    std::unique_ptr<util::base_converter> create_iconv_converter(std::string const &encoding)
     {
-        hold_ptr<util::base_converter> cvt;
         try {
-            cvt.reset(new mb2_iconv_converter(encoding));
+            return std::unique_ptr<util::base_converter>(new mb2_iconv_converter(encoding));
         }
         catch(std::exception const &e) {
-            // Nothing to do, just retrun empty cvt
+            return nullptr;
         }
-        return cvt.release();
     }
 
 #else // no iconv
-    util::base_converter *create_iconv_converter(std::string const &/*encoding*/)
+    std::unique_ptr<util::base_converter> create_iconv_converter(std::string const &/*encoding*/)
     {
-        return 0;
+        return nullptr;
     }
 #endif
 
@@ -237,8 +233,7 @@ namespace impl_posix {
             return util::create_simple_codecvt(in,encoding,type);
         }
         catch(conv::invalid_charset_error const &) {
-            util::base_converter *cvt = create_iconv_converter(encoding);
-            return util::create_codecvt_from_pointer(in,cvt,type);
+            return util::create_codecvt(in,create_iconv_converter(encoding),type);
         }
     }
 

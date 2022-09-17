@@ -9,9 +9,10 @@
 #include <boost/locale/message.hpp>
 #include <boost/locale/gnu_gettext.hpp>
 #include <boost/locale/encoding.hpp>
-#include "test_locale.hpp"
-#include "test_locale_tools.hpp"
+#include "boostLocale/test/unit_test.hpp"
+#include "boostLocale/test/tools.hpp"
 #include <fstream>
+#include <iostream>
 #include <vector>
 
 namespace bl = boost::locale;
@@ -344,26 +345,22 @@ void test_main(int argc, char **argv)
         g.set_default_messages_domain("default");
 
 
-        std::string locales[] = { "he_IL.UTF-8", "he_IL.ISO8859-8" };
-
-        for(unsigned i=0;i<sizeof(locales)/sizeof(locales[0]);i++){
+        for(const std::string locale_name: {"he_IL.UTF-8", "he_IL.ISO8859-8"}){
             std::locale l;
 
-            if(i==1) {
+            if(locale_name.find(".ISO") != std::string::npos) {
                 try {
-                    l = g(locales[i]);
-                }
-                catch(boost::locale::conv::invalid_charset_error const &) {
+                    l = g(locale_name);
+                } catch(boost::locale::conv::invalid_charset_error const &) {
                     std::cout << "Looks like ISO-8859-8 is not supported! skipping" << std::endl;
                     iso_8859_8_not_supported = true;
                     continue;
                 }
             }
-            else {
-                    l = g(locales[i]);
-            }
+            else
+                l = g(locale_name);
 
-            std::cout << "  Testing " << locales[i] << std::endl;
+            std::cout << "  Testing " << locale_name << std::endl;
             std::cout << "    single forms" << std::endl;
 
             test_translate("hello","שלום",l,"default");

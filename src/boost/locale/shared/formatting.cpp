@@ -14,15 +14,10 @@
 namespace boost {
     namespace locale {
 
-        ios_info::string_set::string_set() :
-            type(0),
-            size(0),
-            ptr(0)
-        {
-        }
+        ios_info::string_set::string_set(): type(0), size(0), ptr(0) { }
         ios_info::string_set::~string_set()
         {
-            delete [] ptr;
+            delete[] ptr;
         }
         ios_info::string_set::string_set(string_set const &other)
         {
@@ -46,27 +41,22 @@ namespace boost {
             std::swap(ptr,other.ptr);
         }
 
-        ios_info::string_set const &ios_info::string_set::operator=(string_set const &other)
+        ios_info::string_set& ios_info::string_set::operator=(string_set other)
         {
-            if(this!=&other) {
-                string_set tmp(other);
-                swap(tmp);
-            }
+            swap(other);
             return *this;
         }
 
         struct ios_info::data {};
 
-        ios_info::ios_info() :
+        ios_info::ios_info():
             flags_(0),
             domain_id_(0),
             d(0)
         {
             time_zone_ = time_zone::global();
         }
-        ios_info::~ios_info()
-        {
-        }
+        ios_info::~ios_info() {}
 
         ios_info::ios_info(ios_info const &other)
         {
@@ -77,7 +67,7 @@ namespace boost {
         }
 
 
-        ios_info const &ios_info::operator=(ios_info const &other)
+        ios_info& ios_info::operator=(ios_info const &other)
         {
             if(this!=&other) {
                 flags_ = other.flags_;
@@ -161,9 +151,7 @@ namespace boost {
             return impl::ios_prop<ios_info>::get(ios);
         }
 
-        void ios_info::on_imbue()
-        {
-        }
+        void ios_info::on_imbue() {}
 
         namespace {
             struct initializer {

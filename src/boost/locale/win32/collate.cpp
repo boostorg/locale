@@ -19,23 +19,19 @@ namespace impl_win {
 
 class utf8_collator : public collator<char> {
 public:
-    utf8_collator(winlocale lc,size_t refs = 0) :
-        collator<char>(refs),
-        lc_(lc)
-    {
-    }
-    int do_compare(collator_base::level_type level,char const *lb,char const *le,char const *rb,char const *re) const BOOST_OVERRIDE
+    utf8_collator(winlocale lc,size_t refs = 0): collator<char>(refs), lc_(lc) {}
+    int do_compare(collator_base::level_type level,char const *lb,char const *le,char const *rb,char const *re) const override
     {
         std::wstring l=conv::to_utf<wchar_t>(lb,le,"UTF-8");
         std::wstring r=conv::to_utf<wchar_t>(rb,re,"UTF-8");
         return wcscoll_l(level,l.c_str(),l.c_str()+l.size(),r.c_str(),r.c_str()+r.size(),lc_);
     }
-    long do_hash(collator_base::level_type level,char const *b,char const *e) const BOOST_OVERRIDE
+    long do_hash(collator_base::level_type level,char const *b,char const *e) const override
     {
         std::string key = do_transform(level,b,e);
         return gnu_gettext::pj_winberger_hash_function(key.c_str(),key.c_str() + key.size());
     }
-    std::string do_transform(collator_base::level_type level,char const *b,char const *e) const BOOST_OVERRIDE
+    std::string do_transform(collator_base::level_type level,char const *b,char const *e) const override
     {
         std::wstring tmp=conv::to_utf<wchar_t>(b,e,"UTF-8");
         std::wstring wkey = wcsxfrm_l(level,tmp.c_str(),tmp.c_str()+tmp.size(),lc_);
@@ -70,23 +66,19 @@ private:
 class utf16_collator : public collator<wchar_t> {
 public:
     typedef std::collate<wchar_t> wfacet;
-    utf16_collator(winlocale lc,size_t refs = 0) :
-        collator<wchar_t>(refs),
-        lc_(lc)
-    {
-    }
-    int do_compare(collator_base::level_type level,wchar_t const *lb,wchar_t const *le,wchar_t const *rb,wchar_t const *re) const BOOST_OVERRIDE
+    utf16_collator(winlocale lc,size_t refs = 0): collator<wchar_t>(refs), lc_(lc) {}
+    int do_compare(collator_base::level_type level,wchar_t const *lb,wchar_t const *le,wchar_t const *rb,wchar_t const *re) const override
     {
         return wcscoll_l(level,lb,le,rb,re,lc_);
     }
-    long do_hash(collator_base::level_type level,wchar_t const *b,wchar_t const *e) const BOOST_OVERRIDE
+    long do_hash(collator_base::level_type level,wchar_t const *b,wchar_t const *e) const override
     {
         std::wstring key = do_transform(level,b,e);
         char const *begin = reinterpret_cast<char const *>(key.c_str());
         char const *end = begin + key.size()*sizeof(wchar_t);
         return gnu_gettext::pj_winberger_hash_function(begin,end);
     }
-    std::wstring do_transform(collator_base::level_type level,wchar_t const *b,wchar_t const *e) const BOOST_OVERRIDE
+    std::wstring do_transform(collator_base::level_type level,wchar_t const *b,wchar_t const *e) const override
     {
         return wcsxfrm_l(level,b,e,lc_);
     }

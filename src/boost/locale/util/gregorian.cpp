@@ -10,6 +10,7 @@
 #include <boost/locale/date_time.hpp>
 #include <boost/locale/hold_ptr.hpp>
 #include "boost/locale/util/timezone.hpp"
+#include <boost/assert.hpp>
 #include <algorithm>
 #include <cstdlib>
 #include <ctime>
@@ -154,7 +155,7 @@ namespace util {
             ///
             /// Make a polymorphic copy of the calendar
             ///
-            gregorian_calendar *clone() const BOOST_OVERRIDE
+            gregorian_calendar *clone() const override
             {
                 return new gregorian_calendar(*this);
             }
@@ -162,7 +163,7 @@ namespace util {
             ///
             /// Set specific \a value for period \a p, note not all values are settable.
             ///
-            void set_value(period::marks::period_mark m,int value) BOOST_OVERRIDE
+            void set_value(period::marks::period_mark m,int value) override
             {
                 using namespace period::marks;
                 switch(m) {
@@ -209,7 +210,7 @@ namespace util {
                     break;
                 case day_of_week_in_month:  ///< Original number of the day of the week in month. (1st sunday, 2nd sunday etc)
                 case week_of_year:          ///< The week number in the year, 4 is the minimal number of days to be in month
-                case week_of_month:         ///< The week number withing current month
+                case week_of_month:         ///< The week number within current month
                     {
                         normalize();
                         int current_week = get_value(m,current);
@@ -224,7 +225,7 @@ namespace util {
                 normalized_ = false;
             }
 
-            void normalize() BOOST_OVERRIDE
+            void normalize() override
             {
                 if(!normalized_) {
                     std::tm val = tm_updated_;
@@ -269,18 +270,16 @@ namespace util {
 
             int get_week_number(int day,int wday) const
             {
-                ///
-                /// This is the number of days that are considered withing
+                /// This is the number of days that are considered within
                 /// period such that the week belongs there
-                ///
                 static const int days_in_full_week = 4;
 
 
-                // Alaways use local week start
+                // Always use local week start
                 int current_dow = (wday - first_day_of_week_ + 7) % 7;
                 // Calculate local week day of Jan 1st.
                 int first_week_day = (current_dow + 700 - day) % 7;
-                    // adding something big devidable by 7
+                    // adding something big dividable by 7
 
                 int start_of_period_in_weeks;
                 if(first_week_day < days_in_full_week) {
@@ -298,7 +297,7 @@ namespace util {
             ///
             /// Get specific value for period \a p according to a value_type \a v
             ///
-            int get_value(period::marks::period_mark m,value_type v) const BOOST_OVERRIDE
+            int get_value(period::marks::period_mark m,value_type v) const override
             {
                 using namespace period::marks;
                 switch(m) {
@@ -325,7 +324,7 @@ BOOST_LOCALE_START_CONST_CONDITION
                         if(sizeof(std::time_t) == 4)
                             return 2038; // Y2K38 - maximal with 32 bit time_t
                         else
-                            return std::numeric_limits<int>::max();
+                            return std::numeric_limits<int>::max() / 365; // Reasonably large but we can still get the days without overflowing
 BOOST_LOCALE_END_CONST_CONDITION
                     case current:
                         return tm_.tm_year + 1900;
@@ -504,7 +503,7 @@ BOOST_LOCALE_END_CONST_CONDITION
                         }
                     }
                     break;
-                case week_of_month:              ///< The week number withing current month
+                case week_of_month:              ///< The week number within current month
                     switch(v) {
                     case absolute_minimum:
                     case greatest_minimum:
@@ -541,8 +540,8 @@ BOOST_LOCALE_END_CONST_CONDITION
                         return 4;
                     case actual_maximum:
                         if(tm_.tm_mon == 1 && !is_leap(tm_.tm_year + 1900)) {
-                            // only in february in non leap year is 28 days, the rest
-                            // conver more then 4 weeks
+                            // only february in non leap year is 28 days, the rest
+                            // has more then 4 weeks
                             return 4;
                         }
                         return 5;
@@ -561,11 +560,11 @@ BOOST_LOCALE_END_CONST_CONDITION
             ///
             /// Set current time point
             ///
-            void set_time(posix_time const &p) BOOST_OVERRIDE
+            void set_time(posix_time const &p) override
             {
                 from_time(static_cast<std::time_t>(p.seconds));
             }
-            posix_time get_time() const BOOST_OVERRIDE
+            posix_time get_time() const override
             {
                 posix_time pt = { time_, 0};
                 return pt;
@@ -574,7 +573,7 @@ BOOST_LOCALE_END_CONST_CONDITION
             ///
             /// Set option for calendar, for future use
             ///
-            void set_option(calendar_option_type opt,int /*v*/) BOOST_OVERRIDE
+            void set_option(calendar_option_type opt,int /*v*/) override
             {
                 switch(opt) {
                 case is_gregorian:
@@ -588,7 +587,7 @@ BOOST_LOCALE_END_CONST_CONDITION
             ///
             /// Get option for calendar, currently only check if it is Gregorian calendar
             ///
-            int get_option(calendar_option_type opt) const BOOST_OVERRIDE
+            int get_option(calendar_option_type opt) const override
             {
                 switch(opt) {
                 case is_gregorian:
@@ -604,7 +603,7 @@ BOOST_LOCALE_END_CONST_CONDITION
             /// Adjust period's \a p value by \a difference items using a update_type \a u.
             /// Note: not all values are adjustable
             ///
-            void adjust_value(period::marks::period_mark m,update_type u,int difference) BOOST_OVERRIDE
+            void adjust_value(period::marks::period_mark m,update_type u,int difference) override
             {
                 switch(u) {
                 case move:
@@ -638,7 +637,7 @@ BOOST_LOCALE_END_CONST_CONDITION
                             tm_updated_.tm_sec += difference;
                             break;
                         case week_of_year:               ///< The week number in the year
-                        case week_of_month:              ///< The week number withing current month
+                        case week_of_month:              ///< The week number within current month
                         case day_of_week_in_month:       ///< Original number of the day of the week in month.
                             tm_updated_.tm_mday +=difference * 7;
                             break;
@@ -650,19 +649,21 @@ BOOST_LOCALE_END_CONST_CONDITION
                     }
                     break;
                 case roll:
-                    { // roll
-                        int cur_min = get_value(m,actual_minimum);
-                        int cur_max = get_value(m,actual_maximum);
-                        int max_diff = cur_max - cur_min + 1;
-                        if(max_diff > 0) {
-                            int value = get_value(m,current);
-                            int addon = 0;
-                            if(difference < 0)
-                                addon = ((-difference/max_diff) + 1) * max_diff;
-                            value = (value - cur_min + difference + addon) % max_diff + cur_min;
-                            set_value(m,value);
-                            normalize();
-                        }
+                    {
+                        const int cur_min = get_value(m,actual_minimum);
+                        const int cur_max = get_value(m,actual_maximum);
+                        BOOST_ASSERT(cur_max >= cur_min);
+                        const int range = cur_max - cur_min + 1;
+                        int value = get_value(m,current) - cur_min;
+                        BOOST_ASSERT(value >= 0 && value < range);
+                        BOOST_ASSERT_MSG(difference <= std::numeric_limits<int>::max(), "Input is to large");
+                        value = (value + difference) % range;
+                        // If the sum above was negative the result of the modulo operation "can" be negative too.
+                        if(value < 0)
+                            value += range;
+                        BOOST_ASSERT(value >= 0 && value < range);
+                        set_value(m,value + cur_min);
+                        normalize();
                     }
                 default:
                     ;
@@ -692,7 +693,7 @@ BOOST_LOCALE_END_CONST_CONDITION
             ///
             /// Calculate the difference between this calendar  and \a other in \a p units
             ///
-            int difference(abstract_calendar const *other_cal,period::marks::period_mark m) const BOOST_OVERRIDE
+            int difference(abstract_calendar const *other_cal,period::marks::period_mark m) const override
             {
                 hold_ptr<gregorian_calendar> keeper;
                 gregorian_calendar const *other = dynamic_cast<gregorian_calendar const *>(other_cal);
@@ -754,7 +755,7 @@ BOOST_LOCALE_END_CONST_CONDITION
             ///
             /// Set time zone, empty - use system
             ///
-            void set_timezone(std::string const &tz) BOOST_OVERRIDE
+            void set_timezone(std::string const &tz) override
             {
                 if(tz.empty()) {
                     is_local_ = true;
@@ -767,12 +768,12 @@ BOOST_LOCALE_END_CONST_CONDITION
                 from_time(time_);
                 time_zone_name_ = tz;
             }
-            std::string get_timezone() const BOOST_OVERRIDE
+            std::string get_timezone() const override
             {
                 return time_zone_name_;
             }
 
-            bool same(abstract_calendar const *other) const BOOST_OVERRIDE
+            bool same(abstract_calendar const *other) const override
             {
                 gregorian_calendar const *gcal = dynamic_cast<gregorian_calendar const *>(other);
                 if(!gcal)
@@ -822,12 +823,11 @@ BOOST_LOCALE_END_CONST_CONDITION
 
     class gregorian_facet : public calendar_facet {
     public:
-        gregorian_facet(std::string const &terr,size_t refs = 0) :
+        gregorian_facet(std::string const &terr,size_t refs = 0):
             calendar_facet(refs),
             terr_(terr)
-        {
-        }
-        abstract_calendar *create_calendar() const BOOST_OVERRIDE
+        {}
+        abstract_calendar *create_calendar() const override
         {
             return create_gregorian_calendar(terr_);
         }

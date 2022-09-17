@@ -28,24 +28,20 @@ namespace impl_posix {
 
     class posix_localization_backend : public localization_backend {
     public:
-        posix_localization_backend() :
-            invalid_(true)
-        {
-        }
-        posix_localization_backend(posix_localization_backend const &other) :
+        posix_localization_backend(): invalid_(true) {}
+        posix_localization_backend(posix_localization_backend const &other):
             localization_backend(),
             paths_(other.paths_),
             domains_(other.domains_),
             locale_id_(other.locale_id_),
             invalid_(true)
-        {
-        }
-        posix_localization_backend *clone() const BOOST_OVERRIDE
+        {}
+        posix_localization_backend *clone() const override
         {
             return new posix_localization_backend(*this);
         }
 
-        void set_option(std::string const &name,std::string const &value) BOOST_OVERRIDE
+        void set_option(std::string const &name,std::string const &value) override
         {
             invalid_ = true;
             if(name=="locale")
@@ -56,7 +52,7 @@ namespace impl_posix {
                 domains_.push_back(value);
 
         }
-        void clear_options() BOOST_OVERRIDE
+        void clear_options() override
         {
             invalid_ = true;
             locale_id_.clear();
@@ -100,12 +96,12 @@ namespace impl_posix {
             }
 
             *tmp_p = tmp;
-            lc_ = boost::shared_ptr<locale_t>(tmp_p,free_locale_by_ptr);
+            lc_ = std::shared_ptr<locale_t>(tmp_p,free_locale_by_ptr);
         }
 
         std::locale install(std::locale const &base,
                             locale_category_type category,
-                            character_facet_type type = nochar_facet) BOOST_OVERRIDE
+                            character_facet_type type = nochar_facet) override
         {
             prepare_data();
 
@@ -169,7 +165,7 @@ namespace impl_posix {
         std::string real_id_;
 
         bool invalid_;
-        boost::shared_ptr<locale_t> lc_;
+        std::shared_ptr<locale_t> lc_;
     };
 
     localization_backend *create_localization_backend()

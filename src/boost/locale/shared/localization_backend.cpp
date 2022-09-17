@@ -7,10 +7,10 @@
 #define BOOST_LOCALE_SOURCE
 #include <boost/locale/localization_backend.hpp>
 #include <boost/locale/hold_ptr.hpp>
-#include <boost/shared_ptr.hpp>
 #include <boost/thread/locks.hpp>
 #include <boost/thread/mutex.hpp>
 #include <vector>
+#include <memory>
 
 #ifdef BOOST_LOCALE_WITH_ICU
 #include "boost/locale/icu/icu_backend.hpp"
@@ -31,10 +31,8 @@
 namespace boost {
     namespace locale {
         class localization_backend_manager::impl {
-            void operator = (impl const &);
         public:
-            impl(impl const &other) :
-                default_backends_(other.default_backends_)
+            impl(impl const &other): default_backends_(other.default_backends_)
             {
                 for(all_backends_type::const_iterator p=other.all_backends_.begin();p!=other.all_backends_.end();++p) {
                     all_backends_type::value_type v;
@@ -43,21 +41,20 @@ namespace boost {
                     all_backends_.push_back(v);
                 }
             }
-            impl() :
-                default_backends_(32,-1)
-            {
-            }
+            impl(): default_backends_(32,-1) {}
+
+            impl& operator=(impl const&) = delete;
 
             localization_backend *create() const
             {
-                std::vector<boost::shared_ptr<localization_backend> > backends;
+                std::vector<std::shared_ptr<localization_backend> > backends;
                 for(unsigned i=0;i<all_backends_.size();i++)
                     backends.push_back(all_backends_[i].second);
                 return new actual_backend(backends,default_backends_);
             }
             void adopt_backend(std::string const &name,localization_backend *backend_ptr)
             {
-                boost::shared_ptr<localization_backend> sptr(backend_ptr);
+                std::shared_ptr<localization_backend> sptr(backend_ptr);
                 if(all_backends_.empty()) {
                     all_backends_.push_back(std::make_pair(name,sptr));
                     for(unsigned i=0;i<default_backends_.size();i++)
@@ -107,7 +104,7 @@ namespace boost {
         private:
             class actual_backend : public localization_backend {
             public:
-                actual_backend(std::vector<boost::shared_ptr<localization_backend> > const &backends,std::vector<int> const &index):
+                actual_backend(std::vector<std::shared_ptr<localization_backend> > const &backends,std::vector<int> const &index):
                     index_(index)
                 {
                     backends_.resize(backends.size());
@@ -115,21 +112,21 @@ namespace boost {
                         backends_[i].reset(backends[i]->clone());
                     }
                 }
-                actual_backend *clone() const BOOST_OVERRIDE
+                actual_backend *clone() const override
                 {
                     return new actual_backend(backends_,index_);
                 }
-                void set_option(std::string const &name,std::string const &value) BOOST_OVERRIDE
+                void set_option(std::string const &name,std::string const &value) override
                 {
                     for(unsigned i=0;i<backends_.size();i++)
                         backends_[i]->set_option(name,value);
                 }
-                void clear_options() BOOST_OVERRIDE
+                void clear_options() override
                 {
                     for(unsigned i=0;i<backends_.size();i++)
                         backends_[i]->clear_options();
                 }
-                std::locale install(std::locale const &l,locale_category_type category,character_facet_type type = nochar_facet) BOOST_OVERRIDE
+                std::locale install(std::locale const &l,locale_category_type category,character_facet_type type = nochar_facet) override
                 {
                     int id;
                     unsigned v;
@@ -146,62 +143,41 @@ namespace boost {
                     return backends_[index_[id]]->install(l,category,type);
                 }
             private:
-                std::vector<boost::shared_ptr<localization_backend> > backends_;
+                std::vector<std::shared_ptr<localization_backend> > backends_;
                 std::vector<int> index_;
             };
 
-            typedef std::vector<std::pair<std::string,boost::shared_ptr<localization_backend> > > all_backends_type;
+            typedef std::vector<std::pair<std::string,std::shared_ptr<localization_backend> > > all_backends_type;
             all_backends_type all_backends_;
             std::vector<int> default_backends_;
         };
 
 
 
-        localization_backend_manager::localization_backend_manager() :
-            pimpl_(new impl())
-        {
-        }
+        localization_backend_manager::localization_backend_manager(): pimpl_(new impl()) {}
 
-        localization_backend_manager::~localization_backend_manager()
-        {
-        }
+        localization_backend_manager::~localization_backend_manager() = default;
 
-        localization_backend_manager::localization_backend_manager(localization_backend_manager const &other) :
+        localization_backend_manager::localization_backend_manager(localization_backend_manager const &other):
             pimpl_(new impl(*other.pimpl_))
-        {
-        }
+        {}
 
-        localization_backend_manager const &localization_backend_manager::operator = (localization_backend_manager const &other)
+        localization_backend_manager& localization_backend_manager::operator=(localization_backend_manager const &other)
         {
-            if(this!=&other) {
-                pimpl_.reset(new impl(*other.pimpl_));
-            }
+            pimpl_.reset(new impl(*other.pimpl_));
             return *this;
         }
 
 
-        #if BOOST_LOCALE_USE_AUTO_PTR
-        std::auto_ptr<localization_backend> localization_backend_manager::get() const
+        std::unique_ptr<localization_backend> localization_backend_manager::get() const
         {
-            std::auto_ptr<localization_backend> r(pimpl_->create());
-            return r;
-        }
-        void localization_backend_manager::add_backend(std::string const &name,std::auto_ptr<localization_backend> backend)
-        {
-            pimpl_->adopt_backend(name,backend.release());
-        }
-        #endif
-        #ifndef BOOST_NO_CXX11_SMART_PTR
-        std::unique_ptr<localization_backend> localization_backend_manager::get_unique_ptr() const
-        {
-            std::unique_ptr<localization_backend> r(pimpl_->create());
-            return r;
+            return std::unique_ptr<localization_backend>(pimpl_->create());
         }
         void localization_backend_manager::add_backend(std::string const &name,std::unique_ptr<localization_backend> backend)
         {
             pimpl_->adopt_backend(name,backend.release());
         }
-        #endif
+
         localization_backend *localization_backend_manager::create() const
         {
             return pimpl_->create();

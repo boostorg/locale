@@ -4,14 +4,16 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#ifndef BOOST_LOCLAE_TEST_LOCALE_TOOLS_HPP
-#define BOOST_LOCLAE_TEST_LOCALE_TOOLS_HPP
+#ifndef BOOST_LOCALE_TEST_TOOLS_HPP
+#define BOOST_LOCALE_TEST_TOOLS_HPP
 
 #include <boost/locale/encoding.hpp>
+#include <cstdio>
 #include <fstream>
+#include <string>
 
 #ifndef BOOST_LOCALE_NO_POSIX_BACKEND
-#include "test_posix_tools.hpp"
+#include "boostLocale/test/posix_tools.hpp"
 #endif
 
 #if defined(BOOST_MSVC) && BOOST_MSVC < 1700
@@ -148,5 +150,16 @@ char* make4(unsigned v)
     buf[3] = static_cast<unsigned char>(0x80 | ((v >> 0) & 0x3F));
     return reinterpret_cast<char*>(buf);
 }
+
+class remove_file_on_exit
+{
+    std::string filename_;
+public:
+    explicit remove_file_on_exit(const std::string& filename): filename_(filename){}
+    ~remove_file_on_exit()
+    {
+        std::remove(filename_.c_str());
+    }
+};
 
 #endif

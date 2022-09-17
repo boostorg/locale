@@ -24,14 +24,13 @@ namespace impl_std {
 template<typename CharType>
 class time_put_from_base : public std::time_put<CharType> {
 public:
-    time_put_from_base(std::locale const &base, size_t refs = 0) :
+    time_put_from_base(std::locale const &base, size_t refs = 0):
         std::time_put<CharType>(refs),
         base_(base)
-    {
-    }
+    {}
     typedef typename std::time_put<CharType>::iter_type iter_type;
 
-    iter_type do_put(iter_type out,std::ios_base &/*ios*/,CharType fill,std::tm const *tm,char format,char modifier) const BOOST_OVERRIDE
+    iter_type do_put(iter_type out,std::ios_base &/*ios*/,CharType fill,std::tm const *tm,char format,char modifier) const override
     {
         std::basic_stringstream<CharType> ss;
         ss.imbue(base_);
@@ -43,12 +42,11 @@ private:
 
 class utf8_time_put_from_wide : public std::time_put<char> {
 public:
-    utf8_time_put_from_wide(std::locale const &base, size_t refs = 0) :
+    utf8_time_put_from_wide(std::locale const &base, size_t refs = 0):
         std::time_put<char>(refs),
         base_(base)
-    {
-    }
-    iter_type do_put(iter_type out,std::ios_base &/*ios*/,char fill,std::tm const *tm,char format,char modifier = 0) const BOOST_OVERRIDE
+    {}
+    iter_type do_put(iter_type out,std::ios_base &/*ios*/,char fill,std::tm const *tm,char format,char modifier = 0) const override
     {
         std::basic_ostringstream<wchar_t> wtmps;
         wtmps.imbue(base_);
@@ -66,7 +64,7 @@ private:
 
 class utf8_numpunct_from_wide : public std::numpunct<char> {
 public:
-    utf8_numpunct_from_wide(std::locale const &base,size_t refs = 0) : std::numpunct<char>(refs)
+    utf8_numpunct_from_wide(std::locale const &base,size_t refs = 0): std::numpunct<char>(refs)
     {
         typedef std::numpunct<wchar_t> wfacet_type;
         wfacet_type const &wfacet = std::use_facet<wfacet_type>(base);
@@ -104,23 +102,23 @@ public:
         }
     }
 
-    char do_decimal_point() const BOOST_OVERRIDE
+    char do_decimal_point() const override
     {
         return decimal_point_;
     }
-    char do_thousands_sep() const BOOST_OVERRIDE
+    char do_thousands_sep() const override
     {
         return thousands_sep_;
     }
-    std::string do_grouping() const BOOST_OVERRIDE
+    std::string do_grouping() const override
     {
         return grouping_;
     }
-    std::string do_truename() const BOOST_OVERRIDE
+    std::string do_truename() const override
     {
         return truename_;
     }
-    std::string do_falsename() const BOOST_OVERRIDE
+    std::string do_falsename() const override
     {
         return falsename_;
     }
@@ -136,7 +134,7 @@ private:
 template<bool Intl>
 class utf8_moneypunct_from_wide : public std::moneypunct<char,Intl> {
 public:
-    utf8_moneypunct_from_wide(std::locale const &base,size_t refs = 0) : std::moneypunct<char,Intl>(refs)
+    utf8_moneypunct_from_wide(std::locale const &base,size_t refs = 0): std::moneypunct<char,Intl>(refs)
     {
         typedef std::moneypunct<wchar_t,Intl> wfacet_type;
         wfacet_type const &wfacet = std::use_facet<wfacet_type>(base);
@@ -177,45 +175,45 @@ public:
         }
     }
 
-    char do_decimal_point() const BOOST_OVERRIDE
+    char do_decimal_point() const override
     {
         return decimal_point_;
     }
 
-    char do_thousands_sep() const BOOST_OVERRIDE
+    char do_thousands_sep() const override
     {
         return thousands_sep_;
     }
 
-    std::string do_grouping() const BOOST_OVERRIDE
+    std::string do_grouping() const override
     {
         return grouping_;
     }
 
-    std::string do_curr_symbol() const BOOST_OVERRIDE
+    std::string do_curr_symbol() const override
     {
         return curr_symbol_;
     }
-    std::string do_positive_sign () const BOOST_OVERRIDE
+    std::string do_positive_sign () const override
     {
         return positive_sign_;
     }
-    std::string do_negative_sign() const BOOST_OVERRIDE
+    std::string do_negative_sign() const override
     {
         return negative_sign_;
     }
 
-    int do_frac_digits() const BOOST_OVERRIDE
+    int do_frac_digits() const override
     {
         return frac_digits_;
     }
 
-    std::money_base::pattern do_pos_format() const BOOST_OVERRIDE
+    std::money_base::pattern do_pos_format() const override
     {
         return pos_format_;
     }
 
-    std::money_base::pattern do_neg_format() const BOOST_OVERRIDE
+    std::money_base::pattern do_neg_format() const override
     {
         return neg_format_;
     }
@@ -235,11 +233,8 @@ private:
 class utf8_numpunct : public std::numpunct_byname<char> {
 public:
     typedef std::numpunct_byname<char> base_type;
-    utf8_numpunct(char const *name,size_t refs = 0) :
-        std::numpunct_byname<char>(name,refs)
-    {
-    }
-    char do_thousands_sep() const BOOST_OVERRIDE
+    utf8_numpunct(char const *name,size_t refs = 0): std::numpunct_byname<char>(name,refs) {}
+    char do_thousands_sep() const override
     {
         unsigned char bs = base_type::do_thousands_sep();
         if(bs > 127)
@@ -250,7 +245,7 @@ public:
         else
             return bs;
     }
-    std::string do_grouping() const BOOST_OVERRIDE
+    std::string do_grouping() const override
     {
         unsigned char bs = base_type::do_thousands_sep();
         if(bs > 127 && bs != 0xA0)
@@ -263,11 +258,8 @@ template<bool Intl>
 class utf8_moneypunct : public std::moneypunct_byname<char,Intl> {
 public:
     typedef std::moneypunct_byname<char,Intl> base_type;
-    utf8_moneypunct(char const *name,size_t refs = 0) :
-        std::moneypunct_byname<char,Intl>(name,refs)
-    {
-    }
-    char do_thousands_sep() const BOOST_OVERRIDE
+    utf8_moneypunct(char const *name,size_t refs = 0): std::moneypunct_byname<char,Intl>(name,refs) {}
+    char do_thousands_sep() const override
     {
         unsigned char bs = base_type::do_thousands_sep();
         if(bs > 127)
@@ -278,7 +270,7 @@ public:
         else
             return bs;
     }
-    std::string do_grouping() const BOOST_OVERRIDE
+    std::string do_grouping() const override
     {
         unsigned char bs = base_type::do_thousands_sep();
         if(bs > 127 && bs != 0xA0)

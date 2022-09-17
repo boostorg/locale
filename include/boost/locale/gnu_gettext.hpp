@@ -8,8 +8,8 @@
 #define BOOST_LOCLAE_GNU_GETTEXT_HPP
 
 #include <boost/locale/message.hpp>
-#include <boost/function.hpp>
 #include <stdexcept>
+#include <functional>
 #include <vector>
 
 namespace boost {
@@ -32,11 +32,7 @@ namespace gnu_gettext {
     /// ignore gettext catalogs that use a charset different from \a encoding.
     ///
     struct messages_info {
-        messages_info() :
-            language("C"),
-            locale_category("LC_MESSAGES")
-        {
-        }
+        messages_info(): language("C"), locale_category("LC_MESSAGES") {}
 
         std::string language;   ///< The language we load the catalog for, like "ru", "en", "de"
         std::string country;    ///< The country we load the catalog for, like "US", "IL"
@@ -111,7 +107,7 @@ namespace gnu_gettext {
         /// \note The user should support only the encodings the locales are created for. So if the user
         /// uses only one encoding or the file system is encoding agnostic, he may ignore the \a encoding parameter.
         ///
-        typedef function<
+        typedef std::function<
                     std::vector<char>(
                         std::string const &file_name,
                         std::string const &encoding

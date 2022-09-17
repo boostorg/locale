@@ -53,9 +53,7 @@ namespace boost {
             ///
             /// Standard facet's constructor
             ///
-            info(size_t refs = 0) : std::locale::facet(refs)
-            {
-            }
+            info(size_t refs = 0): std::locale::facet(refs) {}
             ///
             /// Get language name
             ///

@@ -31,26 +31,21 @@ namespace impl_std {
 
     class std_localization_backend : public localization_backend {
     public:
-        std_localization_backend() :
-            invalid_(true),
-            use_ansi_encoding_(false)
-        {
-        }
-        std_localization_backend(std_localization_backend const &other) :
+        std_localization_backend(): invalid_(true), use_ansi_encoding_(false) {}
+        std_localization_backend(std_localization_backend const &other):
             localization_backend(),
             paths_(other.paths_),
             domains_(other.domains_),
             locale_id_(other.locale_id_),
             invalid_(true),
             use_ansi_encoding_(other.use_ansi_encoding_)
-        {
-        }
-        std_localization_backend *clone() const BOOST_OVERRIDE
+        {}
+        std_localization_backend *clone() const override
         {
             return new std_localization_backend(*this);
         }
 
-        void set_option(std::string const &name,std::string const &value) BOOST_OVERRIDE
+        void set_option(std::string const &name,std::string const &value) override
         {
             invalid_ = true;
             if(name=="locale")
@@ -63,7 +58,7 @@ namespace impl_std {
                 use_ansi_encoding_ = value == "true";
 
         }
-        void clear_options() BOOST_OVERRIDE
+        void clear_options() override
         {
             invalid_ = true;
             use_ansi_encoding_ = false;
@@ -85,32 +80,34 @@ namespace impl_std {
             in_use_id_ = lid;
             data_.parse(lid);
             name_ = "C";
-            utf_mode_ = utf8_none;
 
             #if defined(BOOST_WINDOWS)
-            std::pair<std::string,int> wl_inf = to_windows_name(lid);
-            std::string win_name = wl_inf.first;
-            int win_codepage = wl_inf.second;
+            const std::pair<std::string,int> wl_inf = to_windows_name(lid);
+            const std::string& win_name = wl_inf.first;
+            const int win_codepage = wl_inf.second;
             #endif
 
             if(!data_.utf8) {
-                if(loadable(lid)) {
+                if(loadable(lid))
                     name_ = lid;
-                    utf_mode_ = utf8_none;
-                }
                 #if defined(BOOST_WINDOWS)
                 else if(loadable(win_name)
                         && win_codepage == conv::impl::encoding_to_windows_codepage(data_.encoding.c_str()))
-                {
                     name_ = win_name;
-                    utf_mode_ = utf8_none;
-                }
                 #endif
+                utf_mode_ = utf8_none;
             }
             else {
                 if(loadable(lid)) {
                     name_ = lid;
                     utf_mode_ = utf8_native_with_wide;
+                    #if defined(BOOST_WINDOWS)
+                    // This isn't fully correct:
+                    // It will treat the 2-Byte wchar_t as UTF-16 encoded while it may be UCS-2
+                    // std::basic_filebuf explicitely disallows using suche multi-byte codecvts
+                    // but it works in practice so far, so use it instead of failing for codepoints above U+FFFF
+                    utf_mode_ = utf8_from_wide;
+                    #endif
                 }
                 #if defined(BOOST_WINDOWS)
                 else if(loadable(win_name)) {
@@ -118,6 +115,8 @@ namespace impl_std {
                     utf_mode_ = utf8_from_wide;
                 }
                 #endif
+                else
+                    utf_mode_ = utf8_none;
             }
         }
 
@@ -158,7 +157,7 @@ namespace impl_std {
 
         std::locale install(std::locale const &base,
                                     locale_category_type category,
-                                    character_facet_type type = nochar_facet) BOOST_OVERRIDE
+                                    character_facet_type type = nochar_facet) override
         {
             prepare_data();
 

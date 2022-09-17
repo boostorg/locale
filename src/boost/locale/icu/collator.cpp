@@ -78,7 +78,7 @@ namespace boost {
 
                 int do_compare(level_type level,
                                CharType const *b1,CharType const *e1,
-                               CharType const *b2,CharType const *e2) const BOOST_OVERRIDE
+                               CharType const *b2,CharType const *e2) const override
                 {
                     UErrorCode status=U_ZERO_ERROR;
 
@@ -108,26 +108,21 @@ namespace boost {
                         tmp.resize(len);
                     return tmp;
                 }
-                std::basic_string<CharType> do_transform(level_type level,CharType const *b,CharType const *e) const BOOST_OVERRIDE
+                std::basic_string<CharType> do_transform(level_type level,CharType const *b,CharType const *e) const override
                 {
                     std::vector<uint8_t> tmp = do_basic_transform(level,b,e);
                     return std::basic_string<CharType>(tmp.begin(),tmp.end());
                 }
 
-                long do_hash(level_type level,CharType const *b,CharType const *e) const BOOST_OVERRIDE
+                long do_hash(level_type level,CharType const *b,CharType const *e) const override
                 {
                     std::vector<uint8_t> tmp = do_basic_transform(level,b,e);
                     tmp.push_back(0);
                     return gnu_gettext::pj_winberger_hash_function(reinterpret_cast<char *>(&tmp.front()));
                 }
 
-                collate_impl(cdata const &d) :
-                    cvt_(d.encoding),
-                    locale_(d.locale),
-                    is_utf8_(d.utf8)
-                {
+                collate_impl(cdata const &d): cvt_(d.encoding), locale_(d.locale), is_utf8_(d.utf8) {}
 
-                }
                 icu::Collator *get_collator(level_type ilevel) const
                 {
                     int l = limit(ilevel);

@@ -54,16 +54,15 @@ namespace boundary {
         ///
         /// Empty default constructor
         ///
-        boundary_point() : rule_(0) {}
+        boundary_point(): rule_(0) {}
 
         ///
         /// Create a new boundary_point using iterator \p and a rule \a r
         ///
-        boundary_point(iterator_type p,rule_type r) :
+        boundary_point(iterator_type p,rule_type r):
             iterator_(p),
             rule_(r)
-        {
-        }
+        {}
         ///
         /// Set an new iterator value \a i
         ///

@@ -4,7 +4,7 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#include "test_locale.hpp"
+#include "boostLocale/test/unit_test.hpp"
 #include "../src/boost/locale/shared/ios_prop.hpp"
 #include <sstream>
 #include <locale>
@@ -12,9 +12,9 @@
 int counter=0;
 int imbued=0;
 struct propery {
-    propery(int xx=-1) : x(xx) { counter ++; }
+    propery(int xx=-1): x(xx) { counter ++; }
     propery(propery const &other) { counter++; x=other.x; }
-    propery const &operator=(propery const &other) {
+    propery& operator=(propery const &other) {
         x=other.x;
         return *this;
     };

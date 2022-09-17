@@ -16,12 +16,13 @@
 #include <iomanip>
 #include <locale>
 #include <stdexcept>
+#include <vector>
 
 #ifdef BOOST_LOCALE_WITH_ICU
 #include <unicode/uversion.h>
 #endif
 
-#include "test_locale_tools.hpp"
+#include "boostLocale/test/tools.hpp"
 
 char const *env(char const *s)
 {
@@ -31,11 +32,10 @@ char const *env(char const *s)
     return "";
 }
 
-void check_locale(char const **names)
+void check_locale(const std::vector<char const *>& names)
 {
     std::cout << "  " << std::setw(32) << "locale" << std::setw(4) << "C" << std::setw(4) << "C++\n";
-    while(*names) {
-        char const *name = *names;
+    for(const char* name: names) {
         std::cout << "  " << std::setw(32) << name << std::setw(4);
         if(setlocale(LC_ALL,name)!=0)
             std::cout << "Yes";
@@ -50,7 +50,6 @@ void check_locale(char const **names)
             std::cout << "No";
         }
         std::cout << std::endl;
-        names++;
     }
 }
 
@@ -98,13 +97,12 @@ int main()
         std::cout << "- C++ locale: is not supported\n"; // LCOV_EXCL_LINE
     }
 
-    char const *locales_to_check[] = {
+    const std::vector<char const *> locales_to_check = {
         "en_US.UTF-8", "en_US.ISO8859-1", "English_United States.1252",
         "he_IL.UTF-8", "he_IL.ISO8859-8", "Hebrew_Israel.1255",
         "ru_RU.UTF-8", "Russian_Russia.1251",
         "tr_TR.UTF-8", "Turkish_Turkey.1254",
         "ja_JP.UTF-8", "ja_JP.SJIS", "Japanese_Japan.932",
-        0
     };
     std::cout << "- Testing locales availability on the operation system:" << std::endl;
     check_locale(locales_to_check);

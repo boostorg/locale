@@ -27,7 +27,7 @@ namespace impl_icu {
     class uconv_converter : public util::base_converter {
     public:
 
-        uconv_converter(std::string const &encoding) :
+        uconv_converter(std::string const &encoding):
             encoding_(encoding)
         {
             UErrorCode err=U_ZERO_ERROR;
@@ -52,17 +52,17 @@ namespace impl_icu {
             ucnv_close(cvt_);
         }
 
-        bool is_thread_safe() const BOOST_OVERRIDE
+        bool is_thread_safe() const override
         {
             return false;
         }
 
-        uconv_converter *clone() const BOOST_OVERRIDE
+        uconv_converter *clone() const override
         {
             return new uconv_converter(encoding_);
         }
 
-        uint32_t to_unicode(char const *&begin,char const *end) BOOST_OVERRIDE
+        uint32_t to_unicode(char const *&begin,char const *end) override
         {
             UErrorCode err=U_ZERO_ERROR;
             char const *tmp = begin;
@@ -79,7 +79,7 @@ namespace impl_icu {
             return c;
         }
 
-        uint32_t from_unicode(uint32_t u,char *begin,char const *end) BOOST_OVERRIDE
+        uint32_t from_unicode(uint32_t u,char *begin,char const *end) override
         {
             UChar code_point[2]={0};
             int len;
@@ -105,7 +105,7 @@ namespace impl_icu {
             return olen;
         }
 
-        int max_len() const BOOST_OVERRIDE
+        int max_len() const override
         {
             return max_len_;
         }
@@ -116,17 +116,15 @@ namespace impl_icu {
         int max_len_;
     };
 
-    util::base_converter *create_uconv_converter(std::string const &encoding)
+    std::unique_ptr<util::base_converter> create_uconv_converter(std::string const &encoding)
     {
-        hold_ptr<util::base_converter> cvt;
         try {
-            cvt.reset(new uconv_converter(encoding));
+            return std::unique_ptr<util::base_converter>(new uconv_converter(encoding));
         }
         catch(std::exception const &/*e*/)
         {
-            // no encoding so we return empty pointer
+            return nullptr;
         }
-        return cvt.release();
     }
 
     std::locale create_codecvt(std::locale const &in,std::string const &encoding,character_facet_type type)
@@ -138,15 +136,15 @@ namespace impl_icu {
             return util::create_simple_codecvt(in,encoding,type);
         }
         catch(boost::locale::conv::invalid_charset_error const &) {
-            hold_ptr<util::base_converter> cvt;
+            std::unique_ptr<util::base_converter> cvt;
             try {
-                cvt.reset(create_uconv_converter(encoding));
+                cvt = create_uconv_converter(encoding);
             }
             catch(std::exception const &/*e*/)
             {
                 cvt.reset(new util::base_converter());
             }
-            return util::create_codecvt_from_pointer(in,cvt.release(),type);
+            return util::create_codecvt(in,std::move(cvt),type);
         }
     }
 

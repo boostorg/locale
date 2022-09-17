@@ -60,9 +60,7 @@ namespace boost {
             static std::locale::id id;
 
             /// Standard constructor
-            converter(size_t refs = 0) : std::locale::facet(refs)
-            {
-            }
+            converter(size_t refs = 0): std::locale::facet(refs) {}
             ///
             /// Convert text in range [\a begin, \a end) according to conversion method \a how. Parameter
             /// \a flags is used for specification of normalization method like nfd, nfc etc.
@@ -79,9 +77,7 @@ namespace boost {
         public:
             static std::locale::id id;
 
-            converter(size_t refs = 0) : std::locale::facet(refs)
-            {
-            }
+            converter(size_t refs = 0): std::locale::facet(refs) {}
             ~converter();
             virtual std::string convert(conversion_type how,char const *begin,char const *end,int flags = 0) const = 0;
 #if defined (__SUNPRO_CC) && defined (_RWSTD_VER)
@@ -93,9 +89,7 @@ namespace boost {
         class BOOST_LOCALE_DECL converter<wchar_t> : public converter_base, public std::locale::facet {
         public:
             static std::locale::id id;
-            converter(size_t refs = 0) : std::locale::facet(refs)
-            {
-            }
+            converter(size_t refs = 0): std::locale::facet(refs) {}
             ~converter();
              virtual std::wstring convert(conversion_type how,wchar_t const *begin,wchar_t const *end,int flags = 0) const = 0;
 #if defined (__SUNPRO_CC) && defined (_RWSTD_VER)
@@ -108,9 +102,7 @@ namespace boost {
         class BOOST_LOCALE_DECL converter<char16_t> : public converter_base, public std::locale::facet {
         public:
             static std::locale::id id;
-            converter(size_t refs = 0) : std::locale::facet(refs)
-            {
-            }
+            converter(size_t refs = 0): std::locale::facet(refs) {}
             ~converter();
             virtual std::u16string convert(conversion_type how,char16_t const *begin,char16_t const *end,int flags = 0) const = 0;
 #if defined (__SUNPRO_CC) && defined (_RWSTD_VER)
@@ -124,9 +116,7 @@ namespace boost {
         class BOOST_LOCALE_DECL converter<char32_t> : public converter_base, public std::locale::facet {
         public:
             static std::locale::id id;
-            converter(size_t refs = 0) : std::locale::facet(refs)
-            {
-            }
+            converter(size_t refs = 0): std::locale::facet(refs) {}
             ~converter();
             virtual std::u32string convert(conversion_type how,char32_t const *begin,char32_t const *end,int flags = 0) const = 0;
 #if defined (__SUNPRO_CC) && defined (_RWSTD_VER)

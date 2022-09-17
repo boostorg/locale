@@ -17,17 +17,15 @@ namespace locale {
     ///
     template<typename T>
     class hold_ptr {
-        hold_ptr(hold_ptr const &other); // non copyable
-        hold_ptr const &operator=(hold_ptr const &other); // non assignable
     public:
         ///
         /// Create new empty pointer
         ///
-        hold_ptr() : ptr_(0) {}
+        hold_ptr(): ptr_(0) {}
         ///
         /// Create a pointer that holds \a v, ownership is transferred to smart pointer
         ///
-        explicit hold_ptr(T *v) : ptr_(v) {}
+        explicit hold_ptr(T *v): ptr_(v) {}
 
         ///
         /// Destroy smart pointer and the object it owns.
@@ -36,6 +34,10 @@ namespace locale {
         {
             delete ptr_;
         }
+
+        // Non-copyable
+        hold_ptr(hold_ptr const&) = delete;
+        hold_ptr& operator=(hold_ptr const&) = delete;
 
         ///
         /// Get a const pointer to the object
@@ -49,15 +51,15 @@ namespace locale {
         ///
         /// Get a const reference to the object
         ///
-        T const &operator *() const { return *ptr_; }
+        T const & operator*() const { return *ptr_; }
         ///
         /// Get a mutable reference to the object
         ///
-        T &operator *() { return *ptr_; }
+        T & operator*() { return *ptr_; }
         ///
         /// Get a const pointer to the object
         ///
-        T const *operator->() const { return ptr_; }
+        T const * operator->() const { return ptr_; }
         ///
         /// Get a mutable pointer to the object
         ///

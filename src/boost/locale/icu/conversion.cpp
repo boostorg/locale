@@ -61,13 +61,9 @@ namespace impl_icu {
         typedef CharType char_type;
         typedef std::basic_string<char_type> string_type;
 
-        converter_impl(cdata const &d) :
-            locale_(d.locale),
-            encoding_(d.encoding)
-        {
-        }
+        converter_impl(cdata const &d): locale_(d.locale), encoding_(d.encoding) {}
 
-        string_type convert(converter_base::conversion_type how, char_type const* begin, char_type const* end, int flags = 0) const BOOST_OVERRIDE
+        string_type convert(converter_base::conversion_type how, char_type const* begin, char_type const* end, int flags = 0) const override
         {
             icu_std_converter<char_type> cvt(encoding_);
             icu::UnicodeString str=cvt.icu(begin,end);
@@ -100,11 +96,11 @@ namespace impl_icu {
 
     #ifdef BOOST_LOCALE_WITH_CASEMAP
     class raii_casemap {
-        raii_casemap(raii_casemap const &);
-        void operator = (raii_casemap const&);
     public:
-        raii_casemap(std::string const &locale_id) :
-            map_(0)
+        raii_casemap(raii_casemap const&) = delete;
+        void operator=(raii_casemap const&) = delete;
+
+        raii_casemap(std::string const &locale_id): map_(0)
         {
             UErrorCode err=U_ZERO_ERROR;
             map_ = ucasemap_open(locale_id.c_str(),0,&err);
@@ -137,13 +133,9 @@ namespace impl_icu {
     class utf8_converter_impl : public converter<char> {
     public:
 
-        utf8_converter_impl(cdata const &d) :
-            locale_id_(d.locale.getName()),
-            map_(locale_id_)
-        {
-        }
+        utf8_converter_impl(cdata const &d): locale_id_(d.locale.getName()), map_(locale_id_) {}
 
-        std::string convert(converter_base::conversion_type how,char const *begin,char const *end,int flags = 0) const BOOST_OVERRIDE
+        std::string convert(converter_base::conversion_type how,char const *begin,char const *end,int flags = 0) const override
         {
 
             if(how == converter_base::normalization) {

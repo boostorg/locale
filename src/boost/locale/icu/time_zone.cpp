@@ -74,7 +74,7 @@ namespace boost {
 
                 class directory {
                 public:
-                    directory(char const *name) : d(0),read_result(0)
+                    directory(char const *name): d(0),read_result(0)
                     {
                         d=opendir(name);
                         if(!d)

@@ -21,9 +21,7 @@ class iconverter_base {
 public:
 
     iconverter_base() :
-    cvt_((iconv_t)(-1))
-    {
-    }
+    cvt_((iconv_t)(-1)) {}
 
     ~iconverter_base()
     {
@@ -144,12 +142,12 @@ public:
 
     typedef CharType char_type;
 
-    bool open(char const *charset,method_type how) BOOST_OVERRIDE
+    bool open(char const *charset,method_type how) override
     {
         return self_.do_open(charset,utf_name<CharType>(),how);
     }
 
-    std::string convert(char_type const *ubegin,char_type const *uend) BOOST_OVERRIDE
+    std::string convert(char_type const *ubegin,char_type const *uend) override
     {
         return self_.template real_convert<char,char_type>(ubegin,uend);
     }
@@ -160,11 +158,11 @@ private:
 class iconv_between:  public converter_between
 {
 public:
-    bool open(char const *to_charset,char const *from_charset,method_type how) BOOST_OVERRIDE
+    bool open(char const *to_charset,char const *from_charset,method_type how) override
     {
         return self_.do_open(to_charset,from_charset,how);
     }
-    std::string convert(char const *begin,char const *end) BOOST_OVERRIDE
+    std::string convert(char const *begin,char const *end) override
     {
         return self_.real_convert<char,char>(begin,end);
     }
@@ -181,12 +179,12 @@ public:
     typedef CharType char_type;
     typedef std::basic_string<char_type> string_type;
 
-    bool open(char const *charset,method_type how) BOOST_OVERRIDE
+    bool open(char const *charset,method_type how) override
     {
         return self_.do_open(utf_name<CharType>(),charset,how);
     }
 
-    string_type convert(char const *begin,char const *end) BOOST_OVERRIDE
+    string_type convert(char const *begin,char const *end) override
     {
         return self_.template real_convert<char_type,char>(begin,end);
     }

@@ -20,7 +20,7 @@ using namespace period;
 // Calendar
 ////////////////////////
 
-calendar::calendar(std::locale const &l,std::string const &zone) :
+calendar::calendar(std::locale const &l,std::string const &zone):
     locale_(l),
     tz_(zone),
     impl_(std::use_facet<calendar_facet>(l).create_calendar())
@@ -28,7 +28,7 @@ calendar::calendar(std::locale const &l,std::string const &zone) :
     impl_->set_timezone(tz_);
 }
 
-calendar::calendar(std::string const &zone) :
+calendar::calendar(std::string const &zone):
     tz_(zone),
     impl_(std::use_facet<calendar_facet>(std::locale()).create_calendar())
 {
@@ -36,7 +36,7 @@ calendar::calendar(std::string const &zone) :
 }
 
 
-calendar::calendar(std::locale const &l) :
+calendar::calendar(std::locale const &l):
     locale_(l),
     tz_(time_zone::global()),
     impl_(std::use_facet<calendar_facet>(l).create_calendar())
@@ -44,40 +44,34 @@ calendar::calendar(std::locale const &l) :
     impl_->set_timezone(tz_);
 }
 
-calendar::calendar(std::ios_base &ios) :
+calendar::calendar(std::ios_base &ios):
     locale_(ios.getloc()),
     tz_(ios_info::get(ios).time_zone()),
     impl_(std::use_facet<calendar_facet>(locale_).create_calendar())
 {
     impl_->set_timezone(tz_);
-
 }
 
-calendar::calendar() :
+calendar::calendar():
     tz_(time_zone::global()),
     impl_(std::use_facet<calendar_facet>(std::locale()).create_calendar())
 {
     impl_->set_timezone(tz_);
 }
 
-calendar::~calendar()
-{
-}
+calendar::~calendar(){}
 
-calendar::calendar(calendar const &other) :
+calendar::calendar(calendar const &other):
     locale_(other.locale_),
     tz_(other.tz_),
     impl_(other.impl_->clone())
-{
-}
+{}
 
-calendar const &calendar::operator = (calendar const &other)
+calendar& calendar::operator=(calendar const &other)
 {
-    if(this !=&other) {
-        impl_.reset(other.impl_->clone());
-        locale_ = other.locale_;
-        tz_ = other.tz_;
-    }
+    impl_.reset(other.impl_->clone());
+    locale_ = other.locale_;
+    tz_ = other.tz_;
     return *this;
 }
 
@@ -136,16 +130,14 @@ bool calendar::operator!=(calendar const &other) const
 // date_time
 /////////////////
 
-date_time::date_time() :
+date_time::date_time():
     impl_(std::use_facet<calendar_facet>(std::locale()).create_calendar())
 {
     impl_->set_timezone(time_zone::global());
 }
 
-date_time::date_time(date_time const &other)
-{
-    impl_.reset(other.impl_->clone());
-}
+date_time::date_time(date_time const &other): impl_(other.impl_->clone())
+{}
 
 date_time::date_time(date_time const &other,date_time_period_set const &s)
 {
@@ -156,40 +148,35 @@ date_time::date_time(date_time const &other,date_time_period_set const &s)
     impl_->normalize();
 }
 
-date_time const &date_time::operator = (date_time const &other)
+date_time& date_time::operator=(date_time const &other)
 {
-    if(this != &other) {
-        date_time tmp(other);
-        swap(tmp);
-    }
+    impl_.reset(other.impl_->clone());
     return *this;
 }
 
 date_time::~date_time()
-{
-}
+{}
 
-date_time::date_time(double t) :
+date_time::date_time(double t):
     impl_(std::use_facet<calendar_facet>(std::locale()).create_calendar())
 {
     impl_->set_timezone(time_zone::global());
     time(t);
 }
 
-date_time::date_time(double t,calendar const &cal) :
+date_time::date_time(double t,calendar const &cal):
     impl_(cal.impl_->clone())
 {
     time(t);
 }
 
-date_time::date_time(calendar const &cal) :
+date_time::date_time(calendar const &cal):
     impl_(cal.impl_->clone())
-{
-}
+{}
 
 
 
-date_time::date_time(date_time_period_set const &s) :
+date_time::date_time(date_time_period_set const &s):
     impl_(std::use_facet<calendar_facet>(std::locale()).create_calendar())
 {
     impl_->set_timezone(time_zone::global());
@@ -198,7 +185,7 @@ date_time::date_time(date_time_period_set const &s) :
     }
     impl_->normalize();
 }
-date_time::date_time(date_time_period_set const &s,calendar const &cal) :
+date_time::date_time(date_time_period_set const &s,calendar const &cal):
     impl_(cal.impl_->clone())
 {
     for(unsigned i=0;i<s.size();i++) {
@@ -207,7 +194,7 @@ date_time::date_time(date_time_period_set const &s,calendar const &cal) :
     impl_->normalize();
 }
 
-date_time const &date_time::operator=(date_time_period_set const &s)
+date_time& date_time::operator=(date_time_period_set const &s)
 {
     for(unsigned i=0;i<s.size();i++)
         impl_->set_value(s[i].type.mark(),s[i].value);
@@ -254,25 +241,25 @@ date_time date_time::operator>>(date_time_period const &v) const
     return tmp;
 }
 
-date_time const &date_time::operator+=(date_time_period const &v)
+date_time& date_time::operator+=(date_time_period const &v)
 {
     impl_->adjust_value(v.type.mark(),abstract_calendar::move,v.value);
     return *this;
 }
 
-date_time const &date_time::operator-=(date_time_period const &v)
+date_time& date_time::operator-=(date_time_period const &v)
 {
     impl_->adjust_value(v.type.mark(),abstract_calendar::move,-v.value);
     return *this;
 }
 
-date_time const &date_time::operator<<=(date_time_period const &v)
+date_time& date_time::operator<<=(date_time_period const &v)
 {
     impl_->adjust_value(v.type.mark(),abstract_calendar::roll,v.value);
     return *this;
 }
 
-date_time const &date_time::operator>>=(date_time_period const &v)
+date_time& date_time::operator>>=(date_time_period const &v)
 {
     impl_->adjust_value(v.type.mark(),abstract_calendar::roll,-v.value);
     return *this;
@@ -307,7 +294,7 @@ date_time date_time::operator>>(date_time_period_set const &v) const
     return tmp;
 }
 
-date_time const &date_time::operator+=(date_time_period_set const &v)
+date_time& date_time::operator+=(date_time_period_set const &v)
 {
     for(unsigned i=0;i<v.size();i++) {
         *this+=v[i];
@@ -315,7 +302,7 @@ date_time const &date_time::operator+=(date_time_period_set const &v)
     return *this;
 }
 
-date_time const &date_time::operator-=(date_time_period_set const &v)
+date_time& date_time::operator-=(date_time_period_set const &v)
 {
     for(unsigned i=0;i<v.size();i++) {
         *this-=v[i];
@@ -323,7 +310,7 @@ date_time const &date_time::operator-=(date_time_period_set const &v)
     return *this;
 }
 
-date_time const &date_time::operator<<=(date_time_period_set const &v)
+date_time& date_time::operator<<=(date_time_period_set const &v)
 {
     for(unsigned i=0;i<v.size();i++) {
         *this <<= v[i];
@@ -331,7 +318,7 @@ date_time const &date_time::operator<<=(date_time_period_set const &v)
     return *this;
 }
 
-date_time const &date_time::operator>>=(date_time_period_set const &v)
+date_time& date_time::operator>>=(date_time_period_set const &v)
 {
     for(unsigned i=0;i<v.size();i++) {
         *this >>= v[i];

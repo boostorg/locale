@@ -11,17 +11,16 @@
 #include <boost/locale/boundary/facets.hpp>
 #include <boost/locale/boundary/segment.hpp>
 #include <boost/locale/boundary/boundary_point.hpp>
-#include <boost/assert.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/iterator/iterator_facade.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <algorithm>
 #include <iostream>
 #include <iterator>
 #include <locale>
+#include <memory>
 #include <stdexcept>
 #include <string>
+#include <type_traits>
 #include <vector>
 
 #ifdef BOOST_MSVC
@@ -59,12 +58,12 @@ namespace boost {
                 template<typename CharType,typename SomeIteratorType>
                 struct linear_iterator_traits {
                     static const bool is_linear =
-                        is_same<SomeIteratorType,CharType*>::value
-                        || is_same<SomeIteratorType,CharType const*>::value
-                        || is_same<SomeIteratorType,typename std::basic_string<CharType>::iterator>::value
-                        || is_same<SomeIteratorType,typename std::basic_string<CharType>::const_iterator>::value
-                        || is_same<SomeIteratorType,typename std::vector<CharType>::iterator>::value
-                        || is_same<SomeIteratorType,typename std::vector<CharType>::const_iterator>::value
+                        std::is_same<SomeIteratorType,CharType*>::value
+                        || std::is_same<SomeIteratorType,CharType const*>::value
+                        || std::is_same<SomeIteratorType,typename std::basic_string<CharType>::iterator>::value
+                        || std::is_same<SomeIteratorType,typename std::basic_string<CharType>::const_iterator>::value
+                        || std::is_same<SomeIteratorType,typename std::vector<CharType>::iterator>::value
+                        || std::is_same<SomeIteratorType,typename std::vector<CharType>::const_iterator>::value
                         ;
                 };
 
@@ -84,9 +83,8 @@ namespace boost {
                         //
                         // Optimize for most common cases
                         //
-                        // C++0x requires that string is continious in memory and all known
-                        // string implementations
-                        // do this because of c_str() support.
+                        // C++11 requires that string is continuous in memory and all known
+                        // string implementations do this because of c_str() support.
                         //
 
                         if(linear_iterator_traits<char_type,IteratorType>::is_linear && b!=e)
@@ -125,9 +123,7 @@ namespace boost {
                         index_->swap(idx);
                     }
 
-                    mapping()
-                    {
-                    }
+                    mapping(){}
 
                     index_type const &index() const
                     {
@@ -145,7 +141,7 @@ namespace boost {
                     }
 
                 private:
-                    boost::shared_ptr<index_type> index_;
+                    std::shared_ptr<index_type> index_;
                     base_iterator begin_,end_;
                 };
 
@@ -163,18 +159,17 @@ namespace boost {
                     typedef mapping<base_iterator> mapping_type;
                     typedef segment<base_iterator> segment_type;
 
-                    segment_index_iterator() : current_(0,0),map_(0)
-                    {
-                    }
+                    segment_index_iterator(): current_(0,0),map_(0), mask_(0), full_select_(false)
+                    {}
 
-                    segment_index_iterator(base_iterator p,mapping_type const *map,rule_type mask,bool full_select) :
+                    segment_index_iterator(base_iterator p,mapping_type const *map,rule_type mask,bool full_select):
                         map_(map),
                         mask_(mask),
                         full_select_(full_select)
                     {
                         set(p);
                     }
-                    segment_index_iterator(bool is_begin,mapping_type const *map,rule_type mask,bool full_select) :
+                    segment_index_iterator(bool is_begin,mapping_type const *map,rule_type mask,bool full_select):
                         map_(map),
                         mask_(mask),
                         full_select_(full_select)
@@ -274,14 +269,14 @@ namespace boost {
 
                         if(full_select_) {
                             while(current_.first > 0) {
-                                current_.first --;
+                                current_.first--;
                                 if(valid_offset(current_.first))
                                     break;
                             }
                         }
                         else {
                             if(current_.first > 0)
-                                current_.first --;
+                                current_.first--;
                         }
                         value_.first = map_->begin();
                         std::advance(value_.first,get_offset(current_.first));
@@ -353,11 +348,10 @@ namespace boost {
                     typedef mapping<base_iterator> mapping_type;
                     typedef boundary_point<base_iterator> boundary_point_type;
 
-                    boundary_point_index_iterator() : current_(0),map_(0)
-                    {
-                    }
+                    boundary_point_index_iterator(): current_(0),map_(0),mask_(0)
+                    {}
 
-                    boundary_point_index_iterator(bool is_begin,mapping_type const *map,rule_type mask) :
+                    boundary_point_index_iterator(bool is_begin,mapping_type const *map,rule_type mask):
                         map_(map),
                         mask_(mask)
                     {
@@ -366,7 +360,7 @@ namespace boost {
                         else
                             set_end();
                     }
-                    boundary_point_index_iterator(base_iterator p,mapping_type const *map,rule_type mask) :
+                    boundary_point_index_iterator(base_iterator p,mapping_type const *map,rule_type mask):
                         map_(map),
                         mask_(mask)
                     {
@@ -597,9 +591,8 @@ namespace boost {
                 /// calling \ref begin(), \ref end() or \ref find() member functions would lead to undefined
                 /// behavior
                 ///
-                segment_index() : mask_(0xFFFFFFFFu),full_select_(false)
-                {
-                }
+                segment_index(): mask_(0xFFFFFFFFu),full_select_(false)
+                {}
                 ///
                 /// Create a segment_index for %boundary analysis \ref boundary_type "type" of the text
                 /// in range [begin,end) using a rule \a mask for locale \a loc.
@@ -613,8 +606,7 @@ namespace boost {
                         map_(type,begin,end,loc),
                         mask_(mask),
                         full_select_(false)
-                {
-                }
+                {}
                 ///
                 /// Create a segment_index for %boundary analysis \ref boundary_type "type" of the text
                 /// in range [begin,end) selecting all possible segments (full mask) for locale \a loc.
@@ -627,8 +619,7 @@ namespace boost {
                         map_(type,begin,end,loc),
                         mask_(0xFFFFFFFFu),
                         full_select_(false)
-                {
-                }
+                {}
 
                 ///
                 /// Create a segment_index from a \ref boundary_point_index. It copies all indexing information
@@ -651,7 +642,7 @@ namespace boost {
                 ///
                 /// \note \ref rule() flags are not copied
                 ///
-                segment_index const &operator = (boundary_point_index<base_iterator> const &);
+                segment_index& operator=(boundary_point_index<base_iterator> const &);
 
 
                 ///
@@ -866,9 +857,8 @@ namespace boost {
                 /// calling \ref begin(), \ref end() or \ref find() member functions would lead to undefined
                 /// behavior
                 ///
-                boundary_point_index() : mask_(0xFFFFFFFFu)
-                {
-                }
+                boundary_point_index(): mask_(0xFFFFFFFFu)
+                {}
 
                 ///
                 /// Create a segment_index for %boundary analysis \ref boundary_type "type" of the text
@@ -882,8 +872,7 @@ namespace boost {
                     :
                         map_(type,begin,end,loc),
                         mask_(mask)
-                {
-                }
+                {}
                 ///
                 /// Create a segment_index for %boundary analysis \ref boundary_type "type" of the text
                 /// in range [begin,end) selecting all possible %boundary points (full mask) for locale \a loc.
@@ -895,8 +884,7 @@ namespace boost {
                     :
                         map_(type,begin,end,loc),
                         mask_(0xFFFFFFFFu)
-                {
-                }
+                {}
 
                 ///
                 /// Create a boundary_point_index from a \ref segment_index. It copies all indexing information
@@ -919,7 +907,7 @@ namespace boost {
                 ///
                 /// \note \ref rule() flags are not copied
                 ///
-                boundary_point_index const &operator=(segment_index<base_iterator> const &other);
+                boundary_point_index& operator=(segment_index<base_iterator> const &other);
 
                 ///
                 /// Create a new index for %boundary analysis \ref boundary_type "type" of the text
@@ -1003,29 +991,27 @@ namespace boost {
 
             /// \cond INTERNAL
             template<typename BaseIterator>
-            segment_index<BaseIterator>::segment_index(boundary_point_index<BaseIterator> const &other) :
+            segment_index<BaseIterator>::segment_index(boundary_point_index<BaseIterator> const &other):
                 map_(other.map_),
                 mask_(0xFFFFFFFFu),
                 full_select_(false)
-            {
-            }
+            {}
 
             template<typename BaseIterator>
-            boundary_point_index<BaseIterator>::boundary_point_index(segment_index<BaseIterator> const &other) :
+            boundary_point_index<BaseIterator>::boundary_point_index(segment_index<BaseIterator> const &other):
                 map_(other.map_),
                 mask_(0xFFFFFFFFu)
-            {
-            }
+            {}
 
             template<typename BaseIterator>
-            segment_index<BaseIterator> const &segment_index<BaseIterator>::operator=(boundary_point_index<BaseIterator> const &other)
+            segment_index<BaseIterator>& segment_index<BaseIterator>::operator=(boundary_point_index<BaseIterator> const &other)
             {
                 map_ = other.map_;
                 return *this;
             }
 
             template<typename BaseIterator>
-            boundary_point_index<BaseIterator> const &boundary_point_index<BaseIterator>::operator=(segment_index<BaseIterator> const &other)
+            boundary_point_index<BaseIterator>& boundary_point_index<BaseIterator>::operator=(segment_index<BaseIterator> const &other)
             {
                 map_ = other.map_;
                 return *this;

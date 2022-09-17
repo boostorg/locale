@@ -19,11 +19,11 @@ namespace lambda {
 
 namespace { // anon
     struct identity : public plural {
-        int operator()(int n) const BOOST_OVERRIDE
+        int operator()(int n) const override
         {
             return n;
         };
-        identity *clone() const BOOST_OVERRIDE
+        identity *clone() const override
         {
             return new identity();
         }
@@ -31,10 +31,7 @@ namespace { // anon
 
     struct unary : public plural
     {
-        unary(plural_ptr ptr) :
-            op1(ptr)
-        {
-        }
+        unary(plural_ptr ptr): op1(ptr) {}
     protected:
         plural_ptr op1;
     };
@@ -42,26 +39,19 @@ namespace { // anon
 
     struct binary : public plural
     {
-        binary(plural_ptr p1,plural_ptr p2) :
-            op1(p1),
-            op2(p2)
-        {
-        }
+        binary(plural_ptr p1,plural_ptr p2): op1(p1), op2(p2) {}
     protected:
         plural_ptr op1,op2;
     };
 
     struct number : public plural
     {
-        number(int v) :
-            val(v)
-        {
-        }
-        int operator()(int /*n*/) const BOOST_OVERRIDE
+        number(int v): val(v) {}
+        int operator()(int /*n*/) const override
         {
             return val;
         }
-        number *clone() const BOOST_OVERRIDE
+        number *clone() const override
         {
             return new number(val);
         }
@@ -72,14 +62,12 @@ namespace { // anon
 
     #define UNOP(name,oper)                         \
     struct name: public unary {                     \
-        name(plural_ptr op) : unary(op)             \
-        {                                           \
-        };                                          \
-        int operator()(int n) const BOOST_OVERRIDE  \
+        name(plural_ptr op): unary(op) {}          \
+        int operator()(int n) const override  \
         {                                           \
             return oper (*op1)(n);                  \
         }                                           \
-        name *clone() const BOOST_OVERRIDE          \
+        name *clone() const override          \
         {                                           \
             plural_ptr op1_copy(op1->clone());      \
             return new name(op1_copy);              \
@@ -89,16 +77,15 @@ namespace { // anon
     #define BINOP(name,oper)                        \
     struct name : public binary                     \
     {                                               \
-        name(plural_ptr p1,plural_ptr p2) :         \
+        name(plural_ptr p1,plural_ptr p2):         \
             binary(p1,p2)                           \
-        {                                           \
-        }                                           \
+        {}                                          \
                                                     \
-        int operator()(int n) const BOOST_OVERRIDE \
+        int operator()(int n) const override \
         {                                           \
             return (*op1)(n) oper (*op2)(n);        \
         }                                           \
-        name *clone() const BOOST_OVERRIDE          \
+        name *clone() const override          \
         {                                           \
             plural_ptr op1_copy(op1->clone());      \
             plural_ptr op2_copy(op2->clone());      \
@@ -108,17 +95,16 @@ namespace { // anon
 
     #define BINOPD(name,oper)                       \
     struct name : public binary {                   \
-        name(plural_ptr p1,plural_ptr p2) :         \
+        name(plural_ptr p1,plural_ptr p2):         \
             binary(p1,p2)                           \
-        {                                           \
-        }                                           \
-        int operator()(int n) const BOOST_OVERRIDE  \
+        {}                                          \
+        int operator()(int n) const override  \
         {                                           \
             int v1=(*op1)(n);                       \
             int v2=(*op2)(n);                       \
             return v2==0 ? 0 : v1 oper v2;          \
         }                                           \
-        name *clone() const BOOST_OVERRIDE          \
+        name *clone() const override          \
         {                                           \
             plural_ptr op1_copy(op1->clone());      \
             plural_ptr op2_copy(op2->clone());      \
@@ -171,17 +157,16 @@ namespace { // anon
     static int level1[]={1,OR};
 
     struct conditional : public plural {
-        conditional(plural_ptr p1,plural_ptr p2,plural_ptr p3) :
+        conditional(plural_ptr p1,plural_ptr p2,plural_ptr p3):
              op1(p1),
              op2(p2),
              op3(p3)
-        {
-        }
-        int operator()(int n) const BOOST_OVERRIDE
+        {}
+        int operator()(int n) const override
         {
             return (*op1)(n) ? (*op2)(n) : (*op3)(n);
         }
-        conditional *clone() const BOOST_OVERRIDE
+        conditional *clone() const override
         {
             plural_ptr op1_copy(op1->clone());
             plural_ptr op2_copy(op2->clone());
@@ -300,7 +285,7 @@ namespace { // anon
     class parser {
     public:
 
-        parser(tokenizer &tin) : t(tin) {};
+        parser(tokenizer &tin): t(tin) {};
 
         plural_ptr compile()
         {

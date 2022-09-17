@@ -25,9 +25,7 @@ public:
 
     struct state_type {};
 
-    utf8_codecvt(size_t refs = 0) : generic_codecvt<CharType,utf8_codecvt<CharType> >(refs)
-    {
-    }
+    utf8_codecvt(size_t refs = 0): generic_codecvt<CharType,utf8_codecvt<CharType> >(refs) {}
 
     static int max_encoding_length()
     {
