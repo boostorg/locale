@@ -116,17 +116,15 @@ namespace impl_icu {
         int max_len_;
     };
 
-    util::base_converter *create_uconv_converter(std::string const &encoding)
+    std::unique_ptr<util::base_converter> create_uconv_converter(std::string const &encoding)
     {
-        hold_ptr<util::base_converter> cvt;
         try {
-            cvt.reset(new uconv_converter(encoding));
+            return std::unique_ptr<util::base_converter>(new uconv_converter(encoding));
         }
         catch(std::exception const &/*e*/)
         {
-            // no encoding so we return empty pointer
+            return nullptr;
         }
-        return cvt.release();
     }
 
     std::locale create_codecvt(std::locale const &in,std::string const &encoding,character_facet_type type)
@@ -138,15 +136,15 @@ namespace impl_icu {
             return util::create_simple_codecvt(in,encoding,type);
         }
         catch(boost::locale::conv::invalid_charset_error const &) {
-            hold_ptr<util::base_converter> cvt;
+            std::unique_ptr<util::base_converter> cvt;
             try {
-                cvt.reset(create_uconv_converter(encoding));
+                cvt = create_uconv_converter(encoding);
             }
             catch(std::exception const &/*e*/)
             {
                 cvt.reset(new util::base_converter());
             }
-            return util::create_codecvt_from_pointer(in,cvt.release(),type);
+            return util::create_codecvt(in,std::move(cvt),type);
         }
     }
 

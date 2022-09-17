@@ -257,24 +257,20 @@ namespace util {
                         compare_strings);
     }
 
-    std::unique_ptr<base_converter> create_utf8_converter()
-    {
-        return std::unique_ptr<base_converter>(create_utf8_converter_new_ptr());
-    }
     std::unique_ptr<base_converter> create_simple_converter(std::string const &encoding)
     {
         return std::unique_ptr<base_converter>(create_simple_converter_new_ptr(encoding));
     }
-    std::locale create_codecvt(std::locale const &in,std::unique_ptr<base_converter> cvt,character_facet_type type)
-    {
-        return create_codecvt_from_pointer(in,cvt.release(),type);
-    }
-
     base_converter *create_simple_converter_new_ptr(std::string const &encoding)
     {
         if(check_is_simple_encoding(encoding))
             return new simple_converter(encoding);
         return 0;
+    }
+
+    std::unique_ptr<base_converter> create_utf8_converter()
+    {
+        return std::unique_ptr<base_converter>(create_utf8_converter_new_ptr());
     }
 
     base_converter *create_utf8_converter_new_ptr()
@@ -334,29 +330,27 @@ namespace util {
     };
 
 
-    std::locale create_codecvt_from_pointer(std::locale const &in,base_converter *pcvt,character_facet_type type)
+    std::locale create_codecvt(std::locale const& in, std::unique_ptr<base_converter> cvt, character_facet_type type)
     {
-        code_converter<char>::base_converter_ptr cvt(pcvt);
-        if(!cvt.get())
+        if(!cvt)
             cvt.reset(new base_converter());
         switch(type) {
         case char_facet:
-            return std::locale(in,new code_converter<char>(std::move(cvt)));
+            return std::locale(in, new code_converter<char>(std::move(cvt)));
         case wchar_t_facet:
-            return std::locale(in,new code_converter<wchar_t>(std::move(cvt)));
-        #if defined(BOOST_LOCALE_ENABLE_CHAR16_T)
+            return std::locale(in, new code_converter<wchar_t>(std::move(cvt)));
+#if defined(BOOST_LOCALE_ENABLE_CHAR16_T)
         case char16_t_facet:
-            return std::locale(in,new code_converter<char16_t>(std::move(cvt)));
-        #endif
-        #if defined(BOOST_LOCALE_ENABLE_CHAR32_T)
+            return std::locale(in, new code_converter<char16_t>(std::move(cvt)));
+#endif
+#if defined(BOOST_LOCALE_ENABLE_CHAR32_T)
         case char32_t_facet:
-            return std::locale(in,new code_converter<char32_t>(std::move(cvt)));
-        #endif
+            return std::locale(in, new code_converter<char32_t>(std::move(cvt)));
+#endif
         default:
             return in;
         }
     }
-
 
     ///
     /// Install utf8 codecvt to UTF-16 or UTF-32 into locale \a in and return

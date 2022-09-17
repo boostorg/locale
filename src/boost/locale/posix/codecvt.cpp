@@ -207,22 +207,20 @@ namespace impl_posix {
         iconv_t from_utf_;
     };
 
-    util::base_converter *create_iconv_converter(std::string const &encoding)
+    std::unique_ptr<util::base_converter> create_iconv_converter(std::string const &encoding)
     {
-        hold_ptr<util::base_converter> cvt;
         try {
-            cvt.reset(new mb2_iconv_converter(encoding));
+            return std::unique_ptr<util::base_converter>(new mb2_iconv_converter(encoding));
         }
         catch(std::exception const &e) {
-            // Nothing to do, just return empty cvt
+            return nullptr;
         }
-        return cvt.release();
     }
 
 #else // no iconv
-    util::base_converter *create_iconv_converter(std::string const &/*encoding*/)
+    std::unique_ptr<util::base_converter> create_iconv_converter(std::string const &/*encoding*/)
     {
-        return 0;
+        return nullptr;
     }
 #endif
 
@@ -235,8 +233,7 @@ namespace impl_posix {
             return util::create_simple_codecvt(in,encoding,type);
         }
         catch(conv::invalid_charset_error const &) {
-            util::base_converter *cvt = create_iconv_converter(encoding);
-            return util::create_codecvt_from_pointer(in,cvt,type);
+            return util::create_codecvt(in,create_iconv_converter(encoding),type);
         }
     }
 
