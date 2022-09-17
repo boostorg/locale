@@ -54,33 +54,31 @@ bool test_incomplete(boost::locale::util::base_converter &cvt,unsigned codepoint
 #define TEST_FROM(str,codepoint) TEST(test_from(*cvt,codepoint,str))
 #define TEST_INC(codepoint,len) TEST(test_incomplete(*cvt,codepoint,len))
 
-void test_shiftjis(boost::locale::util::base_converter* pcvt)
+void test_shiftjis(std::unique_ptr<boost::locale::util::base_converter>& cvt)
 {
-    boost::locale::hold_ptr<boost::locale::util::base_converter> cvt(pcvt);
+    std::cout << "- Correct" << std::endl;
+    TEST_TO("a",'a');
+    TEST_TO("X",'X');
+    TEST_TO("\xCB",0xFF8b); // half width katakana Hi ヒ
+    TEST_TO("\x83\x71",0x30d2); // Full width katakana Hi ヒ
+    TEST_TO("\x82\xd0",0x3072); // Full width hiragana Hi ひ
 
-        std::cout << "- Correct" << std::endl;
-        TEST_TO("a",'a');
-        TEST_TO("X",'X');
-        TEST_TO("\xCB",0xFF8b); // half width katakana Hi ヒ
-        TEST_TO("\x83\x71",0x30d2); // Full width katakana Hi ヒ
-        TEST_TO("\x82\xd0",0x3072); // Full width hiragana Hi ひ
+    TEST_FROM("a",'a');
+    TEST_FROM("X",'X');
+    TEST_FROM("\xCB",0xFF8b); // half width katakana Hi ヒ
+    TEST_FROM("\x83\x71",0x30d2); // Full width katakana Hi ヒ
+    TEST_FROM("\x82\xd0",0x3072); // Full width hiragana Hi ひ
 
-        TEST_FROM("a",'a');
-        TEST_FROM("X",'X');
-        TEST_FROM("\xCB",0xFF8b); // half width katakana Hi ヒ
-        TEST_FROM("\x83\x71",0x30d2); // Full width katakana Hi ヒ
-        TEST_FROM("\x82\xd0",0x3072); // Full width hiragana Hi ひ
+    std::cout << "- Illegal/incomplete" << std::endl;
 
-        std::cout << "- Illegal/incomplete" << std::endl;
+    TEST_TO("\xa0",illegal);
+    TEST_TO("\x82",incomplete);
+    TEST_TO("\x83\xf0",illegal);
 
-        TEST_TO("\xa0",illegal);
-        TEST_TO("\x82",incomplete);
-        TEST_TO("\x83\xf0",illegal);
+    TEST_INC(0x30d2,1); // Full width katakana Hi ヒ
+    TEST_INC(0x3072,1); // Full width hiragana Hi ひ
 
-        TEST_INC(0x30d2,1); // Full width katakana Hi ヒ
-        TEST_INC(0x3072,1); // Full width hiragana Hi ひ
-
-        TEST_FROM(0,0x5e9); // Hebrew ש not in ShiftJIS
+    TEST_FROM(0,0x5e9); // Hebrew ש not in ShiftJIS
 }
 
 
@@ -252,17 +250,17 @@ void test_main(int /*argc*/, char** /*argv*/)
     #ifdef BOOST_LOCALE_WITH_ICU
     std::cout << "Testing Shift-JIS using ICU/uconv" << std::endl;
 
-    cvt.reset(boost::locale::impl_icu::create_uconv_converter("Shift-JIS"));
-    TEST(cvt.get());
-    test_shiftjis(cvt.release());
+    cvt = boost::locale::impl_icu::create_uconv_converter("Shift-JIS");
+    TEST_REQUIRE(cvt);
+    test_shiftjis(cvt);
     #endif
 
     #if defined(BOOST_LOCALE_WITH_ICONV) && !defined(BOOST_LOCALE_NO_POSIX_BACKEND)
     std::cout << "Testing Shift-JIS using POSIX/iconv" << std::endl;
 
-    cvt.reset(boost::locale::impl_posix::create_iconv_converter("Shift-JIS"));
-    if(cvt.get()) {
-        test_shiftjis(cvt.release());
+    cvt = boost::locale::impl_posix::create_iconv_converter("Shift-JIS");
+    if(cvt) {
+        test_shiftjis(cvt);
     }
     else {
         std::cout<< "- Shift-JIS is not supported!" << std::endl;
