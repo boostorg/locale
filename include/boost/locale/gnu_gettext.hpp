@@ -61,7 +61,7 @@ namespace gnu_gettext {
             ///
             domain(std::string const &n)
             {
-                size_t pos = n.find("/");
+                size_t pos = n.find('/');
                 if(pos==std::string::npos) {
                     name = n;
                     encoding = "UTF-8";
