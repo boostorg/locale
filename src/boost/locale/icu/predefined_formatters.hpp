@@ -32,6 +32,13 @@ namespace boost {
 namespace locale {
     namespace impl_icu {
 
+        enum class format_len {
+            Short,
+            Medium,
+            Long,
+            Full,
+        };
+
         class icu_formatters_cache : public std::locale::facet {
         public:
 
@@ -41,13 +48,11 @@ namespace locale {
                 locale_(locale)
             {
 
-                static const icu::DateFormat::EStyle styles[4] = {
-                    icu::DateFormat::kShort,
-                    icu::DateFormat::kMedium,
-                    icu::DateFormat::kLong,
-                    icu::DateFormat::kFull
-                };
-
+                icu::DateFormat::EStyle styles[4]{};
+                styles[int(format_len::Short)] = icu::DateFormat::kShort;
+                styles[int(format_len::Medium)] = icu::DateFormat::kMedium;
+                styles[int(format_len::Long)] = icu::DateFormat::kLong;
+                styles[int(format_len::Full)] = icu::DateFormat::kFull;
 
                 for(int i=0;i<4;i++) {
                     hold_ptr<icu::DateFormat> fmt(icu::DateFormat::createDateInstance(styles[i],locale));
@@ -150,9 +155,13 @@ namespace locale {
                     throw std::runtime_error("Failed to create a formatter");
             }
 
-            icu::UnicodeString date_format_[4];
-            icu::UnicodeString time_format_[4];
-            icu::UnicodeString date_time_format_[4][4];
+            
+            icu::UnicodeString& date_format(format_len f) { return date_format_[int(f)]; }
+            const icu::UnicodeString& date_format(format_len f) const { return date_format_[int(f)]; }
+            icu::UnicodeString& time_format(format_len f) { return time_format_[int(f)]; }
+            const icu::UnicodeString& time_format(format_len f) const { return time_format_[int(f)]; }
+            icu::UnicodeString& date_time_format(format_len d, format_len t) { return date_time_format_[int(d)][int(t)]; }
+            const icu::UnicodeString& date_time_format(format_len d, format_len t) const { return date_time_format_[int(d)][int(t)]; }
 
             icu::SimpleDateFormat *date_formatter() const
             {
@@ -175,6 +184,9 @@ namespace locale {
         private:
 
             mutable boost::thread_specific_ptr<icu::NumberFormat>    number_format_[fmt_count];
+            icu::UnicodeString date_format_[int(format_len::Full) + 1];
+            icu::UnicodeString time_format_[int(format_len::Full) + 1];
+            icu::UnicodeString date_time_format_[int(format_len::Full) + 1][int(format_len::Full) + 1];
             mutable boost::thread_specific_ptr<icu::SimpleDateFormat> date_formatter_;
             icu::Locale locale_;
         };
