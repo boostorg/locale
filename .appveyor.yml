@@ -130,7 +130,11 @@ install:
 
 build: off
 
-test_script: ci\build.bat
+test_script:
+  - set B2_TARGETS=libs/locale/test//show_config --verbose-test
+  - ci\build.bat
+  - set B2_TARGETS=
+  - ci\build.bat
 
 for:
   # CodeCov coverage build
