@@ -258,7 +258,7 @@ namespace locale {
             case 'c': // DateTile Full
                 {
                     if(cache)
-                        return cache->date_time_format_[1][1];
+                        return cache->date_time_format(format_len::Medium, format_len::Medium);
                     return strftime_to_icu_full(
                         icu::DateFormat::createDateTimeInstance(icu::DateFormat::kFull,icu::DateFormat::kFull,locale),
                         "yyyy-MM-dd HH:mm:ss"
@@ -307,7 +307,7 @@ namespace locale {
             case 'x': // Date
                 {
                     if(cache)
-                        return cache->date_format_[1];
+                        return cache->date_format(format_len::Medium);
                     return strftime_to_icu_full(
                         icu::DateFormat::createDateInstance(icu::DateFormat::kMedium,locale),
                         "yyyy-MM-dd"
@@ -316,7 +316,7 @@ namespace locale {
             case 'X': // Time
                 {
                     if(cache)
-                        return cache->time_format_[1];
+                        return cache->time_format(format_len::Medium);
                     return strftime_to_icu_full(
                         icu::DateFormat::createTimeInstance(icu::DateFormat::kMedium,locale),
                         "HH:mm:ss"
@@ -337,7 +337,7 @@ namespace locale {
 
         icu::UnicodeString strftime_to_icu(icu::UnicodeString const &ftime,icu::Locale const &locale)
         {
-            unsigned len=ftime.length();
+            const unsigned len=ftime.length();
             icu::UnicodeString result;
             bool escaped=false;
             for(unsigned i=0;i<len;i++) {
@@ -458,55 +458,55 @@ namespace locale {
                     icu::SimpleDateFormat *sdf = cache.date_formatter();
                     // try to use cached first
                     if(sdf) {
-                        int tmf=info.time_flags();
-                        switch(tmf) {
+                        format_len tmf;
+                        switch(info.time_flags()) {
                         case time_short:
-                            tmf=0;
+                            tmf = format_len::Short;
                             break;
                         case time_long:
-                            tmf=2;
+                            tmf = format_len::Long;
                             break;
                         case time_full:
-                            tmf=3;
+                            tmf = format_len::Full;
                             break;
                         case time_default:
                         case time_medium:
                         default:
-                            tmf=1;
+                            tmf = format_len::Medium;
                         }
-                        int dtf=info.date_flags();
-                        switch(dtf) {
+                        format_len dtf;
+                        switch(info.date_flags()) {
                         case date_short:
-                            dtf=0;
+                            dtf = format_len::Short;
                             break;
                         case date_long:
-                            dtf=2;
+                            dtf = format_len::Long;
                             break;
                         case date_full:
-                            dtf=3;
+                            dtf = format_len::Full;
                             break;
                         case date_default:
                         case date_medium:
                         default:
-                            dtf=1;
+                            dtf = format_len::Medium;
                         }
 
                         icu::UnicodeString pattern;
                         switch(disp) {
                         case date:
-                            pattern = cache.date_format_[dtf];
+                            pattern = cache.date_format(dtf);
                             break;
                         case time:
-                            pattern = cache.time_format_[tmf];
+                            pattern = cache.time_format(tmf);
                             break;
                         case datetime:
-                            pattern = cache.date_time_format_[dtf][tmf];
+                            pattern = cache.date_time_format(dtf, tmf);
                             break;
                         case strftime:
                             {
-                                if( !cache.date_format_[1].isEmpty()
-                                    && !cache.time_format_[1].isEmpty()
-                                    && !cache.date_time_format_[1][1].isEmpty())
+                                if( !cache.date_format(format_len::Medium).isEmpty()
+                                    && !cache.time_format(format_len::Medium).isEmpty()
+                                    && !cache.date_time_format(format_len::Medium, format_len::Medium).isEmpty())
                                 {
                                     icu_std_converter<CharType> cvt_(encoding);
                                     std::basic_string<CharType> const &f=info.date_time_pattern<CharType>();
@@ -518,9 +518,8 @@ namespace locale {
                         if(!pattern.isEmpty()) {
                             sdf->applyPattern(pattern);
                             df = sdf;
-                            sdf = 0;
                         }
-                        sdf = 0;
+                        sdf = nullptr;
                     }
 
                     if(!df) {
