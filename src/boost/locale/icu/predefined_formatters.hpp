@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2021-2022 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
@@ -56,28 +57,25 @@ namespace locale {
 
                 for(int i=0;i<4;i++) {
                     hold_ptr<icu::DateFormat> fmt(icu::DateFormat::createDateInstance(styles[i],locale));
-                    icu::SimpleDateFormat *sfmt = dynamic_cast<icu::SimpleDateFormat*>(fmt.get());
-                    if(sfmt) {
+                    icu::SimpleDateFormat *sfmt = icu_cast<icu::SimpleDateFormat>(fmt.get());
+                    if(sfmt)
                         sfmt->toPattern(date_format_[i]);
-                    }
                 }
 
                 for(int i=0;i<4;i++) {
                     hold_ptr<icu::DateFormat> fmt(icu::DateFormat::createTimeInstance(styles[i],locale));
-                    icu::SimpleDateFormat *sfmt = dynamic_cast<icu::SimpleDateFormat*>(fmt.get());
-                    if(sfmt) {
+                    icu::SimpleDateFormat *sfmt = icu_cast<icu::SimpleDateFormat>(fmt.get());
+                    if(sfmt)
                         sfmt->toPattern(time_format_[i]);
-                    }
                 }
 
                 for(int i=0;i<4;i++) {
                     for(int j=0;j<4;j++) {
                         hold_ptr<icu::DateFormat> fmt(
                             icu::DateFormat::createDateTimeInstance(styles[i],styles[j],locale));
-                        icu::SimpleDateFormat *sfmt = dynamic_cast<icu::SimpleDateFormat*>(fmt.get());
-                        if(sfmt) {
+                        icu::SimpleDateFormat *sfmt = icu_cast<icu::SimpleDateFormat>(fmt.get());
+                        if(sfmt)
                             sfmt->toPattern(date_time_format_[i][j]);
-                        }
                     }
                 }
 
@@ -174,8 +172,9 @@ namespace locale {
                     icu::DateFormat::kMedium,
                     locale_));
 
-                if(dynamic_cast<icu::SimpleDateFormat *>(fmt.get())) {
-                    p = static_cast<icu::SimpleDateFormat *>(fmt.release());
+                p = icu_cast<icu::SimpleDateFormat>(fmt.get());
+                if(p) {
+                    fmt.release();
                     date_formatter_.reset(p);
                 }
                 return p;

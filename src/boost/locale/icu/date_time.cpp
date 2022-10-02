@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2021-2022 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
@@ -179,7 +180,7 @@ namespace impl_icu {
         {
             switch(opt) {
             case is_gregorian:
-                return dynamic_cast<icu::GregorianCalendar const *>(calendar_.get())!=0;
+                return icu_cast<const icu::GregorianCalendar>(calendar_.get())!=0;
             case is_dst:
                 {
                     guard l(lock_);
