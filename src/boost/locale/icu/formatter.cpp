@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2021-2022 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
@@ -232,16 +233,13 @@ namespace locale {
         icu::UnicodeString strftime_to_icu_full(icu::DateFormat *dfin,char const *alt)
         {
             hold_ptr<icu::DateFormat> df(dfin);
-            icu::SimpleDateFormat *sdf=dynamic_cast<icu::SimpleDateFormat *>(df.get());
-            icu::UnicodeString tmp;
-            if(sdf) {
-                sdf->toPattern(tmp);
-            }
-            else {
-                tmp=alt;
-            }
-            return tmp;
-
+            icu::SimpleDateFormat *sdf = icu_cast<icu::SimpleDateFormat>(df.get());
+            icu::UnicodeString result;
+            if(sdf)
+                sdf->toPattern(result);
+            else
+                result = alt;
+            return result;
         }
 
         icu::UnicodeString strftime_to_icu_symbol(char c,icu::Locale const &locale,icu_formatters_cache const *cache=0)
@@ -255,10 +253,10 @@ namespace locale {
                 return "MMM";
             case 'B': // Full Month
                 return "MMMM";
-            case 'c': // DateTile Full
+            case 'c': // DateTime Full
                 {
                     if(cache)
-                        return cache->date_time_format(format_len::Medium, format_len::Medium);
+                        return cache->date_time_format(format_len::Full, format_len::Full);
                     return strftime_to_icu_full(
                         icu::DateFormat::createDateTimeInstance(icu::DateFormat::kFull,icu::DateFormat::kFull,locale),
                         "yyyy-MM-dd HH:mm:ss"

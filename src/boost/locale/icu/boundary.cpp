@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2021-2022 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
@@ -38,7 +39,7 @@ index_type map_direct(boundary_type t,icu::BreakIterator *it,int reserve)
 #if U_ICU_VERSION_MAJOR_NUM >= 52
     icu::BreakIterator *rbbi=it;
 #else
-    icu::RuleBasedBreakIterator *rbbi=dynamic_cast<icu::RuleBasedBreakIterator *>(it);
+    icu::RuleBasedBreakIterator *rbbi = icu_cast<icu::RuleBasedBreakIterator>(it);
 #endif
 
     indx.push_back(break_info());

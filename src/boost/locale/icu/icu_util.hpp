@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2021-2022 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
@@ -30,6 +31,17 @@ namespace impl_icu {
     {
         if(U_FAILURE(err))
             throw_icu_error(err);
+    }
+
+    /// Cast a pointer to an ICU object to a pointer to TargetType
+    /// using RTTI or ICUs "poor man's RTTI" to make it work with e.g. libc++ and hidden visibility
+    template<class TargetType, class SourceType>
+    TargetType* icu_cast(SourceType* p)
+    {
+        TargetType* result = dynamic_cast<TargetType*>(p);
+        if(!result && p && p->getDynamicClassID() == TargetType::getStaticClassID())
+            result = static_cast<TargetType*>(p);
+        return result;
     }
 } // impl
 } // locale

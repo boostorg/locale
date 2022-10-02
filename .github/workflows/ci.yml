@@ -256,13 +256,13 @@ jobs:
         run: |
           B2_TARGETS="libs/$SELF/test//show_config --verbose-test" ci/build.sh
           ci/build.sh
-        env: {B2_FLAGS: -a boost.locale.icu=on  boost.locale.iconv=off testing.execute=off}
+        env: {B2_FLAGS: -a boost.locale.icu=on  boost.locale.iconv=off}
       - name: Run tests with ICU/iconv
         if: '!matrix.coverity'
         run: |
           B2_TARGETS="libs/$SELF/test//show_config --verbose-test" ci/build.sh
           ci/build.sh
-        env: {B2_FLAGS: -a boost.locale.icu=on  boost.locale.iconv=on testing.execute=off}
+        env: {B2_FLAGS: -a boost.locale.icu=on  boost.locale.iconv=on}
 
       - name: Upload coverage
         if: matrix.coverage
@@ -289,7 +289,6 @@ jobs:
           - { toolset: gcc,       cxxstd: '03,11,14,17,2a', addrmd: '64',    os: windows-2019 }
 
     runs-on: ${{matrix.os}}
-    env: {B2_FLAGS: testing.execute=off}
 
     steps:
       - uses: actions/checkout@v3
