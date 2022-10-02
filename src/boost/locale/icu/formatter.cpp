@@ -253,10 +253,10 @@ namespace locale {
                 return "MMM";
             case 'B': // Full Month
                 return "MMMM";
-            case 'c': // DateTile Full
+            case 'c': // DateTime Full
                 {
                     if(cache)
-                        return cache->date_time_format(format_len::Medium, format_len::Medium);
+                        return cache->date_time_format(format_len::Full, format_len::Full);
                     return strftime_to_icu_full(
                         icu::DateFormat::createDateTimeInstance(icu::DateFormat::kFull,icu::DateFormat::kFull,locale),
                         "yyyy-MM-dd HH:mm:ss"
