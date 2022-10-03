@@ -4,22 +4,27 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#include "boostLocale/test/unit_test.hpp"
 #include "../src/boost/locale/shared/ios_prop.hpp"
-#include <sstream>
+#include "boostLocale/test/unit_test.hpp"
 #include <locale>
+#include <sstream>
 
-int counter=0;
-int imbued=0;
+int counter = 0;
+int imbued = 0;
 struct propery {
-    propery(int xx=-1): x(xx) { counter ++; }
-    propery(propery const &other) { counter++; x=other.x; }
-    propery& operator=(propery const &other) {
-        x=other.x;
+    propery(int xx = -1) : x(xx) { counter++; }
+    propery(propery const& other)
+    {
+        counter++;
+        x = other.x;
+    }
+    propery& operator=(propery const& other)
+    {
+        x = other.x;
         return *this;
     };
     int x;
-    void on_imbue() {imbued++; }
+    void on_imbue() { imbued++; }
     ~propery() { counter--; }
 };
 typedef boost::locale::impl::ios_prop<propery> prop_type;
@@ -33,42 +38,42 @@ void test_main(int /*argc*/, char** /*argv*/)
     {
         std::stringstream ss;
         TEST(!prop_type::has(ss));
-        TEST(prop_type::get(ss).x==-1);
+        TEST(prop_type::get(ss).x == -1);
         TEST(prop_type::has(ss));
-        TEST(counter==1);
+        TEST(counter == 1);
     }
-    TEST(counter==0);
+    TEST(counter == 0);
     {
         std::stringstream ss;
-        prop_type::set(propery(1),ss);
-        TEST(counter==1);
-        TEST(prop_type::get(ss).x==1);
+        prop_type::set(propery(1), ss);
+        TEST(counter == 1);
+        TEST(prop_type::get(ss).x == 1);
     }
-    TEST(counter==0);
+    TEST(counter == 0);
     {
         std::stringstream ss;
-        prop_type::set(propery(1),ss);
-        TEST(counter==1);
-        TEST(prop_type::get(ss).x==1);
+        prop_type::set(propery(1), ss);
+        TEST(counter == 1);
+        TEST(prop_type::get(ss).x == 1);
     }
-    TEST(counter==0);
+    TEST(counter == 0);
     {
-        std::stringstream ss,ss2;
-        prop_type::set(propery(2),ss);
+        std::stringstream ss, ss2;
+        prop_type::set(propery(2), ss);
         ss2.copyfmt(ss);
-        TEST(prop_type::get(ss).x==2);
+        TEST(prop_type::get(ss).x == 2);
         TEST(prop_type::has(ss2));
         TEST(prop_type::has(ss));
-        TEST(prop_type::get(ss2).x==2);
-        prop_type::get(ss2).x=3;
-        TEST(prop_type::get(ss2).x==3);
-        TEST(prop_type::get(ss).x==2);
-        TEST(counter==2);
-        TEST(imbued==0);
+        TEST(prop_type::get(ss2).x == 2);
+        prop_type::get(ss2).x = 3;
+        TEST(prop_type::get(ss2).x == 3);
+        TEST(prop_type::get(ss).x == 2);
+        TEST(counter == 2);
+        TEST(imbued == 0);
         ss2.imbue(std::locale::classic());
-        TEST(imbued==1);
+        TEST(imbued == 1);
     }
-    TEST(counter==0);
+    TEST(counter == 0);
 }
 
 // boostinspect:noascii

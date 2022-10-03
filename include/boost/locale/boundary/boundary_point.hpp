@@ -9,9 +9,7 @@
 
 #include <boost/locale/boundary/types.hpp>
 
-namespace boost {
-namespace locale {
-namespace boundary {
+namespace boost { namespace locale { namespace boundary {
 
     ///
     /// \addtogroup boundary
@@ -44,7 +42,7 @@ namespace boundary {
     /// -   \ref segment_index
     ///
     template<typename IteratorType>
-    class boundary_point  {
+    class boundary_point {
     public:
         ///
         /// The type of the base iterator that iterates the original text
@@ -54,127 +52,94 @@ namespace boundary {
         ///
         /// Empty default constructor
         ///
-        boundary_point(): rule_(0) {}
+        boundary_point() : rule_(0) {}
 
         ///
         /// Create a new boundary_point using iterator \p and a rule \a r
         ///
-        boundary_point(iterator_type p,rule_type r):
-            iterator_(p),
-            rule_(r)
-        {}
+        boundary_point(iterator_type p, rule_type r) : iterator_(p), rule_(r) {}
         ///
         /// Set an new iterator value \a i
         ///
-        void iterator(iterator_type i)
-        {
-            iterator_ = i;
-        }
+        void iterator(iterator_type i) { iterator_ = i; }
         ///
         /// Set an new rule value \a r
         ///
-        void rule(rule_type r)
-        {
-            rule_ = r;
-        }
+        void rule(rule_type r) { rule_ = r; }
         ///
         /// Fetch an iterator
         ///
-        iterator_type iterator() const
-        {
-            return iterator_;
-        }
+        iterator_type iterator() const { return iterator_; }
         ///
         /// Fetch a rule
         ///
-        rule_type rule() const
-        {
-            return rule_;
-        }
+        rule_type rule() const { return rule_; }
         ///
         /// Check if two boundary points are the same
         ///
-        bool operator==(boundary_point const &other) const
+        bool operator==(boundary_point const& other) const
         {
             return iterator_ == other.iterator_ && rule_ = other.rule_;
         }
         ///
         /// Check if two boundary points are different
         ///
-        bool operator!=(boundary_point const &other) const
-        {
-            return !(*this==other);
-        }
+        bool operator!=(boundary_point const& other) const { return !(*this == other); }
         ///
         /// Check if the boundary point points to same location as an iterator \a other
         ///
-        bool operator==(iterator_type const &other) const
-        {
-            return iterator_ == other;
-        }
+        bool operator==(iterator_type const& other) const { return iterator_ == other; }
         ///
         /// Check if the boundary point points to different location from an iterator \a other
         ///
-        bool operator!=(iterator_type const &other) const
-        {
-            return iterator_ != other;
-        }
+        bool operator!=(iterator_type const& other) const { return iterator_ != other; }
 
         ///
         /// Automatic cast to the iterator it represents
         ///
-        operator iterator_type ()const
-        {
-            return iterator_;
-        }
+        operator iterator_type() const { return iterator_; }
 
     private:
         iterator_type iterator_;
         rule_type rule_;
-
     };
     ///
     /// Check if the boundary point \a r points to same location as an iterator \a l
     ///
     template<typename BaseIterator>
-    bool operator==(BaseIterator const &l,boundary_point<BaseIterator> const &r)
+    bool operator==(BaseIterator const& l, boundary_point<BaseIterator> const& r)
     {
-        return r==l;
+        return r == l;
     }
     ///
     /// Check if the boundary point \a r points to different location from an iterator \a l
     ///
     template<typename BaseIterator>
-    bool operator!=(BaseIterator const &l,boundary_point<BaseIterator> const &r)
+    bool operator!=(BaseIterator const& l, boundary_point<BaseIterator> const& r)
     {
-        return r!=l;
+        return r != l;
     }
 
     /// @}
 
-    typedef boundary_point<std::string::const_iterator> sboundary_point;      ///< convenience typedef
-    typedef boundary_point<std::wstring::const_iterator> wsboundary_point;    ///< convenience typedef
-    #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-    typedef boundary_point<std::u16string::const_iterator> u16sboundary_point;///< convenience typedef
-    #endif
-    #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-    typedef boundary_point<std::u32string::const_iterator> u32sboundary_point;///< convenience typedef
-    #endif
-
-    typedef boundary_point<char const *> cboundary_point;                     ///< convenience typedef
-    typedef boundary_point<wchar_t const *> wcboundary_point;                 ///< convenience typedef
-    #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-    typedef boundary_point<char16_t const *> u16cboundary_point;              ///< convenience typedef
-    #endif
-    #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-    typedef boundary_point<char32_t const *> u32cboundary_point;              ///< convenience typedef
-    #endif
-
-
-} // boundary
-} // locale
-} // boost
-
-
+    typedef boundary_point<std::string::const_iterator> sboundary_point;   ///< convenience typedef
+    typedef boundary_point<std::wstring::const_iterator> wsboundary_point; ///< convenience typedef
+#ifdef BOOST_LOCALE_ENABLE_CHAR16_T
+    typedef boundary_point<std::u16string::const_iterator> u16sboundary_point; ///< convenience typedef
+#endif
+#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
+    typedef boundary_point<std::u32string::const_iterator> u32sboundary_point; ///< convenience typedef
 #endif
 
+    typedef boundary_point<char const*> cboundary_point;     ///< convenience typedef
+    typedef boundary_point<wchar_t const*> wcboundary_point; ///< convenience typedef
+#ifdef BOOST_LOCALE_ENABLE_CHAR16_T
+    typedef boundary_point<char16_t const*> u16cboundary_point; ///< convenience typedef
+#endif
+#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
+    typedef boundary_point<char32_t const*> u32cboundary_point; ///< convenience typedef
+#endif
+
+}}} // namespace boost::locale::boundary
+
+#endif

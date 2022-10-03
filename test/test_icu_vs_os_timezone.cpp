@@ -5,46 +5,45 @@
 // https://www.boost.org/LICENSE_1_0.txt
 
 #ifndef BOOST_LOCALE_WITH_ICU
-#include <iostream>
+#    include <iostream>
 int main()
 {
-        std::cout << "ICU is not build... Skipping\n";
+    std::cout << "ICU is not build... Skipping\n";
 }
 #else
 
-#ifdef _MSC_VER
-#define _CRT_SECURE_NO_WARNINGS
+#    ifdef _MSC_VER
+#        define _CRT_SECURE_NO_WARNINGS
 // Disable this "security crap"
-#endif
+#    endif
 
-#include <boost/locale/format.hpp>
-#include <boost/locale/formatting.hpp>
-#include <boost/locale/generator.hpp>
-#include <ctime>
-#include <iostream>
-#include <iomanip>
-#include <sstream>
+#    include <boost/locale/format.hpp>
+#    include <boost/locale/formatting.hpp>
+#    include <boost/locale/generator.hpp>
+#    include <ctime>
+#    include <iomanip>
+#    include <iostream>
+#    include <sstream>
 
-#include "boostLocale/test/unit_test.hpp"
-#include "boostLocale/test/tools.hpp"
+#    include "boostLocale/test/tools.hpp"
+#    include "boostLocale/test/unit_test.hpp"
 
 void test_main(int /*argc*/, char** /*argv*/)
 {
-    time_t now=time(0);
+    time_t now = time(0);
     boost::locale::generator gen;
     std::locale::global(gen("en_US.UTF-8"));
 
-    for(int i=0;i<366;i++) {
+    for(int i = 0; i < 366; i++) {
         time_t point = now + i * 24 * 3600;
         std::stringstream ss;
         ss << boost::locale::format("{1,ftime='%H %M %S'}") % point;
-        int icu_hour = 0,icu_min = 0,icu_sec = 0;
+        int icu_hour = 0, icu_min = 0, icu_sec = 0;
         ss >> icu_hour >> icu_min >> icu_sec;
-        std::tm *tm=localtime(&point);
+        std::tm* tm = localtime(&point);
         TEST(icu_hour == tm->tm_hour);
         TEST(icu_min == tm->tm_min);
         TEST(icu_sec == tm->tm_sec);
-
     }
 }
 

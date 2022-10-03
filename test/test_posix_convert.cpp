@@ -5,30 +5,29 @@
 // https://www.boost.org/LICENSE_1_0.txt
 
 #ifdef BOOST_LOCALE_NO_POSIX_BACKEND
-#include <iostream>
+#    include <iostream>
 int main()
 {
-        std::cout << "POSIX Backend is not build... Skipping\n";
+    std::cout << "POSIX Backend is not build... Skipping\n";
 }
 #else
-#include <boost/locale/conversion.hpp>
-#include <boost/locale/localization_backend.hpp>
-#include <boost/locale/generator.hpp>
-#include <boost/locale/info.hpp>
-#include <iomanip>
-#include "boostLocale/test/unit_test.hpp"
-#include "boostLocale/test/tools.hpp"
-#include <iostream>
+#    include <boost/locale/conversion.hpp>
+#    include <boost/locale/generator.hpp>
+#    include <boost/locale/info.hpp>
+#    include <boost/locale/localization_backend.hpp>
+#    include "boostLocale/test/tools.hpp"
+#    include "boostLocale/test/unit_test.hpp"
+#    include <iomanip>
+#    include <iostream>
 
-#include <wctype.h>
-
+#    include <wctype.h>
 
 template<typename CharType>
-void test_one(std::locale const &l,std::string src,std::string tgtl,std::string tgtu)
+void test_one(std::locale const& l, std::string src, std::string tgtl, std::string tgtu)
 {
-    TEST(boost::locale::to_upper(to_correct_string<CharType>(src,l),l) == to_correct_string<CharType>(tgtu,l));
-    TEST(boost::locale::to_lower(to_correct_string<CharType>(src,l),l) == to_correct_string<CharType>(tgtl,l));
-    TEST(boost::locale::fold_case(to_correct_string<CharType>(src,l),l) == to_correct_string<CharType>(tgtl,l));
+    TEST(boost::locale::to_upper(to_correct_string<CharType>(src, l), l) == to_correct_string<CharType>(tgtu, l));
+    TEST(boost::locale::to_lower(to_correct_string<CharType>(src, l), l) == to_correct_string<CharType>(tgtl, l));
+    TEST(boost::locale::fold_case(to_correct_string<CharType>(src, l), l) == to_correct_string<CharType>(tgtl, l));
 }
 
 template<typename CharType>
@@ -40,48 +39,43 @@ void test_char()
 
     std::locale l = gen("en_US.UTF-8");
 
-    test_one<CharType>(l,"Hello World i","hello world i","HELLO WORLD I");
+    test_one<CharType>(l, "Hello World i", "hello world i", "HELLO WORLD I");
 
     std::string name = "en_US.UTF-8";
     if(have_locale(name)) {
         std::cout << "- Testing " << name << std::endl;
-        std::locale l=gen(name);
-        test_one<CharType>(l,"Façade","façade","FAÇADE");
-    }
-    else {
+        std::locale l = gen(name);
+        test_one<CharType>(l, "Façade", "façade", "FAÇADE");
+    } else {
         std::cout << "- en_US.UTF-8 is not supported, skipping" << std::endl;
     }
 
     name = "en_US.ISO8859-1";
     if(have_locale(name)) {
         std::cout << "Testing " << name << std::endl;
-        std::locale l=gen(name);
-        test_one<CharType>(l,"Hello World","hello world","HELLO WORLD");
-        #if defined(__APPLE__) || defined(__FreeBSD__)
-        if(sizeof(CharType)!=1)
-        #endif
-            test_one<CharType>(l,"Façade","façade","FAÇADE");
-    }
-    else {
+        std::locale l = gen(name);
+        test_one<CharType>(l, "Hello World", "hello world", "HELLO WORLD");
+#    if defined(__APPLE__) || defined(__FreeBSD__)
+        if(sizeof(CharType) != 1)
+#    endif
+            test_one<CharType>(l, "Façade", "façade", "FAÇADE");
+    } else {
         std::cout << "- en_US.ISO8859-1 is not supported, skipping" << std::endl;
     }
 
     name = "tr_TR.UTF-8";
     if(have_locale(name)) {
         std::cout << "Testing " << name << std::endl;
-        locale_holder cl(newlocale(LC_ALL_MASK,name.c_str(),0));
+        locale_holder cl(newlocale(LC_ALL_MASK, name.c_str(), 0));
         TEST(cl);
-        if(towupper_l(L'i',cl) == 0x130)
-            test_one<CharType>(gen(name),"i","i","İ");
+        if(towupper_l(L'i', cl) == 0x130)
+            test_one<CharType>(gen(name), "i", "i", "İ");
         else
             std::cout << "  Turkish locale is not supported well" << std::endl; // LCOV_EXCL_LINE
-    }
-    else
-    {
+    } else {
         std::cout << "- tr_TR.UTF-8 is not supported, skipping" << std::endl;
     }
 }
-
 
 void test_main(int /*argc*/, char** /*argv*/)
 {

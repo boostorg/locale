@@ -10,26 +10,18 @@
 #include <boost/locale/config.hpp>
 #include <memory>
 
-namespace boost {
-    namespace locale {
-        namespace gnu_gettext {
-            namespace lambda {
+namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
 
-                struct plural {
+    struct plural {
+        virtual int operator()(int n) const = 0;
+        virtual plural* clone() const = 0;
+        virtual ~plural() {}
+    };
 
-                    virtual int operator()(int n) const = 0;
-                    virtual plural *clone() const = 0;
-                    virtual ~plural() {}
-                };
+    typedef std::shared_ptr<plural> plural_ptr;
 
-                typedef std::shared_ptr<plural> plural_ptr;
+    plural_ptr compile(char const* c_expression);
 
-                plural_ptr compile(char const *c_expression);
-
-            } // lambda
-        } // gnu_gettext
-     } // locale
-} // boost
+}}}} // namespace boost::locale::gnu_gettext::lambda
 
 #endif
-

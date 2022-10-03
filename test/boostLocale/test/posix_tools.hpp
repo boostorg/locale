@@ -11,12 +11,12 @@
 #include <string>
 
 #if defined(__APPLE__) || defined(__FreeBSD__)
-#include <xlocale.h>
+#    include <xlocale.h>
 #endif
 
-inline bool have_locale(std::string const &name)
+inline bool have_locale(std::string const& name)
 {
-    locale_t l=newlocale(LC_ALL_MASK,name.c_str(),0);
+    locale_t l = newlocale(LC_ALL_MASK, name.c_str(), 0);
     if(l) {
         freelocale(l);
         return true;
@@ -24,8 +24,7 @@ inline bool have_locale(std::string const &name)
     return false;
 }
 
-class locale_holder
-{
+class locale_holder {
     locale_t l_;
     void reset(const locale_t l = 0)
     {
@@ -33,14 +32,18 @@ class locale_holder
             freelocale(l_);
         l_ = l;
     }
+
 public:
-    explicit locale_holder(locale_t l = 0): l_(l) {}
+    explicit locale_holder(locale_t l = 0) : l_(l) {}
     ~locale_holder() { reset(); }
     locale_holder(const locale_holder&) = delete;
     locale_holder& operator=(const locale_holder&) = delete;
-    locale_holder& operator=(locale_t l) { reset(l); return *this; }
+    locale_holder& operator=(locale_t l)
+    {
+        reset(l);
+        return *this;
+    }
     operator locale_t() const { return l_; }
 };
 
 #endif
-

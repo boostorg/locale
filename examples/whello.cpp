@@ -15,7 +15,7 @@ int main()
 
     // Create system default locale
     generator gen;
-    std::locale loc=gen("");
+    std::locale loc = gen("");
     std::locale::global(loc);
     std::wcout.imbue(loc);
 
@@ -23,7 +23,6 @@ int main()
     // convert strings to narrow
     // instead of C++ on some platforms
     std::ios_base::sync_with_stdio(false);
-
 
     std::wcout << wformat(L"Today {1,date} at {1,time} we had run our first localization example") % time(0)
                << std::endl;
@@ -36,7 +35,4 @@ int main()
     std::wcout << L"This is lower case " << to_lower(L"Hello World!") << std::endl;
     std::wcout << L"This is title case " << to_title(L"Hello World!") << std::endl;
     std::wcout << L"This is fold case " << fold_case(L"Hello World!") << std::endl;
-
 }
-
-

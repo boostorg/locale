@@ -13,34 +13,20 @@
 #include <memory>
 
 #ifdef __APPLE__
-#include <xlocale.h>
+#    include <xlocale.h>
 #endif
 
-namespace boost {
-    namespace locale {
-        namespace impl_posix {
+namespace boost { namespace locale { namespace impl_posix {
 
-            std::locale create_convert( std::locale const &in,
-                                        std::shared_ptr<locale_t> lc,
-                                        character_facet_type type);
+    std::locale create_convert(std::locale const& in, std::shared_ptr<locale_t> lc, character_facet_type type);
 
-            std::locale create_collate( std::locale const &in,
-                                        std::shared_ptr<locale_t> lc,
-                                        character_facet_type type);
+    std::locale create_collate(std::locale const& in, std::shared_ptr<locale_t> lc, character_facet_type type);
 
-            std::locale create_formatting(  std::locale const &in,
-                                            std::shared_ptr<locale_t> lc,
-                                            character_facet_type type);
+    std::locale create_formatting(std::locale const& in, std::shared_ptr<locale_t> lc, character_facet_type type);
 
-            std::locale create_parsing( std::locale const &in,
-                                        std::shared_ptr<locale_t> lc,
-                                        character_facet_type type);
-            std::locale create_codecvt( std::locale const &in,
-                                        std::string const &encoding,
-                                        character_facet_type type);
+    std::locale create_parsing(std::locale const& in, std::shared_ptr<locale_t> lc, character_facet_type type);
+    std::locale create_codecvt(std::locale const& in, std::string const& encoding, character_facet_type type);
 
-        }
-    }
-}
+}}} // namespace boost::locale::impl_posix
 
 #endif
