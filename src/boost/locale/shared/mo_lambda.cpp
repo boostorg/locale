@@ -181,7 +181,7 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
 
         class tokenizer {
         public:
-            tokenizer(char const* s)
+            tokenizer(const char* s)
             {
                 text = s;
                 pos = 0;
@@ -207,7 +207,7 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
             }
 
         private:
-            char const* text;
+            const char* text;
             size_t pos;
             int next_tocken;
             int int_value;
@@ -217,7 +217,7 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
             {
                 while(text[pos] && is_blank(text[pos]))
                     pos++;
-                char const* ptr = text + pos;
+                const char* ptr = text + pos;
                 char* tmp_ptr;
                 if(strncmp(ptr, "<<", 2) == 0) {
                     pos += 2;
@@ -363,7 +363,7 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
 
     } // namespace
 
-    plural_ptr compile(char const* str)
+    plural_ptr compile(const char* str)
     {
         tokenizer t(str);
         parser p(t);

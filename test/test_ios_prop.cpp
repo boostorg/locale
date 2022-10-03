@@ -13,12 +13,12 @@ int counter = 0;
 int imbued = 0;
 struct propery {
     propery(int xx = -1) : x(xx) { counter++; }
-    propery(propery const& other)
+    propery(const propery& other)
     {
         counter++;
         x = other.x;
     }
-    propery& operator=(propery const& other)
+    propery& operator=(const propery& other)
     {
         x = other.x;
         return *this;

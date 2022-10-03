@@ -78,22 +78,22 @@ namespace boost { namespace locale { namespace boundary {
         ///
         /// Check if two boundary points are the same
         ///
-        bool operator==(boundary_point const& other) const
+        bool operator==(const boundary_point& other) const
         {
             return iterator_ == other.iterator_ && rule_ = other.rule_;
         }
         ///
         /// Check if two boundary points are different
         ///
-        bool operator!=(boundary_point const& other) const { return !(*this == other); }
+        bool operator!=(const boundary_point& other) const { return !(*this == other); }
         ///
         /// Check if the boundary point points to same location as an iterator \a other
         ///
-        bool operator==(iterator_type const& other) const { return iterator_ == other; }
+        bool operator==(const iterator_type& other) const { return iterator_ == other; }
         ///
         /// Check if the boundary point points to different location from an iterator \a other
         ///
-        bool operator!=(iterator_type const& other) const { return iterator_ != other; }
+        bool operator!=(const iterator_type& other) const { return iterator_ != other; }
 
         ///
         /// Automatic cast to the iterator it represents
@@ -108,7 +108,7 @@ namespace boost { namespace locale { namespace boundary {
     /// Check if the boundary point \a r points to same location as an iterator \a l
     ///
     template<typename BaseIterator>
-    bool operator==(BaseIterator const& l, boundary_point<BaseIterator> const& r)
+    bool operator==(const BaseIterator& l, const boundary_point<BaseIterator>& r)
     {
         return r == l;
     }
@@ -116,7 +116,7 @@ namespace boost { namespace locale { namespace boundary {
     /// Check if the boundary point \a r points to different location from an iterator \a l
     ///
     template<typename BaseIterator>
-    bool operator!=(BaseIterator const& l, boundary_point<BaseIterator> const& r)
+    bool operator!=(const BaseIterator& l, const boundary_point<BaseIterator>& r)
     {
         return r != l;
     }
@@ -132,13 +132,13 @@ namespace boost { namespace locale { namespace boundary {
     typedef boundary_point<std::u32string::const_iterator> u32sboundary_point; ///< convenience typedef
 #endif
 
-    typedef boundary_point<char const*> cboundary_point;     ///< convenience typedef
-    typedef boundary_point<wchar_t const*> wcboundary_point; ///< convenience typedef
+    typedef boundary_point<const char*> cboundary_point;     ///< convenience typedef
+    typedef boundary_point<const wchar_t*> wcboundary_point; ///< convenience typedef
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-    typedef boundary_point<char16_t const*> u16cboundary_point; ///< convenience typedef
+    typedef boundary_point<const char16_t*> u16cboundary_point; ///< convenience typedef
 #endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-    typedef boundary_point<char32_t const*> u32cboundary_point; ///< convenience typedef
+    typedef boundary_point<const char32_t*> u32cboundary_point; ///< convenience typedef
 #endif
 
 }}} // namespace boost::locale::boundary

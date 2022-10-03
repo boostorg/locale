@@ -55,7 +55,7 @@ namespace boost { namespace locale { namespace impl_posix {
                                      long double val) const override
         {
             char buf[4] = {};
-            char const* format = intl ? "%i" : "%n";
+            const char* format = intl ? "%i" : "%n";
             errno = 0;
             ssize_t n = strfmon_l(buf, sizeof(buf), *lc_, format, static_cast<double>(val));
             if(n >= 0)
@@ -69,7 +69,7 @@ namespace boost { namespace locale { namespace impl_posix {
             return out;
         }
 
-        std::ostreambuf_iterator<char> write_it(std::ostreambuf_iterator<char> out, char const* ptr, size_t n) const
+        std::ostreambuf_iterator<char> write_it(std::ostreambuf_iterator<char> out, const char* ptr, size_t n) const
         {
             for(size_t i = 0; i < n; i++)
                 *out++ = *ptr++;
@@ -77,7 +77,7 @@ namespace boost { namespace locale { namespace impl_posix {
         }
 
         std::ostreambuf_iterator<wchar_t>
-        write_it(std::ostreambuf_iterator<wchar_t> out, char const* ptr, size_t n) const
+        write_it(std::ostreambuf_iterator<wchar_t> out, const char* ptr, size_t n) const
         {
             std::wstring tmp = conv::to_utf<wchar_t>(ptr, ptr + n, nl_langinfo_l(CODESET, *lc_));
             for(size_t i = 0; i < tmp.size(); i++)
@@ -95,7 +95,7 @@ namespace boost { namespace locale { namespace impl_posix {
 
     template<>
     struct ftime_traits<char> {
-        static std::string ftime(char const* format, const struct tm* t, locale_t lc)
+        static std::string ftime(const char* format, const struct tm* t, locale_t lc)
         {
             char buf[16];
             size_t n = strftime_l(buf, sizeof(buf), format, t, lc);
@@ -118,7 +118,7 @@ namespace boost { namespace locale { namespace impl_posix {
 
     template<>
     struct ftime_traits<wchar_t> {
-        static std::wstring ftime(wchar_t const* format, const struct tm* t, locale_t lc)
+        static std::wstring ftime(const wchar_t* format, const struct tm* t, locale_t lc)
         {
 #ifdef HAVE_WCSFTIME_L
             wchar_t buf[16];
@@ -158,7 +158,7 @@ namespace boost { namespace locale { namespace impl_posix {
         iter_type do_put(iter_type out,
                          std::ios_base& /*ios*/,
                          CharType /*fill*/,
-                         std::tm const* tm,
+                         const std::tm* tm,
                          char format,
                          char modifier) const override
         {
@@ -205,7 +205,7 @@ namespace boost { namespace locale { namespace impl_posix {
                 return true;
             return false;
         }
-        char const* do_is(char const* begin, char const* end, mask* m) const
+        const char* do_is(const char* begin, const char* end, mask* m) const
         {
             while(begin != end) {
                 char c = *begin++;
@@ -235,14 +235,14 @@ namespace boost { namespace locale { namespace impl_posix {
             }
             return begin;
         }
-        char const* do_scan_is(mask m, char const* begin, char const* end) const
+        const char* do_scan_is(mask m, const char* begin, const char* end) const
         {
             while(begin != end)
                 if(do_is(m, *begin))
                     return begin;
             return begin;
         }
-        char const* do_scan_not(mask m, char const* begin, char const* end) const
+        const char* do_scan_not(mask m, const char* begin, const char* end) const
         {
             while(begin != end)
                 if(!do_is(m, *begin))
@@ -250,14 +250,14 @@ namespace boost { namespace locale { namespace impl_posix {
             return begin;
         }
         char toupper(char c) const { return toupper_l(c, *lc_); }
-        char const* toupper(char* begin, char const* end) const
+        const char* toupper(char* begin, const char* end) const
         {
             for(; begin != end; begin++)
                 *begin = toupper_l(*begin, *lc_);
             return begin;
         }
         char tolower(char c) const { return tolower_l(c, *lc_); }
-        char const* tolower(char* begin, char const* end) const
+        const char* tolower(char* begin, const char* end) const
         {
             for(; begin != end; begin++)
                 *begin = tolower_l(*begin, *lc_);
@@ -295,7 +295,7 @@ namespace boost { namespace locale { namespace impl_posix {
                 return true;
             return false;
         }
-        wchar_t const* do_is(wchar_t const* begin, wchar_t const* end, mask* m) const
+        const wchar_t* do_is(const wchar_t* begin, const wchar_t* end, mask* m) const
         {
             while(begin != end) {
                 wchar_t c = *begin++;
@@ -325,14 +325,14 @@ namespace boost { namespace locale { namespace impl_posix {
             }
             return begin;
         }
-        wchar_t const* do_scan_is(mask m, wchar_t const* begin, wchar_t const* end) const
+        const wchar_t* do_scan_is(mask m, const wchar_t* begin, const wchar_t* end) const
         {
             while(begin != end)
                 if(do_is(m, *begin))
                     return begin;
             return begin;
         }
-        wchar_t const* do_scan_not(mask m, wchar_t const* begin, wchar_t const* end) const
+        const wchar_t* do_scan_not(mask m, const wchar_t* begin, const wchar_t* end) const
         {
             while(begin != end)
                 if(!do_is(m, *begin))
@@ -340,14 +340,14 @@ namespace boost { namespace locale { namespace impl_posix {
             return begin;
         }
         wchar_t toupper(wchar_t c) const { return towupper_l(c, *lc_); }
-        wchar_t const* toupper(wchar_t* begin, wchar_t const* end) const
+        const wchar_t* toupper(wchar_t* begin, const wchar_t* end) const
         {
             for(; begin != end; begin++)
                 *begin = towupper_l(*begin, *lc_);
             return begin;
         }
         wchar_t tolower(wchar_t c) const { return tolower_l(c, *lc_); }
-        wchar_t const* tolower(wchar_t* begin, wchar_t const* end) const
+        const wchar_t* tolower(wchar_t* begin, const wchar_t* end) const
         {
             for(; begin != end; begin++)
                 *begin = tolower_l(*begin, *lc_);
@@ -421,7 +421,7 @@ namespace boost { namespace locale { namespace impl_posix {
     };
 
     template<typename CharType>
-    std::locale create_formatting_impl(std::locale const& in, std::shared_ptr<locale_t> lc)
+    std::locale create_formatting_impl(const std::locale& in, std::shared_ptr<locale_t> lc)
     {
         std::locale tmp = std::locale(in, new num_punct_posix<CharType>(*lc));
         tmp = std::locale(tmp, new ctype_posix<CharType>(lc));
@@ -431,7 +431,7 @@ namespace boost { namespace locale { namespace impl_posix {
     }
 
     template<typename CharType>
-    std::locale create_parsing_impl(std::locale const& in, std::shared_ptr<locale_t> lc)
+    std::locale create_parsing_impl(const std::locale& in, std::shared_ptr<locale_t> lc)
     {
         std::locale tmp = std::locale(in, new num_punct_posix<CharType>(*lc));
         tmp = std::locale(tmp, new ctype_posix<CharType>(std::move(lc)));
@@ -439,7 +439,7 @@ namespace boost { namespace locale { namespace impl_posix {
         return tmp;
     }
 
-    std::locale create_formatting(std::locale const& in, std::shared_ptr<locale_t> lc, character_facet_type type)
+    std::locale create_formatting(const std::locale& in, std::shared_ptr<locale_t> lc, character_facet_type type)
     {
         switch(type) {
             case char_facet: return create_formatting_impl<char>(in, std::move(lc));
@@ -448,7 +448,7 @@ namespace boost { namespace locale { namespace impl_posix {
         }
     }
 
-    std::locale create_parsing(std::locale const& in, std::shared_ptr<locale_t> lc, character_facet_type type)
+    std::locale create_parsing(const std::locale& in, std::shared_ptr<locale_t> lc, character_facet_type type)
     {
         switch(type) {
             case char_facet: return create_parsing_impl<char>(in, std::move(lc));

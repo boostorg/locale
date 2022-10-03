@@ -64,7 +64,7 @@ namespace boost { namespace locale { namespace util {
             return days[is_leap(year)][month - 1] + day - 1;
         }
 
-        std::time_t internal_timegm(std::tm const* t)
+        std::time_t internal_timegm(const std::tm* t)
         {
             int year = t->tm_year + 1900;
             int month = t->tm_mon;
@@ -93,7 +93,7 @@ namespace boost { namespace locale { namespace util {
 
         // Locale dependent data
 
-        bool comparator(char const* left, char const* right)
+        bool comparator(const char* left, const char* right)
         {
             return strcmp(left, right) < 0;
         }
@@ -108,18 +108,18 @@ namespace boost { namespace locale { namespace util {
         // ZW
         //
 
-        int first_day_of_week(char const* terr)
+        int first_day_of_week(const char* terr)
         {
-            static char const* const sat[] = {"AE", "AF", "BH", "DJ", "DZ", "EG", "ER", "ET", "IQ", "IR", "JO", "KE",
+            static const char* const sat[] = {"AE", "AF", "BH", "DJ", "DZ", "EG", "ER", "ET", "IQ", "IR", "JO", "KE",
                                               "KW", "LY", "MA", "OM", "QA", "SA", "SD", "SO", "SY", "TN", "YE"};
-            static char const* const sunday[] = {"AR", "AS", "AZ", "BW", "CA", "CN", "FO", "GE", "GL", "GU", "HK", "IL",
+            static const char* const sunday[] = {"AR", "AS", "AZ", "BW", "CA", "CN", "FO", "GE", "GL", "GU", "HK", "IL",
                                                  "IN", "JM", "JP", "KG", "KR", "LA", "MH", "MN", "MO", "MP", "MT", "NZ",
                                                  "PH", "PK", "SG", "TH", "TT", "TW", "UM", "US", "UZ", "VI", "ZW"};
             if(strcmp(terr, "MV") == 0)
                 return 5; // fri
-            if(std::binary_search<char const* const*>(sat, sat + sizeof(sat) / (sizeof(sat[0])), terr, comparator))
+            if(std::binary_search<const char* const*>(sat, sat + sizeof(sat) / (sizeof(sat[0])), terr, comparator))
                 return 6; // sat
-            if(std::binary_search<char const* const*>(sunday,
+            if(std::binary_search<const char* const*>(sunday,
                                                       sunday + sizeof(sunday) / (sizeof(sunday[0])),
                                                       terr,
                                                       comparator))
@@ -131,7 +131,7 @@ namespace boost { namespace locale { namespace util {
 
     class gregorian_calendar : public abstract_calendar {
     public:
-        gregorian_calendar(std::string const& terr)
+        gregorian_calendar(const std::string& terr)
         {
             first_day_of_week_ = first_day_of_week(terr.c_str());
             time_ = std::time(0);
@@ -484,7 +484,7 @@ namespace boost { namespace locale { namespace util {
         ///
         /// Set current time point
         ///
-        void set_time(posix_time const& p) override
+        void set_time(const posix_time& p) override
         {
             from_time(static_cast<std::time_t>(p.seconds));
         }
@@ -581,7 +581,7 @@ namespace boost { namespace locale { namespace util {
             }
         }
 
-        int get_diff(period::marks::period_mark m, int diff, gregorian_calendar const* other) const
+        int get_diff(period::marks::period_mark m, int diff, const gregorian_calendar* other) const
         {
             if(diff == 0)
                 return 0;
@@ -603,10 +603,10 @@ namespace boost { namespace locale { namespace util {
         ///
         /// Calculate the difference between this calendar  and \a other in \a p units
         ///
-        int difference(abstract_calendar const* other_cal, period::marks::period_mark m) const override
+        int difference(const abstract_calendar* other_cal, period::marks::period_mark m) const override
         {
             hold_ptr<gregorian_calendar> keeper;
-            gregorian_calendar const* other = dynamic_cast<gregorian_calendar const*>(other_cal);
+            const gregorian_calendar* other = dynamic_cast<const gregorian_calendar*>(other_cal);
             if(!other) {
                 keeper.reset(clone());
                 keeper->set_time(other_cal->get_time());
@@ -652,7 +652,7 @@ namespace boost { namespace locale { namespace util {
         ///
         /// Set time zone, empty - use system
         ///
-        void set_timezone(std::string const& tz) override
+        void set_timezone(const std::string& tz) override
         {
             if(tz.empty()) {
                 is_local_ = true;
@@ -669,9 +669,9 @@ namespace boost { namespace locale { namespace util {
             return time_zone_name_;
         }
 
-        bool same(abstract_calendar const* other) const override
+        bool same(const abstract_calendar* other) const override
         {
-            gregorian_calendar const* gcal = dynamic_cast<gregorian_calendar const*>(other);
+            const gregorian_calendar* gcal = dynamic_cast<const gregorian_calendar*>(other);
             if(!gcal)
                 return false;
             return gcal->tzoff_ == tzoff_ && gcal->is_local_ == is_local_
@@ -708,21 +708,21 @@ namespace boost { namespace locale { namespace util {
         std::string time_zone_name_;
     };
 
-    abstract_calendar* create_gregorian_calendar(std::string const& terr)
+    abstract_calendar* create_gregorian_calendar(const std::string& terr)
     {
         return new gregorian_calendar(terr);
     }
 
     class gregorian_facet : public calendar_facet {
     public:
-        gregorian_facet(std::string const& terr, size_t refs = 0) : calendar_facet(refs), terr_(terr) {}
+        gregorian_facet(const std::string& terr, size_t refs = 0) : calendar_facet(refs), terr_(terr) {}
         abstract_calendar* create_calendar() const override { return create_gregorian_calendar(terr_); }
 
     private:
         std::string terr_;
     };
 
-    std::locale install_gregorian_calendar(std::locale const& in, std::string const& terr)
+    std::locale install_gregorian_calendar(const std::locale& in, const std::string& terr)
     {
         return std::locale(in, new gregorian_facet(terr));
     }

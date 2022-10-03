@@ -29,10 +29,10 @@
 namespace boost { namespace locale { namespace conv {
     namespace impl {
 
-        std::string convert_between(char const* begin,
-                                    char const* end,
-                                    char const* to_charset,
-                                    char const* from_charset,
+        std::string convert_between(const char* begin,
+                                    const char* end,
+                                    const char* to_charset,
+                                    const char* from_charset,
                                     method_type how)
         {
             hold_ptr<converter_between> cvt;
@@ -55,7 +55,7 @@ namespace boost { namespace locale { namespace conv {
         }
 
         template<typename CharType>
-        std::basic_string<CharType> convert_to(char const* begin, char const* end, char const* charset, method_type how)
+        std::basic_string<CharType> convert_to(const char* begin, const char* end, const char* charset, method_type how)
         {
             hold_ptr<converter_to_utf<CharType>> cvt;
 #ifdef BOOST_LOCALE_WITH_ICONV
@@ -77,7 +77,7 @@ namespace boost { namespace locale { namespace conv {
         }
 
         template<typename CharType>
-        std::string convert_from(CharType const* begin, CharType const* end, char const* charset, method_type how)
+        std::string convert_from(const CharType* begin, const CharType* end, const char* charset, method_type how)
         {
             hold_ptr<converter_from_utf<CharType>> cvt;
 #ifdef BOOST_LOCALE_WITH_ICONV
@@ -98,7 +98,7 @@ namespace boost { namespace locale { namespace conv {
             throw invalid_charset_error(charset);
         }
 
-        std::string normalize_encoding(char const* ccharset)
+        std::string normalize_encoding(const char* ccharset)
         {
             std::string charset;
             charset.reserve(std::strlen(ccharset));
@@ -118,48 +118,48 @@ namespace boost { namespace locale { namespace conv {
 
     using namespace impl;
 
-    std::string between(char const* begin,
-                        char const* end,
-                        std::string const& to_charset,
-                        std::string const& from_charset,
+    std::string between(const char* begin,
+                        const char* end,
+                        const std::string& to_charset,
+                        const std::string& from_charset,
                         method_type how)
     {
         return convert_between(begin, end, to_charset.c_str(), from_charset.c_str(), how);
     }
 
     template<>
-    std::basic_string<char> to_utf(char const* begin, char const* end, std::string const& charset, method_type how)
+    std::basic_string<char> to_utf(const char* begin, const char* end, const std::string& charset, method_type how)
     {
         return convert_to<char>(begin, end, charset.c_str(), how);
     }
 
     template<>
-    std::string from_utf(char const* begin, char const* end, std::string const& charset, method_type how)
+    std::string from_utf(const char* begin, const char* end, const std::string& charset, method_type how)
     {
         return convert_from<char>(begin, end, charset.c_str(), how);
     }
 
     template<>
-    std::basic_string<wchar_t> to_utf(char const* begin, char const* end, std::string const& charset, method_type how)
+    std::basic_string<wchar_t> to_utf(const char* begin, const char* end, const std::string& charset, method_type how)
     {
         return convert_to<wchar_t>(begin, end, charset.c_str(), how);
     }
 
     template<>
-    std::string from_utf(wchar_t const* begin, wchar_t const* end, std::string const& charset, method_type how)
+    std::string from_utf(const wchar_t* begin, const wchar_t* end, const std::string& charset, method_type how)
     {
         return convert_from<wchar_t>(begin, end, charset.c_str(), how);
     }
 
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
     template<>
-    std::basic_string<char16_t> to_utf(char const* begin, char const* end, std::string const& charset, method_type how)
+    std::basic_string<char16_t> to_utf(const char* begin, const char* end, const std::string& charset, method_type how)
     {
         return convert_to<char16_t>(begin, end, charset.c_str(), how);
     }
 
     template<>
-    std::string from_utf(char16_t const* begin, char16_t const* end, std::string const& charset, method_type how)
+    std::string from_utf(const char16_t* begin, const char16_t* end, const std::string& charset, method_type how)
     {
         return convert_from<char16_t>(begin, end, charset.c_str(), how);
     }
@@ -167,13 +167,13 @@ namespace boost { namespace locale { namespace conv {
 
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
     template<>
-    std::basic_string<char32_t> to_utf(char const* begin, char const* end, std::string const& charset, method_type how)
+    std::basic_string<char32_t> to_utf(const char* begin, const char* end, const std::string& charset, method_type how)
     {
         return convert_to<char32_t>(begin, end, charset.c_str(), how);
     }
 
     template<>
-    std::string from_utf(char32_t const* begin, char32_t const* end, std::string const& charset, method_type how)
+    std::string from_utf(const char32_t* begin, const char32_t* end, const std::string& charset, method_type how)
     {
         return convert_from<char32_t>(begin, end, charset.c_str(), how);
     }

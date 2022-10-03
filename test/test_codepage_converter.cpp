@@ -21,14 +21,14 @@
 static const unsigned illegal = 0xFFFFFFFF;
 static const unsigned incomplete = 0xFFFFFFFE;
 
-bool test_to(boost::locale::util::base_converter& cvt, char const* s, unsigned codepoint)
+bool test_to(boost::locale::util::base_converter& cvt, const char* s, unsigned codepoint)
 {
     size_t len = strlen(s);
-    char const* end = s + len;
+    const char* end = s + len;
     return cvt.to_unicode(s, end) == codepoint;
 }
 
-bool test_from(boost::locale::util::base_converter& cvt, unsigned codepoint, char const* str)
+bool test_from(boost::locale::util::base_converter& cvt, unsigned codepoint, const char* str)
 {
     char buf[32] = {0};
     unsigned res = cvt.from_unicode(codepoint, buf, buf + sizeof(buf));

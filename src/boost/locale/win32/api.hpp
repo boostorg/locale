@@ -62,7 +62,7 @@ namespace boost { namespace locale { namespace impl_win {
     public:
         winlocale() : lcid(0) {}
 
-        winlocale(std::string const& name) { lcid = locale_to_lcid(name); }
+        winlocale(const std::string& name) { lcid = locale_to_lcid(name); }
 
         unsigned lcid;
 
@@ -75,7 +75,7 @@ namespace boost { namespace locale { namespace impl_win {
     ///
     ////////////////////////////////////////////////////////////////////////
 
-    inline numeric_info wcsnumformat_l(winlocale const& l)
+    inline numeric_info wcsnumformat_l(const winlocale& l)
     {
         numeric_info res;
         res.decimal_point = L'.';
@@ -122,7 +122,7 @@ namespace boost { namespace locale { namespace impl_win {
         return res;
     }
 
-    inline std::wstring win_map_string_l(unsigned flags, wchar_t const* begin, wchar_t const* end, winlocale const& l)
+    inline std::wstring win_map_string_l(unsigned flags, const wchar_t* begin, const wchar_t* end, const winlocale& l)
     {
         std::wstring res;
         if(end - begin > std::numeric_limits<int>::max())
@@ -146,11 +146,11 @@ namespace boost { namespace locale { namespace impl_win {
     ////////////////////////////////////////////////////////////////////////
 
     inline int wcscoll_l(collator_base::level_type level,
-                         wchar_t const* lb,
-                         wchar_t const* le,
-                         wchar_t const* rb,
-                         wchar_t const* re,
-                         winlocale const& l)
+                         const wchar_t* lb,
+                         const wchar_t* le,
+                         const wchar_t* rb,
+                         const wchar_t* re,
+                         const winlocale& l)
     {
         if(le - lb > std::numeric_limits<int>::max() || re - rb > std::numeric_limits<int>::max())
             throw std::length_error("String to long for int type");
@@ -169,7 +169,7 @@ namespace boost { namespace locale { namespace impl_win {
     ///
     ////////////////////////////////////////////////////////////////////////
 
-    inline std::wstring wcsfmon_l(double value, winlocale const& l)
+    inline std::wstring wcsfmon_l(double value, const winlocale& l)
     {
         std::wostringstream ss;
         ss.imbue(std::locale::classic());
@@ -188,7 +188,7 @@ namespace boost { namespace locale { namespace impl_win {
     ///
     ////////////////////////////////////////////////////////////////////////
 
-    inline std::wstring wcs_format_date_l(wchar_t const* format, SYSTEMTIME const* tm, winlocale const& l)
+    inline std::wstring wcs_format_date_l(const wchar_t* format, SYSTEMTIME const* tm, const winlocale& l)
     {
         int len = GetDateFormatW(l.lcid, 0, tm, format, 0, 0);
         std::vector<wchar_t> buf(len + 1);
@@ -196,7 +196,7 @@ namespace boost { namespace locale { namespace impl_win {
         return &buf.front();
     }
 
-    inline std::wstring wcs_format_time_l(wchar_t const* format, SYSTEMTIME const* tm, winlocale const& l)
+    inline std::wstring wcs_format_time_l(const wchar_t* format, SYSTEMTIME const* tm, const winlocale& l)
     {
         int len = GetTimeFormatW(l.lcid, 0, tm, format, 0, 0);
         std::vector<wchar_t> buf(len + 1);
@@ -204,14 +204,14 @@ namespace boost { namespace locale { namespace impl_win {
         return &buf.front();
     }
 
-    inline std::wstring wcsfold(wchar_t const* begin, wchar_t const* end)
+    inline std::wstring wcsfold(const wchar_t* begin, const wchar_t* end)
     {
         winlocale l;
         l.lcid = 0x0409; // en-US
         return win_map_string_l(LCMAP_LOWERCASE, begin, end, l);
     }
 
-    inline std::wstring wcsnormalize(norm_type norm, wchar_t const* begin, wchar_t const* end)
+    inline std::wstring wcsnormalize(norm_type norm, const wchar_t* begin, const wchar_t* end)
     {
         // We use FoldString, under Vista it actually does normalization;
         // under XP and below it does something similar, half job, better then nothing
@@ -239,24 +239,24 @@ namespace boost { namespace locale { namespace impl_win {
 #endif
 
     inline std::wstring
-    wcsxfrm_l(collator_base::level_type level, wchar_t const* begin, wchar_t const* end, winlocale const& l)
+    wcsxfrm_l(collator_base::level_type level, const wchar_t* begin, const wchar_t* end, const winlocale& l)
     {
         int flag = LCMAP_SORTKEY | collation_level_to_flag(level);
 
         return win_map_string_l(flag, begin, end, l);
     }
 
-    inline std::wstring towupper_l(wchar_t const* begin, wchar_t const* end, winlocale const& l)
+    inline std::wstring towupper_l(const wchar_t* begin, const wchar_t* end, const winlocale& l)
     {
         return win_map_string_l(LCMAP_UPPERCASE | LCMAP_LINGUISTIC_CASING, begin, end, l);
     }
 
-    inline std::wstring towlower_l(wchar_t const* begin, wchar_t const* end, winlocale const& l)
+    inline std::wstring towlower_l(const wchar_t* begin, const wchar_t* end, const winlocale& l)
     {
         return win_map_string_l(LCMAP_LOWERCASE | LCMAP_LINGUISTIC_CASING, begin, end, l);
     }
 
-    inline std::wstring wcsftime_l(char c, std::tm const* tm, winlocale const& l)
+    inline std::wstring wcsftime_l(char c, const std::tm* tm, const winlocale& l)
     {
         SYSTEMTIME wtm = SYSTEMTIME();
         wtm.wYear = static_cast<WORD>(tm->tm_year + 1900);

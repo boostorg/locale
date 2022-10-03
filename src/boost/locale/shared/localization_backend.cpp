@@ -31,7 +31,7 @@
 namespace boost { namespace locale {
     class localization_backend_manager::impl {
     public:
-        impl(impl const& other) : default_backends_(other.default_backends_)
+        impl(const impl& other) : default_backends_(other.default_backends_)
         {
             for(all_backends_type::const_iterator p = other.all_backends_.begin(); p != other.all_backends_.end(); ++p)
             {
@@ -43,7 +43,7 @@ namespace boost { namespace locale {
         }
         impl() : default_backends_(32, -1) {}
 
-        impl& operator=(impl const&) = delete;
+        impl& operator=(const impl&) = delete;
 
         localization_backend* create() const
         {
@@ -52,7 +52,7 @@ namespace boost { namespace locale {
                 backends.push_back(all_backends_[i].second);
             return new actual_backend(backends, default_backends_);
         }
-        void adopt_backend(std::string const& name, localization_backend* backend_ptr)
+        void adopt_backend(const std::string& name, localization_backend* backend_ptr)
         {
             std::shared_ptr<localization_backend> sptr(backend_ptr);
             if(all_backends_.empty()) {
@@ -67,7 +67,7 @@ namespace boost { namespace locale {
             }
         }
 
-        void select(std::string const& backend_name, locale_category_type category = all_categories)
+        void select(const std::string& backend_name, locale_category_type category = all_categories)
         {
             unsigned id;
             for(id = 0; id < all_backends_.size(); id++) {
@@ -103,8 +103,8 @@ namespace boost { namespace locale {
     private:
         class actual_backend : public localization_backend {
         public:
-            actual_backend(std::vector<std::shared_ptr<localization_backend>> const& backends,
-                           std::vector<int> const& index) :
+            actual_backend(const std::vector<std::shared_ptr<localization_backend>>& backends,
+                           const std::vector<int>& index) :
                 index_(index)
             {
                 backends_.resize(backends.size());
@@ -113,7 +113,7 @@ namespace boost { namespace locale {
                 }
             }
             actual_backend* clone() const override { return new actual_backend(backends_, index_); }
-            void set_option(std::string const& name, std::string const& value) override
+            void set_option(const std::string& name, const std::string& value) override
             {
                 for(unsigned i = 0; i < backends_.size(); i++)
                     backends_[i]->set_option(name, value);
@@ -123,7 +123,7 @@ namespace boost { namespace locale {
                 for(unsigned i = 0; i < backends_.size(); i++)
                     backends_[i]->clear_options();
             }
-            std::locale install(std::locale const& l,
+            std::locale install(const std::locale& l,
                                 locale_category_type category,
                                 character_facet_type type = nochar_facet) override
             {
@@ -156,11 +156,11 @@ namespace boost { namespace locale {
 
     localization_backend_manager::~localization_backend_manager() = default;
 
-    localization_backend_manager::localization_backend_manager(localization_backend_manager const& other) :
+    localization_backend_manager::localization_backend_manager(const localization_backend_manager& other) :
         pimpl_(new impl(*other.pimpl_))
     {}
 
-    localization_backend_manager& localization_backend_manager::operator=(localization_backend_manager const& other)
+    localization_backend_manager& localization_backend_manager::operator=(const localization_backend_manager& other)
     {
         pimpl_.reset(new impl(*other.pimpl_));
         return *this;
@@ -170,7 +170,7 @@ namespace boost { namespace locale {
     {
         return std::unique_ptr<localization_backend>(pimpl_->create());
     }
-    void localization_backend_manager::add_backend(std::string const& name,
+    void localization_backend_manager::add_backend(const std::string& name,
                                                    std::unique_ptr<localization_backend> backend)
     {
         pimpl_->adopt_backend(name, backend.release());
@@ -180,7 +180,7 @@ namespace boost { namespace locale {
     {
         return pimpl_->create();
     }
-    void localization_backend_manager::adopt_backend(std::string const& name, localization_backend* backend)
+    void localization_backend_manager::adopt_backend(const std::string& name, localization_backend* backend)
     {
         pimpl_->adopt_backend(name, backend);
     }
@@ -193,7 +193,7 @@ namespace boost { namespace locale {
     {
         return pimpl_->get_all_backends();
     }
-    void localization_backend_manager::select(std::string const& backend_name, locale_category_type category)
+    void localization_backend_manager::select(const std::string& backend_name, locale_category_type category)
     {
         pimpl_->select(backend_name, category);
     }
@@ -243,7 +243,7 @@ namespace boost { namespace locale {
         localization_backend_manager mgr = localization_backend_manager_global();
         return mgr;
     }
-    localization_backend_manager localization_backend_manager::global(localization_backend_manager const& in)
+    localization_backend_manager localization_backend_manager::global(const localization_backend_manager& in)
     {
         boost::unique_lock<boost::mutex> lock(localization_backend_manager_mutex());
         localization_backend_manager mgr = localization_backend_manager_global();

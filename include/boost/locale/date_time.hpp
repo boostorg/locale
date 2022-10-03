@@ -36,7 +36,7 @@ namespace boost { namespace locale {
         ///
         /// Constructor of date_time_error class
         ///
-        date_time_error(std::string const& e) : std::runtime_error(e) {}
+        date_time_error(const std::string& e) : std::runtime_error(e) {}
     };
 
     ///
@@ -545,7 +545,7 @@ namespace boost { namespace locale {
         ///
         /// Create a set of single period \a fl
         ///
-        date_time_period_set(date_time_period const& fl) { basic_[0] = fl; }
+        date_time_period_set(const date_time_period& fl) { basic_[0] = fl; }
         ///
         /// Append date_time_period \a f to the set
         ///
@@ -575,7 +575,7 @@ namespace boost { namespace locale {
         ///
         /// Get item at position \a n the set, n should be in range [0,size)
         ///
-        date_time_period const& operator[](size_t n) const
+        const date_time_period& operator[](size_t n) const
         {
             if(n >= size())
                 throw std::out_of_range("Invalid index to date_time_period");
@@ -593,7 +593,7 @@ namespace boost { namespace locale {
     ///
     /// Append two periods sets. Note this operator is not commutative
     ///
-    inline date_time_period_set operator+(date_time_period_set const& a, date_time_period_set const& b)
+    inline date_time_period_set operator+(const date_time_period_set& a, const date_time_period_set& b)
     {
         date_time_period_set s(a);
         for(unsigned i = 0; i < b.size(); i++)
@@ -604,7 +604,7 @@ namespace boost { namespace locale {
     ///
     /// Append two period sets when all periods of set \b change their sign
     ///
-    inline date_time_period_set operator-(date_time_period_set const& a, date_time_period_set const& b)
+    inline date_time_period_set operator-(const date_time_period_set& a, const date_time_period_set& b)
     {
         date_time_period_set s(a);
         for(unsigned i = 0; i < b.size(); i++)
@@ -633,19 +633,19 @@ namespace boost { namespace locale {
         ///
         /// \note throws std::bad_cast if loc does not have \ref calendar_facet facet installed
         ///
-        calendar(std::locale const& l, std::string const& zone);
+        calendar(const std::locale& l, const std::string& zone);
         ///
         /// Create calendar with locale \a l and default timezone
         ///
         /// \note throws std::bad_cast if loc does not have \ref calendar_facet facet installed
         ///
-        calendar(std::locale const& l);
+        calendar(const std::locale& l);
         ///
         /// Create calendar with default locale and timezone \a zone
         ///
         /// \note throws std::bad_cast if global locale does not have \ref calendar_facet facet installed
         ///
-        calendar(std::string const& zone);
+        calendar(const std::string& zone);
         ///
         /// Create calendar with default locale and timezone
         ///
@@ -657,11 +657,11 @@ namespace boost { namespace locale {
         ///
         /// copy calendar
         ///
-        calendar(calendar const& other);
+        calendar(const calendar& other);
         ///
         /// assign calendar
         ///
-        calendar& operator=(calendar const& other);
+        calendar& operator=(const calendar& other);
 
         ///
         /// Get minimum value for period f, For example for period::day it is 1.
@@ -702,11 +702,11 @@ namespace boost { namespace locale {
         ///
         /// Compare calendars for equivalence: i.e. calendar types, time zones etc.
         ///
-        bool operator==(calendar const& other) const;
+        bool operator==(const calendar& other) const;
         ///
         /// Opposite of ==
         ///
-        bool operator!=(calendar const& other) const;
+        bool operator!=(const calendar& other) const;
 
     private:
         friend class date_time;
@@ -753,15 +753,15 @@ namespace boost { namespace locale {
         ///
         /// copy date_time
         ///
-        date_time(date_time const& other);
+        date_time(const date_time& other);
         ///
         /// copy date_time and change some fields according to the \a set
         ///
-        date_time(date_time const& other, date_time_period_set const& set);
+        date_time(const date_time& other, const date_time_period_set& set);
         ///
         /// assign the date_time
         ///
-        date_time& operator=(date_time const& other);
+        date_time& operator=(const date_time& other);
         ~date_time();
 
         ///
@@ -773,27 +773,27 @@ namespace boost { namespace locale {
         ///
         /// Create a date_time object using POSIX time \a time and calendar \a cal
         ///
-        date_time(double time, calendar const& cal);
+        date_time(double time, const calendar& cal);
         ///
         /// Create a date_time object using calendar \a cal and initializes it to current time.
         ///
-        date_time(calendar const& cal);
+        date_time(const calendar& cal);
 
         ///
         /// Create a date_time object using default calendar and define values given in \a set
         ///
         /// \note throws std::bad_cast if the global locale does not have \ref calendar_facet facet installed
         ///
-        date_time(date_time_period_set const& set);
+        date_time(const date_time_period_set& set);
         ///
         /// Create a date_time object using calendar \a cal and define values given in \a set
         ///
-        date_time(date_time_period_set const& set, calendar const& cal);
+        date_time(const date_time_period_set& set, const calendar& cal);
 
         ///
         /// assign values to various periods in set \a f
         ///
-        date_time& operator=(date_time_period_set const& f);
+        date_time& operator=(const date_time_period_set& f);
 
         ///
         /// set specific period \a f value to \a v
@@ -850,70 +850,70 @@ namespace boost { namespace locale {
         ///
         /// add date_time_period to the current date_time
         ///
-        date_time operator+(date_time_period const& v) const;
+        date_time operator+(const date_time_period& v) const;
         ///
         /// subtract date_time_period from the current date_time
         ///
-        date_time operator-(date_time_period const& v) const;
+        date_time operator-(const date_time_period& v) const;
         ///
         /// add date_time_period to the current date_time
         ///
-        date_time& operator+=(date_time_period const& v);
+        date_time& operator+=(const date_time_period& v);
         ///
         /// subtract date_time_period from the current date_time
         ///
-        date_time& operator-=(date_time_period const& v);
+        date_time& operator-=(const date_time_period& v);
 
         ///
         /// roll current date_time forward by date_time_period v
         ///
-        date_time operator<<(date_time_period const& v) const;
+        date_time operator<<(const date_time_period& v) const;
         ///
         /// roll current date_time backward by date_time_period v
         ///
-        date_time operator>>(date_time_period const& v) const;
+        date_time operator>>(const date_time_period& v) const;
         ///
         /// roll current date_time forward by date_time_period v
         ///
-        date_time& operator<<=(date_time_period const& v);
+        date_time& operator<<=(const date_time_period& v);
         ///
         /// roll current date_time backward by date_time_period v
         ///
-        date_time& operator>>=(date_time_period const& v);
+        date_time& operator>>=(const date_time_period& v);
 
         ///
         /// add date_time_period_set v to the current date_time
         ///
-        date_time operator+(date_time_period_set const& v) const;
+        date_time operator+(const date_time_period_set& v) const;
         ///
         /// subtract date_time_period_set v from the current date_time
         ///
-        date_time operator-(date_time_period_set const& v) const;
+        date_time operator-(const date_time_period_set& v) const;
         ///
         /// add date_time_period_set v to the current date_time
         ///
-        date_time& operator+=(date_time_period_set const& v);
+        date_time& operator+=(const date_time_period_set& v);
         ///
         /// subtract date_time_period_set v from the current date_time
         ///
-        date_time& operator-=(date_time_period_set const& v);
+        date_time& operator-=(const date_time_period_set& v);
 
         ///
         /// roll current date_time forward by date_time_period_set v
         ///
-        date_time operator<<(date_time_period_set const& v) const;
+        date_time operator<<(const date_time_period_set& v) const;
         ///
         /// roll current date_time backward by date_time_period_set v
         ///
-        date_time operator>>(date_time_period_set const& v) const;
+        date_time operator>>(const date_time_period_set& v) const;
         ///
         /// roll current date_time forward by date_time_period_set v
         ///
-        date_time& operator<<=(date_time_period_set const& v);
+        date_time& operator<<=(const date_time_period_set& v);
         ///
         /// roll current date_time backward by date_time_period_set v
         ///
-        date_time& operator>>=(date_time_period_set const& v);
+        date_time& operator>>=(const date_time_period_set& v);
 
         ///
         /// Get POSIX time
@@ -932,27 +932,27 @@ namespace boost { namespace locale {
         ///
         /// compare date_time in the timeline (ignores difference in calendar, timezone etc)
         ///
-        bool operator==(date_time const& other) const;
+        bool operator==(const date_time& other) const;
         ///
         /// compare date_time in the timeline (ignores difference in calendar, timezone etc)
         ///
-        bool operator!=(date_time const& other) const;
+        bool operator!=(const date_time& other) const;
         ///
         /// compare date_time in the timeline (ignores difference in calendar, timezone etc)
         ///
-        bool operator<(date_time const& other) const;
+        bool operator<(const date_time& other) const;
         ///
         /// compare date_time in the timeline (ignores difference in calendar, timezone etc)
         ///
-        bool operator>(date_time const& other) const;
+        bool operator>(const date_time& other) const;
         ///
         /// compare date_time in the timeline (ignores difference in calendar, timezone etc)
         ///
-        bool operator<=(date_time const& other) const;
+        bool operator<=(const date_time& other) const;
         ///
         /// compare date_time in the timeline (ignores difference in calendar, timezone etc)
         ///
-        bool operator>=(date_time const& other) const;
+        bool operator>=(const date_time& other) const;
 
         ///
         /// swaps two dates - efficient, does not throw
@@ -962,7 +962,7 @@ namespace boost { namespace locale {
         ///
         /// calculate the distance from this date_time to \a other in terms of periods \a f
         ///
-        int difference(date_time const& other, period::period_type f) const;
+        int difference(const date_time& other, period::period_type f) const;
 
         ///
         /// Get minimal possible value for *this time point for a period \a f.
@@ -997,7 +997,7 @@ namespace boost { namespace locale {
     /// The output may be Year:5770 Full Date:Jan 1, 2010
     ///
     template<typename CharType>
-    std::basic_ostream<CharType>& operator<<(std::basic_ostream<CharType>& out, date_time const& t)
+    std::basic_ostream<CharType>& operator<<(std::basic_ostream<CharType>& out, const date_time& t)
     {
         double time_point = t.time();
         uint64_t display_flags = ios_info::get(out).display_flags();
@@ -1055,7 +1055,7 @@ namespace boost { namespace locale {
         /// Create an object were \a first represents earlier point on time line and \a second is later
         /// point.
         ///
-        date_time_duration(date_time const& first, date_time const& second) : s_(first), e_(second) {}
+        date_time_duration(const date_time& first, const date_time& second) : s_(first), e_(second) {}
 
         ///
         /// find a difference in terms of period_type \a f
@@ -1070,15 +1070,15 @@ namespace boost { namespace locale {
         ///
         /// Get starting point
         ///
-        date_time const& start() const { return s_; }
+        const date_time& start() const { return s_; }
         ///
         /// Get ending point
         ///
-        date_time const& end() const { return e_; }
+        const date_time& end() const { return e_; }
 
     private:
-        date_time const& s_;
-        date_time const& e_;
+        const date_time& s_;
+        const date_time& e_;
     };
 #ifdef BOOST_MSVC
 #    pragma warning(pop)
@@ -1088,7 +1088,7 @@ namespace boost { namespace locale {
     /// Calculates the difference between two dates, the left operand is a later point on time line.
     /// Returns date_time_duration object.
     ///
-    inline date_time_duration operator-(date_time const& later, date_time const& earlier)
+    inline date_time_duration operator-(const date_time& later, const date_time& earlier)
     {
         return date_time_duration(earlier, later);
     }
@@ -1097,7 +1097,7 @@ namespace boost { namespace locale {
         ///
         ///  Extract from date_time numerical value of Era i.e. AC, BC in Gregorian and Julian calendar, range [0,1]
         ///
-        inline int era(date_time const& dt)
+        inline int era(const date_time& dt)
         {
             return dt.get(era());
         }
@@ -1105,7 +1105,7 @@ namespace boost { namespace locale {
         ///  Extract from date_time numerical value of Year, it is calendar specific, for example 2011 in Gregorian
         ///  calendar.
         ///
-        inline int year(date_time const& dt)
+        inline int year(const date_time& dt)
         {
             return dt.get(year());
         }
@@ -1113,28 +1113,28 @@ namespace boost { namespace locale {
         ///  Extract from date_time numerical value of Extended year for Gregorian/Julian calendars, where 1 BC == 0, 2
         ///  BC == -1.
         ///
-        inline int extended_year(date_time const& dt)
+        inline int extended_year(const date_time& dt)
         {
             return dt.get(extended_year());
         }
         ///
         ///  Extract from date_time numerical value of The month of year, calendar specific, in Gregorian [0..11]
         ///
-        inline int month(date_time const& dt)
+        inline int month(const date_time& dt)
         {
             return dt.get(month());
         }
         ///
         ///  Extract from date_time numerical value of The day of month, calendar specific, in Gregorian [1..31]
         ///
-        inline int day(date_time const& dt)
+        inline int day(const date_time& dt)
         {
             return dt.get(day());
         }
         ///
         ///  Extract from date_time numerical value of The number of day in year, starting from 1, in Gregorian [1..366]
         ///
-        inline int day_of_year(date_time const& dt)
+        inline int day_of_year(const date_time& dt)
         {
             return dt.get(day_of_year());
         }
@@ -1146,7 +1146,7 @@ namespace boost { namespace locale {
         /// the value to Sunday (1) would forward the date by 5 days forward and not backward
         /// by two days as it could be expected if the numbers were taken as is.
         ///
-        inline int day_of_week(date_time const& dt)
+        inline int day_of_week(const date_time& dt)
         {
             return dt.get(day_of_week());
         }
@@ -1155,7 +1155,7 @@ namespace boost { namespace locale {
         ///  Sunday,
         /// 2nd Sunday, etc. in Gregorian [1..5]
         ///
-        inline int day_of_week_in_month(date_time const& dt)
+        inline int day_of_week_in_month(const date_time& dt)
         {
             return dt.get(day_of_week_in_month());
         }
@@ -1163,56 +1163,56 @@ namespace boost { namespace locale {
         ///  Extract from date_time numerical value of Local day of week, for example in France Monday is 1, in US
         ///  Sunday is 1, [1..7]
         ///
-        inline int day_of_week_local(date_time const& dt)
+        inline int day_of_week_local(const date_time& dt)
         {
             return dt.get(day_of_week_local());
         }
         ///
         ///  Extract from date_time numerical value of 24 clock hour [0..23]
         ///
-        inline int hour(date_time const& dt)
+        inline int hour(const date_time& dt)
         {
             return dt.get(hour());
         }
         ///
         ///  Extract from date_time numerical value of 12 clock hour [0..11]
         ///
-        inline int hour_12(date_time const& dt)
+        inline int hour_12(const date_time& dt)
         {
             return dt.get(hour_12());
         }
         ///
         ///  Extract from date_time numerical value of am or pm marker [0..1]
         ///
-        inline int am_pm(date_time const& dt)
+        inline int am_pm(const date_time& dt)
         {
             return dt.get(am_pm());
         }
         ///
         ///  Extract from date_time numerical value of minute [0..59]
         ///
-        inline int minute(date_time const& dt)
+        inline int minute(const date_time& dt)
         {
             return dt.get(minute());
         }
         ///
         ///  Extract from date_time numerical value of second [0..59]
         ///
-        inline int second(date_time const& dt)
+        inline int second(const date_time& dt)
         {
             return dt.get(second());
         }
         ///
         ///  Extract from date_time numerical value of The week number in the year
         ///
-        inline int week_of_year(date_time const& dt)
+        inline int week_of_year(const date_time& dt)
         {
             return dt.get(week_of_year());
         }
         ///
         ///  Extract from date_time numerical value of The week number within current month
         ///
-        inline int week_of_month(date_time const& dt)
+        inline int week_of_month(const date_time& dt)
         {
             return dt.get(week_of_month());
         }
@@ -1220,7 +1220,7 @@ namespace boost { namespace locale {
         ///  Extract from date_time numerical value of First day of week, constant, for example Sunday in US = 1, Monday
         ///  in France = 2
         ///
-        inline int first_day_of_week(date_time const& dt)
+        inline int first_day_of_week(const date_time& dt)
         {
             return dt.get(first_day_of_week());
         }
@@ -1229,14 +1229,14 @@ namespace boost { namespace locale {
         ///  Extract from date_time_duration numerical value of duration in  Era i.e. AC, BC in Gregorian and Julian
         ///  calendar, range [0,1]
         ///
-        inline int era(date_time_duration const& dt)
+        inline int era(const date_time_duration& dt)
         {
             return dt.get(era());
         }
         ///
         ///  Extract from date_time_duration numerical value of duration in years
         ///
-        inline int year(date_time_duration const& dt)
+        inline int year(const date_time_duration& dt)
         {
             return dt.get(year());
         }
@@ -1244,35 +1244,35 @@ namespace boost { namespace locale {
         ///  Extract from date_time_duration numerical value of duration in extended years (for Gregorian/Julian
         ///  calendars, where 1 BC == 0, 2 BC == -1).
         ///
-        inline int extended_year(date_time_duration const& dt)
+        inline int extended_year(const date_time_duration& dt)
         {
             return dt.get(extended_year());
         }
         ///
         ///  Extract from date_time_duration numerical value of duration in months
         ///
-        inline int month(date_time_duration const& dt)
+        inline int month(const date_time_duration& dt)
         {
             return dt.get(month());
         }
         ///
         ///  Extract from date_time_duration numerical value of duration in days of month
         ///
-        inline int day(date_time_duration const& dt)
+        inline int day(const date_time_duration& dt)
         {
             return dt.get(day());
         }
         ///
         ///  Extract from date_time_duration numerical value of duration in days of year
         ///
-        inline int day_of_year(date_time_duration const& dt)
+        inline int day_of_year(const date_time_duration& dt)
         {
             return dt.get(day_of_year());
         }
         ///
         ///  Extract from date_time_duration numerical value of duration in days of week
         ///
-        inline int day_of_week(date_time_duration const& dt)
+        inline int day_of_week(const date_time_duration& dt)
         {
             return dt.get(day_of_week());
         }
@@ -1280,70 +1280,70 @@ namespace boost { namespace locale {
         ///  Extract from date_time_duration numerical value of duration in original number of the day of the week in
         ///  month
         ///
-        inline int day_of_week_in_month(date_time_duration const& dt)
+        inline int day_of_week_in_month(const date_time_duration& dt)
         {
             return dt.get(day_of_week_in_month());
         }
         ///
         ///  Extract from date_time_duration numerical value of duration in local day of week
         ///
-        inline int day_of_week_local(date_time_duration const& dt)
+        inline int day_of_week_local(const date_time_duration& dt)
         {
             return dt.get(day_of_week_local());
         }
         ///
         ///  Extract from date_time_duration numerical value of duration in hours
         ///
-        inline int hour(date_time_duration const& dt)
+        inline int hour(const date_time_duration& dt)
         {
             return dt.get(hour());
         }
         ///
         ///  Extract from date_time_duration numerical value of duration in  12 clock hours
         ///
-        inline int hour_12(date_time_duration const& dt)
+        inline int hour_12(const date_time_duration& dt)
         {
             return dt.get(hour_12());
         }
         ///
         ///  Extract from date_time_duration numerical value of duration in  am or pm markers
         ///
-        inline int am_pm(date_time_duration const& dt)
+        inline int am_pm(const date_time_duration& dt)
         {
             return dt.get(am_pm());
         }
         ///
         ///  Extract from date_time_duration numerical value of duration in  minutes
         ///
-        inline int minute(date_time_duration const& dt)
+        inline int minute(const date_time_duration& dt)
         {
             return dt.get(minute());
         }
         ///
         ///  Extract from date_time_duration numerical value of duration in  seconds
         ///
-        inline int second(date_time_duration const& dt)
+        inline int second(const date_time_duration& dt)
         {
             return dt.get(second());
         }
         ///
         ///  Extract from date_time_duration numerical value of duration in the week number in the year
         ///
-        inline int week_of_year(date_time_duration const& dt)
+        inline int week_of_year(const date_time_duration& dt)
         {
             return dt.get(week_of_year());
         }
         ///
         ///  Extract from date_time_duration numerical value of duration in  The week number within current month
         ///
-        inline int week_of_month(date_time_duration const& dt)
+        inline int week_of_month(const date_time_duration& dt)
         {
             return dt.get(week_of_month());
         }
         ///
         ///  Extract from date_time_duration numerical value of duration in the first day of week
         ///
-        inline int first_day_of_week(date_time_duration const& dt)
+        inline int first_day_of_week(const date_time_duration& dt)
         {
             return dt.get(first_day_of_week());
         }

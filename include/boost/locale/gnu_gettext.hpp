@@ -56,7 +56,7 @@ namespace boost { namespace locale {
                 /// be "cp1255" and if n is "hello" then the name would be the same but encoding would be
                 /// "UTF-8"
                 ///
-                domain(std::string const& n)
+                domain(const std::string& n)
                 {
                     size_t pos = n.find('/');
                     if(pos == std::string::npos) {
@@ -71,11 +71,11 @@ namespace boost { namespace locale {
                 ///
                 /// Check whether two objects are equivalent, only names are compared, encoding is ignored
                 ///
-                bool operator==(domain const& other) const { return name == other.name; }
+                bool operator==(const domain& other) const { return name == other.name; }
                 ///
                 /// Check whether two objects are distinct, only names are compared, encoding is ignored
                 ///
-                bool operator!=(domain const& other) const { return !(*this == other); }
+                bool operator!=(const domain& other) const { return !(*this == other); }
             };
 
             typedef std::vector<domain> domains_type; ///< Type that defines a list of domains that are loaded
@@ -95,7 +95,7 @@ namespace boost { namespace locale {
             /// \note The user should support only the encodings the locales are created for. So if the user
             /// uses only one encoding or the file system is encoding agnostic, he may ignore the \a encoding parameter.
             ///
-            typedef std::function<std::vector<char>(std::string const& file_name, std::string const& encoding)>
+            typedef std::function<std::vector<char>(const std::string& file_name, const std::string& encoding)>
               callback_type;
 
             ///
@@ -111,24 +111,24 @@ namespace boost { namespace locale {
         ///
 
         template<typename CharType>
-        message_format<CharType>* create_messages_facet(messages_info const& info);
+        message_format<CharType>* create_messages_facet(const messages_info& info);
 
         /// \cond INTERNAL
 
         template<>
-        BOOST_LOCALE_DECL message_format<char>* create_messages_facet(messages_info const& info);
+        BOOST_LOCALE_DECL message_format<char>* create_messages_facet(const messages_info& info);
 
         template<>
-        BOOST_LOCALE_DECL message_format<wchar_t>* create_messages_facet(messages_info const& info);
+        BOOST_LOCALE_DECL message_format<wchar_t>* create_messages_facet(const messages_info& info);
 
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
         template<>
-        BOOST_LOCALE_DECL message_format<char16_t>* create_messages_facet(messages_info const& info);
+        BOOST_LOCALE_DECL message_format<char16_t>* create_messages_facet(const messages_info& info);
 #endif
 
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
         template<>
-        BOOST_LOCALE_DECL message_format<char32_t>* create_messages_facet(messages_info const& info);
+        BOOST_LOCALE_DECL message_format<char32_t>* create_messages_facet(const messages_info& info);
 #endif
 
         /// \endcond

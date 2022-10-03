@@ -74,7 +74,7 @@ namespace boost { namespace locale { namespace impl_win {
         return TRUE;
     }
 
-    table_type const& get_ready_lcid_table()
+    const table_type& get_ready_lcid_table()
     {
         if(table)
             return *table;
@@ -88,7 +88,7 @@ namespace boost { namespace locale { namespace impl_win {
         }
     }
 
-    unsigned locale_to_lcid(std::string const& locale_name)
+    unsigned locale_to_lcid(const std::string& locale_name)
     {
         if(locale_name.empty()) {
             return LOCALE_USER_DEFAULT;
@@ -104,7 +104,7 @@ namespace boost { namespace locale { namespace impl_win {
             id += "@" + d.variant;
         }
 
-        table_type const& tbl = get_ready_lcid_table();
+        const table_type& tbl = get_ready_lcid_table();
         table_type::const_iterator p = tbl.find(id);
 
         unsigned lcid = 0;

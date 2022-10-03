@@ -69,10 +69,10 @@ namespace boost { namespace locale {
         /// they considered equal.
         ///
         int compare(level_type level,
-                    char_type const* b1,
-                    char_type const* e1,
-                    char_type const* b2,
-                    char_type const* e2) const
+                    const char_type* b1,
+                    const char_type* e1,
+                    const char_type* b2,
+                    const char_type* e2) const
         {
             return do_compare(level, b1, e1, b2, e2);
         }
@@ -87,7 +87,7 @@ namespace boost { namespace locale {
         ///
         /// Calls do_transform
         ///
-        string_type transform(level_type level, char_type const* b, char_type const* e) const
+        string_type transform(level_type level, const char_type* b, const char_type* e) const
         {
             return do_transform(level, b, e);
         }
@@ -99,7 +99,7 @@ namespace boost { namespace locale {
         ///
         /// Calls do_hash
         ///
-        long hash(level_type level, char_type const* b, char_type const* e) const { return do_hash(level, b, e); }
+        long hash(level_type level, const char_type* b, const char_type* e) const { return do_hash(level, b, e); }
 
         ///
         /// Compare two strings \a l and \a r using collation level \a level
@@ -108,7 +108,7 @@ namespace boost { namespace locale {
         /// they considered equal.
         ///
         ///
-        int compare(level_type level, string_type const& l, string_type const& r) const
+        int compare(level_type level, const string_type& l, const string_type& r) const
         {
             return do_compare(level, l.data(), l.data() + l.size(), r.data(), r.data() + r.size());
         }
@@ -119,7 +119,7 @@ namespace boost { namespace locale {
         /// If compare(level,s1,s2) == 0 then hash(level,s1) == hash(level,s2)
         ///
 
-        long hash(level_type level, string_type const& s) const
+        long hash(level_type level, const string_type& s) const
         {
             return do_hash(level, s.data(), s.data() + s.size());
         }
@@ -132,7 +132,7 @@ namespace boost { namespace locale {
         ///   compare(level,s1,s2) == sign( transform(level,s1).compare(transform(level,s2)) );
         /// \endcode
         ///
-        string_type transform(level_type level, string_type const& s) const
+        string_type transform(level_type level, const string_type& s) const
         {
             return do_transform(level, s.data(), s.data() + s.size());
         }
@@ -148,7 +148,7 @@ namespace boost { namespace locale {
         /// Uses primary level
         ///
         int
-        do_compare(char_type const* b1, char_type const* e1, char_type const* b2, char_type const* e2) const override
+        do_compare(const char_type* b1, const char_type* e1, const char_type* b2, const char_type* e2) const override
         {
             return do_compare(identical, b1, e1, b2, e2);
         }
@@ -156,7 +156,7 @@ namespace boost { namespace locale {
         /// This function is used to override default collation function that does not take in account collation level.
         /// Uses primary level
         ///
-        string_type do_transform(char_type const* b, char_type const* e) const override
+        string_type do_transform(const char_type* b, const char_type* e) const override
         {
             return do_transform(identical, b, e);
         }
@@ -164,25 +164,25 @@ namespace boost { namespace locale {
         /// This function is used to override default collation function that does not take in account collation level.
         /// Uses primary level
         ///
-        long do_hash(char_type const* b, char_type const* e) const override { return do_hash(identical, b, e); }
+        long do_hash(const char_type* b, const char_type* e) const override { return do_hash(identical, b, e); }
 
         ///
         /// Actual function that performs comparison between the strings. For details see compare member function. Can
         /// be overridden.
         ///
         virtual int do_compare(level_type level,
-                               char_type const* b1,
-                               char_type const* e1,
-                               char_type const* b2,
-                               char_type const* e2) const = 0;
+                               const char_type* b1,
+                               const char_type* e1,
+                               const char_type* b2,
+                               const char_type* e2) const = 0;
         ///
         /// Actual function that performs transformation. For details see transform member function. Can be overridden.
         ///
-        virtual string_type do_transform(level_type level, char_type const* b, char_type const* e) const = 0;
+        virtual string_type do_transform(level_type level, const char_type* b, const char_type* e) const = 0;
         ///
         /// Actual function that calculates hash. For details see hash member function. Can be overridden.
         ///
-        virtual long do_hash(level_type level, char_type const* b, char_type const* e) const = 0;
+        virtual long do_hash(level_type level, const char_type* b, const char_type* e) const = 0;
     };
 
     ///
@@ -205,14 +205,14 @@ namespace boost { namespace locale {
         ///
         /// \note throws std::bad_cast if l does not have \ref collator facet installed
         ///
-        comparator(std::locale const& l = std::locale(), collator_base::level_type level = default_level) :
+        comparator(const std::locale& l = std::locale(), collator_base::level_type level = default_level) :
             locale_(l), level_(level)
         {}
 
         ///
         /// Compare two strings -- equivalent to return left < right according to collation rules
         ///
-        bool operator()(std::basic_string<CharType> const& left, std::basic_string<CharType> const& right) const
+        bool operator()(const std::basic_string<CharType>& left, const std::basic_string<CharType>& right) const
         {
             return std::use_facet<collator<CharType>>(locale_).compare(level_, left, right) < 0;
         }

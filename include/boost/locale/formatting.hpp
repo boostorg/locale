@@ -99,8 +99,8 @@ namespace boost { namespace locale {
         /// \cond INTERNAL
 
         ios_info();
-        ios_info(ios_info const&);
-        ios_info& operator=(ios_info const&);
+        ios_info(const ios_info&);
+        ios_info& operator=(const ios_info&);
         ~ios_info();
 
         /// \endcond
@@ -143,13 +143,13 @@ namespace boost { namespace locale {
         ///
         /// Set time zone for formatting dates and time
         ///
-        void time_zone(std::string const&);
+        void time_zone(const std::string&);
 
         ///
         /// Set date/time pattern (strftime like)
         ///
         template<typename CharType>
-        void date_time_pattern(std::basic_string<CharType> const& str)
+        void date_time_pattern(const std::basic_string<CharType>& str)
         {
             string_set& s = date_time_pattern_set();
             s.set<CharType>(str.c_str());
@@ -196,7 +196,7 @@ namespace boost { namespace locale {
         template<typename CharType>
         std::basic_string<CharType> date_time_pattern() const
         {
-            string_set const& s = date_time_pattern_set();
+            const string_set& s = date_time_pattern_set();
             return s.get<CharType>();
         }
 
@@ -207,24 +207,24 @@ namespace boost { namespace locale {
     private:
         class string_set;
 
-        string_set const& date_time_pattern_set() const;
+        const string_set& date_time_pattern_set() const;
         string_set& date_time_pattern_set();
 
         class BOOST_LOCALE_DECL string_set {
         public:
             string_set();
             ~string_set();
-            string_set(string_set const& other);
+            string_set(const string_set& other);
             string_set& operator=(string_set other);
             void swap(string_set& other);
 
             template<typename Char>
-            void set(Char const* s)
+            void set(const Char* s)
             {
                 delete[] ptr;
                 ptr = 0;
                 type = &typeid(Char);
-                Char const* end = s;
+                const Char* end = s;
                 while(*end != 0)
                     end++;
                 // if ptr = 0 it does not matter what is value of size
@@ -238,12 +238,12 @@ namespace boost { namespace locale {
             {
                 if(type == 0 || *type != typeid(Char))
                     throw std::bad_cast();
-                std::basic_string<Char> result = reinterpret_cast<Char const*>(ptr);
+                std::basic_string<Char> result = reinterpret_cast<const Char*>(ptr);
                 return result;
             }
 
         private:
-            std::type_info const* type;
+            const std::type_info* type;
             size_t size;
             char* ptr;
         };
@@ -492,14 +492,14 @@ namespace boost { namespace locale {
             };
 
             template<typename CharType>
-            std::basic_ostream<CharType>& operator<<(std::basic_ostream<CharType>& out, add_ftime<CharType> const& fmt)
+            std::basic_ostream<CharType>& operator<<(std::basic_ostream<CharType>& out, const add_ftime<CharType>& fmt)
             {
                 fmt.apply(out);
                 return out;
             }
 
             template<typename CharType>
-            std::basic_istream<CharType>& operator>>(std::basic_istream<CharType>& in, add_ftime<CharType> const& fmt)
+            std::basic_istream<CharType>& operator>>(std::basic_istream<CharType>& in, const add_ftime<CharType>& fmt)
             {
                 fmt.apply(in);
                 return in;
@@ -549,7 +549,7 @@ namespace boost { namespace locale {
 #else
         detail::add_ftime<CharType>
 #endif
-        ftime(std::basic_string<CharType> const& format)
+        ftime(const std::basic_string<CharType>& format)
         {
             detail::add_ftime<CharType> fmt;
             fmt.ftime = format;
@@ -565,7 +565,7 @@ namespace boost { namespace locale {
 #else
         detail::add_ftime<CharType>
 #endif
-        ftime(CharType const* format)
+        ftime(const CharType* format)
         {
             detail::add_ftime<CharType> fmt;
             fmt.ftime = format;
@@ -578,14 +578,14 @@ namespace boost { namespace locale {
                 std::string id;
             };
             template<typename CharType>
-            std::basic_ostream<CharType>& operator<<(std::basic_ostream<CharType>& out, set_timezone const& fmt)
+            std::basic_ostream<CharType>& operator<<(std::basic_ostream<CharType>& out, const set_timezone& fmt)
             {
                 ios_info::get(out).time_zone(fmt.id);
                 return out;
             }
 
             template<typename CharType>
-            std::basic_istream<CharType>& operator>>(std::basic_istream<CharType>& in, set_timezone const& fmt)
+            std::basic_istream<CharType>& operator>>(std::basic_istream<CharType>& in, const set_timezone& fmt)
             {
                 ios_info::get(in).time_zone(fmt.id);
                 return in;
@@ -620,7 +620,7 @@ namespace boost { namespace locale {
 #else
           detail::set_timezone
 #endif
-          time_zone(char const* id)
+          time_zone(const char* id)
         {
             detail::set_timezone tz;
             tz.id = id;
@@ -636,7 +636,7 @@ namespace boost { namespace locale {
 #else
           detail::set_timezone
 #endif
-          time_zone(std::string const& id)
+          time_zone(const std::string& id)
         {
             detail::set_timezone tz;
             tz.id = id;

@@ -22,13 +22,13 @@ namespace boost { namespace locale { namespace impl_std {
     template<typename CharType>
     class time_put_from_base : public std::time_put<CharType> {
     public:
-        time_put_from_base(std::locale const& base, size_t refs = 0) : std::time_put<CharType>(refs), base_(base) {}
+        time_put_from_base(const std::locale& base, size_t refs = 0) : std::time_put<CharType>(refs), base_(base) {}
         typedef typename std::time_put<CharType>::iter_type iter_type;
 
         iter_type do_put(iter_type out,
                          std::ios_base& /*ios*/,
                          CharType fill,
-                         std::tm const* tm,
+                         const std::tm* tm,
                          char format,
                          char modifier) const override
         {
@@ -43,11 +43,11 @@ namespace boost { namespace locale { namespace impl_std {
 
     class utf8_time_put_from_wide : public std::time_put<char> {
     public:
-        utf8_time_put_from_wide(std::locale const& base, size_t refs = 0) : std::time_put<char>(refs), base_(base) {}
+        utf8_time_put_from_wide(const std::locale& base, size_t refs = 0) : std::time_put<char>(refs), base_(base) {}
         iter_type do_put(iter_type out,
                          std::ios_base& /*ios*/,
                          char fill,
-                         std::tm const* tm,
+                         const std::tm* tm,
                          char format,
                          char modifier = 0) const override
         {
@@ -69,10 +69,10 @@ namespace boost { namespace locale { namespace impl_std {
 
     class utf8_numpunct_from_wide : public std::numpunct<char> {
     public:
-        utf8_numpunct_from_wide(std::locale const& base, size_t refs = 0) : std::numpunct<char>(refs)
+        utf8_numpunct_from_wide(const std::locale& base, size_t refs = 0) : std::numpunct<char>(refs)
         {
             typedef std::numpunct<wchar_t> wfacet_type;
-            wfacet_type const& wfacet = std::use_facet<wfacet_type>(base);
+            const wfacet_type& wfacet = std::use_facet<wfacet_type>(base);
 
             truename_ = conv::from_utf<wchar_t>(wfacet.truename(), "UTF-8");
             falsename_ = conv::from_utf<wchar_t>(wfacet.falsename(), "UTF-8");
@@ -119,10 +119,10 @@ namespace boost { namespace locale { namespace impl_std {
     template<bool Intl>
     class utf8_moneypunct_from_wide : public std::moneypunct<char, Intl> {
     public:
-        utf8_moneypunct_from_wide(std::locale const& base, size_t refs = 0) : std::moneypunct<char, Intl>(refs)
+        utf8_moneypunct_from_wide(const std::locale& base, size_t refs = 0) : std::moneypunct<char, Intl>(refs)
         {
             typedef std::moneypunct<wchar_t, Intl> wfacet_type;
-            wfacet_type const& wfacet = std::use_facet<wfacet_type>(base);
+            const wfacet_type& wfacet = std::use_facet<wfacet_type>(base);
 
             curr_symbol_ = conv::from_utf<wchar_t>(wfacet.curr_symbol(), "UTF-8");
             positive_sign_ = conv::from_utf<wchar_t>(wfacet.positive_sign(), "UTF-8");
@@ -185,7 +185,7 @@ namespace boost { namespace locale { namespace impl_std {
     class utf8_numpunct : public std::numpunct_byname<char> {
     public:
         typedef std::numpunct_byname<char> base_type;
-        utf8_numpunct(char const* name, size_t refs = 0) : std::numpunct_byname<char>(name, refs) {}
+        utf8_numpunct(const char* name, size_t refs = 0) : std::numpunct_byname<char>(name, refs) {}
         char do_thousands_sep() const override
         {
             unsigned char bs = base_type::do_thousands_sep();
@@ -210,7 +210,7 @@ namespace boost { namespace locale { namespace impl_std {
     class utf8_moneypunct : public std::moneypunct_byname<char, Intl> {
     public:
         typedef std::moneypunct_byname<char, Intl> base_type;
-        utf8_moneypunct(char const* name, size_t refs = 0) : std::moneypunct_byname<char, Intl>(name, refs) {}
+        utf8_moneypunct(const char* name, size_t refs = 0) : std::moneypunct_byname<char, Intl>(name, refs) {}
         char do_thousands_sep() const override
         {
             unsigned char bs = base_type::do_thousands_sep();
@@ -232,7 +232,7 @@ namespace boost { namespace locale { namespace impl_std {
     };
 
     template<typename CharType>
-    std::locale create_basic_parsing(std::locale const& in, std::string const& locale_name)
+    std::locale create_basic_parsing(const std::locale& in, const std::string& locale_name)
     {
         std::locale tmp = std::locale(in, new std::numpunct_byname<CharType>(locale_name.c_str()));
         tmp = std::locale(tmp, new std::moneypunct_byname<CharType, true>(locale_name.c_str()));
@@ -242,7 +242,7 @@ namespace boost { namespace locale { namespace impl_std {
     }
 
     template<typename CharType>
-    std::locale create_basic_formatting(std::locale const& in, std::string const& locale_name)
+    std::locale create_basic_formatting(const std::locale& in, const std::string& locale_name)
     {
         std::locale tmp = create_basic_parsing<CharType>(in, locale_name);
         std::locale base(locale_name.c_str());
@@ -250,8 +250,8 @@ namespace boost { namespace locale { namespace impl_std {
         return tmp;
     }
 
-    std::locale create_formatting(std::locale const& in,
-                                  std::string const& locale_name,
+    std::locale create_formatting(const std::locale& in,
+                                  const std::string& locale_name,
                                   character_facet_type type,
                                   utf8_support utf)
     {
@@ -311,7 +311,7 @@ namespace boost { namespace locale { namespace impl_std {
     }
 
     std::locale
-    create_parsing(std::locale const& in, std::string const& locale_name, character_facet_type type, utf8_support utf)
+    create_parsing(const std::locale& in, const std::string& locale_name, character_facet_type type, utf8_support utf)
     {
         switch(type) {
             case char_facet: {

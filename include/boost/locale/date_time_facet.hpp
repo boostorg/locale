@@ -80,11 +80,11 @@ namespace boost { namespace locale {
             ///
             /// Check if two periods are the same
             ///
-            bool operator==(period_type const& other) const { return mark() == other.mark(); }
+            bool operator==(const period_type& other) const { return mark() == other.mark(); }
             ///
             /// Check if two periods are different
             ///
-            bool operator!=(period_type const& other) const { return mark() != other.mark(); }
+            bool operator!=(const period_type& other) const { return mark() != other.mark(); }
 
         private:
             marks::period_mark mark_;
@@ -169,7 +169,7 @@ namespace boost { namespace locale {
         ///
         /// Set current time point
         ///
-        virtual void set_time(posix_time const& p) = 0;
+        virtual void set_time(const posix_time& p) = 0;
         ///
         /// Get current time point
         ///
@@ -193,12 +193,12 @@ namespace boost { namespace locale {
         ///
         /// Calculate the difference between this calendar  and \a other in \a p units
         ///
-        virtual int difference(abstract_calendar const* other, period::marks::period_mark m) const = 0;
+        virtual int difference(const abstract_calendar* other, period::marks::period_mark m) const = 0;
 
         ///
         /// Set time zone, empty - use system
         ///
-        virtual void set_timezone(std::string const& tz) = 0;
+        virtual void set_timezone(const std::string& tz) = 0;
         ///
         /// Get current time zone, empty - system one
         ///
@@ -207,7 +207,7 @@ namespace boost { namespace locale {
         ///
         /// Check of two calendars have same rules
         ///
-        virtual bool same(abstract_calendar const* other) const = 0;
+        virtual bool same(const abstract_calendar* other) const = 0;
 
         virtual ~abstract_calendar() {}
     };

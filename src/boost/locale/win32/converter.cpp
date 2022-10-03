@@ -19,10 +19,10 @@ namespace boost { namespace locale { namespace impl_win {
 
     class utf16_converter : public converter<wchar_t> {
     public:
-        utf16_converter(winlocale const& lc, size_t refs = 0) : converter<wchar_t>(refs), lc_(lc) {}
+        utf16_converter(const winlocale& lc, size_t refs = 0) : converter<wchar_t>(refs), lc_(lc) {}
         std::wstring convert(converter_base::conversion_type how,
-                             wchar_t const* begin,
-                             wchar_t const* end,
+                             const wchar_t* begin,
+                             const wchar_t* end,
                              int flags = 0) const override
         {
             switch(how) {
@@ -40,13 +40,13 @@ namespace boost { namespace locale { namespace impl_win {
 
     class utf8_converter : public converter<char> {
     public:
-        utf8_converter(winlocale const& lc, size_t refs = 0) : converter<char>(refs), lc_(lc) {}
+        utf8_converter(const winlocale& lc, size_t refs = 0) : converter<char>(refs), lc_(lc) {}
         std::string
-        convert(converter_base::conversion_type how, char const* begin, char const* end, int flags = 0) const override
+        convert(converter_base::conversion_type how, const char* begin, const char* end, int flags = 0) const override
         {
             std::wstring tmp = conv::to_utf<wchar_t>(begin, end, "UTF-8");
-            wchar_t const* wb = tmp.c_str();
-            wchar_t const* we = wb + tmp.size();
+            const wchar_t* wb = tmp.c_str();
+            const wchar_t* we = wb + tmp.size();
 
             std::wstring res;
 
@@ -64,7 +64,7 @@ namespace boost { namespace locale { namespace impl_win {
         winlocale lc_;
     };
 
-    std::locale create_convert(std::locale const& in, winlocale const& lc, character_facet_type type)
+    std::locale create_convert(const std::locale& in, const winlocale& lc, character_facet_type type)
     {
         switch(type) {
             case char_facet: return std::locale(in, new utf8_converter(lc));

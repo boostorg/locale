@@ -19,19 +19,19 @@ namespace boost { namespace locale {
     // Calendar
     ////////////////////////
 
-    calendar::calendar(std::locale const& l, std::string const& zone) :
+    calendar::calendar(const std::locale& l, const std::string& zone) :
         locale_(l), tz_(zone), impl_(std::use_facet<calendar_facet>(l).create_calendar())
     {
         impl_->set_timezone(tz_);
     }
 
-    calendar::calendar(std::string const& zone) :
+    calendar::calendar(const std::string& zone) :
         tz_(zone), impl_(std::use_facet<calendar_facet>(std::locale()).create_calendar())
     {
         impl_->set_timezone(tz_);
     }
 
-    calendar::calendar(std::locale const& l) :
+    calendar::calendar(const std::locale& l) :
         locale_(l), tz_(time_zone::global()), impl_(std::use_facet<calendar_facet>(l).create_calendar())
     {
         impl_->set_timezone(tz_);
@@ -52,9 +52,9 @@ namespace boost { namespace locale {
 
     calendar::~calendar() {}
 
-    calendar::calendar(calendar const& other) : locale_(other.locale_), tz_(other.tz_), impl_(other.impl_->clone()) {}
+    calendar::calendar(const calendar& other) : locale_(other.locale_), tz_(other.tz_), impl_(other.impl_->clone()) {}
 
-    calendar& calendar::operator=(calendar const& other)
+    calendar& calendar::operator=(const calendar& other)
     {
         impl_.reset(other.impl_->clone());
         locale_ = other.locale_;
@@ -102,12 +102,12 @@ namespace boost { namespace locale {
         return impl_->get_value(period::marks::first_day_of_week, abstract_calendar::current);
     }
 
-    bool calendar::operator==(calendar const& other) const
+    bool calendar::operator==(const calendar& other) const
     {
         return impl_->same(other.impl_.get());
     }
 
-    bool calendar::operator!=(calendar const& other) const
+    bool calendar::operator!=(const calendar& other) const
     {
         return !(*this == other);
     }
@@ -121,9 +121,9 @@ namespace boost { namespace locale {
         impl_->set_timezone(time_zone::global());
     }
 
-    date_time::date_time(date_time const& other) : impl_(other.impl_->clone()) {}
+    date_time::date_time(const date_time& other) : impl_(other.impl_->clone()) {}
 
-    date_time::date_time(date_time const& other, date_time_period_set const& s)
+    date_time::date_time(const date_time& other, const date_time_period_set& s)
     {
         impl_.reset(other.impl_->clone());
         for(unsigned i = 0; i < s.size(); i++) {
@@ -132,7 +132,7 @@ namespace boost { namespace locale {
         impl_->normalize();
     }
 
-    date_time& date_time::operator=(date_time const& other)
+    date_time& date_time::operator=(const date_time& other)
     {
         impl_.reset(other.impl_->clone());
         return *this;
@@ -146,14 +146,14 @@ namespace boost { namespace locale {
         time(t);
     }
 
-    date_time::date_time(double t, calendar const& cal) : impl_(cal.impl_->clone())
+    date_time::date_time(double t, const calendar& cal) : impl_(cal.impl_->clone())
     {
         time(t);
     }
 
-    date_time::date_time(calendar const& cal) : impl_(cal.impl_->clone()) {}
+    date_time::date_time(const calendar& cal) : impl_(cal.impl_->clone()) {}
 
-    date_time::date_time(date_time_period_set const& s) :
+    date_time::date_time(const date_time_period_set& s) :
         impl_(std::use_facet<calendar_facet>(std::locale()).create_calendar())
     {
         impl_->set_timezone(time_zone::global());
@@ -162,7 +162,7 @@ namespace boost { namespace locale {
         }
         impl_->normalize();
     }
-    date_time::date_time(date_time_period_set const& s, calendar const& cal) : impl_(cal.impl_->clone())
+    date_time::date_time(const date_time_period_set& s, const calendar& cal) : impl_(cal.impl_->clone())
     {
         for(unsigned i = 0; i < s.size(); i++) {
             impl_->set_value(s[i].type.mark(), s[i].value);
@@ -170,7 +170,7 @@ namespace boost { namespace locale {
         impl_->normalize();
     }
 
-    date_time& date_time::operator=(date_time_period_set const& s)
+    date_time& date_time::operator=(const date_time_period_set& s)
     {
         for(unsigned i = 0; i < s.size(); i++)
             impl_->set_value(s[i].type.mark(), s[i].value);
@@ -189,87 +189,87 @@ namespace boost { namespace locale {
         return impl_->get_value(f.mark(), abstract_calendar::current);
     }
 
-    date_time date_time::operator+(date_time_period const& v) const
+    date_time date_time::operator+(const date_time_period& v) const
     {
         date_time tmp(*this);
         tmp += v;
         return tmp;
     }
 
-    date_time date_time::operator-(date_time_period const& v) const
+    date_time date_time::operator-(const date_time_period& v) const
     {
         date_time tmp(*this);
         tmp -= v;
         return tmp;
     }
 
-    date_time date_time::operator<<(date_time_period const& v) const
+    date_time date_time::operator<<(const date_time_period& v) const
     {
         date_time tmp(*this);
         tmp <<= v;
         return tmp;
     }
 
-    date_time date_time::operator>>(date_time_period const& v) const
+    date_time date_time::operator>>(const date_time_period& v) const
     {
         date_time tmp(*this);
         tmp >>= v;
         return tmp;
     }
 
-    date_time& date_time::operator+=(date_time_period const& v)
+    date_time& date_time::operator+=(const date_time_period& v)
     {
         impl_->adjust_value(v.type.mark(), abstract_calendar::move, v.value);
         return *this;
     }
 
-    date_time& date_time::operator-=(date_time_period const& v)
+    date_time& date_time::operator-=(const date_time_period& v)
     {
         impl_->adjust_value(v.type.mark(), abstract_calendar::move, -v.value);
         return *this;
     }
 
-    date_time& date_time::operator<<=(date_time_period const& v)
+    date_time& date_time::operator<<=(const date_time_period& v)
     {
         impl_->adjust_value(v.type.mark(), abstract_calendar::roll, v.value);
         return *this;
     }
 
-    date_time& date_time::operator>>=(date_time_period const& v)
+    date_time& date_time::operator>>=(const date_time_period& v)
     {
         impl_->adjust_value(v.type.mark(), abstract_calendar::roll, -v.value);
         return *this;
     }
 
-    date_time date_time::operator+(date_time_period_set const& v) const
+    date_time date_time::operator+(const date_time_period_set& v) const
     {
         date_time tmp(*this);
         tmp += v;
         return tmp;
     }
 
-    date_time date_time::operator-(date_time_period_set const& v) const
+    date_time date_time::operator-(const date_time_period_set& v) const
     {
         date_time tmp(*this);
         tmp -= v;
         return tmp;
     }
 
-    date_time date_time::operator<<(date_time_period_set const& v) const
+    date_time date_time::operator<<(const date_time_period_set& v) const
     {
         date_time tmp(*this);
         tmp <<= v;
         return tmp;
     }
 
-    date_time date_time::operator>>(date_time_period_set const& v) const
+    date_time date_time::operator>>(const date_time_period_set& v) const
     {
         date_time tmp(*this);
         tmp >>= v;
         return tmp;
     }
 
-    date_time& date_time::operator+=(date_time_period_set const& v)
+    date_time& date_time::operator+=(const date_time_period_set& v)
     {
         for(unsigned i = 0; i < v.size(); i++) {
             *this += v[i];
@@ -277,7 +277,7 @@ namespace boost { namespace locale {
         return *this;
     }
 
-    date_time& date_time::operator-=(date_time_period_set const& v)
+    date_time& date_time::operator-=(const date_time_period_set& v)
     {
         for(unsigned i = 0; i < v.size(); i++) {
             *this -= v[i];
@@ -285,7 +285,7 @@ namespace boost { namespace locale {
         return *this;
     }
 
-    date_time& date_time::operator<<=(date_time_period_set const& v)
+    date_time& date_time::operator<<=(const date_time_period_set& v)
     {
         for(unsigned i = 0; i < v.size(); i++) {
             *this <<= v[i];
@@ -293,7 +293,7 @@ namespace boost { namespace locale {
         return *this;
     }
 
-    date_time& date_time::operator>>=(date_time_period_set const& v)
+    date_time& date_time::operator>>=(const date_time_period_set& v)
     {
         for(unsigned i = 0; i < v.size(); i++) {
             *this >>= v[i];
@@ -324,7 +324,7 @@ namespace boost { namespace locale {
     }
 
     namespace {
-        int compare(posix_time const& left, posix_time const& right)
+        int compare(const posix_time& left, const posix_time& right)
         {
             if(left.seconds < right.seconds)
                 return -1;
@@ -338,32 +338,32 @@ namespace boost { namespace locale {
         }
     } // namespace
 
-    bool date_time::operator==(date_time const& other) const
+    bool date_time::operator==(const date_time& other) const
     {
         return compare(impl_->get_time(), other.impl_->get_time()) == 0;
     }
 
-    bool date_time::operator!=(date_time const& other) const
+    bool date_time::operator!=(const date_time& other) const
     {
         return !(*this == other);
     }
 
-    bool date_time::operator<(date_time const& other) const
+    bool date_time::operator<(const date_time& other) const
     {
         return compare(impl_->get_time(), other.impl_->get_time()) < 0;
     }
 
-    bool date_time::operator>=(date_time const& other) const
+    bool date_time::operator>=(const date_time& other) const
     {
         return !(*this < other);
     }
 
-    bool date_time::operator>(date_time const& other) const
+    bool date_time::operator>(const date_time& other) const
     {
         return compare(impl_->get_time(), other.impl_->get_time()) > 0;
     }
 
-    bool date_time::operator<=(date_time const& other) const
+    bool date_time::operator<=(const date_time& other) const
     {
         return !(*this > other);
     }
@@ -373,7 +373,7 @@ namespace boost { namespace locale {
         impl_.swap(other.impl_);
     }
 
-    int date_time::difference(date_time const& other, period_type f) const
+    int date_time::difference(const date_time& other, period_type f) const
     {
         return impl_->difference(other.impl_.get(), f.mark());
     }
@@ -410,7 +410,7 @@ namespace boost { namespace locale {
             std::string id = tz_id();
             return id;
         }
-        std::string global(std::string const& new_id)
+        std::string global(const std::string& new_id)
         {
             boost::unique_lock<boost::mutex> lock(tz_mutex());
             std::string id = tz_id();

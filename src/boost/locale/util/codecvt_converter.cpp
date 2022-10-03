@@ -36,9 +36,9 @@ namespace boost { namespace locale { namespace util {
 
         bool is_thread_safe() const override { return true; }
 
-        uint32_t to_unicode(char const*& begin, char const* end) override
+        uint32_t to_unicode(const char*& begin, const char* end) override
         {
-            char const* p = begin;
+            const char* p = begin;
 
             utf::code_point c = utf::utf_traits<char>::decode(p, end);
 
@@ -52,7 +52,7 @@ namespace boost { namespace locale { namespace util {
             return c;
         }
 
-        uint32_t from_unicode(uint32_t u, char* begin, char const* end) override
+        uint32_t from_unicode(uint32_t u, char* begin, const char* end) override
         {
             if(!utf::is_valid_codepoint(u))
                 return illegal;
@@ -69,7 +69,7 @@ namespace boost { namespace locale { namespace util {
     public:
         static const int hash_table_size = 1024;
 
-        simple_converter_impl(std::string const& encoding)
+        simple_converter_impl(const std::string& encoding)
         {
             for(unsigned i = 0; i < 128; i++)
                 to_unicode_tbl_[i] = i;
@@ -83,7 +83,7 @@ namespace boost { namespace locale { namespace util {
                     } else {
                         uchar = utf::illegal;
                     }
-                } catch(conv::conversion_error const& /*e*/) {
+                } catch(const conv::conversion_error& /*e*/) {
                     uchar = utf::illegal;
                 }
                 to_unicode_tbl_[i] = uchar;
@@ -100,14 +100,14 @@ namespace boost { namespace locale { namespace util {
             }
         }
 
-        uint32_t to_unicode(char const*& begin, char const* end) const
+        uint32_t to_unicode(const char*& begin, const char* end) const
         {
             if(begin == end)
                 return utf::incomplete;
             unsigned char c = *begin++;
             return to_unicode_tbl_[c];
         }
-        uint32_t from_unicode(uint32_t u, char* begin, char const* end) const
+        uint32_t from_unicode(uint32_t u, char* begin, const char* end) const
         {
             if(begin == end)
                 return utf::incomplete;
@@ -132,15 +132,15 @@ namespace boost { namespace locale { namespace util {
 
     class simple_converter : public base_converter {
     public:
-        simple_converter(std::string const& encoding) : cvt_(encoding) {}
+        simple_converter(const std::string& encoding) : cvt_(encoding) {}
 
         int max_len() const override { return 1; }
 
         bool is_thread_safe() const override { return true; }
         base_converter* clone() const override { return new simple_converter(*this); }
 
-        uint32_t to_unicode(char const*& begin, char const* end) override { return cvt_.to_unicode(begin, end); }
-        uint32_t from_unicode(uint32_t u, char* begin, char const* end) override
+        uint32_t to_unicode(const char*& begin, const char* end) override { return cvt_.to_unicode(begin, end); }
+        uint32_t from_unicode(uint32_t u, char* begin, const char* end) override
         {
             return cvt_.from_unicode(u, begin, end);
         }
@@ -152,7 +152,7 @@ namespace boost { namespace locale { namespace util {
     template<typename CharType>
     class simple_codecvt : public generic_codecvt<CharType, simple_codecvt<CharType>> {
     public:
-        simple_codecvt(std::string const& encoding, size_t refs = 0) :
+        simple_codecvt(const std::string& encoding, size_t refs = 0) :
             generic_codecvt<CharType, simple_codecvt<CharType>>(refs), cvt_(encoding)
         {}
 
@@ -163,12 +163,12 @@ namespace boost { namespace locale { namespace util {
         }
         static int max_encoding_length() { return 1; }
 
-        utf::code_point to_unicode(state_type&, char const*& begin, char const* end) const
+        utf::code_point to_unicode(state_type&, const char*& begin, const char* end) const
         {
             return cvt_.to_unicode(begin, end);
         }
 
-        utf::code_point from_unicode(state_type&, utf::code_point u, char* begin, char const* end) const
+        utf::code_point from_unicode(state_type&, utf::code_point u, char* begin, const char* end) const
         {
             return cvt_.from_unicode(u, begin, end);
         }
@@ -178,34 +178,34 @@ namespace boost { namespace locale { namespace util {
     };
 
     namespace {
-        char const* simple_encoding_table[] = {
+        const char* simple_encoding_table[] = {
           "cp1250",      "cp1251",      "cp1252",      "cp1253",      "cp1254",      "cp1255",
           "cp1256",      "cp1257",      "iso88591",    "iso885913",   "iso885915",   "iso88592",
           "iso88593",    "iso88594",    "iso88595",    "iso88596",    "iso88597",    "iso88598",
           "iso88599",    "koi8r",       "koi8u",       "usascii",     "windows1250", "windows1251",
           "windows1252", "windows1253", "windows1254", "windows1255", "windows1256", "windows1257"};
 
-        bool compare_strings(char const* l, char const* r)
+        bool compare_strings(const char* l, const char* r)
         {
             return strcmp(l, r) < 0;
         }
     } // namespace
 
-    bool check_is_simple_encoding(std::string const& encoding)
+    bool check_is_simple_encoding(const std::string& encoding)
     {
         std::string norm = conv::impl::normalize_encoding(encoding.c_str());
-        return std::binary_search<char const**>(simple_encoding_table,
+        return std::binary_search<const char**>(simple_encoding_table,
                                                 simple_encoding_table
-                                                  + sizeof(simple_encoding_table) / sizeof(char const*),
+                                                  + sizeof(simple_encoding_table) / sizeof(const char*),
                                                 norm.c_str(),
                                                 compare_strings);
     }
 
-    std::unique_ptr<base_converter> create_simple_converter(std::string const& encoding)
+    std::unique_ptr<base_converter> create_simple_converter(const std::string& encoding)
     {
         return std::unique_ptr<base_converter>(create_simple_converter_new_ptr(encoding));
     }
-    base_converter* create_simple_converter_new_ptr(std::string const& encoding)
+    base_converter* create_simple_converter_new_ptr(const std::string& encoding)
     {
         if(check_is_simple_encoding(encoding))
             return new simple_converter(encoding);
@@ -245,7 +245,7 @@ namespace boost { namespace locale { namespace util {
             return r;
         }
 
-        utf::code_point to_unicode(base_converter_ptr& ptr, char const*& begin, char const* end) const
+        utf::code_point to_unicode(base_converter_ptr& ptr, const char*& begin, const char* end) const
         {
             if(thread_safe_)
                 return cvt_->to_unicode(begin, end);
@@ -253,7 +253,7 @@ namespace boost { namespace locale { namespace util {
                 return ptr->to_unicode(begin, end);
         }
 
-        utf::code_point from_unicode(base_converter_ptr& ptr, utf::code_point u, char* begin, char const* end) const
+        utf::code_point from_unicode(base_converter_ptr& ptr, utf::code_point u, char* begin, const char* end) const
         {
             if(thread_safe_)
                 return cvt_->from_unicode(u, begin, end);
@@ -267,7 +267,7 @@ namespace boost { namespace locale { namespace util {
         bool thread_safe_;
     };
 
-    std::locale create_codecvt(std::locale const& in, std::unique_ptr<base_converter> cvt, character_facet_type type)
+    std::locale create_codecvt(const std::locale& in, std::unique_ptr<base_converter> cvt, character_facet_type type)
     {
         if(!cvt)
             cvt.reset(new base_converter());
@@ -288,7 +288,7 @@ namespace boost { namespace locale { namespace util {
     /// Install utf8 codecvt to UTF-16 or UTF-32 into locale \a in and return
     /// new locale that is based on \a in and uses new facet.
     ///
-    std::locale create_utf8_codecvt(std::locale const& in, character_facet_type type)
+    std::locale create_utf8_codecvt(const std::locale& in, character_facet_type type)
     {
         switch(type) {
             case char_facet: return std::locale(in, new utf8_codecvt<char>());
@@ -309,7 +309,7 @@ namespace boost { namespace locale { namespace util {
     ///
     /// Throws invalid_charset_error if the chacater set is not supported or isn't single byte character
     /// set
-    std::locale create_simple_codecvt(std::locale const& in, std::string const& encoding, character_facet_type type)
+    std::locale create_simple_codecvt(const std::locale& in, const std::string& encoding, character_facet_type type)
     {
         if(!check_is_simple_encoding(encoding))
             throw boost::locale::conv::invalid_charset_error("Invalid simple encoding " + encoding);

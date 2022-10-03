@@ -46,7 +46,7 @@ namespace boost { namespace locale { namespace boundary {
                  typename CategoryType = typename std::iterator_traits<IteratorType>::iterator_category>
         struct mapping_traits {
             typedef typename std::iterator_traits<IteratorType>::value_type char_type;
-            static index_type map(boundary_type t, IteratorType b, IteratorType e, std::locale const& l)
+            static index_type map(boundary_type t, IteratorType b, IteratorType e, const std::locale& l)
             {
                 std::basic_string<char_type> str(b, e);
                 return std::use_facet<boundary_indexing<char_type>>(l).map(t, str.c_str(), str.c_str() + str.size());
@@ -56,7 +56,7 @@ namespace boost { namespace locale { namespace boundary {
         template<typename CharType, typename SomeIteratorType>
         struct linear_iterator_traits {
             static const bool is_linear =
-              std::is_same<SomeIteratorType, CharType*>::value || std::is_same<SomeIteratorType, CharType const*>::value
+              std::is_same<SomeIteratorType, CharType*>::value || std::is_same<SomeIteratorType, const CharType*>::value
               || std::is_same<SomeIteratorType, typename std::basic_string<CharType>::iterator>::value
               || std::is_same<SomeIteratorType, typename std::basic_string<CharType>::const_iterator>::value
               || std::is_same<SomeIteratorType, typename std::vector<CharType>::iterator>::value
@@ -67,7 +67,7 @@ namespace boost { namespace locale { namespace boundary {
         struct mapping_traits<IteratorType, std::random_access_iterator_tag> {
             typedef typename std::iterator_traits<IteratorType>::value_type char_type;
 
-            static index_type map(boundary_type t, IteratorType b, IteratorType e, std::locale const& l)
+            static index_type map(boundary_type t, IteratorType b, IteratorType e, const std::locale& l)
             {
                 index_type result;
 
@@ -79,8 +79,8 @@ namespace boost { namespace locale { namespace boundary {
                 //
 
                 if(linear_iterator_traits<char_type, IteratorType>::is_linear && b != e) {
-                    char_type const* begin = &*b;
-                    char_type const* end = begin + (e - b);
+                    const char_type* begin = &*b;
+                    const char_type* end = begin + (e - b);
                     index_type tmp = std::use_facet<boundary_indexing<char_type>>(l).map(t, begin, end);
                     result.swap(tmp);
                 } else {
@@ -99,7 +99,7 @@ namespace boost { namespace locale { namespace boundary {
             typedef BaseIterator base_iterator;
             typedef typename std::iterator_traits<base_iterator>::value_type char_type;
 
-            mapping(boundary_type type, base_iterator begin, base_iterator end, std::locale const& loc) :
+            mapping(boundary_type type, base_iterator begin, base_iterator end, const std::locale& loc) :
                 index_(new index_type()), begin_(begin), end_(end)
             {
                 index_type idx = detail::mapping_traits<base_iterator>::map(type, begin, end, loc);
@@ -108,7 +108,7 @@ namespace boost { namespace locale { namespace boundary {
 
             mapping() {}
 
-            index_type const& index() const { return *index_; }
+            const index_type& index() const { return *index_; }
 
             base_iterator begin() const { return begin_; }
 
@@ -123,7 +123,7 @@ namespace boost { namespace locale { namespace boundary {
         class segment_index_iterator : public boost::iterator_facade<segment_index_iterator<BaseIterator>,
                                                                      segment<BaseIterator>,
                                                                      boost::bidirectional_traversal_tag,
-                                                                     segment<BaseIterator> const&> {
+                                                                     const segment<BaseIterator>&> {
         public:
             typedef BaseIterator base_iterator;
             typedef mapping<base_iterator> mapping_type;
@@ -131,12 +131,12 @@ namespace boost { namespace locale { namespace boundary {
 
             segment_index_iterator() : current_(0, 0), map_(0), mask_(0), full_select_(false) {}
 
-            segment_index_iterator(base_iterator p, mapping_type const* map, rule_type mask, bool full_select) :
+            segment_index_iterator(base_iterator p, const mapping_type* map, rule_type mask, bool full_select) :
                 map_(map), mask_(mask), full_select_(full_select)
             {
                 set(p);
             }
-            segment_index_iterator(bool is_begin, mapping_type const* map, rule_type mask, bool full_select) :
+            segment_index_iterator(bool is_begin, const mapping_type* map, rule_type mask, bool full_select) :
                 map_(map), mask_(mask), full_select_(full_select)
             {
                 if(is_begin)
@@ -145,9 +145,9 @@ namespace boost { namespace locale { namespace boundary {
                     set_end();
             }
 
-            segment_type const& dereference() const { return value_; }
+            const segment_type& dereference() const { return value_; }
 
-            bool equal(segment_index_iterator const& other) const
+            bool equal(const segment_index_iterator& other) const
             {
                 return map_ == other.map_ && current_.second == other.current_.second;
             }
@@ -274,11 +274,11 @@ namespace boost { namespace locale { namespace boundary {
 
             size_t size() const { return index().size(); }
 
-            index_type const& index() const { return map_->index(); }
+            const index_type& index() const { return map_->index(); }
 
             segment_type value_;
             std::pair<size_t, size_t> current_;
-            mapping_type const* map_;
+            const mapping_type* map_;
             rule_type mask_;
             bool full_select_;
         };
@@ -287,7 +287,7 @@ namespace boost { namespace locale { namespace boundary {
         class boundary_point_index_iterator : public boost::iterator_facade<boundary_point_index_iterator<BaseIterator>,
                                                                             boundary_point<BaseIterator>,
                                                                             boost::bidirectional_traversal_tag,
-                                                                            boundary_point<BaseIterator> const&> {
+                                                                            const boundary_point<BaseIterator>&> {
         public:
             typedef BaseIterator base_iterator;
             typedef mapping<base_iterator> mapping_type;
@@ -295,7 +295,7 @@ namespace boost { namespace locale { namespace boundary {
 
             boundary_point_index_iterator() : current_(0), map_(0), mask_(0) {}
 
-            boundary_point_index_iterator(bool is_begin, mapping_type const* map, rule_type mask) :
+            boundary_point_index_iterator(bool is_begin, const mapping_type* map, rule_type mask) :
                 map_(map), mask_(mask)
             {
                 if(is_begin)
@@ -303,15 +303,15 @@ namespace boost { namespace locale { namespace boundary {
                 else
                     set_end();
             }
-            boundary_point_index_iterator(base_iterator p, mapping_type const* map, rule_type mask) :
+            boundary_point_index_iterator(base_iterator p, const mapping_type* map, rule_type mask) :
                 map_(map), mask_(mask)
             {
                 set(p);
             }
 
-            boundary_point_type const& dereference() const { return value_; }
+            const boundary_point_type& dereference() const { return value_; }
 
-            bool equal(boundary_point_index_iterator const& other) const
+            bool equal(const boundary_point_index_iterator& other) const
             {
                 return map_ == other.map_ && current_ == other.current_;
             }
@@ -403,11 +403,11 @@ namespace boost { namespace locale { namespace boundary {
 
             size_t size() const { return index().size(); }
 
-            index_type const& index() const { return map_->index(); }
+            const index_type& index() const { return map_->index(); }
 
             boundary_point_type value_;
             size_t current_;
-            mapping_type const* map_;
+            const mapping_type* map_;
             rule_type mask_;
         };
 
@@ -528,7 +528,7 @@ namespace boost { namespace locale { namespace boundary {
                       base_iterator begin,
                       base_iterator end,
                       rule_type mask,
-                      std::locale const& loc = std::locale()) :
+                      const std::locale& loc = std::locale()) :
             map_(type, begin, end, loc),
             mask_(mask), full_select_(false)
         {}
@@ -539,7 +539,7 @@ namespace boost { namespace locale { namespace boundary {
         segment_index(boundary_type type,
                       base_iterator begin,
                       base_iterator end,
-                      std::locale const& loc = std::locale()) :
+                      const std::locale& loc = std::locale()) :
             map_(type, begin, end, loc),
             mask_(0xFFFFFFFFu), full_select_(false)
         {}
@@ -554,7 +554,7 @@ namespace boost { namespace locale { namespace boundary {
         ///
         /// \note \ref rule() flags are not copied
         ///
-        segment_index(boundary_point_index<base_iterator> const&);
+        segment_index(const boundary_point_index<base_iterator>&);
         ///
         /// Copy an index from a \ref boundary_point_index. It copies all indexing information
         /// and uses the default rule (all possible segments)
@@ -565,7 +565,7 @@ namespace boost { namespace locale { namespace boundary {
         ///
         /// \note \ref rule() flags are not copied
         ///
-        segment_index& operator=(boundary_point_index<base_iterator> const&);
+        segment_index& operator=(const boundary_point_index<base_iterator>&);
 
         ///
         /// Create a new index for %boundary analysis \ref boundary_type "type" of the text
@@ -573,7 +573,7 @@ namespace boost { namespace locale { namespace boundary {
         ///
         /// \note \ref rule() and \ref full_select() remain unchanged.
         ///
-        void map(boundary_type type, base_iterator begin, base_iterator end, std::locale const& loc = std::locale())
+        void map(boundary_type type, base_iterator begin, base_iterator end, const std::locale& loc = std::locale())
         {
             map_ = mapping_type(type, begin, end, loc);
         }
@@ -788,7 +788,7 @@ namespace boost { namespace locale { namespace boundary {
                              base_iterator begin,
                              base_iterator end,
                              rule_type mask,
-                             std::locale const& loc = std::locale()) :
+                             const std::locale& loc = std::locale()) :
             map_(type, begin, end, loc),
             mask_(mask)
         {}
@@ -799,7 +799,7 @@ namespace boost { namespace locale { namespace boundary {
         boundary_point_index(boundary_type type,
                              base_iterator begin,
                              base_iterator end,
-                             std::locale const& loc = std::locale()) :
+                             const std::locale& loc = std::locale()) :
             map_(type, begin, end, loc),
             mask_(0xFFFFFFFFu)
         {}
@@ -814,7 +814,7 @@ namespace boost { namespace locale { namespace boundary {
         ///
         /// \note \ref rule() flags are not copied
         ///
-        boundary_point_index(segment_index<base_iterator> const& other);
+        boundary_point_index(const segment_index<base_iterator>& other);
         ///
         /// Copy a boundary_point_index from a \ref segment_index. It copies all indexing information
         /// and keeps the current \ref rule() unchanged
@@ -825,7 +825,7 @@ namespace boost { namespace locale { namespace boundary {
         ///
         /// \note \ref rule() flags are not copied
         ///
-        boundary_point_index& operator=(segment_index<base_iterator> const& other);
+        boundary_point_index& operator=(const segment_index<base_iterator>& other);
 
         ///
         /// Create a new index for %boundary analysis \ref boundary_type "type" of the text
@@ -833,7 +833,7 @@ namespace boost { namespace locale { namespace boundary {
         ///
         /// \note \ref rule() remains unchanged.
         ///
-        void map(boundary_type type, base_iterator begin, base_iterator end, std::locale const& loc = std::locale())
+        void map(boundary_type type, base_iterator begin, base_iterator end, const std::locale& loc = std::locale())
         {
             map_ = mapping_type(type, begin, end, loc);
         }
@@ -908,17 +908,17 @@ namespace boost { namespace locale { namespace boundary {
 
     /// \cond INTERNAL
     template<typename BaseIterator>
-    segment_index<BaseIterator>::segment_index(boundary_point_index<BaseIterator> const& other) :
+    segment_index<BaseIterator>::segment_index(const boundary_point_index<BaseIterator>& other) :
         map_(other.map_), mask_(0xFFFFFFFFu), full_select_(false)
     {}
 
     template<typename BaseIterator>
-    boundary_point_index<BaseIterator>::boundary_point_index(segment_index<BaseIterator> const& other) :
+    boundary_point_index<BaseIterator>::boundary_point_index(const segment_index<BaseIterator>& other) :
         map_(other.map_), mask_(0xFFFFFFFFu)
     {}
 
     template<typename BaseIterator>
-    segment_index<BaseIterator>& segment_index<BaseIterator>::operator=(boundary_point_index<BaseIterator> const& other)
+    segment_index<BaseIterator>& segment_index<BaseIterator>::operator=(const boundary_point_index<BaseIterator>& other)
     {
         map_ = other.map_;
         return *this;
@@ -926,7 +926,7 @@ namespace boost { namespace locale { namespace boundary {
 
     template<typename BaseIterator>
     boundary_point_index<BaseIterator>&
-    boundary_point_index<BaseIterator>::operator=(segment_index<BaseIterator> const& other)
+    boundary_point_index<BaseIterator>::operator=(const segment_index<BaseIterator>& other)
     {
         map_ = other.map_;
         return *this;
@@ -942,13 +942,13 @@ namespace boost { namespace locale { namespace boundary {
     typedef segment_index<std::u32string::const_iterator> u32ssegment_index; ///< convenience typedef
 #endif
 
-    typedef segment_index<char const*> csegment_index;     ///< convenience typedef
-    typedef segment_index<wchar_t const*> wcsegment_index; ///< convenience typedef
+    typedef segment_index<const char*> csegment_index;     ///< convenience typedef
+    typedef segment_index<const wchar_t*> wcsegment_index; ///< convenience typedef
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-    typedef segment_index<char16_t const*> u16csegment_index; ///< convenience typedef
+    typedef segment_index<const char16_t*> u16csegment_index; ///< convenience typedef
 #endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-    typedef segment_index<char32_t const*> u32csegment_index; ///< convenience typedef
+    typedef segment_index<const char32_t*> u32csegment_index; ///< convenience typedef
 #endif
 
     typedef boundary_point_index<std::string::const_iterator> sboundary_point_index;   ///< convenience typedef
@@ -960,13 +960,13 @@ namespace boost { namespace locale { namespace boundary {
     typedef boundary_point_index<std::u32string::const_iterator> u32sboundary_point_index; ///< convenience typedef
 #endif
 
-    typedef boundary_point_index<char const*> cboundary_point_index;     ///< convenience typedef
-    typedef boundary_point_index<wchar_t const*> wcboundary_point_index; ///< convenience typedef
+    typedef boundary_point_index<const char*> cboundary_point_index;     ///< convenience typedef
+    typedef boundary_point_index<const wchar_t*> wcboundary_point_index; ///< convenience typedef
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-    typedef boundary_point_index<char16_t const*> u16cboundary_point_index; ///< convenience typedef
+    typedef boundary_point_index<const char16_t*> u16cboundary_point_index; ///< convenience typedef
 #endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-    typedef boundary_point_index<char32_t const*> u32cboundary_point_index; ///< convenience typedef
+    typedef boundary_point_index<const char32_t*> u32cboundary_point_index; ///< convenience typedef
 #endif
 
 }}} // namespace boost::locale::boundary

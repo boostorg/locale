@@ -22,7 +22,7 @@ std::string backend;
 bool file_loader_is_actually_called = false;
 
 struct file_loader {
-    std::vector<char> operator()(std::string const& name, std::string const& /*encoding*/) const
+    std::vector<char> operator()(const std::string& name, const std::string& /*encoding*/) const
     {
         std::vector<char> buffer;
         std::ifstream f(name.c_str(), std::ifstream::binary);
@@ -70,7 +70,7 @@ void strings_equal(std::string n_c,
                    std::string n_p,
                    int n,
                    std::string iexpected,
-                   std::locale const& l,
+                   const std::locale& l,
                    std::string domain)
 {
     typedef std::basic_string<Char> string_type;
@@ -82,7 +82,7 @@ void strings_equal(std::string n_c,
 
     if(domain == "default") {
         TEST(bl::translate(c, s, p, n).str(l) == expected);
-        Char const *c_c_str = c.c_str(), *s_c_str = s.c_str(), *p_c_str = p.c_str(); // workaround gcc-3.4 bug
+        const Char *c_c_str = c.c_str(), *s_c_str = s.c_str(), *p_c_str = p.c_str(); // workaround gcc-3.4 bug
         TEST(bl::translate(c_c_str, s_c_str, p_c_str, n).str(l) == expected);
         std::locale tmp_locale = std::locale();
         std::locale::global(l);
@@ -121,7 +121,7 @@ void strings_equal(std::string n_s,
                    std::string n_p,
                    int n,
                    std::string iexpected,
-                   std::locale const& l,
+                   const std::locale& l,
                    std::string domain)
 {
     typedef std::basic_string<Char> string_type;
@@ -130,7 +130,7 @@ void strings_equal(std::string n_s,
     string_type p = to<Char>(n_p.c_str());
     if(domain == "default") {
         TEST(bl::translate(s, p, n).str(l) == expected);
-        Char const *s_c_str = s.c_str(), *p_c_str = p.c_str(); // workaround gcc-3.4 bug
+        const Char *s_c_str = s.c_str(), *p_c_str = p.c_str(); // workaround gcc-3.4 bug
         TEST(bl::translate(s_c_str, p_c_str, n).str(l) == expected);
         std::locale tmp_locale = std::locale();
         std::locale::global(l);
@@ -168,7 +168,7 @@ template<typename Char>
 void strings_equal(std::string n_c,
                    std::string n_original,
                    std::string iexpected,
-                   std::locale const& l,
+                   const std::locale& l,
                    std::string domain)
 {
     typedef std::basic_string<Char> string_type;
@@ -177,8 +177,8 @@ void strings_equal(std::string n_c,
     string_type c = to<Char>(n_c.c_str());
     if(domain == "default") {
         TEST(bl::translate(c, original).str(l) == expected);
-        Char const* original_c_str = original.c_str(); // workaround gcc-3.4 bug
-        Char const* context_c_str = c.c_str();
+        const Char* original_c_str = original.c_str(); // workaround gcc-3.4 bug
+        const Char* context_c_str = c.c_str();
         TEST(bl::translate(context_c_str, original_c_str).str(l) == expected);
         std::locale tmp_locale = std::locale();
         std::locale::global(l);
@@ -213,14 +213,14 @@ void strings_equal(std::string n_c,
 }
 
 template<typename Char>
-void strings_equal(std::string n_original, std::string iexpected, std::locale const& l, std::string domain)
+void strings_equal(std::string n_original, std::string iexpected, const std::locale& l, std::string domain)
 {
     typedef std::basic_string<Char> string_type;
     string_type expected = to_correct_string<Char>(iexpected, l);
     string_type original = to<Char>(n_original.c_str());
     if(domain == "default") {
         TEST(bl::translate(original).str(l) == expected);
-        Char const* original_c_str = original.c_str(); // workaround gcc-3.4 bug
+        const Char* original_c_str = original.c_str(); // workaround gcc-3.4 bug
         TEST(bl::translate(original_c_str).str(l) == expected);
         std::locale tmp_locale = std::locale();
         std::locale::global(l);
@@ -259,7 +259,7 @@ void test_cntranslate(std::string c,
                       std::string p,
                       int n,
                       std::string expected,
-                      std::locale const& l,
+                      const std::locale& l,
                       std::string domain)
 {
     strings_equal<char>(c, s, p, n, expected, l, domain);
@@ -278,7 +278,7 @@ void test_ntranslate(std::string s,
                      std::string p,
                      int n,
                      std::string expected,
-                     std::locale const& l,
+                     const std::locale& l,
                      std::string domain)
 {
     strings_equal<char>(s, p, n, expected, l, domain);
@@ -296,7 +296,7 @@ void test_ntranslate(std::string s,
 void test_ctranslate(std::string c,
                      std::string original,
                      std::string expected,
-                     std::locale const& l,
+                     const std::locale& l,
                      std::string domain)
 {
     strings_equal<char>(c, original, expected, l, domain);
@@ -311,7 +311,7 @@ void test_ctranslate(std::string c,
 #endif
 }
 
-void test_translate(std::string original, std::string expected, std::locale const& l, std::string domain)
+void test_translate(std::string original, std::string expected, const std::locale& l, std::string domain)
 {
     strings_equal<char>(original, expected, l, domain);
     strings_equal<wchar_t>(original, expected, l, domain);
@@ -368,7 +368,7 @@ void test_main(int argc, char** argv)
             if(locale_name.find(".ISO") != std::string::npos) {
                 try {
                     l = g(locale_name);
-                } catch(boost::locale::conv::invalid_charset_error const&) {
+                } catch(const boost::locale::conv::invalid_charset_error&) {
                     std::cout << "Looks like ISO-8859-8 is not supported! skipping" << std::endl;
                     iso_8859_8_not_supported = true;
                     continue;

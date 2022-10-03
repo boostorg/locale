@@ -28,17 +28,17 @@ namespace boost { namespace locale { namespace impl_std {
         typedef CharType char_type;
         typedef std::basic_string<char_type> string_type;
         typedef std::ctype<char_type> ctype_type;
-        std_converter(std::locale const& base, size_t refs = 0) : converter<CharType>(refs), base_(base) {}
+        std_converter(const std::locale& base, size_t refs = 0) : converter<CharType>(refs), base_(base) {}
         string_type convert(converter_base::conversion_type how,
-                            char_type const* begin,
-                            char_type const* end,
+                            const char_type* begin,
+                            const char_type* end,
                             int /*flags*/ = 0) const override
         {
             switch(how) {
                 case converter_base::upper_case:
                 case converter_base::lower_case:
                 case converter_base::case_folding: {
-                    ctype_type const& ct = std::use_facet<ctype_type>(base_);
+                    const ctype_type& ct = std::use_facet<ctype_type>(base_);
                     size_t len = end - begin;
                     std::vector<char_type> res(len + 1, 0);
                     char_type* lbegin = &res[0];
@@ -61,10 +61,10 @@ namespace boost { namespace locale { namespace impl_std {
     public:
         typedef std::ctype<char> ctype_type;
         typedef std::ctype<wchar_t> wctype_type;
-        utf8_converter(std::locale const& base, size_t refs = 0) : converter<char>(refs), base_(base) {}
+        utf8_converter(const std::locale& base, size_t refs = 0) : converter<char>(refs), base_(base) {}
         std::string convert(converter_base::conversion_type how,
-                            char const* begin,
-                            char const* end,
+                            const char* begin,
+                            const char* end,
                             int /*flags*/ = 0) const override
         {
             switch(how) {
@@ -72,7 +72,7 @@ namespace boost { namespace locale { namespace impl_std {
                 case lower_case:
                 case case_folding: {
                     std::wstring tmp = conv::to_utf<wchar_t>(begin, end, "UTF-8");
-                    wctype_type const& ct = std::use_facet<wctype_type>(base_);
+                    const wctype_type& ct = std::use_facet<wctype_type>(base_);
                     size_t len = tmp.size();
                     std::vector<wchar_t> res(len + 1, 0);
                     wchar_t* lbegin = &res[0];
@@ -92,7 +92,7 @@ namespace boost { namespace locale { namespace impl_std {
     };
 
     std::locale
-    create_convert(std::locale const& in, std::string const& locale_name, character_facet_type type, utf8_support utf)
+    create_convert(const std::locale& in, const std::string& locale_name, character_facet_type type, utf8_support utf)
     {
         switch(type) {
             case char_facet: {

@@ -30,13 +30,13 @@ namespace boost { namespace locale { namespace impl_std {
     class std_localization_backend : public localization_backend {
     public:
         std_localization_backend() : invalid_(true), use_ansi_encoding_(false) {}
-        std_localization_backend(std_localization_backend const& other) :
+        std_localization_backend(const std_localization_backend& other) :
             localization_backend(), paths_(other.paths_), domains_(other.domains_), locale_id_(other.locale_id_),
             invalid_(true), use_ansi_encoding_(other.use_ansi_encoding_)
         {}
         std_localization_backend* clone() const override { return new std_localization_backend(*this); }
 
-        void set_option(std::string const& name, std::string const& value) override
+        void set_option(const std::string& name, const std::string& value) override
         {
             invalid_ = true;
             if(name == "locale")
@@ -111,7 +111,7 @@ namespace boost { namespace locale { namespace impl_std {
         }
 
 #if defined(BOOST_WINDOWS)
-        std::pair<std::string, int> to_windows_name(std::string const& l)
+        std::pair<std::string, int> to_windows_name(const std::string& l)
         {
             std::pair<std::string, int> res("C", 0);
             unsigned lcid = impl_win::locale_to_lcid(l);
@@ -139,12 +139,12 @@ namespace boost { namespace locale { namespace impl_std {
             try {
                 std::locale l(name.c_str());
                 return true;
-            } catch(std::exception const& /*e*/) {
+            } catch(const std::exception& /*e*/) {
                 return false;
             }
         }
 
-        std::locale install(std::locale const& base,
+        std::locale install(const std::locale& base,
                             locale_category_type category,
                             character_facet_type type = nochar_facet) override
         {

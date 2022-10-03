@@ -51,17 +51,17 @@ namespace boost { namespace locale { namespace impl_icu {
         /// Parse the string and return the number of used characters. If it returns 0
         /// then parsing failed.
         ///
-        virtual size_t parse(string_type const& str, double& value) const = 0;
+        virtual size_t parse(const string_type& str, double& value) const = 0;
         ///
         /// Parse the string and return the number of used characters. If it returns 0
         /// then parsing failed.
         ///
-        virtual size_t parse(string_type const& str, int64_t& value) const = 0;
+        virtual size_t parse(const string_type& str, int64_t& value) const = 0;
         ///
         /// Parse the string and return the number of used characters. If it returns 0
         /// then parsing failed.
         ///
-        virtual size_t parse(string_type const& str, int32_t& value) const = 0;
+        virtual size_t parse(const string_type& str, int32_t& value) const = 0;
 
         ///
         /// Get formatter for the current state of ios_base -- flags and locale,
@@ -83,27 +83,27 @@ namespace boost { namespace locale { namespace impl_icu {
         ///
         /// Would create a new spelling formatter only once.
         ///
-        static formatter* create(std::ios_base& ios, icu::Locale const& l, std::string const& enc);
+        static formatter* create(std::ios_base& ios, const icu::Locale& l, const std::string& enc);
     }; // class formatter
 
     ///
     /// Specialization for real implementation
     ///
     template<>
-    formatter<char>* formatter<char>::create(std::ios_base& ios, icu::Locale const& l, std::string const& enc);
+    formatter<char>* formatter<char>::create(std::ios_base& ios, const icu::Locale& l, const std::string& enc);
 
     ///
     /// Specialization for real implementation
     ///
     template<>
-    formatter<wchar_t>* formatter<wchar_t>::create(std::ios_base& ios, icu::Locale const& l, std::string const& e);
+    formatter<wchar_t>* formatter<wchar_t>::create(std::ios_base& ios, const icu::Locale& l, const std::string& e);
 
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
     ///
     /// Specialization for real implementation
     ///
     template<>
-    formatter<char16_t>* formatter<char16_t>::create(std::ios_base& ios, icu::Locale const& l, std::string const& e);
+    formatter<char16_t>* formatter<char16_t>::create(std::ios_base& ios, const icu::Locale& l, const std::string& e);
 #endif
 
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
@@ -111,7 +111,7 @@ namespace boost { namespace locale { namespace impl_icu {
     /// Specialization for real implementation
     ///
     template<>
-    formatter<char32_t>* formatter<char32_t>::create(std::ios_base& ios, icu::Locale const& l, std::string const& e);
+    formatter<char32_t>* formatter<char32_t>::create(std::ios_base& ios, const icu::Locale& l, const std::string& e);
 #endif
 
 }}} // namespace boost::locale::impl_icu

@@ -12,7 +12,7 @@
 
 namespace boost { namespace locale { namespace impl_win {
 
-    BOOST_LOCALE_DECL unsigned locale_to_lcid(std::string const& locale_name);
+    BOOST_LOCALE_DECL unsigned locale_to_lcid(const std::string& locale_name);
 
 }}} // namespace boost::locale::impl_win
 

@@ -25,7 +25,7 @@ void test_comp(std::locale l, std::basic_string<Char> left, std::basic_string<Ch
     boost::locale::collator_base::level_type level = static_cast<boost::locale::collator_base::level_type>(ilevel);
     TEST(boost::locale::comparator<Char>(l, level)(left, right) == (expected < 0));
     if(ilevel == 4) {
-        std::collate<Char> const& coll = std::use_facet<std::collate<Char>>(l);
+        const std::collate<Char>& coll = std::use_facet<std::collate<Char>>(l);
         string_type lt = coll.transform(left.c_str(), left.c_str() + left.size());
         string_type rt = coll.transform(right.c_str(), right.c_str() + right.size());
         if(expected < 0)
@@ -41,7 +41,7 @@ void test_comp(std::locale l, std::basic_string<Char> left, std::basic_string<Ch
         else
             TEST(lh != rh);
     }
-    boost::locale::collator<Char> const& coll = std::use_facet<boost::locale::collator<Char>>(l);
+    const boost::locale::collator<Char>& coll = std::use_facet<boost::locale::collator<Char>>(l);
     string_type lt = coll.transform(level, left.c_str(), left.c_str() + left.size());
     TEST(lt == coll.transform(level, left));
     string_type rt = coll.transform(level, right.c_str(), right.c_str() + right.size());

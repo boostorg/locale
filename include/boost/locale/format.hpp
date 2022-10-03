@@ -35,13 +35,13 @@ namespace boost { namespace locale {
         template<typename CharType>
         struct formattible {
             typedef std::basic_ostream<CharType> stream_type;
-            typedef void (*writer_type)(stream_type& output, void const* ptr);
+            typedef void (*writer_type)(stream_type& output, const void* ptr);
 
             formattible() : pointer_(0), writer_(&formattible::void_write) {}
 
-            formattible(formattible const& other) : pointer_(other.pointer_), writer_(other.writer_) {}
+            formattible(const formattible& other) : pointer_(other.pointer_), writer_(other.writer_) {}
 
-            formattible& operator=(formattible const& other)
+            formattible& operator=(const formattible& other)
             {
                 if(this != &other) {
                     pointer_ = other.pointer_;
@@ -51,53 +51,53 @@ namespace boost { namespace locale {
             }
 
             template<typename Type>
-            formattible(Type const& value)
+            formattible(const Type& value)
             {
-                pointer_ = static_cast<void const*>(&value);
+                pointer_ = static_cast<const void*>(&value);
                 writer_ = &write<Type>;
             }
 
             template<typename Type>
-            formattible& operator=(Type const& other)
+            formattible& operator=(const Type& other)
             {
                 *this = formattible(other);
                 return *this;
             }
 
-            friend stream_type& operator<<(stream_type& out, formattible const& fmt)
+            friend stream_type& operator<<(stream_type& out, const formattible& fmt)
             {
                 fmt.writer_(out, fmt.pointer_);
                 return out;
             }
 
         private:
-            static void void_write(stream_type& output, void const* /*ptr*/)
+            static void void_write(stream_type& output, const void* /*ptr*/)
             {
                 CharType empty_string[1] = {0};
                 output << empty_string;
             }
 
             template<typename Type>
-            static void write(stream_type& output, void const* ptr)
+            static void write(stream_type& output, const void* ptr)
             {
-                output << *static_cast<Type const*>(ptr);
+                output << *static_cast<const Type*>(ptr);
             }
 
-            void const* pointer_;
+            const void* pointer_;
             writer_type writer_;
         }; // formattible
 
         class BOOST_LOCALE_DECL format_parser {
         public:
-            format_parser(std::ios_base& ios, void*, void (*imbuer)(void*, std::locale const&));
+            format_parser(std::ios_base& ios, void*, void (*imbuer)(void*, const std::locale&));
             ~format_parser();
 
             unsigned get_position();
 
-            void set_one_flag(std::string const& key, std::string const& value);
+            void set_one_flag(const std::string& key, const std::string& value);
 
             template<typename CharType>
-            void set_flag_with_str(std::string const& key, std::basic_string<CharType> const& value)
+            void set_flag_with_str(const std::string& key, const std::basic_string<CharType>& value)
             {
                 if(key == "ftime" || key == "strftime") {
                     as::strftime(ios_);
@@ -107,9 +107,9 @@ namespace boost { namespace locale {
             void restore();
 
         private:
-            void imbue(std::locale const&);
-            format_parser(format_parser const&);
-            void operator=(format_parser const&);
+            void imbue(const std::locale&);
+            format_parser(const format_parser&);
+            void operator=(const format_parser&);
 
             std::ios_base& ios_;
             struct data;
@@ -212,14 +212,14 @@ namespace boost { namespace locale {
         /// Create a format class using message \a trans. The message if translated first according
         /// to the rules of target locale and then interpreted as format string
         ///
-        basic_format(message_type const& trans) : message_(trans), translate_(true), parameters_count_(0) {}
+        basic_format(const message_type& trans) : message_(trans), translate_(true), parameters_count_(0) {}
 
         ///
         /// Add new parameter to format list. The object should be a type
         /// with defined expression out << object where \c out is \c std::basic_ostream.
         ///
         template<typename Formattible>
-        basic_format& operator%(Formattible const& object)
+        basic_format& operator%(const Formattible& object)
         {
             add(formattible_type(object));
             return *this;
@@ -228,7 +228,7 @@ namespace boost { namespace locale {
         ///
         /// Format a string using a locale \a loc
         ///
-        string_type str(std::locale const& loc = std::locale()) const
+        string_type str(const std::locale& loc = std::locale()) const
         {
             std::basic_ostringstream<CharType> buffer;
             buffer.imbue(loc);
@@ -274,7 +274,7 @@ namespace boost { namespace locale {
             bool restored_;
         };
 
-        void format_output(stream_type& out, string_type const& sformat) const
+        void format_output(stream_type& out, const string_type& sformat) const
         {
             char_type obrk = '{';
             char_type cbrk = '}';
@@ -284,7 +284,7 @@ namespace boost { namespace locale {
 
             size_t pos = 0;
             size_t size = sformat.size();
-            CharType const* format = sformat.c_str();
+            const CharType* format = sformat.c_str();
             while(format[pos] != 0) {
                 if(format[pos] != obrk) {
                     if(format[pos] == cbrk && format[pos + 1] == cbrk) {
@@ -375,10 +375,10 @@ namespace boost { namespace locale {
         //
         // Non-copyable
         //
-        basic_format(basic_format const& other);
-        void operator=(basic_format const& other);
+        basic_format(const basic_format& other);
+        void operator=(const basic_format& other);
 
-        void add(formattible_type const& param)
+        void add(const formattible_type& param)
         {
             if(parameters_count_ >= base_params_)
                 ext_params_.push_back(param);
@@ -397,9 +397,9 @@ namespace boost { namespace locale {
                 return parameters_[id];
         }
 
-        static void imbue_locale(void* ptr, std::locale const& l) { reinterpret_cast<stream_type*>(ptr)->imbue(l); }
+        static void imbue_locale(void* ptr, const std::locale& l) { reinterpret_cast<stream_type*>(ptr)->imbue(l); }
 
-        static unsigned const base_params_ = 8;
+        static const unsigned base_params_ = 8;
 
         message_type message_;
         string_type format_;
@@ -416,7 +416,7 @@ namespace boost { namespace locale {
     /// This operator actually causes actual text formatting. It uses the locale of \a out stream
     ///
     template<typename CharType>
-    std::basic_ostream<CharType>& operator<<(std::basic_ostream<CharType>& out, basic_format<CharType> const& fmt)
+    std::basic_ostream<CharType>& operator<<(std::basic_ostream<CharType>& out, const basic_format<CharType>& fmt)
     {
         fmt.write(out);
         return out;

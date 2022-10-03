@@ -30,7 +30,7 @@ int main()
 #    include "boostLocale/test/tools.hpp"
 #    include "boostLocale/test/unit_test.hpp"
 
-bool equal(std::string const& s1, std::wstring const& s2)
+bool equal(const std::string& s1, const std::wstring& s2)
 {
     bool res = s1 == boost::locale::conv::from_utf(s2, "UTF-8");
     if(!res)
@@ -38,7 +38,7 @@ bool equal(std::string const& s1, std::wstring const& s2)
     return res;
 }
 
-bool equal(std::wstring const& s1, std::wstring const& s2)
+bool equal(const std::wstring& s1, const std::wstring& s2)
 {
     bool res = s1 == s2;
     if(!res)
@@ -47,7 +47,7 @@ bool equal(std::wstring const& s1, std::wstring const& s2)
     return res;
 }
 
-bool equal(std::string const& s1, std::string const& s2)
+bool equal(const std::string& s1, const std::string& s2)
 {
     bool res = s1 == s2;
     if(!res)
@@ -55,7 +55,7 @@ bool equal(std::string const& s1, std::string const& s2)
     return res;
 }
 
-bool equal(std::wstring const& s1, std::string const& s2)
+bool equal(const std::wstring& s1, const std::string& s2)
 {
     bool res = s1 == boost::locale::conv::to_utf<wchar_t>(s2, "UTF-8");
     if(!res)
@@ -64,7 +64,7 @@ bool equal(std::wstring const& s1, std::string const& s2)
 }
 
 template<typename CharType>
-std::basic_string<CharType> conv_to_char(char const* p)
+std::basic_string<CharType> conv_to_char(const char* p)
 {
     std::basic_string<CharType> r;
     while(*p)
@@ -73,7 +73,7 @@ std::basic_string<CharType> conv_to_char(char const* p)
 }
 
 template<typename CharType>
-void test_by_char(std::locale const& l, std::string name, int lcid)
+void test_by_char(const std::locale& l, std::string name, int lcid)
 {
     typedef std::basic_stringstream<CharType> ss_type;
 

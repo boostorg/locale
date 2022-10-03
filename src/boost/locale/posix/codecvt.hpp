@@ -14,7 +14,7 @@
 
 namespace boost { namespace locale { namespace impl_posix {
     BOOST_LOCALE_DECL
-    std::unique_ptr<util::base_converter> create_iconv_converter(std::string const& encoding);
+    std::unique_ptr<util::base_converter> create_iconv_converter(const std::string& encoding);
 
 }}} // namespace boost::locale::impl_posix
 

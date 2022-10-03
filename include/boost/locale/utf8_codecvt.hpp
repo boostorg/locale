@@ -31,9 +31,9 @@ namespace boost { namespace locale {
         {
             return state_type();
         }
-        static utf::code_point to_unicode(state_type&, char const*& begin, char const* end)
+        static utf::code_point to_unicode(state_type&, const char*& begin, const char* end)
         {
-            char const* p = begin;
+            const char* p = begin;
 
             utf::code_point c = utf::utf_traits<char>::decode(p, end);
             if(c != utf::illegal && c != utf::incomplete)
@@ -41,7 +41,7 @@ namespace boost { namespace locale {
             return c;
         }
 
-        static utf::code_point from_unicode(state_type&, utf::code_point u, char* begin, char const* end)
+        static utf::code_point from_unicode(state_type&, utf::code_point u, char* begin, const char* end)
         {
             if(!utf::is_valid_codepoint(u))
                 return utf::illegal;

@@ -13,7 +13,7 @@ namespace boost { namespace locale { namespace impl {
     template<typename Property>
     class ios_prop {
     public:
-        static void set(Property const& prop, std::ios_base& ios)
+        static void set(const Property& prop, std::ios_base& ios)
         {
             int id = get_id();
             if(ios.pword(id) == 0) {

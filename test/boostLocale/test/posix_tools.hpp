@@ -14,7 +14,7 @@
 #    include <xlocale.h>
 #endif
 
-inline bool have_locale(std::string const& name)
+inline bool have_locale(const std::string& name)
 {
     locale_t l = newlocale(LC_ALL_MASK, name.c_str(), 0);
     if(l) {

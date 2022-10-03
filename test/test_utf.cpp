@@ -12,7 +12,7 @@
 
 using namespace boost::locale::utf;
 
-boost::uint32_t const* u32_seq(boost::uint32_t a)
+const boost::uint32_t* u32_seq(boost::uint32_t a)
 {
     static boost::uint32_t buf[2];
     buf[0] = a;
@@ -20,7 +20,7 @@ boost::uint32_t const* u32_seq(boost::uint32_t a)
     return buf;
 }
 
-boost::uint16_t const* u16_seq(boost::uint16_t a)
+const boost::uint16_t* u16_seq(boost::uint16_t a)
 {
     static boost::uint16_t buf[2];
     buf[0] = a;
@@ -28,7 +28,7 @@ boost::uint16_t const* u16_seq(boost::uint16_t a)
     return buf;
 }
 
-boost::uint16_t const* u16_seq(boost::uint16_t a, boost::uint16_t b)
+const boost::uint16_t* u16_seq(boost::uint16_t a, boost::uint16_t b)
 {
     static boost::uint16_t buf[3];
     buf[0] = a;
@@ -37,7 +37,7 @@ boost::uint16_t const* u16_seq(boost::uint16_t a, boost::uint16_t b)
     return buf;
 }
 
-char16_t const* c16_seq(boost::uint16_t a)
+const char16_t* c16_seq(boost::uint16_t a)
 {
     static char16_t buf[2];
     buf[0] = static_cast<char16_t>(a);
@@ -45,7 +45,7 @@ char16_t const* c16_seq(boost::uint16_t a)
     return buf;
 }
 
-char32_t const* c32_seq(boost::uint32_t a)
+const char32_t* c32_seq(boost::uint32_t a)
 {
     static char32_t buf[2];
     buf[0] = static_cast<char32_t>(a);
@@ -55,7 +55,7 @@ char32_t const* c32_seq(boost::uint32_t a)
 
 // Get end of C-String, i.e. the NULL byte
 template<typename CharType>
-CharType const* str_end(CharType const* s)
+const CharType* str_end(const CharType* s)
 {
     while(*s)
         s++;
@@ -63,16 +63,16 @@ CharType const* str_end(CharType const* s)
 }
 
 template<typename CharType>
-void test_from_utf(CharType const* const s, unsigned codepoint)
+void test_from_utf(const CharType* const s, unsigned codepoint)
 {
-    CharType const* cur = s;
-    CharType const* const end = str_end(s);
+    const CharType* cur = s;
+    const CharType* const end = str_end(s);
 
     typedef utf_traits<CharType> tr;
 
     static_assert(tr::max_width == 4 / sizeof(CharType), "Wrong max_width");
 
-    TEST(tr::template decode<CharType const*>(cur, end) == codepoint);
+    TEST(tr::template decode<const CharType*>(cur, end) == codepoint);
 
     if(codepoint != illegal)
         TEST(cur == end);
@@ -99,12 +99,12 @@ void test_from_utf(CharType const* const s, unsigned codepoint)
 }
 
 template<typename CharType>
-void test_to_utf(CharType const* str, unsigned codepoint)
+void test_to_utf(const CharType* str, unsigned codepoint)
 {
     CharType buf[5] = {1, 1, 1, 1, 1};
     CharType* p = buf;
     p = utf_traits<CharType>::template encode<CharType*>(codepoint, p);
-    CharType const* const end = str_end(str);
+    const CharType* const end = str_end(str);
     TEST(end - str == p - buf);
     TEST(*p);
     *p = 0;
@@ -112,7 +112,7 @@ void test_to_utf(CharType const* str, unsigned codepoint)
 }
 
 template<typename CharType>
-void test_valid_utf(CharType const* str, unsigned codepoint)
+void test_valid_utf(const CharType* str, unsigned codepoint)
 {
     test_from_utf(str, codepoint);
     test_to_utf(str, codepoint);

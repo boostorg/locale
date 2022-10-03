@@ -16,7 +16,7 @@
 
 namespace boost { namespace locale {
     struct generator::data {
-        data(localization_backend_manager const& mgr) :
+        data(const localization_backend_manager& mgr) :
             cats(all_categories), chars(all_characters), caching_enabled(false), use_ansi_encoding(false),
             backend_manager(mgr)
         {}
@@ -39,7 +39,7 @@ namespace boost { namespace locale {
         localization_backend_manager backend_manager;
     };
 
-    generator::generator(localization_backend_manager const& mgr) : d(new generator::data(mgr)) {}
+    generator::generator(const localization_backend_manager& mgr) : d(new generator::data(mgr)) {}
     generator::generator() : d(new generator::data(localization_backend_manager::global())) {}
     generator::~generator() = default;
 
@@ -62,13 +62,13 @@ namespace boost { namespace locale {
         return d->chars;
     }
 
-    void generator::add_messages_domain(std::string const& domain)
+    void generator::add_messages_domain(const std::string& domain)
     {
         if(std::find(d->domains.begin(), d->domains.end(), domain) == d->domains.end())
             d->domains.push_back(domain);
     }
 
-    void generator::set_default_messages_domain(std::string const& domain)
+    void generator::set_default_messages_domain(const std::string& domain)
     {
         std::vector<std::string>::iterator p;
         if((p = std::find(d->domains.begin(), d->domains.end(), domain)) != d->domains.end()) {
@@ -81,7 +81,7 @@ namespace boost { namespace locale {
     {
         d->domains.clear();
     }
-    void generator::add_messages_path(std::string const& path)
+    void generator::add_messages_path(const std::string& path)
     {
         d->paths.push_back(path);
     }
@@ -94,14 +94,14 @@ namespace boost { namespace locale {
         d->cached.clear();
     }
 
-    std::locale generator::generate(std::string const& id) const
+    std::locale generator::generate(const std::string& id) const
     {
         std::locale base = std::locale::classic();
 
         return generate(base, id);
     }
 
-    std::locale generator::generate(std::locale const& base, std::string const& id) const
+    std::locale generator::generate(const std::locale& base, const std::string& id) const
     {
         if(d->caching_enabled) {
             boost::unique_lock<boost::mutex> guard(d->cached_lock);
@@ -164,7 +164,7 @@ namespace boost { namespace locale {
         d->caching_enabled = enabled;
     }
 
-    void generator::set_all_options(localization_backend& backend, std::string const& id) const
+    void generator::set_all_options(localization_backend& backend, const std::string& id) const
     {
         backend.set_option("locale", id);
         if(d->use_ansi_encoding)

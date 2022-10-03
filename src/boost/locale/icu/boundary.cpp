@@ -104,7 +104,7 @@ namespace boost { namespace locale {
             return indx;
         }
 
-        icu::BreakIterator* get_iterator(boundary_type t, icu::Locale const& loc)
+        icu::BreakIterator* get_iterator(boundary_type t, const icu::Locale& loc)
         {
             UErrorCode err = U_ZERO_ERROR;
             hold_ptr<icu::BreakIterator> bi;
@@ -123,10 +123,10 @@ namespace boost { namespace locale {
 
         template<typename CharType>
         index_type do_map(boundary_type t,
-                          CharType const* begin,
-                          CharType const* end,
-                          icu::Locale const& loc,
-                          std::string const& encoding)
+                          const CharType* begin,
+                          const CharType* end,
+                          const icu::Locale& loc,
+                          const std::string& encoding)
         {
             index_type indx;
             hold_ptr<icu::BreakIterator> bi(get_iterator(t, loc));
@@ -138,9 +138,9 @@ namespace boost { namespace locale {
                 UText* ut = 0;
                 try {
                     if(sizeof(CharType) == 1)
-                        ut = utext_openUTF8(0, reinterpret_cast<char const*>(begin), end - begin, &err);
+                        ut = utext_openUTF8(0, reinterpret_cast<const char*>(begin), end - begin, &err);
                     else // sizeof(CharType)==2
-                        ut = utext_openUChars(0, reinterpret_cast<UChar const*>(begin), end - begin, &err);
+                        ut = utext_openUChars(0, reinterpret_cast<const UChar*>(begin), end - begin, &err);
                     BOOST_LOCALE_END_CONST_CONDITION
 
                     check_and_throw_icu_error(err);
@@ -179,8 +179,8 @@ namespace boost { namespace locale {
         template<typename CharType>
         class boundary_indexing_impl : public boundary_indexing<CharType> {
         public:
-            boundary_indexing_impl(cdata const& data) : locale_(data.locale), encoding_(data.encoding) {}
-            index_type map(boundary_type t, CharType const* begin, CharType const* end) const
+            boundary_indexing_impl(const cdata& data) : locale_(data.locale), encoding_(data.encoding) {}
+            index_type map(boundary_type t, const CharType* begin, const CharType* end) const
             {
                 return do_map<CharType>(t, begin, end, locale_, encoding_);
             }
@@ -193,7 +193,7 @@ namespace boost { namespace locale {
     }} // namespace boundary::impl_icu
 
     namespace impl_icu {
-        std::locale create_boundary(std::locale const& in, cdata const& cd, character_facet_type type)
+        std::locale create_boundary(const std::locale& in, const cdata& cd, character_facet_type type)
         {
             using namespace boost::locale::boundary::impl_icu;
             switch(type) {

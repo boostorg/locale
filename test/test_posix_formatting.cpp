@@ -27,18 +27,18 @@ int main()
 
 //#define DEBUG_FMT
 
-bool equal(std::string const& s1, std::string const& s2, locale_t /*lc*/)
+bool equal(const std::string& s1, const std::string& s2, locale_t /*lc*/)
 {
     return s1 == s2;
 }
 
-bool equal(std::wstring const& s1, std::string const& s2, locale_t lc)
+bool equal(const std::wstring& s1, const std::string& s2, locale_t lc)
 {
     return s1 == boost::locale::conv::to_utf<wchar_t>(s2, nl_langinfo_l(CODESET, lc));
 }
 
 template<typename CharType>
-std::basic_string<CharType> conv_to_char(char const* p)
+std::basic_string<CharType> conv_to_char(const char* p)
 {
     std::basic_string<CharType> r;
     while(*p)
@@ -47,7 +47,7 @@ std::basic_string<CharType> conv_to_char(char const* p)
 }
 
 template<typename CharType, typename RefCharType>
-void test_by_char(std::locale const& l, locale_t lreal)
+void test_by_char(const std::locale& l, locale_t lreal)
 {
     typedef std::basic_stringstream<CharType> ss_type;
 

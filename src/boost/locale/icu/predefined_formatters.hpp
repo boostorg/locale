@@ -42,7 +42,7 @@ namespace boost { namespace locale { namespace impl_icu {
     public:
         static std::locale::id id;
 
-        icu_formatters_cache(icu::Locale const& locale) : locale_(locale)
+        icu_formatters_cache(const icu::Locale& locale) : locale_(locale)
         {
             icu::DateFormat::EStyle styles[4]{};
             styles[int(format_len::Short)] = icu::DateFormat::kShort;

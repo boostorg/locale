@@ -23,13 +23,13 @@ namespace boost { namespace locale { namespace impl_win {
     class winapi_localization_backend : public localization_backend {
     public:
         winapi_localization_backend() : invalid_(true) {}
-        winapi_localization_backend(winapi_localization_backend const& other) :
+        winapi_localization_backend(const winapi_localization_backend& other) :
             localization_backend(), paths_(other.paths_), domains_(other.domains_), locale_id_(other.locale_id_),
             invalid_(true)
         {}
         winapi_localization_backend* clone() const override { return new winapi_localization_backend(*this); }
 
-        void set_option(std::string const& name, std::string const& value)
+        void set_option(const std::string& name, const std::string& value)
         {
             invalid_ = true;
             if(name == "locale")
@@ -67,7 +67,7 @@ namespace boost { namespace locale { namespace impl_win {
             }
         }
 
-        std::locale install(std::locale const& base,
+        std::locale install(const std::locale& base,
                             locale_category_type category,
                             character_facet_type type = nochar_facet) override
         {
@@ -86,7 +86,7 @@ namespace boost { namespace locale { namespace impl_win {
                 case message_facet: {
                     gnu_gettext::messages_info minf;
                     std::locale tmp = util::create_info(std::locale::classic(), real_id_);
-                    boost::locale::info const& inf = std::use_facet<boost::locale::info>(tmp);
+                    const boost::locale::info& inf = std::use_facet<boost::locale::info>(tmp);
                     minf.language = inf.language();
                     minf.country = inf.country();
                     minf.variant = inf.variant();

@@ -31,7 +31,7 @@ int get_sign(int x)
 }
 
 template<typename CharType>
-void test_one(std::locale const& l, std::string ia, std::string ib, int diff)
+void test_one(const std::locale& l, std::string ia, std::string ib, int diff)
 {
     std::basic_string<CharType> a = to_correct_string<CharType>(ia, l);
     std::basic_string<CharType> b = to_correct_string<CharType>(ib, l);
@@ -46,7 +46,7 @@ void test_one(std::locale const& l, std::string ia, std::string ib, int diff)
         TEST(l(b, a));
     }
 
-    std::collate<CharType> const& col = std::use_facet<std::collate<CharType>>(l);
+    const std::collate<CharType>& col = std::use_facet<std::collate<CharType>>(l);
 
     TEST(diff == col.compare(a.c_str(), a.c_str() + a.size(), b.c_str(), b.c_str() + b.size()));
     TEST(diff

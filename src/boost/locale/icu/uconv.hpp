@@ -35,11 +35,11 @@ namespace boost { namespace locale { namespace impl_icu {
         typedef std::basic_string<char_type> string_type;
 
         icu_std_converter(std::string charset, cpcvt_type cv = cvt_skip);
-        icu::UnicodeString icu(char_type const* begin, char_type const* end) const;
-        string_type std(icu::UnicodeString const& str) const;
-        size_t cut(icu::UnicodeString const& str,
-                   char_type const* begin,
-                   char_type const* end,
+        icu::UnicodeString icu(const char_type* begin, const char_type* end) const;
+        string_type std(const icu::UnicodeString& str) const;
+        size_t cut(const icu::UnicodeString& str,
+                   const char_type* begin,
+                   const char_type* end,
                    size_t n,
                    size_t from_u = 0,
                    size_t from_c = 0) const;
@@ -51,14 +51,14 @@ namespace boost { namespace locale { namespace impl_icu {
         typedef CharType char_type;
         typedef std::basic_string<char_type> string_type;
 
-        icu::UnicodeString icu_checked(char_type const* vb, char_type const* ve) const
+        icu::UnicodeString icu_checked(const char_type* vb, const char_type* ve) const
         {
             return icu(vb, ve); // Already done
         }
-        icu::UnicodeString icu(char_type const* vb, char_type const* ve) const
+        icu::UnicodeString icu(const char_type* vb, const char_type* ve) const
         {
-            char const* begin = reinterpret_cast<char const*>(vb);
-            char const* end = reinterpret_cast<char const*>(ve);
+            const char* begin = reinterpret_cast<const char*>(vb);
+            const char* end = reinterpret_cast<const char*>(ve);
             uconv cvt(charset_, cvt_type_);
             UErrorCode err = U_ZERO_ERROR;
             icu::UnicodeString tmp(begin, end - begin, cvt.cvt(), err);
@@ -66,7 +66,7 @@ namespace boost { namespace locale { namespace impl_icu {
             return tmp;
         }
 
-        string_type std(icu::UnicodeString const& str) const
+        string_type std(const icu::UnicodeString& str) const
         {
             uconv cvt(charset_, cvt_type_);
             return cvt.go(str.getBuffer(), str.length(), max_len_);
@@ -78,9 +78,9 @@ namespace boost { namespace locale { namespace impl_icu {
             max_len_ = cvt.max_char_size();
         }
 
-        size_t cut(icu::UnicodeString const& str,
-                   char_type const* begin,
-                   char_type const* end,
+        size_t cut(const icu::UnicodeString& str,
+                   const char_type* begin,
+                   const char_type* end,
                    size_t n,
                    size_t from_u = 0,
                    size_t from_char = 0) const
@@ -91,11 +91,11 @@ namespace boost { namespace locale { namespace impl_icu {
         }
 
         struct uconv {
-            uconv(uconv const& other);
-            void operator=(uconv const& other);
+            uconv(const uconv& other);
+            void operator=(const uconv& other);
 
         public:
-            uconv(std::string const& charset, cpcvt_type cvt_type = cvt_skip)
+            uconv(const std::string& charset, cpcvt_type cvt_type = cvt_skip)
             {
                 UErrorCode err = U_ZERO_ERROR;
                 cvt_ = ucnv_open(charset.c_str(), &err);
@@ -129,7 +129,7 @@ namespace boost { namespace locale { namespace impl_icu {
 
             int max_char_size() { return ucnv_getMaxCharSize(cvt_); }
 
-            string_type go(UChar const* buf, int length, int max_size)
+            string_type go(const UChar* buf, int length, int max_size)
             {
                 string_type res;
                 res.resize(UCNV_GET_MAX_BYTES_FOR_STRING(length, max_size));
@@ -141,9 +141,9 @@ namespace boost { namespace locale { namespace impl_icu {
                 return res;
             }
 
-            size_t cut(size_t n, char_type const* begin, char_type const* end)
+            size_t cut(size_t n, const char_type* begin, const char_type* end)
             {
-                char_type const* saved = begin;
+                const char_type* saved = begin;
                 while(n > 0 && begin < end) {
                     UErrorCode err = U_ZERO_ERROR;
                     ucnv_getNextUChar(cvt_, &begin, end, &err);
@@ -174,7 +174,7 @@ namespace boost { namespace locale { namespace impl_icu {
         typedef CharType char_type;
         typedef std::basic_string<char_type> string_type;
 
-        icu::UnicodeString icu_checked(char_type const* begin, char_type const* end) const
+        icu::UnicodeString icu_checked(const char_type* begin, const char_type* end) const
         {
             icu::UnicodeString tmp(end - begin, 0, 0); // make inital capacity
             while(begin != end) {
@@ -203,22 +203,22 @@ namespace boost { namespace locale { namespace impl_icu {
             if(mode_ == cvt_stop)
                 throw conv::conversion_error();
         }
-        icu::UnicodeString icu(char_type const* vb, char_type const* ve) const
+        icu::UnicodeString icu(const char_type* vb, const char_type* ve) const
         {
-            UChar const* begin = reinterpret_cast<UChar const*>(vb);
-            UChar const* end = reinterpret_cast<UChar const*>(ve);
+            const UChar* begin = reinterpret_cast<const UChar*>(vb);
+            const UChar* end = reinterpret_cast<const UChar*>(ve);
             icu::UnicodeString tmp(begin, end - begin);
             return tmp;
         }
 
-        string_type std(icu::UnicodeString const& str) const
+        string_type std(const icu::UnicodeString& str) const
         {
-            char_type const* ptr = reinterpret_cast<char_type const*>(str.getBuffer());
+            const char_type* ptr = reinterpret_cast<const char_type*>(str.getBuffer());
             return string_type(ptr, str.length());
         }
-        size_t cut(icu::UnicodeString const& /*str*/,
-                   char_type const* /*begin*/,
-                   char_type const* /*end*/,
+        size_t cut(const icu::UnicodeString& /*str*/,
+                   const char_type* /*begin*/,
+                   const char_type* /*end*/,
                    size_t n,
                    size_t /*from_u*/ = 0,
                    size_t /*from_c*/ = 0) const
@@ -238,7 +238,7 @@ namespace boost { namespace locale { namespace impl_icu {
         typedef CharType char_type;
         typedef std::basic_string<char_type> string_type;
 
-        icu::UnicodeString icu_checked(char_type const* begin, char_type const* end) const
+        icu::UnicodeString icu_checked(const char_type* begin, const char_type* end) const
         {
             icu::UnicodeString tmp(end - begin, 0, 0); // make inital capacity
             while(begin != end) {
@@ -256,7 +256,7 @@ namespace boost { namespace locale { namespace impl_icu {
                 throw conv::conversion_error();
         }
 
-        icu::UnicodeString icu(char_type const* begin, char_type const* end) const
+        icu::UnicodeString icu(const char_type* begin, const char_type* end) const
         {
             icu::UnicodeString tmp(end - begin, 0, 0); // make inital capacity
             while(begin != end) {
@@ -266,7 +266,7 @@ namespace boost { namespace locale { namespace impl_icu {
             return tmp;
         }
 
-        string_type std(icu::UnicodeString const& str) const
+        string_type std(const icu::UnicodeString& str) const
         {
             string_type tmp;
             tmp.resize(str.length());
@@ -288,9 +288,9 @@ namespace boost { namespace locale { namespace impl_icu {
             return tmp;
         }
 
-        size_t cut(icu::UnicodeString const& str,
-                   char_type const* /*begin*/,
-                   char_type const* /*end*/,
+        size_t cut(const icu::UnicodeString& str,
+                   const char_type* /*begin*/,
+                   const char_type* /*end*/,
                    size_t n,
                    size_t from_u = 0,
                    size_t /*from_c*/ = 0) const

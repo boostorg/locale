@@ -11,13 +11,13 @@
 
 namespace boost { namespace locale { namespace impl_std {
     template<typename CharType>
-    std::locale codecvt_bychar(std::locale const& in, std::string const& locale_name)
+    std::locale codecvt_bychar(const std::locale& in, const std::string& locale_name)
     {
         return std::locale(in, new std::codecvt_byname<CharType, char, std::mbstate_t>(locale_name.c_str()));
     }
 
     std::locale
-    create_codecvt(std::locale const& in, std::string const& locale_name, character_facet_type type, utf8_support utf)
+    create_codecvt(const std::locale& in, const std::string& locale_name, character_facet_type type, utf8_support utf)
     {
         if(utf == utf8_from_wide) {
             return util::create_utf8_codecvt(in, type);

@@ -41,7 +41,7 @@ void test_norm(std::string orig, std::string normal, boost::locale::norm_type ty
 
 #    define TEST_A(Chr, how, source, dest)                                                            \
         do {                                                                                          \
-            boost::locale::info const& inf = std::use_facet<boost::locale::info>(std::locale());      \
+            const boost::locale::info& inf = std::use_facet<boost::locale::info>(std::locale());      \
             std::cout << "Testing " #how " for " #Chr ", lang=" << inf.language();                    \
             if(std::string("char") == #Chr)                                                           \
                 std::cout << " charset=" << inf.encoding();                                           \

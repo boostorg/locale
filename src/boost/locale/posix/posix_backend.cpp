@@ -27,13 +27,13 @@ namespace boost { namespace locale { namespace impl_posix {
     class posix_localization_backend : public localization_backend {
     public:
         posix_localization_backend() : invalid_(true) {}
-        posix_localization_backend(posix_localization_backend const& other) :
+        posix_localization_backend(const posix_localization_backend& other) :
             localization_backend(), paths_(other.paths_), domains_(other.domains_), locale_id_(other.locale_id_),
             invalid_(true)
         {}
         posix_localization_backend* clone() const override { return new posix_localization_backend(*this); }
 
-        void set_option(std::string const& name, std::string const& value) override
+        void set_option(const std::string& name, const std::string& value) override
         {
             invalid_ = true;
             if(name == "locale")
@@ -89,7 +89,7 @@ namespace boost { namespace locale { namespace impl_posix {
             lc_ = std::shared_ptr<locale_t>(tmp_p, free_locale_by_ptr);
         }
 
-        std::locale install(std::locale const& base,
+        std::locale install(const std::locale& base,
                             locale_category_type category,
                             character_facet_type type = nochar_facet) override
         {

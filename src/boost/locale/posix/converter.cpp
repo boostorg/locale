@@ -46,8 +46,8 @@ namespace boost { namespace locale { namespace impl_posix {
         typedef std::ctype<char_type> ctype_type;
         std_converter(std::shared_ptr<locale_t> lc, size_t refs = 0) : converter<CharType>(refs), lc_(std::move(lc)) {}
         string_type convert(converter_base::conversion_type how,
-                            char_type const* begin,
-                            char_type const* end,
+                            const char_type* begin,
+                            const char_type* end,
                             int /*flags*/ = 0) const override
         {
             switch(how) {
@@ -80,8 +80,8 @@ namespace boost { namespace locale { namespace impl_posix {
     public:
         utf8_converter(std::shared_ptr<locale_t> lc, size_t refs = 0) : converter<char>(refs), lc_(std::move(lc)) {}
         std::string convert(converter_base::conversion_type how,
-                            char const* begin,
-                            char const* end,
+                            const char* begin,
+                            const char* end,
                             int /*flags*/ = 0) const override
         {
             switch(how) {
@@ -111,7 +111,7 @@ namespace boost { namespace locale { namespace impl_posix {
         std::shared_ptr<locale_t> lc_;
     };
 
-    std::locale create_convert(std::locale const& in, std::shared_ptr<locale_t> lc, character_facet_type type)
+    std::locale create_convert(const std::locale& in, std::shared_ptr<locale_t> lc, character_facet_type type)
     {
         switch(type) {
             case char_facet: {

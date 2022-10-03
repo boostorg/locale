@@ -19,21 +19,21 @@ namespace boost { namespace locale { namespace impl_win {
     public:
         utf8_collator(winlocale lc, size_t refs = 0) : collator<char>(refs), lc_(lc) {}
         int do_compare(collator_base::level_type level,
-                       char const* lb,
-                       char const* le,
-                       char const* rb,
-                       char const* re) const override
+                       const char* lb,
+                       const char* le,
+                       const char* rb,
+                       const char* re) const override
         {
             std::wstring l = conv::to_utf<wchar_t>(lb, le, "UTF-8");
             std::wstring r = conv::to_utf<wchar_t>(rb, re, "UTF-8");
             return wcscoll_l(level, l.c_str(), l.c_str() + l.size(), r.c_str(), r.c_str() + r.size(), lc_);
         }
-        long do_hash(collator_base::level_type level, char const* b, char const* e) const override
+        long do_hash(collator_base::level_type level, const char* b, const char* e) const override
         {
             std::string key = do_transform(level, b, e);
             return gnu_gettext::pj_winberger_hash_function(key.c_str(), key.c_str() + key.size());
         }
-        std::string do_transform(collator_base::level_type level, char const* b, char const* e) const override
+        std::string do_transform(collator_base::level_type level, const char* b, const char* e) const override
         {
             std::wstring tmp = conv::to_utf<wchar_t>(b, e, "UTF-8");
             std::wstring wkey = wcsxfrm_l(level, tmp.c_str(), tmp.c_str() + tmp.size(), lc_);
@@ -69,21 +69,21 @@ namespace boost { namespace locale { namespace impl_win {
         typedef std::collate<wchar_t> wfacet;
         utf16_collator(winlocale lc, size_t refs = 0) : collator<wchar_t>(refs), lc_(lc) {}
         int do_compare(collator_base::level_type level,
-                       wchar_t const* lb,
-                       wchar_t const* le,
-                       wchar_t const* rb,
-                       wchar_t const* re) const override
+                       const wchar_t* lb,
+                       const wchar_t* le,
+                       const wchar_t* rb,
+                       const wchar_t* re) const override
         {
             return wcscoll_l(level, lb, le, rb, re, lc_);
         }
-        long do_hash(collator_base::level_type level, wchar_t const* b, wchar_t const* e) const override
+        long do_hash(collator_base::level_type level, const wchar_t* b, const wchar_t* e) const override
         {
             std::wstring key = do_transform(level, b, e);
-            char const* begin = reinterpret_cast<char const*>(key.c_str());
-            char const* end = begin + key.size() * sizeof(wchar_t);
+            const char* begin = reinterpret_cast<const char*>(key.c_str());
+            const char* end = begin + key.size() * sizeof(wchar_t);
             return gnu_gettext::pj_winberger_hash_function(begin, end);
         }
-        std::wstring do_transform(collator_base::level_type level, wchar_t const* b, wchar_t const* e) const override
+        std::wstring do_transform(collator_base::level_type level, const wchar_t* b, const wchar_t* e) const override
         {
             return wcsxfrm_l(level, b, e, lc_);
         }
@@ -92,7 +92,7 @@ namespace boost { namespace locale { namespace impl_win {
         winlocale lc_;
     };
 
-    std::locale create_collate(std::locale const& in, winlocale const& lc, character_facet_type type)
+    std::locale create_collate(const std::locale& in, const winlocale& lc, character_facet_type type)
     {
         if(lc.is_c()) {
             switch(type) {

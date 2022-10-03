@@ -11,7 +11,7 @@
 
 namespace boost { namespace locale { namespace util {
 
-    std::locale install_gregorian_calendar(std::locale const& in, std::string const& terr);
+    std::locale install_gregorian_calendar(const std::locale& in, const std::string& terr);
 
 }}} // namespace boost::locale::util
 

@@ -44,7 +44,7 @@ namespace boost { namespace locale { namespace impl_icu {
 
     // This is normal behavior
 
-    icu::TimeZone* get_time_zone(std::string const& time_zone)
+    icu::TimeZone* get_time_zone(const std::string& time_zone)
     {
         if(time_zone.empty()) {
             return icu::TimeZone::createDefault();
@@ -70,7 +70,7 @@ namespace boost { namespace locale { namespace impl_icu {
 
         class directory {
         public:
-            directory(char const* name) : d(0), read_result(0)
+            directory(const char* name) : d(0), read_result(0)
             {
                 d = opendir(name);
                 if(!d)
@@ -82,7 +82,7 @@ namespace boost { namespace locale { namespace impl_icu {
                     closedir(d);
             }
             bool is_open() { return d; }
-            char const* next()
+            const char* next()
             {
                 if(d && readdir_r(d, &de, &read_result) == 0 && read_result != 0)
                     return de.d_name;
@@ -95,7 +95,7 @@ namespace boost { namespace locale { namespace impl_icu {
             struct dirent* read_result;
         };
 
-        bool files_equal(std::string const& left, std::string const& right)
+        bool files_equal(const std::string& left, const std::string& right)
         {
             char l[256], r[256];
             std::ifstream ls(left.c_str());
@@ -118,13 +118,13 @@ namespace boost { namespace locale { namespace impl_icu {
             return true;
         }
 
-        std::string find_file_in(std::string const& ref, size_t size, std::string const& dir)
+        std::string find_file_in(const std::string& ref, size_t size, const std::string& dir)
         {
             directory d(dir.c_str());
             if(!d.is_open())
                 return std::string();
 
-            char const* name = 0;
+            const char* name = 0;
             while((name = d.next()) != 0) {
                 std::string file_name = name;
                 if(file_name == "." || file_name == ".." || file_name == "posixrules" || file_name == "localtime") {
@@ -151,8 +151,8 @@ namespace boost { namespace locale { namespace impl_icu {
         // algorithm... just it ignores localtime
         std::string detect_correct_time_zone()
         {
-            char const* tz_dir = "/usr/share/zoneinfo";
-            char const* tz_file = "/etc/localtime";
+            const char* tz_dir = "/usr/share/zoneinfo";
+            const char* tz_file = "/etc/localtime";
 
             struct stat st;
             if(::stat(tz_file, &st) != 0)
@@ -197,7 +197,7 @@ namespace boost { namespace locale { namespace impl_icu {
 
     } // namespace
 
-    icu::TimeZone* get_time_zone(std::string const& time_zone)
+    icu::TimeZone* get_time_zone(const std::string& time_zone)
     {
         if(!time_zone.empty()) {
             return icu::TimeZone::createTimeZone(time_zone.c_str());

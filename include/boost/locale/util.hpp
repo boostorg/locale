@@ -56,7 +56,7 @@ namespace boost { namespace locale {
         /// is assumed to be US-ASCII and missing language is assumed to be "C"
         ///
         BOOST_LOCALE_DECL
-        std::locale create_info(std::locale const& in, std::string const& name);
+        std::locale create_info(const std::locale& in, const std::string& name);
 
         ///
         /// \brief This class represent a simple stateless converter from UCS-4 and to UCS-4 for
@@ -129,7 +129,7 @@ namespace boost { namespace locale {
             /// unchanged. For example if *begin = 0xFF and begin < end for UTF-8, then \a illegal is returned.
             ///
             ///
-            virtual uint32_t to_unicode(char const*& begin, char const* end)
+            virtual uint32_t to_unicode(const char*& begin, const char* end)
             {
                 if(begin == end)
                     return incomplete;
@@ -152,7 +152,7 @@ namespace boost { namespace locale {
             /// -# If end - begin < N, incomplete is returned, it is unspecified what would be
             ///    stored in bytes in range [begin,end)
 
-            virtual uint32_t from_unicode(uint32_t u, char* begin, char const* end)
+            virtual uint32_t from_unicode(uint32_t u, char* begin, const char* end)
             {
                 if(begin == end)
                     return incomplete;
@@ -181,10 +181,10 @@ namespace boost { namespace locale {
         /// If \a encoding is not supported, empty pointer is returned.
         /// So you should check whether the returned pointer is valid/non-NULL
         ///
-        BOOST_LOCALE_DECL std::unique_ptr<base_converter> create_simple_converter(std::string const& encoding);
+        BOOST_LOCALE_DECL std::unique_ptr<base_converter> create_simple_converter(const std::string& encoding);
 
         BOOST_LOCALE_DEPRECATED("This function is deprecated, use 'create_simple_converter()'")
-        inline std::unique_ptr<base_converter> create_simple_converter_unique_ptr(std::string const& encoding)
+        inline std::unique_ptr<base_converter> create_simple_converter_unique_ptr(const std::string& encoding)
         {
             return create_simple_converter(encoding);
         }
@@ -203,11 +203,11 @@ namespace boost { namespace locale {
         ///
         BOOST_LOCALE_DECL
         std::locale
-        create_codecvt(std::locale const& in, std::unique_ptr<base_converter> cvt, character_facet_type type);
+        create_codecvt(const std::locale& in, std::unique_ptr<base_converter> cvt, character_facet_type type);
 
         BOOST_LOCALE_DEPRECATED("This function is deprecated, use 'create_codecvt()'")
         inline std::locale
-        create_codecvt_from_pointer(std::locale const& in, base_converter* cvt, character_facet_type type)
+        create_codecvt_from_pointer(const std::locale& in, base_converter* cvt, character_facet_type type)
         {
             return create_codecvt(in, std::unique_ptr<base_converter>(cvt), type);
         }
@@ -224,14 +224,14 @@ namespace boost { namespace locale {
         /// If \a encoding is not supported, empty pointer is returned. You should check if
         /// the returned pointer is NULL.
         ///
-        BOOST_LOCALE_DECL base_converter* create_simple_converter_new_ptr(std::string const& encoding);
+        BOOST_LOCALE_DECL base_converter* create_simple_converter_new_ptr(const std::string& encoding);
 
         ///
         /// Install utf8 codecvt to UTF-16 or UTF-32 into locale \a in and return
         /// new locale that is based on \a in and uses new facet.
         ///
         BOOST_LOCALE_DECL
-        std::locale create_utf8_codecvt(std::locale const& in, character_facet_type type);
+        std::locale create_utf8_codecvt(const std::locale& in, character_facet_type type);
 
         ///
         /// This function installs codecvt that can be used for conversion between single byte
@@ -241,7 +241,7 @@ namespace boost { namespace locale {
         /// character set
         BOOST_LOCALE_DECL
         std::locale
-        create_simple_codecvt(std::locale const& in, std::string const& encoding, character_facet_type type);
+        create_simple_codecvt(const std::locale& in, const std::string& encoding, character_facet_type type);
     } // namespace util
 }}    // namespace boost::locale
 

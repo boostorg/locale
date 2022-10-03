@@ -20,7 +20,7 @@ namespace boost { namespace locale { namespace util {
 
     class simple_info : public info {
     public:
-        simple_info(std::string const& name, size_t refs = 0) : info(refs), name_(name) { d.parse(name); }
+        simple_info(const std::string& name, size_t refs = 0) : info(refs), name_(name) { d.parse(name); }
         std::string get_string_property(string_propery v) const override
         {
             switch(v) {
@@ -46,7 +46,7 @@ namespace boost { namespace locale { namespace util {
         std::string name_;
     };
 
-    std::locale create_info(std::locale const& in, std::string const& name)
+    std::locale create_info(const std::locale& in, const std::string& name)
     {
         return std::locale(in, new simple_info(name));
     }

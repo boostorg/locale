@@ -14,7 +14,7 @@
 
 namespace boost { namespace locale { namespace impl_icu {
     BOOST_LOCALE_DECL
-    std::unique_ptr<util::base_converter> create_uconv_converter(std::string const& encoding);
+    std::unique_ptr<util::base_converter> create_uconv_converter(const std::string& encoding);
 
 }}} // namespace boost::locale::impl_icu
 

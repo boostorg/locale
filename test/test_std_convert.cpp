@@ -22,7 +22,7 @@ int main()
 #    include <iostream>
 
 template<typename CharType>
-void test_one(std::locale const& l, std::string src, std::string tgtl, std::string tgtu)
+void test_one(const std::locale& l, std::string src, std::string tgtl, std::string tgtu)
 {
     TEST(boost::locale::to_upper(to_correct_string<CharType>(src, l), l) == to_correct_string<CharType>(tgtu, l));
     TEST(boost::locale::to_lower(to_correct_string<CharType>(src, l), l) == to_correct_string<CharType>(tgtl, l));

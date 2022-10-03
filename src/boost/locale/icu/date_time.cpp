@@ -60,7 +60,7 @@ namespace boost { namespace locale { namespace impl_icu {
 
     class calendar_impl : public abstract_calendar {
     public:
-        calendar_impl(cdata const& dat)
+        calendar_impl(const cdata& dat)
         {
             UErrorCode err = U_ZERO_ERROR;
             calendar_.reset(icu::Calendar::createInstance(dat.locale, err));
@@ -71,7 +71,7 @@ namespace boost { namespace locale { namespace impl_icu {
 #endif
             encoding_ = dat.encoding;
         }
-        calendar_impl(calendar_impl const& other)
+        calendar_impl(const calendar_impl& other)
         {
             calendar_.reset(other.calendar_->clone());
             encoding_ = other.encoding_;
@@ -111,7 +111,7 @@ namespace boost { namespace locale { namespace impl_icu {
             return v;
         }
 
-        void set_time(posix_time const& p) override
+        void set_time(const posix_time& p) override
         {
             double utime = p.seconds * 1000.0 + p.nanoseconds / 1000000.0;
             UErrorCode code = U_ZERO_ERROR;
@@ -175,7 +175,7 @@ namespace boost { namespace locale { namespace impl_icu {
             }
             check_and_throw_dt(err);
         }
-        int difference(abstract_calendar const* other_ptr, period::marks::period_mark m) const override
+        int difference(const abstract_calendar* other_ptr, period::marks::period_mark m) const override
         {
             UErrorCode err = U_ZERO_ERROR;
             double other_time = 0;
@@ -185,7 +185,7 @@ namespace boost { namespace locale { namespace impl_icu {
             //
             hold_ptr<icu::Calendar> self(calendar_->clone());
 
-            calendar_impl const* other_cal = dynamic_cast<calendar_impl const*>(other_ptr);
+            const calendar_impl* other_cal = dynamic_cast<const calendar_impl*>(other_ptr);
             if(other_cal) {
                 guard l(other_cal->lock_);
                 other_time = other_cal->calendar_->getTime(err);
@@ -200,7 +200,7 @@ namespace boost { namespace locale { namespace impl_icu {
             check_and_throw_dt(err);
             return diff;
         }
-        void set_timezone(std::string const& tz) override
+        void set_timezone(const std::string& tz) override
         {
             calendar_->adoptTimeZone(get_time_zone(tz));
         }
@@ -211,9 +211,9 @@ namespace boost { namespace locale { namespace impl_icu {
             icu_std_converter<char> cvt(encoding_);
             return cvt.std(tz);
         }
-        bool same(abstract_calendar const* other) const override
+        bool same(const abstract_calendar* other) const override
         {
-            calendar_impl const* oc = dynamic_cast<calendar_impl const*>(other);
+            const calendar_impl* oc = dynamic_cast<const calendar_impl*>(other);
             if(!oc)
                 return false;
             return calendar_->isEquivalentTo(*oc->calendar_) != 0;
@@ -228,14 +228,14 @@ namespace boost { namespace locale { namespace impl_icu {
 
     class icu_calendar_facet : public calendar_facet {
     public:
-        icu_calendar_facet(cdata const& d, size_t refs = 0) : calendar_facet(refs), data_(d) {}
+        icu_calendar_facet(const cdata& d, size_t refs = 0) : calendar_facet(refs), data_(d) {}
         abstract_calendar* create_calendar() const override { return new calendar_impl(data_); }
 
     private:
         cdata data_;
     };
 
-    std::locale create_calendar(std::locale const& in, cdata const& d)
+    std::locale create_calendar(const std::locale& in, const cdata& d)
     {
         return std::locale(in, new icu_calendar_facet(d));
     }

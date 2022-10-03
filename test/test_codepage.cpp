@@ -49,7 +49,7 @@ std::basic_string<Char> read_file(std::basic_istream<Char>& in)
 }
 
 template<typename Char>
-void test_ok(std::string const& content, std::locale const& l, std::basic_string<Char> cmp = std::basic_string<Char>())
+void test_ok(const std::string& content, const std::locale& l, std::basic_string<Char> cmp = std::basic_string<Char>())
 {
     typedef std::basic_fstream<Char> stream_type;
     if(cmp.empty())
@@ -79,7 +79,7 @@ void test_ok(std::string const& content, std::locale const& l, std::basic_string
 }
 
 template<typename Char>
-void test_rfail(std::string const& content, std::locale const& l, int pos)
+void test_rfail(const std::string& content, const std::locale& l, int pos)
 {
     remove_file_on_exit _("testi.txt");
     {
@@ -105,7 +105,7 @@ void test_rfail(std::string const& content, std::locale const& l, int pos)
 }
 
 template<typename Char>
-void test_wfail(std::string const& content, std::locale const& l, int pos)
+void test_wfail(const std::string& content, const std::locale& l, int pos)
 {
     typedef std::basic_fstream<Char> stream_type;
     remove_file_on_exit _("testo.txt");
@@ -247,13 +247,13 @@ void test_from_neg(std::basic_string<Char> source, std::string target, std::stri
 }
 
 template<typename Char>
-std::basic_string<Char> utf(char const* s)
+std::basic_string<Char> utf(const char* s)
 {
     return to<Char>(s);
 }
 
 template<>
-std::basic_string<char> utf(char const* s)
+std::basic_string<char> utf(const char* s)
 {
     return s;
 }
@@ -271,8 +271,8 @@ struct utfutf;
 
 template<>
 struct utfutf<char, 1> {
-    static char const* ok() { return "grüßen"; }
-    static char const* bad()
+    static const char* ok() { return "grüßen"; }
+    static const char* bad()
     {
         return "gr\xFF"
                "üßen";
@@ -282,8 +282,8 @@ struct utfutf<char, 1> {
 
 template<>
 struct utfutf<wchar_t, 2> {
-    static wchar_t const* ok() { return L"\x67\x72\xfc\xdf\x65\x6e"; }
-    static wchar_t const* bad()
+    static const wchar_t* ok() { return L"\x67\x72\xfc\xdf\x65\x6e"; }
+    static const wchar_t* bad()
     {
         static wchar_t buf[256] = L"\x67\x72\xFF\xfc\xFE\xFD\xdf\x65\x6e";
         buf[2] = 0xDC01; // second surrogate must not be
@@ -298,8 +298,8 @@ struct utfutf<wchar_t, 2> {
 #endif
 template<>
 struct utfutf<wchar_t, 4> {
-    static wchar_t const* ok() { return L"\x67\x72\xfc\xdf\x65\x6e"; }
-    static wchar_t const* bad()
+    static const wchar_t* ok() { return L"\x67\x72\xfc\xdf\x65\x6e"; }
+    static const wchar_t* bad()
     {
         static wchar_t buf[256] = L"\x67\x72\xFF\xfc\xdf\x65\x6e";
         buf[2] = static_cast<wchar_t>(0x1000000); // > 10FFFF
@@ -349,7 +349,7 @@ void test_to()
     test_with_0<Char>();
 }
 
-void test_skip(char const* enc, char const* utf, char const* name, char const* opt = 0)
+void test_skip(const char* enc, const char* utf, const char* name, const char* opt = 0)
 {
     if(opt != 0) {
         if(boost::locale::conv::to_utf<char>(enc, name) == opt) {
@@ -377,7 +377,7 @@ void test_simple_conversions()
         test_skip("\xFB", "", "ISO-8859-8");
         test_skip("test \xE0\xE1\xFB", "test \xd7\x90\xd7\x91", "ISO-8859-8");
         test_skip("\xFB-", "-", "ISO-8859-8");
-    } catch(blc::invalid_charset_error const&) {
+    } catch(const blc::invalid_charset_error&) {
         std::cout << "--- not supported\n"; // LCOV_EXCL_LINE
     }
     try {
@@ -386,7 +386,7 @@ void test_simple_conversions()
         test_skip("\x83\xF8", "", "cp932");
         test_skip("test\xE0\xA0 \x83\xF8", "test\xe7\x87\xbf ", "cp932");
         test_skip("\x83\xF8-", "-", "cp932", "");
-    } catch(blc::invalid_charset_error const&) {
+    } catch(const blc::invalid_charset_error&) {
         std::cout << "--- not supported\n"; // LCOV_EXCL_LINE
     }
 }

@@ -78,7 +78,7 @@ namespace locale {
         ///
         /// Create new generator using specific localization_backend_manager
         ///
-        generator(localization_backend_manager const&);
+        generator(const localization_backend_manager&);
 
         ~generator();
 
@@ -120,12 +120,12 @@ namespace locale {
         /// you should use dgettext("blog","Hello")
         ///
         ///
-        void add_messages_domain(std::string const& domain);
+        void add_messages_domain(const std::string& domain);
         ///
         /// Set default message domain. If this member was not called, the first added messages domain is used.
         /// If the domain \a domain is not added yet it is added.
         ///
-        void set_default_messages_domain(std::string const& domain);
+        void set_default_messages_domain(const std::string& domain);
 
         ///
         /// Remove all added domains from the list
@@ -146,7 +146,7 @@ namespace locale {
         ///   encodings are the native encodings for POSIX platforms.
         ///
         ///
-        void add_messages_path(std::string const& path);
+        void add_messages_path(const std::string& path);
 
         ///
         /// Remove all added paths
@@ -185,21 +185,21 @@ namespace locale {
         ///
         /// Generate a locale with id \a id
         ///
-        std::locale generate(std::string const& id) const;
+        std::locale generate(const std::string& id) const;
         ///
         /// Generate a locale with id \a id. Use \a base as a locale to which all facets are added,
         /// instead of std::locale::classic().
         ///
-        std::locale generate(std::locale const& base, std::string const& id) const;
+        std::locale generate(const std::locale& base, const std::string& id) const;
         ///
         /// Shortcut to generate(id)
         ///
-        std::locale operator()(std::string const& id) const { return generate(id); }
+        std::locale operator()(const std::string& id) const { return generate(id); }
 
         ///
         /// Set backend specific option
         ///
-        void set_option(std::string const& name, std::string const& value);
+        void set_option(const std::string& name, const std::string& value);
 
         ///
         /// Clear backend specific options
@@ -207,10 +207,10 @@ namespace locale {
         void clear_options();
 
     private:
-        void set_all_options(localization_backend& backend, std::string const& id) const;
+        void set_all_options(localization_backend& backend, const std::string& id) const;
 
-        generator(generator const&);
-        void operator=(generator const&);
+        generator(const generator&);
+        void operator=(const generator&);
 
         struct data;
         hold_ptr<data> d;

@@ -21,18 +21,18 @@
 #endif
 
 template<typename Char>
-std::basic_string<Char> to_correct_string(std::string const& e, std::locale /*l*/)
+std::basic_string<Char> to_correct_string(const std::string& e, std::locale /*l*/)
 {
     return boost::locale::conv::to_utf<Char>(e, "UTF-8");
 }
 
 template<>
-inline std::string to_correct_string(std::string const& e, std::locale l)
+inline std::string to_correct_string(const std::string& e, std::locale l)
 {
     return boost::locale::conv::from_utf(e, l);
 }
 
-bool has_std_locale(std::string const& name)
+bool has_std_locale(const std::string& name)
 {
     try {
         std::locale tmp(name.c_str());
@@ -42,12 +42,12 @@ bool has_std_locale(std::string const& name)
     }
 }
 
-inline bool test_std_supports_SJIS_codecvt(std::string const& locale_name)
+inline bool test_std_supports_SJIS_codecvt(const std::string& locale_name)
 {
     bool res = true;
     {
         // Japan in Shift JIS/cp932
-        char const* japan_932 = "\x93\xfa\x96\x7b";
+        const char* japan_932 = "\x93\xfa\x96\x7b";
         std::ofstream f("test-siftjis.txt");
         f << japan_932;
         f.close();
@@ -61,14 +61,14 @@ inline bool test_std_supports_SJIS_codecvt(std::string const& locale_name)
         std::wstring ref;
         test >> ref;
         res = ref == cmp;
-    } catch(std::exception const&) {
+    } catch(const std::exception&) {
         res = false;
     }
     remove("test-siftjis.txt");
     return res;
 }
 
-std::string get_std_name(std::string const& name, std::string* real_name = 0)
+std::string get_std_name(const std::string& name, std::string* real_name = 0)
 {
     if(has_std_locale(name)) {
         if(real_name)

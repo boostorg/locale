@@ -40,8 +40,8 @@
 namespace boost { namespace locale { namespace gnu_gettext {
 
     class c_file {
-        c_file(c_file const&);
-        void operator=(c_file const&);
+        c_file(const c_file&);
+        void operator=(const c_file&);
 
     public:
         FILE* file;
@@ -59,7 +59,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
 
 #if defined(BOOST_WINDOWS)
 
-        bool open(std::string const& file_name, std::string const& encoding)
+        bool open(const std::string& file_name, const std::string& encoding)
         {
             close();
 
@@ -81,7 +81,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
 
         // We do not use encoding as we use native file name encoding
 
-        bool open(std::string const& file_name, std::string const& /* encoding */)
+        bool open(const std::string& file_name, const std::string& /* encoding */)
         {
             close();
 
@@ -95,7 +95,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
 
     class mo_file {
     public:
-        typedef std::pair<char const*, char const*> pair_type;
+        typedef std::pair<const char*, const char*> pair_type;
 
         mo_file(std::vector<char>& file) : native_byteorder_(true), size_(0)
         {
@@ -109,9 +109,9 @@ namespace boost { namespace locale { namespace gnu_gettext {
             init();
         }
 
-        pair_type find(char const* context_in, char const* key_in) const
+        pair_type find(const char* context_in, const char* key_in) const
         {
-            pair_type null_pair((char const*)0, (char const*)0);
+            pair_type null_pair((const char*)0, (const char*)0);
             if(hash_size_ == 0)
                 return null_pair;
             uint32_t hkey = 0;
@@ -142,7 +142,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
             return null_pair;
         }
 
-        static bool key_equals(char const* real_key, char const* cntx, char const* key)
+        static bool key_equals(const char* real_key, const char* cntx, const char* key)
         {
             if(cntx == 0)
                 return strcmp(real_key, key) == 0;
@@ -157,7 +157,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
             }
         }
 
-        char const* key(int id) const
+        const char* key(int id) const
         {
             uint32_t off = get(keys_offset_ + id * 8 + 4);
             return data_ + off;
@@ -257,7 +257,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
         uint32_t hash_size_;
         uint32_t hash_offset_;
 
-        char const* data_;
+        const char* data_;
         size_t file_size_;
         std::vector<char> vdata_;
         bool native_byteorder_;
@@ -268,10 +268,10 @@ namespace boost { namespace locale { namespace gnu_gettext {
     struct mo_file_use_traits {
         static const bool in_use = false;
         typedef CharType char_type;
-        typedef std::pair<char_type const*, char_type const*> pair_type;
-        static pair_type use(mo_file const& /*mo*/, char_type const* /*context*/, char_type const* /*key*/)
+        typedef std::pair<const char_type*, const char_type*> pair_type;
+        static pair_type use(const mo_file& /*mo*/, const char_type* /*context*/, const char_type* /*key*/)
         {
-            return pair_type((char_type const*)(0), (char_type const*)(0));
+            return pair_type((const char_type*)(0), (const char_type*)(0));
         }
     };
 
@@ -279,8 +279,8 @@ namespace boost { namespace locale { namespace gnu_gettext {
     struct mo_file_use_traits<char> {
         static const bool in_use = true;
         typedef char char_type;
-        typedef std::pair<char_type const*, char_type const*> pair_type;
-        static pair_type use(mo_file const& mo, char const* context, char const* key) { return mo.find(context, key); }
+        typedef std::pair<const char_type*, const char_type*> pair_type;
+        static pair_type use(const mo_file& mo, const char* context, const char* key) { return mo.find(context, key); }
     };
 
     template<typename CharType>
@@ -288,7 +288,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
     public:
         converter(std::string /*out_enc*/, std::string in_enc) : in_(in_enc) {}
 
-        std::basic_string<CharType> operator()(char const* begin, char const* end)
+        std::basic_string<CharType> operator()(const char* begin, const char* end)
         {
             return conv::to_utf<CharType>(begin, end, in_, conv::stop);
         }
@@ -302,7 +302,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
     public:
         converter(std::string out_enc, std::string in_enc) : out_(out_enc), in_(in_enc) {}
 
-        std::string operator()(char const* begin, char const* end)
+        std::string operator()(const char* begin, const char* end)
         {
             return conv::between(begin, end, out_, in_, conv::stop);
         }
@@ -316,7 +316,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
         typedef CharType char_type;
         typedef std::basic_string<char_type> string_type;
 
-        message_key(string_type const& c = string_type()) : c_context_(0), c_key_(0)
+        message_key(const string_type& c = string_type()) : c_context_(0), c_key_(0)
         {
             size_t pos = c.find(char_type(4));
             if(pos == string_type::npos) {
@@ -326,7 +326,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
                 key_ = c.substr(pos + 1);
             }
         }
-        message_key(char_type const* c, char_type const* k) : c_key_(k)
+        message_key(const char_type* c, const char_type* k) : c_key_(k)
         {
             static const char_type empty = 0;
             if(c != 0)
@@ -334,25 +334,25 @@ namespace boost { namespace locale { namespace gnu_gettext {
             else
                 c_context_ = &empty;
         }
-        bool operator<(message_key const& other) const
+        bool operator<(const message_key& other) const
         {
             int cc = compare(context(), other.context());
             if(cc != 0)
                 return cc < 0;
             return compare(key(), other.key()) < 0;
         }
-        bool operator==(message_key const& other) const
+        bool operator==(const message_key& other) const
         {
             return compare(context(), other.context()) == 0 && compare(key(), other.key()) == 0;
         }
-        bool operator!=(message_key const& other) const { return !(*this == other); }
-        char_type const* context() const
+        bool operator!=(const message_key& other) const { return !(*this == other); }
+        const char_type* context() const
         {
             if(c_context_)
                 return c_context_;
             return context_.c_str();
         }
-        char_type const* key() const
+        const char_type* key() const
         {
             if(c_key_)
                 return c_key_;
@@ -360,7 +360,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
         }
 
     private:
-        static int compare(char_type const* l, char_type const* r)
+        static int compare(const char_type* l, const char_type* r)
         {
             typedef std::char_traits<char_type> traits_type;
             for(;;) {
@@ -376,54 +376,54 @@ namespace boost { namespace locale { namespace gnu_gettext {
         }
         string_type context_;
         string_type key_;
-        char_type const* c_context_;
-        char_type const* c_key_;
+        const char_type* c_context_;
+        const char_type* c_key_;
     };
 
     template<typename CharType>
     struct hash_function {
-        size_t operator()(message_key<CharType> const& msg) const
+        size_t operator()(const message_key<CharType>& msg) const
         {
             pj_winberger_hash::state_type state = pj_winberger_hash::initial_state;
-            CharType const* p = msg.context();
+            const CharType* p = msg.context();
             if(*p != 0) {
-                CharType const* e = p;
+                const CharType* e = p;
                 while(*e)
                     e++;
                 state = pj_winberger_hash::update_state(state,
-                                                        reinterpret_cast<char const*>(p),
-                                                        reinterpret_cast<char const*>(e));
+                                                        reinterpret_cast<const char*>(p),
+                                                        reinterpret_cast<const char*>(e));
                 state = pj_winberger_hash::update_state(state, '\4');
             }
             p = msg.key();
-            CharType const* e = p;
+            const CharType* e = p;
             while(*e)
                 e++;
             state = pj_winberger_hash::update_state(state,
-                                                    reinterpret_cast<char const*>(p),
-                                                    reinterpret_cast<char const*>(e));
+                                                    reinterpret_cast<const char*>(p),
+                                                    reinterpret_cast<const char*>(e));
             return state;
         }
     };
 
     // By default for wide types the conversion is not requiredyy
     template<typename CharType>
-    CharType const* runtime_conversion(CharType const* msg,
+    const CharType* runtime_conversion(const CharType* msg,
                                        std::basic_string<CharType>& /*buffer*/,
                                        bool /*do_conversion*/,
-                                       std::string const& /*locale_encoding*/,
-                                       std::string const& /*key_encoding*/)
+                                       const std::string& /*locale_encoding*/,
+                                       const std::string& /*key_encoding*/)
     {
         return msg;
     }
 
     // But still need to specialize for char
     template<>
-    char const* runtime_conversion(char const* msg,
+    const char* runtime_conversion(const char* msg,
                                    std::string& buffer,
                                    bool do_conversion,
-                                   std::string const& locale_encoding,
-                                   std::string const& key_encoding)
+                                   const std::string& locale_encoding,
+                                   const std::string& key_encoding)
     {
         if(!do_conversion)
             return msg;
@@ -444,14 +444,14 @@ namespace boost { namespace locale { namespace gnu_gettext {
         typedef std::map<std::string, int> domains_map_type;
 
     public:
-        typedef std::pair<CharType const*, CharType const*> pair_type;
+        typedef std::pair<const CharType*, const CharType*> pair_type;
 
-        char_type const* get(int domain_id, char_type const* context, char_type const* in_id) const override
+        const char_type* get(int domain_id, const char_type* context, const char_type* in_id) const override
         {
             return get_string(domain_id, context, in_id).first;
         }
 
-        char_type const* get(int domain_id, char_type const* context, char_type const* single_id, int n) const override
+        const char_type* get(int domain_id, const char_type* context, const char_type* single_id, int n) const override
         {
             pair_type ptr = get_string(domain_id, context, single_id);
             if(!ptr.first)
@@ -462,7 +462,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
             else
                 form = n == 1 ? 0 : 1; // Fallback to english plural form
 
-            CharType const* p = ptr.first;
+            const CharType* p = ptr.first;
             for(int i = 0; p < ptr.second && i < form; i++) {
                 p = std::find(p, ptr.second, 0);
                 if(p == ptr.second)
@@ -474,7 +474,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
             return p;
         }
 
-        int domain(std::string const& domain) const override
+        int domain(const std::string& domain) const override
         {
             domains_map_type::const_iterator p = domains_.find(domain);
             if(p == domains_.end())
@@ -482,15 +482,15 @@ namespace boost { namespace locale { namespace gnu_gettext {
             return p->second;
         }
 
-        mo_message(messages_info const& inf) : key_conversion_required_(false)
+        mo_message(const messages_info& inf) : key_conversion_required_(false)
         {
             std::string language = inf.language;
             std::string variant = inf.variant;
             std::string country = inf.country;
             std::string encoding = inf.encoding;
             std::string lc_cat = inf.locale_category;
-            std::vector<messages_info::domain> const& domains = inf.domains;
-            std::vector<std::string> const& search_paths = inf.paths;
+            const std::vector<messages_info::domain>& domains = inf.domains;
+            const std::vector<std::string>& search_paths = inf.paths;
 
             //
             // List of fallbacks: en_US@euro, en@euro, en_US, en.
@@ -527,7 +527,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
             }
         }
 
-        char_type const* convert(char_type const* msg, string_type& buffer) const override
+        const char_type* convert(const char_type* msg, string_type& buffer) const override
         {
             return runtime_conversion<char_type>(msg,
                                                  buffer,
@@ -537,12 +537,12 @@ namespace boost { namespace locale { namespace gnu_gettext {
         }
 
     private:
-        int compare_encodings(std::string const& left, std::string const& right)
+        int compare_encodings(const std::string& left, const std::string& right)
         {
             return convert_encoding_name(left).compare(convert_encoding_name(right));
         }
 
-        std::string convert_encoding_name(std::string const& in)
+        std::string convert_encoding_name(const std::string& in)
         {
             std::string result;
             for(unsigned i = 0; i < in.size(); i++) {
@@ -558,11 +558,11 @@ namespace boost { namespace locale { namespace gnu_gettext {
             return result;
         }
 
-        bool load_file(std::string const& file_name,
-                       std::string const& locale_encoding,
-                       std::string const& key_encoding,
+        bool load_file(const std::string& file_name,
+                       const std::string& locale_encoding,
+                       const std::string& key_encoding,
                        int idx,
-                       messages_info::callback_type const& callback)
+                       const messages_info::callback_type& callback)
         {
             locale_encoding_ = locale_encoding;
             key_encoding_ = key_encoding;
@@ -602,7 +602,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
                 converter<CharType> cvt_value(locale_encoding, mo_encoding);
                 converter<CharType> cvt_key(key_encoding, mo_encoding);
                 for(unsigned i = 0; i < mo->size(); i++) {
-                    char const* ckey = mo->key(i);
+                    const char* ckey = mo->key(i);
                     string_type skey = cvt_key(ckey, ckey + strlen(ckey));
                     key_type key(skey);
 
@@ -619,7 +619,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
         // 2. The locale encoding and mo encoding is same
         // 3. The source strings encoding and mo encoding is same or all
         //    mo key strings are US-ASCII
-        bool mo_useable_directly(std::string const& mo_encoding, mo_file const& mo)
+        bool mo_useable_directly(const std::string& mo_encoding, const mo_file& mo)
         {
             BOOST_LOCALE_START_CONST_CONDITION
             if(sizeof(CharType) != 1)
@@ -640,7 +640,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
             return true;
         }
 
-        static std::string extract(std::string const& meta, std::string const& key, char const* separator)
+        static std::string extract(const std::string& meta, const std::string& key, const char* separator)
         {
             size_t pos = meta.find(key);
             if(pos == std::string::npos)
@@ -650,9 +650,9 @@ namespace boost { namespace locale { namespace gnu_gettext {
             return meta.substr(pos, end_pos - pos);
         }
 
-        pair_type get_string(int domain_id, char_type const* context, char_type const* in_id) const
+        pair_type get_string(int domain_id, const char_type* context, const char_type* in_id) const
         {
-            pair_type null_pair((CharType const*)0, (CharType const*)0);
+            pair_type null_pair((const CharType*)0, (const CharType*)0);
             if(domain_id < 0 || size_t(domain_id) >= catalogs_.size())
                 return null_pair;
             BOOST_LOCALE_START_CONST_CONDITION
@@ -661,7 +661,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
                 return mo_file_use_traits<char_type>::use(*mo_catalogs_[domain_id], context, in_id);
             } else {
                 key_type key(context, in_id);
-                catalog_type const& cat = catalogs_[domain_id];
+                const catalog_type& cat = catalogs_[domain_id];
                 typename catalog_type::const_iterator p = cat.find(key);
                 if(p == cat.end()) {
                     return null_pair;
@@ -681,13 +681,13 @@ namespace boost { namespace locale { namespace gnu_gettext {
     };
 
     template<>
-    message_format<char>* create_messages_facet(messages_info const& info)
+    message_format<char>* create_messages_facet(const messages_info& info)
     {
         return new mo_message<char>(info);
     }
 
     template<>
-    message_format<wchar_t>* create_messages_facet(messages_info const& info)
+    message_format<wchar_t>* create_messages_facet(const messages_info& info)
     {
         return new mo_message<wchar_t>(info);
     }
@@ -695,7 +695,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
 
     template<>
-    message_format<char16_t>* create_messages_facet(messages_info const& info)
+    message_format<char16_t>* create_messages_facet(const messages_info& info)
     {
         return new mo_message<char16_t>(info);
     }
@@ -704,7 +704,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
 
     template<>
-    message_format<char32_t>* create_messages_facet(messages_info const& info)
+    message_format<char32_t>* create_messages_facet(const messages_info& info)
     {
         return new mo_message<char32_t>(info);
     }

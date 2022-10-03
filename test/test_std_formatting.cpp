@@ -29,19 +29,19 @@ int main()
 #    endif
 
 template<typename C1, typename C2>
-bool equal(std::basic_string<C1> const& s1, std::basic_string<C2> const& s2)
+bool equal(const std::basic_string<C1>& s1, const std::basic_string<C2>& s2)
 {
     return boost::locale::conv::from_utf(s1, "UTF-8") == boost::locale::conv::from_utf(s2, "UTF-8");
 }
 
 template<>
-bool equal(std::string const& s1, std::string const& s2)
+bool equal(const std::string& s1, const std::string& s2)
 {
     return s1 == s2;
 }
 
 template<typename CharType>
-std::basic_string<CharType> conv_to_char(char const* p)
+std::basic_string<CharType> conv_to_char(const char* p)
 {
     std::basic_string<CharType> r;
     while(*p)
@@ -50,7 +50,7 @@ std::basic_string<CharType> conv_to_char(char const* p)
 }
 
 template<typename CharType, typename RefCharType>
-void test_by_char(std::locale const& l, std::locale const& lreal)
+void test_by_char(const std::locale& l, const std::locale& lreal)
 {
     typedef std::basic_stringstream<CharType> ss_type;
     typedef std::basic_stringstream<RefCharType> ss_ref_type;

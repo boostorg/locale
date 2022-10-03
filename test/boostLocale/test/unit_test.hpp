@@ -66,7 +66,7 @@ int main(int argc, char** argv)
 {
     try {
         test_main(argc, argv);
-    } catch(std::exception const& e) {
+    } catch(const std::exception& e) {
         std::cerr << "Failed " << e.what() << std::endl; // LCOV_EXCL_LINE
         return EXIT_FAILURE;                             // LCOV_EXCL_LINE
     }
@@ -81,7 +81,7 @@ int main(int argc, char** argv)
     return error_counter == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
-inline unsigned utf8_next(std::string const& s, unsigned& pos)
+inline unsigned utf8_next(const std::string& s, unsigned& pos)
 {
     unsigned c = (unsigned char)s[pos++];
     if((unsigned char)(c - 0xc0) >= 0x35)
@@ -107,7 +107,7 @@ inline unsigned utf8_next(std::string const& s, unsigned& pos)
 }
 
 template<typename Char>
-std::basic_string<Char> to(std::string const& utf8)
+std::basic_string<Char> to(const std::string& utf8)
 {
     std::basic_string<Char> out;
     unsigned i = 0;
@@ -141,7 +141,7 @@ std::string to_string(T const& s)
     return ss.str();
 }
 
-std::string const& to_string(std::string const& s)
+const std::string& to_string(const std::string& s)
 {
     return s;
 }
@@ -158,7 +158,7 @@ void stream_char(std::ostream& s, const Char c)
 }
 
 template<typename Char>
-std::string to_string(std::basic_string<Char> const& s)
+std::string to_string(const std::basic_string<Char>& s)
 {
     std::stringstream ss;
     for(size_t i = 0; i < s.size(); ++i)

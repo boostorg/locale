@@ -24,7 +24,7 @@
 namespace boost { namespace locale { namespace impl_icu {
     class uconv_converter : public util::base_converter {
     public:
-        uconv_converter(std::string const& encoding) : encoding_(encoding)
+        uconv_converter(const std::string& encoding) : encoding_(encoding)
         {
             UErrorCode err = U_ZERO_ERROR;
 
@@ -49,10 +49,10 @@ namespace boost { namespace locale { namespace impl_icu {
 
         uconv_converter* clone() const override { return new uconv_converter(encoding_); }
 
-        uint32_t to_unicode(char const*& begin, char const* end) override
+        uint32_t to_unicode(const char*& begin, const char* end) override
         {
             UErrorCode err = U_ZERO_ERROR;
-            char const* tmp = begin;
+            const char* tmp = begin;
             UChar32 c = ucnv_getNextUChar(cvt_, &tmp, end, &err);
             ucnv_reset(cvt_);
             if(err == U_TRUNCATED_CHAR_FOUND) {
@@ -66,7 +66,7 @@ namespace boost { namespace locale { namespace impl_icu {
             return c;
         }
 
-        uint32_t from_unicode(uint32_t u, char* begin, char const* end) override
+        uint32_t from_unicode(uint32_t u, char* begin, const char* end) override
         {
             UChar code_point[2] = {0};
             int len;
@@ -99,27 +99,27 @@ namespace boost { namespace locale { namespace impl_icu {
         int max_len_;
     };
 
-    std::unique_ptr<util::base_converter> create_uconv_converter(std::string const& encoding)
+    std::unique_ptr<util::base_converter> create_uconv_converter(const std::string& encoding)
     {
         try {
             return std::unique_ptr<util::base_converter>(new uconv_converter(encoding));
-        } catch(std::exception const& /*e*/) {
+        } catch(const std::exception& /*e*/) {
             return nullptr;
         }
     }
 
-    std::locale create_codecvt(std::locale const& in, std::string const& encoding, character_facet_type type)
+    std::locale create_codecvt(const std::locale& in, const std::string& encoding, character_facet_type type)
     {
         if(conv::impl::normalize_encoding(encoding.c_str()) == "utf8")
             return util::create_utf8_codecvt(in, type);
 
         try {
             return util::create_simple_codecvt(in, encoding, type);
-        } catch(boost::locale::conv::invalid_charset_error const&) {
+        } catch(const boost::locale::conv::invalid_charset_error&) {
             std::unique_ptr<util::base_converter> cvt;
             try {
                 cvt = create_uconv_converter(encoding);
-            } catch(std::exception const& /*e*/) {
+            } catch(const std::exception& /*e*/) {
                 cvt.reset(new util::base_converter());
             }
             return util::create_codecvt(in, std::move(cvt), type);

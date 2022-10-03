@@ -28,12 +28,12 @@ namespace boost { namespace locale { namespace util {
 
     template<typename CharType>
     struct formatting_size_traits {
-        static size_t size(std::basic_string<CharType> const& s, std::locale const& /*l*/) { return s.size(); }
+        static size_t size(const std::basic_string<CharType>& s, const std::locale& /*l*/) { return s.size(); }
     };
 
     template<>
     struct formatting_size_traits<char> {
-        static size_t size(std::string const& s, std::locale const& l)
+        static size_t size(const std::string& s, const std::locale& l)
         {
             if(!std::has_facet<info>(l))
                 return s.size();
@@ -170,7 +170,7 @@ namespace boost { namespace locale { namespace util {
                               std::ios_base& ios,
                               char_type fill,
                               std::time_t time,
-                              string_type const& format) const
+                              const string_type& format) const
         {
             std::string tz = ios_info::get(ios).time_zone();
             std::tm tm;

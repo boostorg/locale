@@ -20,13 +20,13 @@ namespace boost { namespace locale { namespace conv { namespace impl {
 
         ~iconverter_base() { close(); }
 
-        size_t conv(char const** inbufc, size_t* inchar_left, char** outbuf, size_t* outchar_left)
+        size_t conv(const char** inbufc, size_t* inchar_left, char** outbuf, size_t* outchar_left)
         {
             char** inbuf = const_cast<char**>(inbufc);
             return call_iconv(cvt_, inbuf, inchar_left, outbuf, outchar_left);
         }
 
-        bool do_open(char const* to, char const* from, method_type how)
+        bool do_open(const char* to, const char* from, method_type how)
         {
             close();
             cvt_ = iconv_open(to, from);
@@ -35,7 +35,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
         }
 
         template<typename OutChar, typename InChar>
-        std::basic_string<OutChar> real_convert(InChar const* ubegin, InChar const* uend)
+        std::basic_string<OutChar> real_convert(const InChar* ubegin, const InChar* uend)
         {
             std::basic_string<OutChar> sresult;
 
@@ -44,8 +44,8 @@ namespace boost { namespace locale { namespace conv { namespace impl {
             OutChar result[64];
 
             char* out_start = reinterpret_cast<char*>(&result[0]);
-            char const* begin = reinterpret_cast<char const*>(ubegin);
-            char const* end = reinterpret_cast<char const*>(uend);
+            const char* begin = reinterpret_cast<const char*>(ubegin);
+            const char* end = reinterpret_cast<const char*>(uend);
 
             enum { normal, unshifting, done } state = normal;
 
@@ -124,12 +124,12 @@ namespace boost { namespace locale { namespace conv { namespace impl {
     public:
         typedef CharType char_type;
 
-        bool open(char const* charset, method_type how) override
+        bool open(const char* charset, method_type how) override
         {
             return self_.do_open(charset, utf_name<CharType>(), how);
         }
 
-        std::string convert(char_type const* ubegin, char_type const* uend) override
+        std::string convert(const char_type* ubegin, const char_type* uend) override
         {
             return self_.template real_convert<char, char_type>(ubegin, uend);
         }
@@ -140,11 +140,11 @@ namespace boost { namespace locale { namespace conv { namespace impl {
 
     class iconv_between : public converter_between {
     public:
-        bool open(char const* to_charset, char const* from_charset, method_type how) override
+        bool open(const char* to_charset, const char* from_charset, method_type how) override
         {
             return self_.do_open(to_charset, from_charset, how);
         }
-        std::string convert(char const* begin, char const* end) override
+        std::string convert(const char* begin, const char* end) override
         {
             return self_.real_convert<char, char>(begin, end);
         }
@@ -159,12 +159,12 @@ namespace boost { namespace locale { namespace conv { namespace impl {
         typedef CharType char_type;
         typedef std::basic_string<char_type> string_type;
 
-        bool open(char const* charset, method_type how) override
+        bool open(const char* charset, method_type how) override
         {
             return self_.do_open(utf_name<CharType>(), charset, how);
         }
 
-        string_type convert(char const* begin, char const* end) override
+        string_type convert(const char* begin, const char* end) override
         {
             return self_.template real_convert<char_type, char>(begin, end);
         }

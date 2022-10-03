@@ -32,7 +32,7 @@ namespace boost { namespace locale {
     class generic_codecvt_base {
     public:
         ///
-        /// Initail state for converting to or from unicode code points, used by initial_state in derived classes
+        /// Initial state for converting to or from unicode code points, used by initial_state in derived classes
         ///
         enum initial_convertion_state {
             to_unicode_state,  ///< The state would be used by to_unicode functions
@@ -41,10 +41,10 @@ namespace boost { namespace locale {
     };
 
     ///
-    /// \brief Geneneric generic codecvt facet, various stateless encodings to UTF-16 and UTF-32 using wchar_t, char32_t
+    /// \brief Generic codecvt facet for various stateless encodings to UTF-16 and UTF-32 using wchar_t, char32_t
     /// and char16_t
     ///
-    /// Implementations should dervide from this class defining itself as CodecvtImpl and provide following members
+    /// Implementations should derive from this class defining itself as CodecvtImpl and provide following members
     ///
     /// - `state_type` - a type of special object that allows to store intermediate cached data, for example `iconv_t`
     /// descriptor
@@ -57,12 +57,12 @@ namespace boost { namespace locale {
     /// encoded to next code point, in case of incomplete sequence - utf::incomplete shell be returned, and in case of
     /// invalid input sequence utf::illegal shell be returned and begin would remain unmodified
     /// - `utf::code_point from_unicode(state_type &state,utf::code_point u,char *begin,char const *end)` - convert a
-    /// unicode code point `u` into a character seqnece at [begin,end). Return the length of the sequence in case of
+    /// unicode code point `u` into a character sequence at [begin,end). Return the length of the sequence in case of
     /// success, utf::incomplete in case of not enough room to encode the code point of utf::illegal in case conversion
     /// can not be performed
     ///
     ///
-    /// For example implementaion of codecvt for latin1/ISO-8859-1 character set
+    /// For example implementation of codecvt for latin1/ISO-8859-1 character set
     ///
     /// \code
     ///
@@ -163,7 +163,7 @@ namespace boost { namespace locale {
         typedef CharType uchar;
 
         generic_codecvt(size_t refs = 0) : std::codecvt<CharType, char, std::mbstate_t>(refs) {}
-        CodecvtImpl const& implementation() const { return *static_cast<CodecvtImpl const*>(this); }
+        const CodecvtImpl& implementation() const { return *static_cast<const CodecvtImpl*>(this); }
 
     protected:
         std::codecvt_base::result do_unshift(std::mbstate_t& s, char* from, char* /*to*/, char*& next) const override
@@ -190,27 +190,27 @@ namespace boost { namespace locale {
             return false;
         }
 
-        int do_length(std::mbstate_t
+        int do_length(
 #ifdef BOOST_LOCALE_DO_LENGTH_MBSTATE_CONST
-                      const
+          const
 #endif
-                        & std_state,
-                      char const* from,
-                      char const* from_end,
-                      size_t max) const override
+          std::mbstate_t& std_state,
+          const char* from,
+          const char* from_end,
+          size_t max) const override
         {
 #ifndef BOOST_LOCALE_DO_LENGTH_MBSTATE_CONST
-            char const* save_from = from;
+            const char* save_from = from;
             boost::uint16_t& state = *reinterpret_cast<boost::uint16_t*>(&std_state);
 #else
             size_t save_max = max;
-            boost::uint16_t state = *reinterpret_cast<boost::uint16_t const*>(&std_state);
+            boost::uint16_t state = *reinterpret_cast<const boost::uint16_t*>(&std_state);
 #endif
 
             typename CodecvtImpl::state_type cvt_state =
               implementation().initial_state(generic_codecvt_base::to_unicode_state);
             while(max > 0 && from < from_end) {
-                char const* prev_from = from;
+                const char* prev_from = from;
                 boost::uint32_t ch = implementation().to_unicode(cvt_state, from, from_end);
                 if(ch == boost::locale::utf::incomplete || ch == boost::locale::utf::illegal) {
                     from = prev_from;
@@ -234,9 +234,9 @@ namespace boost { namespace locale {
         }
 
         std::codecvt_base::result do_in(std::mbstate_t& std_state,
-                                        char const* from,
-                                        char const* from_end,
-                                        char const*& from_next,
+                                        const char* from,
+                                        const char* from_end,
+                                        const char*& from_next,
                                         uchar* to,
                                         uchar* to_end,
                                         uchar*& to_next) const override
@@ -257,7 +257,7 @@ namespace boost { namespace locale {
                 std::cout << "State " << std::hex << state << std::endl;
                 std::cout << "Left in " << std::dec << from_end - from << " out " << to_end - to << std::endl;
 #endif
-                char const* from_saved = from;
+                const char* from_saved = from;
 
                 uint32_t ch = implementation().to_unicode(cvt_state, from, from_end);
 
@@ -316,9 +316,9 @@ namespace boost { namespace locale {
         }
 
         std::codecvt_base::result do_out(std::mbstate_t& std_state,
-                                         uchar const* from,
-                                         uchar const* from_end,
-                                         uchar const*& from_next,
+                                         const uchar* from,
+                                         const uchar* from_end,
+                                         const uchar*& from_next,
                                          char* to,
                                          char* to_end,
                                          char*& to_next) const override
@@ -425,7 +425,7 @@ namespace boost { namespace locale {
 
         generic_codecvt(size_t refs = 0) : std::codecvt<CharType, char, std::mbstate_t>(refs) {}
 
-        CodecvtImpl const& implementation() const { return *static_cast<CodecvtImpl const*>(this); }
+        const CodecvtImpl& implementation() const { return *static_cast<const CodecvtImpl*>(this); }
 
     protected:
         std::codecvt_base::result
@@ -438,24 +438,24 @@ namespace boost { namespace locale {
         int do_max_length() const noexcept override { return implementation().max_encoding_length(); }
         bool do_always_noconv() const noexcept override { return false; }
 
-        int do_length(std::mbstate_t
+        int do_length(
 #ifdef BOOST_LOCALE_DO_LENGTH_MBSTATE_CONST
-                      const
+          const
 #endif
-                        & /*state*/,
-                      char const* from,
-                      char const* from_end,
-                      size_t max) const override
+          std::mbstate_t& /*state*/,
+          const char* from,
+          const char* from_end,
+          size_t max) const override
         {
 #ifndef BOOST_LOCALE_DO_LENGTH_MBSTATE_CONST
-            char const* start_from = from;
+            const char* start_from = from;
 #else
             size_t save_max = max;
 #endif
             typename CodecvtImpl::state_type cvt_state =
               implementation().initial_state(generic_codecvt_base::to_unicode_state);
             while(max > 0 && from < from_end) {
-                char const* save_from = from;
+                const char* save_from = from;
                 boost::uint32_t ch = implementation().to_unicode(cvt_state, from, from_end);
                 if(ch == boost::locale::utf::incomplete || ch == boost::locale::utf::illegal) {
                     from = save_from;
@@ -471,9 +471,9 @@ namespace boost { namespace locale {
         }
 
         std::codecvt_base::result do_in(std::mbstate_t& /*state*/,
-                                        char const* from,
-                                        char const* from_end,
-                                        char const*& from_next,
+                                        const char* from,
+                                        const char* from_end,
+                                        const char*& from_next,
                                         uchar* to,
                                         uchar* to_end,
                                         uchar*& to_next) const override
@@ -493,7 +493,7 @@ namespace boost { namespace locale {
                 std::cout << "State " << std::hex << state << std::endl;
                 std::cout << "Left in " << std::dec << from_end - from << " out " << to_end - to << std::endl;
 #endif
-                char const* from_saved = from;
+                const char* from_saved = from;
 
                 uint32_t ch = implementation().to_unicode(cvt_state, from, from_end);
 
@@ -528,9 +528,9 @@ namespace boost { namespace locale {
         }
 
         std::codecvt_base::result do_out(std::mbstate_t& /*std_state*/,
-                                         uchar const* from,
-                                         uchar const* from_end,
-                                         uchar const*& from_next,
+                                         const uchar* from,
+                                         const uchar* from_end,
+                                         const uchar*& from_next,
                                          char* to,
                                          char* to_end,
                                          char*& to_next) const override
@@ -586,7 +586,7 @@ namespace boost { namespace locale {
     public:
         typedef CharType uchar;
 
-        CodecvtImpl const& implementation() const { return *static_cast<CodecvtImpl const*>(this); }
+        const CodecvtImpl& implementation() const { return *static_cast<const CodecvtImpl*>(this); }
 
         generic_codecvt(size_t refs = 0) : std::codecvt<char, char, std::mbstate_t>(refs) {}
     };

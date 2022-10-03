@@ -32,8 +32,8 @@ namespace boost { namespace locale {
         ~hold_ptr() { delete ptr_; }
 
         // Non-copyable
-        hold_ptr(hold_ptr const&) = delete;
-        hold_ptr& operator=(hold_ptr const&) = delete;
+        hold_ptr(const hold_ptr&) = delete;
+        hold_ptr& operator=(const hold_ptr&) = delete;
 
         ///
         /// Get a const pointer to the object

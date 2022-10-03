@@ -28,14 +28,14 @@ namespace boost { namespace locale { namespace impl_posix {
 
     template<>
     struct coll_traits<char> {
-        static size_t xfrm(char* out, char const* in, size_t n, locale_t l) { return strxfrm_l(out, in, n, l); }
-        static size_t coll(char const* left, char const* right, locale_t l) { return strcoll_l(left, right, l); }
+        static size_t xfrm(char* out, const char* in, size_t n, locale_t l) { return strxfrm_l(out, in, n, l); }
+        static size_t coll(const char* left, const char* right, locale_t l) { return strcoll_l(left, right, l); }
     };
 
     template<>
     struct coll_traits<wchar_t> {
-        static size_t xfrm(wchar_t* out, wchar_t const* in, size_t n, locale_t l) { return wcsxfrm_l(out, in, n, l); }
-        static size_t coll(wchar_t const* left, wchar_t const* right, locale_t l) { return wcscoll_l(left, right, l); }
+        static size_t xfrm(wchar_t* out, const wchar_t* in, size_t n, locale_t l) { return wcsxfrm_l(out, in, n, l); }
+        static size_t coll(const wchar_t* left, const wchar_t* right, locale_t l) { return wcscoll_l(left, right, l); }
     };
 
     template<typename CharType>
@@ -46,7 +46,7 @@ namespace boost { namespace locale { namespace impl_posix {
         collator(std::shared_ptr<locale_t> l, size_t refs = 0) : std::collate<CharType>(refs), lc_(std::move(l)) {}
 
         int
-        do_compare(char_type const* lb, char_type const* le, char_type const* rb, char_type const* re) const override
+        do_compare(const char_type* lb, const char_type* le, const char_type* rb, const char_type* re) const override
         {
             string_type left(lb, le - lb);
             string_type right(rb, re - rb);
@@ -57,14 +57,14 @@ namespace boost { namespace locale { namespace impl_posix {
                 return 1;
             return 0;
         }
-        long do_hash(char_type const* b, char_type const* e) const override
+        long do_hash(const char_type* b, const char_type* e) const override
         {
             string_type s(do_transform(b, e));
-            char const* begin = reinterpret_cast<char const*>(s.c_str());
-            char const* end = begin + s.size() * sizeof(char_type);
+            const char* begin = reinterpret_cast<const char*>(s.c_str());
+            const char* end = begin + s.size() * sizeof(char_type);
             return gnu_gettext::pj_winberger_hash_function(begin, end);
         }
-        string_type do_transform(char_type const* b, char_type const* e) const override
+        string_type do_transform(const char_type* b, const char_type* e) const override
         {
             string_type s(b, e - b);
             std::vector<char_type> buf((e - b) * 2 + 1);
@@ -80,7 +80,7 @@ namespace boost { namespace locale { namespace impl_posix {
         std::shared_ptr<locale_t> lc_;
     };
 
-    std::locale create_collate(std::locale const& in, std::shared_ptr<locale_t> lc, character_facet_type type)
+    std::locale create_collate(const std::locale& in, std::shared_ptr<locale_t> lc, character_facet_type type)
     {
         switch(type) {
             case char_facet: return std::locale(in, new collator<char>(std::move(lc)));

@@ -10,7 +10,7 @@
 #include <string>
 
 namespace boost { namespace locale { namespace util {
-    void locale_data::parse(std::string const& locale_name)
+    void locale_data::parse(const std::string& locale_name)
     {
         language = "C";
         country.clear();
@@ -20,7 +20,7 @@ namespace boost { namespace locale { namespace util {
         parse_from_lang(locale_name);
     }
 
-    void locale_data::parse_from_lang(std::string const& locale_name)
+    void locale_data::parse_from_lang(const std::string& locale_name)
     {
         size_t end = locale_name.find_first_of("-_@.");
         std::string tmp = locale_name.substr(0, end);
@@ -45,7 +45,7 @@ namespace boost { namespace locale { namespace util {
         }
     }
 
-    void locale_data::parse_from_country(std::string const& locale_name)
+    void locale_data::parse_from_country(const std::string& locale_name)
     {
         size_t end = locale_name.find_first_of("@.");
         std::string tmp = locale_name.substr(0, end);
@@ -69,7 +69,7 @@ namespace boost { namespace locale { namespace util {
         }
     }
 
-    void locale_data::parse_from_encoding(std::string const& locale_name)
+    void locale_data::parse_from_encoding(const std::string& locale_name)
     {
         size_t end = locale_name.find_first_of('@');
         std::string tmp = locale_name.substr(0, end);
@@ -91,7 +91,7 @@ namespace boost { namespace locale { namespace util {
         }
     }
 
-    void locale_data::parse_from_variant(std::string const& locale_name)
+    void locale_data::parse_from_variant(const std::string& locale_name)
     {
         variant = locale_name;
         for(unsigned i = 0; i < variant.size(); i++) {

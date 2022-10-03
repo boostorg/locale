@@ -33,7 +33,7 @@ namespace boost { namespace locale {
         ///
         /// Set global time zone identifier returning previous one. If empty, system time zone is used
         ///
-        BOOST_LOCALE_DECL std::string global(std::string const& new_tz);
+        BOOST_LOCALE_DECL std::string global(const std::string& new_tz);
     } // namespace time_zone
 
     /// @}

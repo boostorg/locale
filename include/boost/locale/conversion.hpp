@@ -64,7 +64,7 @@ namespace boost { namespace locale {
         /// \a flags is used for specification of normalization method like nfd, nfc etc.
         ///
         virtual std::basic_string<Char>
-        convert(conversion_type how, Char const* begin, Char const* end, int flags = 0) const = 0;
+        convert(conversion_type how, const Char* begin, const Char* end, int flags = 0) const = 0;
     };
 #else
 
@@ -75,7 +75,7 @@ namespace boost { namespace locale {
 
         converter(size_t refs = 0) : std::locale::facet(refs) {}
         ~converter();
-        virtual std::string convert(conversion_type how, char const* begin, char const* end, int flags = 0) const = 0;
+        virtual std::string convert(conversion_type how, const char* begin, const char* end, int flags = 0) const = 0;
     };
 
     template<>
@@ -85,7 +85,7 @@ namespace boost { namespace locale {
         converter(size_t refs = 0) : std::locale::facet(refs) {}
         ~converter();
         virtual std::wstring
-        convert(conversion_type how, wchar_t const* begin, wchar_t const* end, int flags = 0) const = 0;
+        convert(conversion_type how, const wchar_t* begin, const wchar_t* end, int flags = 0) const = 0;
     };
 
 #    ifdef BOOST_LOCALE_ENABLE_CHAR16_T
@@ -96,7 +96,7 @@ namespace boost { namespace locale {
         converter(size_t refs = 0) : std::locale::facet(refs) {}
         ~converter();
         virtual std::u16string
-        convert(conversion_type how, char16_t const* begin, char16_t const* end, int flags = 0) const = 0;
+        convert(conversion_type how, const char16_t* begin, const char16_t* end, int flags = 0) const = 0;
     };
 #    endif
 
@@ -108,7 +108,7 @@ namespace boost { namespace locale {
         converter(size_t refs = 0) : std::locale::facet(refs) {}
         ~converter();
         virtual std::u32string
-        convert(conversion_type how, char32_t const* begin, char32_t const* end, int flags = 0) const = 0;
+        convert(conversion_type how, const char32_t* begin, const char32_t* end, int flags = 0) const = 0;
     };
 #    endif
 
@@ -136,9 +136,9 @@ namespace boost { namespace locale {
     /// \note throws std::bad_cast if loc does not have \ref converter facet installed
     ///
     template<typename CharType>
-    std::basic_string<CharType> normalize(std::basic_string<CharType> const& str,
+    std::basic_string<CharType> normalize(const std::basic_string<CharType>& str,
                                           norm_type n = norm_default,
-                                          std::locale const& loc = std::locale())
+                                          const std::locale& loc = std::locale())
     {
         return std::use_facet<converter<CharType>>(loc).convert(converter_base::normalization,
                                                                 str.data(),
@@ -157,9 +157,9 @@ namespace boost { namespace locale {
     ///
     template<typename CharType>
     std::basic_string<CharType>
-    normalize(CharType const* str, norm_type n = norm_default, std::locale const& loc = std::locale())
+    normalize(const CharType* str, norm_type n = norm_default, const std::locale& loc = std::locale())
     {
-        CharType const* end = str;
+        const CharType* end = str;
         while(*end)
             end++;
         return std::use_facet<converter<CharType>>(loc).convert(converter_base::normalization, str, end, n);
@@ -175,10 +175,10 @@ namespace boost { namespace locale {
     /// \note throws std::bad_cast if loc does not have \ref converter facet installed
     ///
     template<typename CharType>
-    std::basic_string<CharType> normalize(CharType const* begin,
-                                          CharType const* end,
+    std::basic_string<CharType> normalize(const CharType* begin,
+                                          const CharType* end,
                                           norm_type n = norm_default,
-                                          std::locale const& loc = std::locale())
+                                          const std::locale& loc = std::locale())
     {
         return std::use_facet<converter<CharType>>(loc).convert(converter_base::normalization, begin, end, n);
     }
@@ -192,7 +192,7 @@ namespace boost { namespace locale {
     ///
 
     template<typename CharType>
-    std::basic_string<CharType> to_upper(std::basic_string<CharType> const& str, std::locale const& loc = std::locale())
+    std::basic_string<CharType> to_upper(const std::basic_string<CharType>& str, const std::locale& loc = std::locale())
     {
         return std::use_facet<converter<CharType>>(loc).convert(converter_base::upper_case,
                                                                 str.data(),
@@ -205,9 +205,9 @@ namespace boost { namespace locale {
     /// \note throws std::bad_cast if loc does not have \ref converter facet installed
     ///
     template<typename CharType>
-    std::basic_string<CharType> to_upper(CharType const* str, std::locale const& loc = std::locale())
+    std::basic_string<CharType> to_upper(const CharType* str, const std::locale& loc = std::locale())
     {
-        CharType const* end = str;
+        const CharType* end = str;
         while(*end)
             end++;
         return std::use_facet<converter<CharType>>(loc).convert(converter_base::upper_case, str, end);
@@ -220,7 +220,7 @@ namespace boost { namespace locale {
     ///
     template<typename CharType>
     std::basic_string<CharType>
-    to_upper(CharType const* begin, CharType const* end, std::locale const& loc = std::locale())
+    to_upper(const CharType* begin, const CharType* end, const std::locale& loc = std::locale())
     {
         return std::use_facet<converter<CharType>>(loc).convert(converter_base::upper_case, begin, end);
     }
@@ -234,7 +234,7 @@ namespace boost { namespace locale {
     ///
 
     template<typename CharType>
-    std::basic_string<CharType> to_lower(std::basic_string<CharType> const& str, std::locale const& loc = std::locale())
+    std::basic_string<CharType> to_lower(const std::basic_string<CharType>& str, const std::locale& loc = std::locale())
     {
         return std::use_facet<converter<CharType>>(loc).convert(converter_base::lower_case,
                                                                 str.data(),
@@ -247,9 +247,9 @@ namespace boost { namespace locale {
     /// \note throws std::bad_cast if loc does not have \ref converter facet installed
     ///
     template<typename CharType>
-    std::basic_string<CharType> to_lower(CharType const* str, std::locale const& loc = std::locale())
+    std::basic_string<CharType> to_lower(const CharType* str, const std::locale& loc = std::locale())
     {
-        CharType const* end = str;
+        const CharType* end = str;
         while(*end)
             end++;
         return std::use_facet<converter<CharType>>(loc).convert(converter_base::lower_case, str, end);
@@ -262,7 +262,7 @@ namespace boost { namespace locale {
     ///
     template<typename CharType>
     std::basic_string<CharType>
-    to_lower(CharType const* begin, CharType const* end, std::locale const& loc = std::locale())
+    to_lower(const CharType* begin, const CharType* end, const std::locale& loc = std::locale())
     {
         return std::use_facet<converter<CharType>>(loc).convert(converter_base::lower_case, begin, end);
     }
@@ -275,7 +275,7 @@ namespace boost { namespace locale {
     ///
 
     template<typename CharType>
-    std::basic_string<CharType> to_title(std::basic_string<CharType> const& str, std::locale const& loc = std::locale())
+    std::basic_string<CharType> to_title(const std::basic_string<CharType>& str, const std::locale& loc = std::locale())
     {
         return std::use_facet<converter<CharType>>(loc).convert(converter_base::title_case,
                                                                 str.data(),
@@ -288,9 +288,9 @@ namespace boost { namespace locale {
     /// \note throws std::bad_cast if loc does not have \ref converter facet installed
     ///
     template<typename CharType>
-    std::basic_string<CharType> to_title(CharType const* str, std::locale const& loc = std::locale())
+    std::basic_string<CharType> to_title(const CharType* str, const std::locale& loc = std::locale())
     {
-        CharType const* end = str;
+        const CharType* end = str;
         while(*end)
             end++;
         return std::use_facet<converter<CharType>>(loc).convert(converter_base::title_case, str, end);
@@ -303,7 +303,7 @@ namespace boost { namespace locale {
     ///
     template<typename CharType>
     std::basic_string<CharType>
-    to_title(CharType const* begin, CharType const* end, std::locale const& loc = std::locale())
+    to_title(const CharType* begin, const CharType* end, const std::locale& loc = std::locale())
     {
         return std::use_facet<converter<CharType>>(loc).convert(converter_base::title_case, begin, end);
     }
@@ -317,8 +317,8 @@ namespace boost { namespace locale {
     ///
 
     template<typename CharType>
-    std::basic_string<CharType> fold_case(std::basic_string<CharType> const& str,
-                                          std::locale const& loc = std::locale())
+    std::basic_string<CharType> fold_case(const std::basic_string<CharType>& str,
+                                          const std::locale& loc = std::locale())
     {
         return std::use_facet<converter<CharType>>(loc).convert(converter_base::case_folding,
                                                                 str.data(),
@@ -331,9 +331,9 @@ namespace boost { namespace locale {
     /// \note throws std::bad_cast if loc does not have \ref converter facet installed
     ///
     template<typename CharType>
-    std::basic_string<CharType> fold_case(CharType const* str, std::locale const& loc = std::locale())
+    std::basic_string<CharType> fold_case(const CharType* str, const std::locale& loc = std::locale())
     {
-        CharType const* end = str;
+        const CharType* end = str;
         while(*end)
             end++;
         return std::use_facet<converter<CharType>>(loc).convert(converter_base::case_folding, str, end);
@@ -346,7 +346,7 @@ namespace boost { namespace locale {
     ///
     template<typename CharType>
     std::basic_string<CharType>
-    fold_case(CharType const* begin, CharType const* end, std::locale const& loc = std::locale())
+    fold_case(const CharType* begin, const CharType* end, const std::locale& loc = std::locale())
     {
         return std::use_facet<converter<CharType>>(loc).convert(converter_base::case_folding, begin, end);
     }

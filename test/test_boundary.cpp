@@ -25,11 +25,11 @@ int main()
 // Debugging code
 
 template<typename Char>
-void print_str(std::basic_string<Char> const& /*s*/)
+void print_str(const std::basic_string<Char>& /*s*/)
 {}
 
 template<>
-void print_str<char>(std::basic_string<char> const& s)
+void print_str<char>(const std::basic_string<char>& s)
 {
     std::cout << "[" << s << "]\n";
 }
@@ -39,9 +39,9 @@ namespace lb = boost::locale::boundary;
 template<typename Char, typename Iterator>
 void test_word_container(Iterator begin,
                          Iterator end,
-                         std::vector<size_t> const& ipos,
-                         std::vector<unsigned> const& imasks,
-                         std::vector<std::basic_string<Char>> const& ichunks,
+                         const std::vector<size_t>& ipos,
+                         const std::vector<unsigned>& imasks,
+                         const std::vector<std::basic_string<Char>>& ichunks,
                          std::locale l,
                          lb::boundary_type bt = lb::word)
 {
@@ -445,7 +445,7 @@ void word_boundary()
     run_word<char32_t>(txt_all, none_all, num_all, word_all, kana_all, ideo_all, utf8_jp_locale);
 #    endif
 }
-void test_op_one_side(std::string const& sl, std::string const& sr, int val)
+void test_op_one_side(const std::string& sl, const std::string& sr, int val)
 {
     boost::locale::boundary::ssegment l(sl.begin(), sl.end(), 0), r(sr.begin(), sr.end(), 0);
 
@@ -495,7 +495,7 @@ void test_op_one_side(std::string const& sl, std::string const& sr, int val)
     TEST((sl > sr) == (val > 0));
 }
 
-void test_op(std::string const& sl, std::string const& sr, int val)
+void test_op(const std::string& sl, const std::string& sr, int val)
 {
     test_op_one_side(sl, sr, val);
     test_op_one_side(sr, sl, -val);

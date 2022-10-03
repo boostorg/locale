@@ -10,7 +10,7 @@
 #include "boostLocale/test/unit_test.hpp"
 #include <iomanip>
 
-bool has_message(std::locale const& l)
+bool has_message(const std::locale& l)
 {
     return std::has_facet<boost::locale::message_format<char>>(l);
 }

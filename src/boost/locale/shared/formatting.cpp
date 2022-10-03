@@ -18,7 +18,7 @@ namespace boost { namespace locale {
     {
         delete[] ptr;
     }
-    ios_info::string_set::string_set(string_set const& other)
+    ios_info::string_set::string_set(const string_set& other)
     {
         if(other.ptr != 0) {
             ptr = new char[other.size];
@@ -53,7 +53,7 @@ namespace boost { namespace locale {
     }
     ios_info::~ios_info() {}
 
-    ios_info::ios_info(ios_info const& other)
+    ios_info::ios_info(const ios_info& other)
     {
         flags_ = other.flags_;
         domain_id_ = other.domain_id_;
@@ -61,7 +61,7 @@ namespace boost { namespace locale {
         datetime_ = other.datetime_;
     }
 
-    ios_info& ios_info::operator=(ios_info const& other)
+    ios_info& ios_info::operator=(const ios_info& other)
     {
         if(this != &other) {
             flags_ = other.flags_;
@@ -94,7 +94,7 @@ namespace boost { namespace locale {
         domain_id_ = id;
     }
 
-    void ios_info::time_zone(std::string const& tz)
+    void ios_info::time_zone(const std::string& tz)
     {
         time_zone_ = tz;
     }
@@ -129,7 +129,7 @@ namespace boost { namespace locale {
         return time_zone_;
     }
 
-    ios_info::string_set const& ios_info::date_time_pattern_set() const
+    const ios_info::string_set& ios_info::date_time_pattern_set() const
     {
         return datetime_;
     }

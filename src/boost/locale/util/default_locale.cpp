@@ -23,7 +23,7 @@
 namespace boost { namespace locale { namespace util {
     std::string get_system_locale(bool use_utf8)
     {
-        char const* lang = 0;
+        const char* lang = 0;
         if(!lang || !*lang)
             lang = getenv("LC_CTYPE");
         if(!lang || !*lang)

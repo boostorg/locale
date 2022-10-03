@@ -49,11 +49,11 @@ namespace boost { namespace locale { namespace impl_icu {
         typedef CharType char_type;
         typedef std::basic_string<char_type> string_type;
 
-        converter_impl(cdata const& d) : locale_(d.locale), encoding_(d.encoding) {}
+        converter_impl(const cdata& d) : locale_(d.locale), encoding_(d.encoding) {}
 
         string_type convert(converter_base::conversion_type how,
-                            char_type const* begin,
-                            char_type const* end,
+                            const char_type* begin,
+                            const char_type* end,
                             int flags = 0) const override
         {
             icu_std_converter<char_type> cvt(encoding_);
@@ -77,10 +77,10 @@ namespace boost { namespace locale { namespace impl_icu {
 #ifdef BOOST_LOCALE_WITH_CASEMAP
     class raii_casemap {
     public:
-        raii_casemap(raii_casemap const&) = delete;
-        void operator=(raii_casemap const&) = delete;
+        raii_casemap(const raii_casemap&) = delete;
+        void operator=(const raii_casemap&) = delete;
 
-        raii_casemap(std::string const& locale_id) : map_(0)
+        raii_casemap(const std::string& locale_id) : map_(0)
         {
             UErrorCode err = U_ZERO_ERROR;
             map_ = ucasemap_open(locale_id.c_str(), 0, &err);
@@ -89,7 +89,7 @@ namespace boost { namespace locale { namespace impl_icu {
                 throw std::runtime_error("Failed to create UCaseMap");
         }
         template<typename Conv>
-        std::string convert(Conv func, char const* begin, char const* end) const
+        std::string convert(Conv func, const char* begin, const char* end) const
         {
             std::vector<char> buf((end - begin) * 11 / 10 + 1);
             UErrorCode err = U_ZERO_ERROR;
@@ -110,10 +110,10 @@ namespace boost { namespace locale { namespace impl_icu {
 
     class utf8_converter_impl : public converter<char> {
     public:
-        utf8_converter_impl(cdata const& d) : locale_id_(d.locale.getName()), map_(locale_id_) {}
+        utf8_converter_impl(const cdata& d) : locale_id_(d.locale.getName()), map_(locale_id_) {}
 
         std::string
-        convert(converter_base::conversion_type how, char const* begin, char const* end, int flags = 0) const override
+        convert(converter_base::conversion_type how, const char* begin, const char* end, int flags = 0) const override
         {
             if(how == converter_base::normalization) {
                 icu_std_converter<char> cvt("UTF-8");
@@ -142,7 +142,7 @@ namespace boost { namespace locale { namespace impl_icu {
 
 #endif // BOOST_LOCALE_WITH_CASEMAP
 
-    std::locale create_convert(std::locale const& in, cdata const& cd, character_facet_type type)
+    std::locale create_convert(const std::locale& in, const cdata& cd, character_facet_type type)
     {
         switch(type) {
             case char_facet:

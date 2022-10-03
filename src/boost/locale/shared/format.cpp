@@ -21,10 +21,10 @@ namespace boost { namespace locale { namespace detail {
         std::locale saved_locale;
         bool restore_locale;
         void* cookie;
-        void (*imbuer)(void*, std::locale const&);
+        void (*imbuer)(void*, const std::locale&);
     };
 
-    format_parser::format_parser(std::ios_base& ios, void* cookie, void (*imbuer)(void*, std::locale const&)) :
+    format_parser::format_parser(std::ios_base& ios, void* cookie, void (*imbuer)(void*, const std::locale&)) :
         ios_(ios), d(new data)
     {
         d->position = std::numeric_limits<unsigned>::max();
@@ -37,7 +37,7 @@ namespace boost { namespace locale { namespace detail {
         d->imbuer = imbuer;
     }
 
-    void format_parser::imbue(std::locale const& l)
+    void format_parser::imbue(const std::locale& l)
     {
         d->imbuer(d->cookie, l);
     }
@@ -58,7 +58,7 @@ namespace boost { namespace locale { namespace detail {
         return d->position;
     }
 
-    void format_parser::set_one_flag(std::string const& key, std::string const& value)
+    void format_parser::set_one_flag(const std::string& key, const std::string& value)
     {
         if(key.empty())
             return;

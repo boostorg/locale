@@ -42,8 +42,8 @@ namespace boost { namespace locale {
     ///
 
     class localization_backend {
-        localization_backend(localization_backend const&);
-        void operator=(localization_backend const&);
+        localization_backend(const localization_backend&);
+        void operator=(const localization_backend&);
 
     public:
         localization_backend() {}
@@ -58,7 +58,7 @@ namespace boost { namespace locale {
         ///
         /// Set option for backend, for example "locale" or "encoding"
         ///
-        virtual void set_option(std::string const& name, std::string const& value) = 0;
+        virtual void set_option(const std::string& name, const std::string& value) = 0;
 
         ///
         /// Clear all options
@@ -69,7 +69,7 @@ namespace boost { namespace locale {
         /// Create a facet for category \a category and character type \a type
         ///
         virtual std::locale
-        install(std::locale const& base, locale_category_type category, character_facet_type type = nochar_facet) = 0;
+        install(const std::locale& base, locale_category_type category, character_facet_type type = nochar_facet) = 0;
 
     }; // localization_backend
 
@@ -87,11 +87,11 @@ namespace boost { namespace locale {
         ///
         /// Copy localization_backend_manager
         ///
-        localization_backend_manager(localization_backend_manager const&);
+        localization_backend_manager(const localization_backend_manager&);
         ///
         /// Assign localization_backend_manager
         ///
-        localization_backend_manager& operator=(localization_backend_manager const&);
+        localization_backend_manager& operator=(const localization_backend_manager&);
 
         ///
         /// Destructor
@@ -111,7 +111,7 @@ namespace boost { namespace locale {
         ///
         /// This library provides: "icu", "posix", "winapi" and "std" backends.
         ///
-        void add_backend(std::string const& name, std::unique_ptr<localization_backend> backend);
+        void add_backend(const std::string& name, std::unique_ptr<localization_backend> backend);
 
         ///
         /// Create new localization backend according to current settings. Ownership is passed to caller
@@ -123,7 +123,7 @@ namespace boost { namespace locale {
         ///
         /// This library provides: "icu", "posix", "winapi" and "std" backends.
         ///
-        void adopt_backend(std::string const& name, localization_backend* backend);
+        void adopt_backend(const std::string& name, localization_backend* backend);
 
         ///
         /// Clear backend
@@ -139,14 +139,14 @@ namespace boost { namespace locale {
         /// Select specific backend by name for a category \a category. It allows combining different
         /// backends for user preferences.
         ///
-        void select(std::string const& backend_name, locale_category_type category = all_categories);
+        void select(const std::string& backend_name, locale_category_type category = all_categories);
 
         ///
         /// Set new global backend manager, the old one is returned.
         ///
         /// This function is thread safe
         ///
-        static localization_backend_manager global(localization_backend_manager const&);
+        static localization_backend_manager global(const localization_backend_manager&);
         ///
         /// Get global backend manager
         ///

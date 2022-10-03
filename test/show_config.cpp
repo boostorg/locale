@@ -24,15 +24,15 @@
 
 #include "boostLocale/test/tools.hpp"
 
-char const* env(char const* s)
+const char* env(const char* s)
 {
-    char const* r = getenv(s);
+    const char* r = getenv(s);
     if(r)
         return r;
     return "";
 }
 
-void check_locale(const std::vector<char const*>& names)
+void check_locale(const std::vector<const char*>& names)
 {
     std::cout << "  " << std::setw(32) << "locale" << std::setw(4) << "C" << std::setw(4) << "C++\n";
     for(const char* name : names) {
@@ -45,7 +45,7 @@ void check_locale(const std::vector<char const*>& names)
         try {
             std::locale l(name);
             std::cout << "Yes";
-        } catch(std::exception const&) {
+        } catch(const std::exception&) {
             std::cout << "No";
         }
         std::cout << std::endl;
@@ -79,7 +79,7 @@ int main()
     std::cout << "  LC_CTYPE=" << env("LC_CTYPE") << std::endl;
     std::cout << "  TZ=" << env("TZ") << std::endl;
 
-    char const* clocale = setlocale(LC_ALL, "");
+    const char* clocale = setlocale(LC_ALL, "");
     if(!clocale)
         clocale = "undetected"; // LCOV_EXCL_LINE
     std::cout << "- C locale: " << clocale << std::endl;
@@ -91,11 +91,11 @@ int main()
 #else
         std::cout << "- C++ locale: " << loc.name() << std::endl;
 #endif
-    } catch(std::exception const&) {
+    } catch(const std::exception&) {
         std::cout << "- C++ locale: is not supported\n"; // LCOV_EXCL_LINE
     }
 
-    const std::vector<char const*> locales_to_check = {
+    const std::vector<const char*> locales_to_check = {
       "en_US.UTF-8",
       "en_US.ISO8859-1",
       "English_United States.1252",
@@ -130,7 +130,7 @@ int main()
         boost::locale::generator gen;
         std::locale l = gen("");
         std::cout << std::use_facet<boost::locale::info>(l).name() << std::endl;
-    } catch(std::exception const&) {
+    } catch(const std::exception&) {
         std::cout << " undetected\n"; // LCOV_EXCL_LINE
         return EXIT_FAILURE;          // LCOV_EXCL_LINE
     }

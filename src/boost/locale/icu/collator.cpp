@@ -44,10 +44,10 @@ namespace boost { namespace locale { namespace impl_icu {
 
 #if BOOST_LOCALE_WITH_STRINGPIECE
         int do_utf8_compare(level_type level,
-                            char const* b1,
-                            char const* e1,
-                            char const* b2,
-                            char const* e2,
+                            const char* b1,
+                            const char* e1,
+                            const char* b2,
+                            const char* e2,
                             UErrorCode& status) const
         {
             icu::StringPiece left(b1, e1 - b1);
@@ -57,10 +57,10 @@ namespace boost { namespace locale { namespace impl_icu {
 #endif
 
         int do_ustring_compare(level_type level,
-                               CharType const* b1,
-                               CharType const* e1,
-                               CharType const* b2,
-                               CharType const* e2,
+                               const CharType* b1,
+                               const CharType* e1,
+                               const CharType* b2,
+                               const CharType* e2,
                                UErrorCode& status) const
         {
             icu::UnicodeString left = cvt_.icu(b1, e1);
@@ -69,20 +69,20 @@ namespace boost { namespace locale { namespace impl_icu {
         }
 
         int do_real_compare(level_type level,
-                            CharType const* b1,
-                            CharType const* e1,
-                            CharType const* b2,
-                            CharType const* e2,
+                            const CharType* b1,
+                            const CharType* e1,
+                            const CharType* b2,
+                            const CharType* e2,
                             UErrorCode& status) const
         {
             return do_ustring_compare(level, b1, e1, b2, e2, status);
         }
 
         int do_compare(level_type level,
-                       CharType const* b1,
-                       CharType const* e1,
-                       CharType const* b2,
-                       CharType const* e2) const override
+                       const CharType* b1,
+                       const CharType* e1,
+                       const CharType* b2,
+                       const CharType* e2) const override
         {
             UErrorCode status = U_ZERO_ERROR;
 
@@ -97,7 +97,7 @@ namespace boost { namespace locale { namespace impl_icu {
             return 0;
         }
 
-        std::vector<uint8_t> do_basic_transform(level_type level, CharType const* b, CharType const* e) const
+        std::vector<uint8_t> do_basic_transform(level_type level, const CharType* b, const CharType* e) const
         {
             icu::UnicodeString str = cvt_.icu(b, e);
             std::vector<uint8_t> tmp;
@@ -111,20 +111,20 @@ namespace boost { namespace locale { namespace impl_icu {
                 tmp.resize(len);
             return tmp;
         }
-        std::basic_string<CharType> do_transform(level_type level, CharType const* b, CharType const* e) const override
+        std::basic_string<CharType> do_transform(level_type level, const CharType* b, const CharType* e) const override
         {
             std::vector<uint8_t> tmp = do_basic_transform(level, b, e);
             return std::basic_string<CharType>(tmp.begin(), tmp.end());
         }
 
-        long do_hash(level_type level, CharType const* b, CharType const* e) const override
+        long do_hash(level_type level, const CharType* b, const CharType* e) const override
         {
             std::vector<uint8_t> tmp = do_basic_transform(level, b, e);
             tmp.push_back(0);
             return gnu_gettext::pj_winberger_hash_function(reinterpret_cast<char*>(&tmp.front()));
         }
 
-        collate_impl(cdata const& d) : cvt_(d.encoding), locale_(d.locale), is_utf8_(d.utf8) {}
+        collate_impl(const cdata& d) : cvt_(d.encoding), locale_(d.locale), is_utf8_(d.utf8) {}
 
         icu::Collator* get_collator(level_type ilevel) const
         {
@@ -161,10 +161,10 @@ namespace boost { namespace locale { namespace impl_icu {
 #if BOOST_LOCALE_WITH_STRINGPIECE
     template<>
     int collate_impl<char>::do_real_compare(level_type level,
-                                            char const* b1,
-                                            char const* e1,
-                                            char const* b2,
-                                            char const* e2,
+                                            const char* b1,
+                                            const char* e1,
+                                            const char* b2,
+                                            const char* e2,
                                             UErrorCode& status) const
     {
         if(is_utf8_)
@@ -174,7 +174,7 @@ namespace boost { namespace locale { namespace impl_icu {
     }
 #endif
 
-    std::locale create_collate(std::locale const& in, cdata const& cd, character_facet_type type)
+    std::locale create_collate(const std::locale& in, const cdata& cd, character_facet_type type)
     {
         switch(type) {
             case char_facet: return std::locale(in, new collate_impl<char>(cd));

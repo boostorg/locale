@@ -25,7 +25,7 @@ namespace boost { namespace locale { namespace impl_posix {
 #ifdef BOOST_LOCALE_WITH_ICONV
     class mb2_iconv_converter : public util::base_converter {
     public:
-        mb2_iconv_converter(std::string const& encoding) :
+        mb2_iconv_converter(const std::string& encoding) :
             encoding_(encoding), to_utf_((iconv_t)(-1)), from_utf_((iconv_t)(-1))
         {
             iconv_t d = (iconv_t)(-1);
@@ -78,7 +78,7 @@ namespace boost { namespace locale { namespace impl_posix {
             first_byte_table_->swap(first_byte_table);
         }
 
-        mb2_iconv_converter(mb2_iconv_converter const& other) :
+        mb2_iconv_converter(const mb2_iconv_converter& other) :
             first_byte_table_(other.first_byte_table_), encoding_(other.encoding_), to_utf_((iconv_t)(-1)),
             from_utf_((iconv_t)(-1))
         {}
@@ -95,7 +95,7 @@ namespace boost { namespace locale { namespace impl_posix {
 
         mb2_iconv_converter* clone() const override { return new mb2_iconv_converter(*this); }
 
-        uint32_t to_unicode(char const*& begin, char const* end) override
+        uint32_t to_unicode(const char*& begin, const char* end) override
         {
             if(begin == end)
                 return incomplete;
@@ -128,7 +128,7 @@ namespace boost { namespace locale { namespace impl_posix {
             return illegal;
         }
 
-        uint32_t from_unicode(uint32_t cp, char* begin, char const* end) override
+        uint32_t from_unicode(uint32_t cp, char* begin, const char* end) override
         {
             if(cp == 0) {
                 if(begin != end) {
@@ -161,14 +161,14 @@ namespace boost { namespace locale { namespace impl_posix {
             return len;
         }
 
-        void open(iconv_t& d, char const* to, char const* from)
+        void open(iconv_t& d, const char* to, const char* from)
         {
             if(d != (iconv_t)(-1))
                 return;
             d = iconv_open(to, from);
         }
 
-        static char const* utf32_encoding()
+        static const char* utf32_encoding()
         {
             union {
                 char one;
@@ -190,30 +190,30 @@ namespace boost { namespace locale { namespace impl_posix {
         iconv_t from_utf_;
     };
 
-    std::unique_ptr<util::base_converter> create_iconv_converter(std::string const& encoding)
+    std::unique_ptr<util::base_converter> create_iconv_converter(const std::string& encoding)
     {
         try {
             return std::unique_ptr<util::base_converter>(new mb2_iconv_converter(encoding));
-        } catch(std::exception const& e) {
+        } catch(const std::exception& e) {
             return nullptr;
         }
     }
 
 #else // no iconv
-    std::unique_ptr<util::base_converter> create_iconv_converter(std::string const& /*encoding*/)
+    std::unique_ptr<util::base_converter> create_iconv_converter(const std::string& /*encoding*/)
     {
         return nullptr;
     }
 #endif
 
-    std::locale create_codecvt(std::locale const& in, std::string const& encoding, character_facet_type type)
+    std::locale create_codecvt(const std::locale& in, const std::string& encoding, character_facet_type type)
     {
         if(conv::impl::normalize_encoding(encoding.c_str()) == "utf8")
             return util::create_utf8_codecvt(in, type);
 
         try {
             return util::create_simple_codecvt(in, encoding, type);
-        } catch(conv::invalid_charset_error const&) {
+        } catch(const conv::invalid_charset_error&) {
             return util::create_codecvt(in, create_iconv_converter(encoding), type);
         }
     }

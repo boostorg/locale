@@ -21,13 +21,13 @@ namespace boost { namespace locale { namespace gnu_gettext {
                 value = (value ^ (high >> 24)) ^ high;
             return value;
         }
-        static state_type update_state(state_type value, char const* ptr)
+        static state_type update_state(state_type value, const char* ptr)
         {
             while(*ptr)
                 value = update_state(value, *ptr++);
             return value;
         }
-        static state_type update_state(state_type value, char const* begin, char const* end)
+        static state_type update_state(state_type value, const char* begin, const char* end)
         {
             while(begin != end)
                 value = update_state(value, *begin++);
@@ -35,14 +35,14 @@ namespace boost { namespace locale { namespace gnu_gettext {
         }
     };
 
-    inline pj_winberger_hash::state_type pj_winberger_hash_function(char const* ptr)
+    inline pj_winberger_hash::state_type pj_winberger_hash_function(const char* ptr)
     {
         pj_winberger_hash::state_type state = pj_winberger_hash::initial_state;
         state = pj_winberger_hash::update_state(state, ptr);
         return state;
     }
 
-    inline pj_winberger_hash::state_type pj_winberger_hash_function(char const* begin, char const* end)
+    inline pj_winberger_hash::state_type pj_winberger_hash_function(const char* begin, const char* end)
     {
         pj_winberger_hash::state_type state = pj_winberger_hash::initial_state;
         state = pj_winberger_hash::update_state(state, begin, end);

@@ -16,8 +16,8 @@ namespace boost { namespace locale { namespace impl_std {
     class utf8_collator_from_wide : public std::collate<char> {
     public:
         typedef std::collate<wchar_t> wfacet;
-        utf8_collator_from_wide(std::locale const& base, size_t refs = 0) : std::collate<char>(refs), base_(base) {}
-        int do_compare(char const* lb, char const* le, char const* rb, char const* re) const override
+        utf8_collator_from_wide(const std::locale& base, size_t refs = 0) : std::collate<char>(refs), base_(base) {}
+        int do_compare(const char* lb, const char* le, const char* rb, const char* re) const override
         {
             std::wstring l = conv::to_utf<wchar_t>(lb, le, "UTF-8");
             std::wstring r = conv::to_utf<wchar_t>(rb, re, "UTF-8");
@@ -26,12 +26,12 @@ namespace boost { namespace locale { namespace impl_std {
                                                          r.c_str(),
                                                          r.c_str() + r.size());
         }
-        long do_hash(char const* b, char const* e) const override
+        long do_hash(const char* b, const char* e) const override
         {
             std::wstring tmp = conv::to_utf<wchar_t>(b, e, "UTF-8");
             return std::use_facet<wfacet>(base_).hash(tmp.c_str(), tmp.c_str() + tmp.size());
         }
-        std::string do_transform(char const* b, char const* e) const override
+        std::string do_transform(const char* b, const char* e) const override
         {
             std::wstring tmp = conv::to_utf<wchar_t>(b, e, "UTF-8");
             std::wstring wkey = std::use_facet<wfacet>(base_).transform(tmp.c_str(), tmp.c_str() + tmp.size());
@@ -63,7 +63,7 @@ namespace boost { namespace locale { namespace impl_std {
     };
 
     std::locale
-    create_collate(std::locale const& in, std::string const& locale_name, character_facet_type type, utf8_support utf)
+    create_collate(const std::locale& in, const std::string& locale_name, character_facet_type type, utf8_support utf)
     {
         switch(type) {
             case char_facet: {

@@ -69,16 +69,16 @@ namespace boost { namespace locale { namespace impl_icu {
             return cvt_.std(tmp);
         }
 
-        size_t parse(string_type const& str, double& value) const override
+        size_t parse(const string_type& str, double& value) const override
         {
             return do_parse(str, value);
         }
 
-        size_t parse(string_type const& str, int64_t& value) const override
+        size_t parse(const string_type& str, int64_t& value) const override
         {
             return do_parse(str, value);
         }
-        size_t parse(string_type const& str, int32_t& value) const override
+        size_t parse(const string_type& str, int32_t& value) const override
         {
             return do_parse(str, value);
         }
@@ -114,7 +114,7 @@ namespace boost { namespace locale { namespace impl_icu {
         }
 
         template<typename ValueType>
-        size_t do_parse(string_type const& str, ValueType& v) const
+        size_t do_parse(const string_type& str, ValueType& v) const
         {
             icu::Formattable val;
             icu::ParsePosition pp;
@@ -148,9 +148,9 @@ namespace boost { namespace locale { namespace impl_icu {
 
         string_type format(int32_t value, size_t& code_points) const override { return do_format(value, code_points); }
 
-        size_t parse(string_type const& str, double& value) const override { return do_parse(str, value); }
-        size_t parse(string_type const& str, int64_t& value) const override { return do_parse(str, value); }
-        size_t parse(string_type const& str, int32_t& value) const override { return do_parse(str, value); }
+        size_t parse(const string_type& str, double& value) const override { return do_parse(str, value); }
+        size_t parse(const string_type& str, int64_t& value) const override { return do_parse(str, value); }
+        size_t parse(const string_type& str, int32_t& value) const override { return do_parse(str, value); }
 
         date_format(icu::DateFormat* fmt, bool transfer_owneship, std::string codepage) : cvt_(codepage)
         {
@@ -164,7 +164,7 @@ namespace boost { namespace locale { namespace impl_icu {
 
     private:
         template<typename ValueType>
-        size_t do_parse(string_type const& str, ValueType& value) const
+        size_t do_parse(const string_type& str, ValueType& value) const
         {
             icu::ParsePosition pp;
             icu::UnicodeString tmp = cvt_.icu(str.data(), str.data() + str.size());
@@ -205,7 +205,7 @@ namespace boost { namespace locale { namespace impl_icu {
         icu::DateFormat* icu_fmt_;
     };
 
-    icu::UnicodeString strftime_to_icu_full(icu::DateFormat* dfin, char const* alt)
+    icu::UnicodeString strftime_to_icu_full(icu::DateFormat* dfin, const char* alt)
     {
         hold_ptr<icu::DateFormat> df(dfin);
         icu::SimpleDateFormat* sdf = icu_cast<icu::SimpleDateFormat>(df.get());
@@ -217,7 +217,7 @@ namespace boost { namespace locale { namespace impl_icu {
         return result;
     }
 
-    icu::UnicodeString strftime_to_icu_symbol(char c, icu::Locale const& locale, icu_formatters_cache const* cache = 0)
+    icu::UnicodeString strftime_to_icu_symbol(char c, const icu::Locale& locale, const icu_formatters_cache* cache = 0)
     {
         switch(c) {
             case 'a': // Abbr Weekday
@@ -302,7 +302,7 @@ namespace boost { namespace locale { namespace impl_icu {
         }
     }
 
-    icu::UnicodeString strftime_to_icu(icu::UnicodeString const& ftime, icu::Locale const& locale)
+    icu::UnicodeString strftime_to_icu(const icu::UnicodeString& ftime, const icu::Locale& locale)
     {
         const unsigned len = ftime.length();
         icu::UnicodeString result;
@@ -337,7 +337,7 @@ namespace boost { namespace locale { namespace impl_icu {
     }
 
     template<typename CharType>
-    formatter<CharType>* generate_formatter(std::ios_base& ios, icu::Locale const& locale, std::string const& encoding)
+    formatter<CharType>* generate_formatter(std::ios_base& ios, const icu::Locale& locale, const std::string& encoding)
     {
         using namespace boost::locale::flags;
 
@@ -345,7 +345,7 @@ namespace boost { namespace locale { namespace impl_icu {
         ios_info& info = ios_info::get(ios);
         uint64_t disp = info.display_flags();
 
-        icu_formatters_cache const& cache = std::use_facet<icu_formatters_cache>(ios.getloc());
+        const icu_formatters_cache& cache = std::use_facet<icu_formatters_cache>(ios.getloc());
 
         if(disp == posix)
             return fmt.release();
@@ -440,7 +440,7 @@ namespace boost { namespace locale { namespace impl_icu {
                                && !cache.date_time_format(format_len::Medium, format_len::Medium).isEmpty())
                             {
                                 icu_std_converter<CharType> cvt_(encoding);
-                                std::basic_string<CharType> const& f = info.date_time_pattern<CharType>();
+                                const std::basic_string<CharType>& f = info.date_time_pattern<CharType>();
                                 pattern = strftime_to_icu(cvt_.icu(f.c_str(), f.c_str() + f.size()), locale);
                             }
                         } break;
@@ -477,7 +477,7 @@ namespace boost { namespace locale { namespace impl_icu {
                         adf.reset(icu::DateFormat::createDateTimeInstance(dstyle, tstyle, locale));
                     else { // strftime
                         icu_std_converter<CharType> cvt_(encoding);
-                        std::basic_string<CharType> const& f = info.date_time_pattern<CharType>();
+                        const std::basic_string<CharType>& f = info.date_time_pattern<CharType>();
                         icu::UnicodeString pattern = strftime_to_icu(cvt_.icu(f.data(), f.data() + f.size()), locale);
                         adf.reset(new icu::SimpleDateFormat(pattern, locale, err));
                     }
@@ -500,20 +500,20 @@ namespace boost { namespace locale { namespace impl_icu {
     }
 
     template<>
-    formatter<char>* formatter<char>::create(std::ios_base& ios, icu::Locale const& l, std::string const& e)
+    formatter<char>* formatter<char>::create(std::ios_base& ios, const icu::Locale& l, const std::string& e)
     {
         return generate_formatter<char>(ios, l, e);
     }
 
     template<>
-    formatter<wchar_t>* formatter<wchar_t>::create(std::ios_base& ios, icu::Locale const& l, std::string const& e)
+    formatter<wchar_t>* formatter<wchar_t>::create(std::ios_base& ios, const icu::Locale& l, const std::string& e)
     {
         return generate_formatter<wchar_t>(ios, l, e);
     }
 
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
     template<>
-    formatter<char16_t>* formatter<char16_t>::create(std::ios_base& ios, icu::Locale const& l, std::string const& e)
+    formatter<char16_t>* formatter<char16_t>::create(std::ios_base& ios, const icu::Locale& l, const std::string& e)
     {
         return generate_formatter<char16_t>(ios, l, e);
     }
@@ -522,7 +522,7 @@ namespace boost { namespace locale { namespace impl_icu {
 
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
     template<>
-    formatter<char32_t>* formatter<char32_t>::create(std::ios_base& ios, icu::Locale const& l, std::string const& e)
+    formatter<char32_t>* formatter<char32_t>::create(std::ios_base& ios, const icu::Locale& l, const std::string& e)
     {
         return generate_formatter<char32_t>(ios, l, e);
     }

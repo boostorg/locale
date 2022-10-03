@@ -11,7 +11,7 @@
 #include <string>
 
 namespace boost { namespace locale { namespace util {
-    inline int parse_tz(std::string const& tz)
+    inline int parse_tz(const std::string& tz)
     {
         int gmtoff = 0;
         std::string ltz;
@@ -27,7 +27,7 @@ namespace boost { namespace locale { namespace util {
             return 0;
         if(ltz.size() <= 3)
             return 0;
-        char const* begin = ltz.c_str() + 3;
+        const char* begin = ltz.c_str() + 3;
         char* end = 0;
         int hours = strtol(begin, &end, 10);
         if(end != begin) {

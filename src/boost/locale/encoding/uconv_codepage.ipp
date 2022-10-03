@@ -22,13 +22,13 @@ namespace boost { namespace locale { namespace conv { namespace impl {
 
         typedef std::basic_string<char_type> string_type;
 
-        bool open(char const* charset, method_type how) override
+        bool open(const char* charset, method_type how) override
         {
             close();
             try {
                 cvt_from_.reset(new from_type(charset, how == skip ? impl_icu::cvt_skip : impl_icu::cvt_stop));
                 cvt_to_.reset(new to_type("UTF-8", how == skip ? impl_icu::cvt_skip : impl_icu::cvt_stop));
-            } catch(std::exception const& /*e*/) {
+            } catch(const std::exception& /*e*/) {
                 close();
                 return false;
             }
@@ -40,11 +40,11 @@ namespace boost { namespace locale { namespace conv { namespace impl {
             cvt_to_.reset();
         }
 
-        string_type convert(char const* begin, char const* end) override
+        string_type convert(const char* begin, const char* end) override
         {
             try {
                 return cvt_to_->std(cvt_from_->icu_checked(begin, end));
-            } catch(std::exception const& /*e*/) {
+            } catch(const std::exception& /*e*/) {
                 throw conversion_error();
             }
         }
@@ -61,13 +61,13 @@ namespace boost { namespace locale { namespace conv { namespace impl {
     class uconv_from_utf : public converter_from_utf<CharType> {
     public:
         typedef CharType char_type;
-        bool open(char const* charset, method_type how) override
+        bool open(const char* charset, method_type how) override
         {
             close();
             try {
                 cvt_from_.reset(new from_type("UTF-8", how == skip ? impl_icu::cvt_skip : impl_icu::cvt_stop));
                 cvt_to_.reset(new to_type(charset, how == skip ? impl_icu::cvt_skip : impl_icu::cvt_stop));
-            } catch(std::exception const& /*e*/) {
+            } catch(const std::exception& /*e*/) {
                 close();
                 return false;
             }
@@ -79,11 +79,11 @@ namespace boost { namespace locale { namespace conv { namespace impl {
             cvt_to_.reset();
         }
 
-        std::string convert(CharType const* begin, CharType const* end) override
+        std::string convert(const CharType* begin, const CharType* end) override
         {
             try {
                 return cvt_to_->std(cvt_from_->icu_checked(begin, end));
-            } catch(std::exception const& /*e*/) {
+            } catch(const std::exception& /*e*/) {
                 throw conversion_error();
             }
         }
@@ -98,13 +98,13 @@ namespace boost { namespace locale { namespace conv { namespace impl {
 
     class uconv_between : public converter_between {
     public:
-        bool open(char const* to_charset, char const* from_charset, method_type how) override
+        bool open(const char* to_charset, const char* from_charset, method_type how) override
         {
             close();
             try {
                 cvt_from_.reset(new from_type(from_charset, how == skip ? impl_icu::cvt_skip : impl_icu::cvt_stop));
                 cvt_to_.reset(new to_type(to_charset, how == skip ? impl_icu::cvt_skip : impl_icu::cvt_stop));
-            } catch(std::exception const& /*e*/) {
+            } catch(const std::exception& /*e*/) {
                 close();
                 return false;
             }
@@ -116,11 +116,11 @@ namespace boost { namespace locale { namespace conv { namespace impl {
             cvt_to_.reset();
         }
 
-        std::string convert(char const* begin, char const* end) override
+        std::string convert(const char* begin, const char* end) override
         {
             try {
                 return cvt_to_->std(cvt_from_->icu(begin, end));
-            } catch(std::exception const& /*e*/) {
+            } catch(const std::exception& /*e*/) {
                 throw conversion_error();
             }
         }

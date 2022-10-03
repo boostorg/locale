@@ -107,7 +107,7 @@ namespace boost { namespace locale { namespace impl_icu {
         typedef formatter<CharType> formatter_type;
         typedef hold_ptr<formatter_type> formatter_ptr;
 
-        num_format(cdata const& d, size_t refs = 0) : std::num_put<CharType>(refs), loc_(d.locale), enc_(d.encoding) {}
+        num_format(const cdata& d, size_t refs = 0) : std::num_put<CharType>(refs), loc_(d.locale), enc_(d.encoding) {}
 
     protected:
         iter_type do_put(iter_type out, std::ios_base& ios, char_type fill, long val) const override
@@ -150,7 +150,7 @@ namespace boost { namespace locale { namespace impl_icu {
 
             size_t code_points;
             typedef typename detail::cast_traits<ValueType>::cast_type cast_type;
-            string_type const& str = formatter->format(static_cast<cast_type>(val), code_points);
+            const string_type& str = formatter->format(static_cast<cast_type>(val), code_points);
             std::streamsize on_left = 0, on_right = 0, points = code_points;
             if(points < ios.width()) {
                 std::streamsize n = ios.width() - points;
@@ -186,7 +186,7 @@ namespace boost { namespace locale { namespace impl_icu {
     template<typename CharType>
     class num_parse : public std::num_get<CharType>, protected num_base {
     public:
-        num_parse(cdata const& d, size_t refs = 0) : std::num_get<CharType>(refs), loc_(d.locale), enc_(d.encoding) {}
+        num_parse(const cdata& d, size_t refs = 0) : std::num_get<CharType>(refs), loc_(d.locale), enc_(d.encoding) {}
 
     protected:
         typedef typename std::num_get<CharType>::iter_type iter_type;
@@ -348,7 +348,7 @@ namespace boost { namespace locale { namespace impl_icu {
     };
 
     template<typename CharType>
-    std::locale install_formatting_facets(std::locale const& in, cdata const& cd)
+    std::locale install_formatting_facets(const std::locale& in, const cdata& cd)
     {
         std::locale tmp = std::locale(in, new num_format<CharType>(cd));
         if(!std::has_facet<icu_formatters_cache>(in)) {
@@ -358,7 +358,7 @@ namespace boost { namespace locale { namespace impl_icu {
     }
 
     template<typename CharType>
-    std::locale install_parsing_facets(std::locale const& in, cdata const& cd)
+    std::locale install_parsing_facets(const std::locale& in, const cdata& cd)
     {
         std::locale tmp = std::locale(in, new num_parse<CharType>(cd));
         if(!std::has_facet<icu_formatters_cache>(in)) {
@@ -367,7 +367,7 @@ namespace boost { namespace locale { namespace impl_icu {
         return tmp;
     }
 
-    std::locale create_formatting(std::locale const& in, cdata const& cd, character_facet_type type)
+    std::locale create_formatting(const std::locale& in, const cdata& cd, character_facet_type type)
     {
         switch(type) {
             case char_facet: return install_formatting_facets<char>(in, cd);
@@ -382,7 +382,7 @@ namespace boost { namespace locale { namespace impl_icu {
         }
     }
 
-    std::locale create_parsing(std::locale const& in, cdata const& cd, character_facet_type type)
+    std::locale create_parsing(const std::locale& in, const cdata& cd, character_facet_type type)
     {
         switch(type) {
             case char_facet: return install_parsing_facets<char>(in, cd);
