@@ -60,7 +60,6 @@ void test_codecvt_in_n_m(cvt_type const &cvt,int n,int m)
 
         std::mbstate_t mb2 = mb;
         std::codecvt_base::result r = cvt.in(mb,from,end,from_next,to,to_end,to_next);
-        //std::cout << "In from_size=" << (end-from) << " from move=" <<  (from_next - from) << " to move= " << to_next - to << " state = " << res(r) << std::endl;
 
         int count = cvt.length(mb2,from,end,to_end - to);
         #ifndef BOOST_LOCALE_DO_LENGTH_MBSTATE_CONST
@@ -121,7 +120,6 @@ void test_codecvt_out_n_m(cvt_type const &cvt,int n,int m)
         }
 
         std::codecvt_base::result r = cvt.out(mb,from,from_end,from_next,to,to_end,to_next);
-        //std::cout << "In from_size=" << (end-from) << " from move=" <<  (from_next - from) << " to move= " << to_next - to << " state = " << res(r) << std::endl;
         if(r == cvt_type::partial) {
             TEST(to_end - to_next < cvt.max_length());
             to_end += n;

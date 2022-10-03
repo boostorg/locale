@@ -42,16 +42,18 @@
 
 // Check for some C++11 features to provide easier checks for what is missing
 // shortly after the requirement of C++11 in Boost 1.81
+// clang-format off
 #if defined(BOOST_NO_CXX11_DEFAULTED_FUNCTIONS) || \
-    defined(BOOST_NO_CXX11_DEFAULTED_MOVES) || \
-    defined(BOOST_NO_CXX11_HDR_FUNCTIONAL) || \
-    defined(BOOST_NO_CXX11_HDR_TYPE_TRAITS) || \
-    defined(BOOST_NO_CXX11_NOEXCEPT) || \
-    defined(BOOST_NO_CXX11_OVERRIDE) || \
-    defined(BOOST_NO_CXX11_RVALUE_REFERENCES) || \
-    defined(BOOST_NO_CXX11_SMART_PTR) || \
+    defined(BOOST_NO_CXX11_DEFAULTED_MOVES) ||     \
+    defined(BOOST_NO_CXX11_HDR_FUNCTIONAL) ||      \
+    defined(BOOST_NO_CXX11_HDR_TYPE_TRAITS) ||     \
+    defined(BOOST_NO_CXX11_NOEXCEPT) ||            \
+    defined(BOOST_NO_CXX11_OVERRIDE) ||            \
+    defined(BOOST_NO_CXX11_RVALUE_REFERENCES) ||   \
+    defined(BOOST_NO_CXX11_SMART_PTR) ||           \
     defined(BOOST_NO_CXX11_STATIC_ASSERT)
-        #error "Boost.Locale requires C++11 since Boost 1.81."
+// clang-format on
+		#error "Boost.Locale requires C++11 since Boost 1.81."
 #endif
 
 #ifdef _MSC_VER

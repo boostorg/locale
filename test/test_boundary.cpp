@@ -364,6 +364,7 @@ void run_word(std::string *original,
 std::string character[]={"שָ","ל","וֹ","ם","!",""};
 int         nones[]={1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
 
+// clang-format off
 std::string sentence1[]={"To be\n","or not\n","to be?\n"," That is the question. ","Or maybe not",""};
 int         sentence1a[]={      0,          0,        1,                         1,             0, 0};
 int         sentence1b[]={      1,          1,        0,                         0,             1, 0};
@@ -371,7 +372,7 @@ int         sentence1b[]={      1,          1,        0,                        
 std::string line1[]={"To ","be\n","or ","not\n","to ","be",""};
 int         line1a[]={ 1,   0,     1 ,  0,       1,   1 , 0 };
 int         line1b[]={ 0,   1,     0 ,  1,       0,   0 , 0 };
-
+// clang-format on
 
 void test_boundaries(std::string *all,int *first,int *second,lb::boundary_type t)
 {
@@ -399,28 +400,30 @@ void word_boundary()
     int zero[25] = {0};
     std::string txt_empty[] = {""};
 
+    // clang-format off
     std::string txt_simple[] = {" ","Hello",",","World","!"," ",""};
     int        none_simple[] = { 1,      0,  1,      0,  1,  1, 0};
     int        word_simple[] = { 0,      1,  0,      1,  0,  0, 0};
 
-    std::string txt_all[]={"10"," ","Hello"," ","Windows7"," ","He22o"," ","平仮名","アヒル",""};
-    int        none_all[]={  0,  1,      0,  1,         0,  1,      0,  1,      0,      0,  0};
+    std::string txt_all[] = {"10"," ","Hello"," ","Windows7"," ","He22o"," ","平仮名","アヒル",""};
+    int        none_all[] = {  0,  1,      0,  1,         0,  1,      0,  1,      0,      0,  0};
 #if U_ICU_VERSION_MAJOR_NUM >= 62
     // ICU 62+ returns only the number classification if there is a number at the boundary
-    int         num_all[]={  1,  0,      0,  0,         1,  0,      0,  0,      0,      0,  0};
-    int        word_all[]={  0,  0,      1,  0,         0,  0,      1,  0,      0,      0,  0};
+    int         num_all[] = {  1,  0,      0,  0,         1,  0,      0,  0,      0,      0,  0};
+    int        word_all[] = {  0,  0,      1,  0,         0,  0,      1,  0,      0,      0,  0};
 #else
     // ICU < 62 combines the word and number classification if there is a number at the boundary
-    int         num_all[]={  1,  0,      0,  0,         1,  0,      0,  0,      0,      0,  0};
-    int        word_all[]={  0,  0,      1,  0,         1,  0,      1,  0,      0,      0,  0};
+    int         num_all[] = {  1,  0,      0,  0,         1,  0,      0,  0,      0,      0,  0};
+    int        word_all[] = {  0,  0,      1,  0,         1,  0,      1,  0,      0,      0,  0};
 #endif
 #if U_ICU_VERSION_MAJOR_NUM >= 50
-    int        kana_all[]={  0,  0,      0,  0,         0,  0,      0,  0,      0,      0,  0};
-    int        ideo_all[]={  0,  0,      0,  0,         0,  0,      0,  0,      1,      1,  1};
+    int        kana_all[] = {  0,  0,      0,  0,         0,  0,      0,  0,      0,      0,  0};
+    int        ideo_all[] = {  0,  0,      0,  0,         0,  0,      0,  0,      1,      1,  1};
 #else
-    int        kana_all[]={  0,  0,      0,  0,         0,  0,      0,  0,      0,      1,  1};
-    int        ideo_all[]={  0,  0,      0,  0,         0,  0,      0,  0,      1,      0,  0};
+    int        kana_all[] = {  0,  0,      0,  0,         0,  0,      0,  0,      0,      1,  1};
+    int        ideo_all[] = {  0,  0,      0,  0,         0,  0,      0,  0,      1,      0,  0};
 #endif
+    // clang-format on
 
     std::cout << " char UTF-8" << std::endl;
     const std::locale utf8_en_locale = g("en_US.UTF-8");
