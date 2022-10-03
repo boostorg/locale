@@ -40,7 +40,7 @@ namespace boost { namespace locale { namespace boundary {
 
     /// \cond INTERNAL
 
-    namespace details {
+    namespace detail {
 
         template<typename IteratorType,
                  typename CategoryType = typename std::iterator_traits<IteratorType>::iterator_category>
@@ -102,7 +102,7 @@ namespace boost { namespace locale { namespace boundary {
             mapping(boundary_type type, base_iterator begin, base_iterator end, std::locale const& loc) :
                 index_(new index_type()), begin_(begin), end_(end)
             {
-                index_type idx = details::mapping_traits<base_iterator>::map(type, begin, end, loc);
+                index_type idx = detail::mapping_traits<base_iterator>::map(type, begin, end, loc);
                 index_->swap(idx);
             }
 
@@ -411,7 +411,7 @@ namespace boost { namespace locale { namespace boundary {
             rule_type mask_;
         };
 
-    } // namespace details
+    } // namespace detail
 
     /// \endcond
 
@@ -501,8 +501,8 @@ namespace boost { namespace locale { namespace boundary {
         ///
         typedef unspecified_iterator_type const_iterator;
 #else
-        typedef details::segment_index_iterator<base_iterator> iterator;
-        typedef details::segment_index_iterator<base_iterator> const_iterator;
+        typedef detail::segment_index_iterator<base_iterator> iterator;
+        typedef detail::segment_index_iterator<base_iterator> const_iterator;
 #endif
         ///
         /// The type dereferenced by the \ref iterator and \ref const_iterator. It is
@@ -679,7 +679,7 @@ namespace boost { namespace locale { namespace boundary {
 
     private:
         friend class boundary_point_index<base_iterator>;
-        typedef details::mapping<base_iterator> mapping_type;
+        typedef detail::mapping<base_iterator> mapping_type;
         mapping_type map_;
         rule_type mask_;
         bool full_select_;
@@ -760,8 +760,8 @@ namespace boost { namespace locale { namespace boundary {
         ///
         typedef unspecified_iterator_type const_iterator;
 #else
-        typedef details::boundary_point_index_iterator<base_iterator> iterator;
-        typedef details::boundary_point_index_iterator<base_iterator> const_iterator;
+        typedef detail::boundary_point_index_iterator<base_iterator> iterator;
+        typedef detail::boundary_point_index_iterator<base_iterator> const_iterator;
 #endif
         ///
         /// The type dereferenced by the \ref iterator and \ref const_iterator. It is
@@ -901,7 +901,7 @@ namespace boost { namespace locale { namespace boundary {
 
     private:
         friend class segment_index<base_iterator>;
-        typedef details::mapping<base_iterator> mapping_type;
+        typedef detail::mapping<base_iterator> mapping_type;
         mapping_type map_;
         rule_type mask_;
     };

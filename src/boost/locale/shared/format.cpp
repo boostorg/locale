@@ -12,7 +12,7 @@
 #include <iostream>
 #include <limits>
 
-namespace boost { namespace locale { namespace details {
+namespace boost { namespace locale { namespace detail {
     struct format_parser::data {
         unsigned position;
         std::streamsize precision;
@@ -163,5 +163,5 @@ namespace boost { namespace locale { namespace details {
             imbue(new_loc);
         }
     }
-}}} // namespace boost::locale::details
+}}} // namespace boost::locale::detail
 // boostinspect:nominmax

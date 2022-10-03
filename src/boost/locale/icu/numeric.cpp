@@ -19,7 +19,7 @@
 
 namespace boost { namespace locale { namespace impl_icu {
 
-    namespace details {
+    namespace detail {
         template<typename V, int n = std::numeric_limits<V>::digits, bool integer = std::numeric_limits<V>::is_integer>
         struct cast_traits;
 
@@ -75,7 +75,7 @@ namespace boost { namespace locale { namespace impl_icu {
             static bool use(V v) { return static_cast<int64_t>(v) < 0; }
         };
 
-    } // namespace details
+    } // namespace detail
 
     class num_base {
     protected:
@@ -85,7 +85,7 @@ namespace boost { namespace locale { namespace impl_icu {
             uint64_t flg = ios_info::get(ios).display_flags();
             if(flg == flags::posix)
                 return true;
-            if(details::use_parent_traits<ValueType>::use(v))
+            if(detail::use_parent_traits<ValueType>::use(v))
                 return true;
 
             if(!std::numeric_limits<ValueType>::is_integer)
@@ -149,7 +149,7 @@ namespace boost { namespace locale { namespace impl_icu {
                 return std::num_put<char_type>::do_put(out, ios, fill, val);
 
             size_t code_points;
-            typedef typename details::cast_traits<ValueType>::cast_type cast_type;
+            typedef typename detail::cast_traits<ValueType>::cast_type cast_type;
             string_type const& str = formatter->format(static_cast<cast_type>(val), code_points);
             std::streamsize on_left = 0, on_right = 0, points = code_points;
             if(points < ios.width()) {
@@ -286,7 +286,7 @@ namespace boost { namespace locale { namespace impl_icu {
                 return std::num_get<CharType>::do_get(in, end, ios, err, val);
             }
 
-            typedef typename details::cast_traits<ValueType>::cast_type cast_type;
+            typedef typename detail::cast_traits<ValueType>::cast_type cast_type;
             string_type tmp;
             tmp.reserve(64);
 

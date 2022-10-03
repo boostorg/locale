@@ -30,7 +30,7 @@ namespace boost { namespace locale {
     ///
 
     /// \cond INTERNAL
-    namespace details {
+    namespace detail {
 
         template<typename CharType>
         struct formattible {
@@ -116,7 +116,7 @@ namespace boost { namespace locale {
             hold_ptr<data> d;
         };
 
-    } // namespace details
+    } // namespace detail
 
     /// \endcond
 
@@ -198,7 +198,7 @@ namespace boost { namespace locale {
         typedef CharType char_type;                    ///< Underlying character type
         typedef basic_message<char_type> message_type; ///< The translation message type
         /// \cond INTERNAL
-        typedef details::formattible<CharType> formattible_type;
+        typedef detail::formattible<CharType> formattible_type;
         /// \endcond
 
         typedef std::basic_string<CharType> string_type;  ///< string type for this type of character
@@ -253,7 +253,7 @@ namespace boost { namespace locale {
     private:
         class format_guard {
         public:
-            format_guard(details::format_parser& fmt) : fmt_(&fmt), restored_(false) {}
+            format_guard(detail::format_parser& fmt) : fmt_(&fmt), restored_(false) {}
             void restore()
             {
                 if(restored_)
@@ -270,7 +270,7 @@ namespace boost { namespace locale {
             }
 
         private:
-            details::format_parser* fmt_;
+            detail::format_parser* fmt_;
             bool restored_;
         };
 
@@ -304,7 +304,7 @@ namespace boost { namespace locale {
                 }
                 pos++;
 
-                details::format_parser fmt(out, static_cast<void*>(&out), &basic_format::imbue_locale);
+                detail::format_parser fmt(out, static_cast<void*>(&out), &basic_format::imbue_locale);
 
                 format_guard guard(fmt);
 

@@ -110,7 +110,7 @@ namespace boost { namespace locale {
 
     /// \cond INTERNAL
 
-    namespace details {
+    namespace detail {
         inline bool is_us_ascii_char(char c)
         {
             // works for null terminated strings regardless char "signness"
@@ -145,7 +145,7 @@ namespace boost { namespace locale {
                 return buffer.c_str();
             }
         };
-    } // namespace details
+    } // namespace detail
 
     /// \endcond
 
@@ -388,7 +388,7 @@ namespace boost { namespace locale {
                 if(facet) {
                     translated = facet->convert(msg, buffer);
                 } else {
-                    translated = details::string_cast_traits<char_type>::cast(msg, buffer);
+                    translated = detail::string_cast_traits<char_type>::cast(msg, buffer);
                 }
             }
             return translated;
@@ -644,7 +644,7 @@ namespace boost { namespace locale {
 
     namespace as {
         /// \cond INTERNAL
-        namespace details {
+        namespace detail {
             struct set_domain {
                 std::string domain_id;
             };
@@ -655,7 +655,7 @@ namespace boost { namespace locale {
                 ios_info::get(out).domain_id(id);
                 return out;
             }
-        } // namespace details
+        } // namespace detail
         /// \endcond
 
         ///
@@ -673,11 +673,11 @@ namespace boost { namespace locale {
 #ifdef BOOST_LOCALE_DOXYGEN
           unspecified_type
 #else
-          details::set_domain
+          detail::set_domain
 #endif
           domain(std::string const& id)
         {
-            details::set_domain tmp = {id};
+            detail::set_domain tmp = {id};
             return tmp;
         }
         /// @}

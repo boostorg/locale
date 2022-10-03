@@ -427,7 +427,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
     {
         if(!do_conversion)
             return msg;
-        if(details::is_us_ascii_string(msg))
+        if(detail::is_us_ascii_string(msg))
             return msg;
         std::string tmp = conv::between(msg, locale_encoding, key_encoding, conv::skip);
         buffer.swap(tmp);
@@ -633,7 +633,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
                 return true;
             }
             for(unsigned i = 0; i < mo.size(); i++) {
-                if(!details::is_us_ascii_string(mo.key(i))) {
+                if(!detail::is_us_ascii_string(mo.key(i))) {
                     return false;
                 }
             }

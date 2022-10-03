@@ -479,7 +479,7 @@ namespace boost { namespace locale {
         }
 
         /// \cond INTERNAL
-        namespace details {
+        namespace detail {
             template<typename CharType>
             struct add_ftime {
                 std::basic_string<CharType> ftime;
@@ -505,7 +505,7 @@ namespace boost { namespace locale {
                 return in;
             }
 
-        } // namespace details
+        } // namespace detail
         /// \endcond
 
         ///
@@ -547,11 +547,11 @@ namespace boost { namespace locale {
 #ifdef BOOST_LOCALE_DOXYGEN
         unspecified_type
 #else
-        details::add_ftime<CharType>
+        detail::add_ftime<CharType>
 #endif
         ftime(std::basic_string<CharType> const& format)
         {
-            details::add_ftime<CharType> fmt;
+            detail::add_ftime<CharType> fmt;
             fmt.ftime = format;
             return fmt;
         }
@@ -563,17 +563,17 @@ namespace boost { namespace locale {
 #ifdef BOOST_LOCALE_DOXYGEN
         unspecified_type
 #else
-        details::add_ftime<CharType>
+        detail::add_ftime<CharType>
 #endif
         ftime(CharType const* format)
         {
-            details::add_ftime<CharType> fmt;
+            detail::add_ftime<CharType> fmt;
             fmt.ftime = format;
             return fmt;
         }
 
         /// \cond INTERNAL
-        namespace details {
+        namespace detail {
             struct set_timezone {
                 std::string id;
             };
@@ -590,7 +590,7 @@ namespace boost { namespace locale {
                 ios_info::get(in).time_zone(fmt.id);
                 return in;
             }
-        } // namespace details
+        } // namespace detail
         /// \endcond
 
         ///
@@ -618,11 +618,11 @@ namespace boost { namespace locale {
 #ifdef BOOST_LOCALE_DOXYGEN
           unspecified_type
 #else
-          details::set_timezone
+          detail::set_timezone
 #endif
           time_zone(char const* id)
         {
-            details::set_timezone tz;
+            detail::set_timezone tz;
             tz.id = id;
             return tz;
         }
@@ -634,11 +634,11 @@ namespace boost { namespace locale {
 #ifdef BOOST_LOCALE_DOXYGEN
           unspecified_type
 #else
-          details::set_timezone
+          detail::set_timezone
 #endif
           time_zone(std::string const& id)
         {
-            details::set_timezone tz;
+            detail::set_timezone tz;
             tz.id = id;
             return tz;
         }

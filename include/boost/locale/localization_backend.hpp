@@ -104,7 +104,7 @@ namespace boost { namespace locale {
         std::unique_ptr<localization_backend> get() const;
 
         BOOST_LOCALE_DEPRECATED("This function is deprecated, use 'get()' instead")
-        inline std::unique_ptr<localization_backend> get_unique_ptr() const { return get(); }
+        std::unique_ptr<localization_backend> get_unique_ptr() const { return get(); }
 
         ///
         /// Add new backend to the manager, each backend should be uniquely defined by its name.
