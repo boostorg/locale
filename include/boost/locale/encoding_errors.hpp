@@ -9,6 +9,7 @@
 
 #include <boost/locale/config.hpp>
 #include <stdexcept>
+#include <string>
 
 #ifdef BOOST_MSVC
 #    pragma warning(push)
@@ -22,7 +23,7 @@ namespace boost { namespace locale { namespace conv {
     /// @{
 
     ///
-    /// \brief The excepton that is thrown in case of conversion error
+    /// \brief The exception that is thrown in case of conversion error
     ///
     class BOOST_SYMBOL_VISIBLE conversion_error : public std::runtime_error {
     public:
@@ -36,14 +37,16 @@ namespace boost { namespace locale { namespace conv {
     class BOOST_SYMBOL_VISIBLE invalid_charset_error : public std::runtime_error {
     public:
         /// Create an error for charset \a charset
-        invalid_charset_error(std::string charset) : std::runtime_error("Invalid or unsupported charset:" + charset) {}
+        invalid_charset_error(const std::string& charset) :
+            std::runtime_error("Invalid or unsupported charset:" + charset)
+        {}
     };
 
     ///
     /// enum that defines conversion policy
     ///
     typedef enum {
-        skip = 0,             ///< Skip illegal/unconvertable characters
+        skip = 0,             ///< Skip illegal/unconvertible characters
         stop = 1,             ///< Stop conversion and throw conversion_error
         default_method = skip ///< Default method - skip
     } method_type;
