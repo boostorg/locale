@@ -106,9 +106,6 @@ namespace boost {
             ///
             virtual char_type const *convert(char_type const *msg,string_type &buffer) const = 0;
 
-#if defined (__SUNPRO_CC) && defined (_RWSTD_VER)
-            std::locale::id& __get_id (void) const { return id; }
-#endif
         protected:
             virtual ~message_format() {}
         };

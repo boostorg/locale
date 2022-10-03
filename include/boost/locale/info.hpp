@@ -98,10 +98,6 @@ namespace boost {
             {
                 return get_integer_property(utf8_property) != 0;
             }
-
-#if defined (__SUNPRO_CC) && defined (_RWSTD_VER)
-            std::locale::id& __get_id (void) const { return id; }
-#endif
         protected:
             ///
             /// Get string property by its id \a v
