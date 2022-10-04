@@ -421,8 +421,10 @@ void test_main(int /*argc*/, char** /*argv*/)
 
             // Default constructed time_point
             {
+                time_t current_time = std::time(0);
                 date_time time_point_default;
-                const time_t current_time = std::time(0);
+                // Try to estimate when exactly the construction happened
+                current_time += (std::time(0) - current_time) / 2;
                 const tm current_time_gmt = *std::gmtime(&current_time);
                 // Defaults to current time, i.e. different than a date in 1970
                 date_time time_point_1970 = year(1970) + february() + day(5);
