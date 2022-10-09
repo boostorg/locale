@@ -11,7 +11,6 @@
 #include <boost/locale/date_time_facet.hpp>
 #include <boost/locale/info.hpp>
 #include <boost/locale/message.hpp>
-
 #include <boost/core/ignore_unused.hpp>
 
 namespace boost { namespace locale {

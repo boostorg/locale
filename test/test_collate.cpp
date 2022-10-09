@@ -4,18 +4,11 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#ifndef BOOST_LOCALE_WITH_ICU
-#    include <iostream>
-int main()
-{
-    std::cout << "ICU is not build... Skipping\n";
-}
-#else
-
-#    include <boost/locale/collator.hpp>
-#    include <boost/locale/generator.hpp>
-#    include "boostLocale/test/unit_test.hpp"
-#    include <iomanip>
+#include <boost/locale/collator.hpp>
+#include <boost/locale/generator.hpp>
+#include "boostLocale/test/unit_test.hpp"
+#include <iomanip>
+#include <iostream>
 
 template<typename Char>
 void test_comp(std::locale l, std::basic_string<Char> left, std::basic_string<Char> right, int ilevel, int expected)
@@ -61,7 +54,7 @@ void test_comp(std::locale l, std::basic_string<Char> left, std::basic_string<Ch
         TEST(lh != rh);
 }
 
-#    define TEST_COMP(c, _l, _r) test_comp<c>(l, _l, _r, level, expected)
+#define TEST_COMP(c, _l, _r) test_comp<c>(l, _l, _r, level, expected)
 
 void compare(std::string left, std::string right, int level, int expected)
 {
@@ -71,12 +64,12 @@ void compare(std::string left, std::string right, int level, int expected)
         TEST(l(left, right) == (expected < 0));
     TEST_COMP(char, left, right);
     TEST_COMP(wchar_t, to<wchar_t>(left), to<wchar_t>(right));
-#    ifdef BOOST_LOCALE_ENABLE_CHAR16_T
+#ifdef BOOST_LOCALE_ENABLE_CHAR16_T
     TEST_COMP(char16_t, to<char16_t>(left), to<char16_t>(right));
-#    endif
-#    ifdef BOOST_LOCALE_ENABLE_CHAR32_T
+#endif
+#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
     TEST_COMP(char32_t, to<char32_t>(left), to<char32_t>(right));
-#    endif
+#endif
     l = gen("en_US.ISO8859-1");
     if(level == 4)
         TEST(l(to<char>(left), to<char>(right)) == (expected < 0));
@@ -105,11 +98,14 @@ void test_collate()
     compare("ä", "a", identical, gt);  //  a , ä
 }
 
+BOOST_LOCALE_DISABLE_UNREACHABLE_CODE_WARNING
 void test_main(int /*argc*/, char** /*argv*/)
 {
+#ifndef BOOST_LOCALE_WITH_ICU
+    std::cout << "ICU is not build... Skipping\n";
+    return;
+#endif
     test_collate();
 }
-
-#endif // NOICU
 
 // boostinspect:noascii

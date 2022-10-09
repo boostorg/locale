@@ -4,22 +4,14 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#ifdef BOOST_LOCALE_NO_WINAPI_BACKEND
-#    include <iostream>
-int main()
-{
-    std::cout << "WinAPI Backend is not build... Skipping\n";
-}
-#else
-
-#    include <boost/locale/conversion.hpp>
-#    include <boost/locale/generator.hpp>
-#    include <boost/locale/info.hpp>
-#    include <boost/locale/localization_backend.hpp>
-#    include "boostLocale/test/tools.hpp"
-#    include "boostLocale/test/unit_test.hpp"
-#    include <iomanip>
-#    include <iostream>
+#include <boost/locale/conversion.hpp>
+#include <boost/locale/generator.hpp>
+#include <boost/locale/info.hpp>
+#include <boost/locale/localization_backend.hpp>
+#include "boostLocale/test/tools.hpp"
+#include "boostLocale/test/unit_test.hpp"
+#include <iomanip>
+#include <iostream>
 
 template<typename CharType>
 void test_one(const std::locale& l, std::string src, std::string tgtl, std::string tgtu)
@@ -36,7 +28,7 @@ void test_char()
 
     std::cout << "- Testing at least C" << std::endl;
 
-    std::locale l = gen("en_US.UTF-8");
+    std::locale l = gen("C.UTF-8");
 
     test_one<CharType>(l, "Hello World i", "hello world i", "HELLO WORLD I");
 
@@ -68,6 +60,10 @@ void test_norm(std::string orig, std::string normal, boost::locale::norm_type ty
 
 void test_main(int /*argc*/, char** /*argv*/)
 {
+#ifdef BOOST_LOCALE_NO_WINAPI_BACKEND
+    std::cout << "WinAPI Backend is not build... Skipping\n";
+    return;
+#endif
     boost::locale::localization_backend_manager mgr = boost::locale::localization_backend_manager::global();
     mgr.select("winapi");
     boost::locale::localization_backend_manager::global(mgr);
@@ -80,14 +76,12 @@ void test_main(int /*argc*/, char** /*argv*/)
     std::cout << "Testing Unicode normalization" << std::endl;
     test_norm("\xEF\xAC\x81", "\xEF\xAC\x81", boost::locale::norm_nfd); /// ligature fi
     test_norm("\xEF\xAC\x81", "\xEF\xAC\x81", boost::locale::norm_nfc);
-#    if defined(_WIN32_NT) && _WIN32_NT >= 0x600
+#if defined(_WIN32_NT) && _WIN32_NT >= 0x600
     test_norm("\xEF\xAC\x81", "fi", boost::locale::norm_nfkd);
     test_norm("\xEF\xAC\x81", "fi", boost::locale::norm_nfkc);
-#    endif
+#endif
     test_norm("ä", "ä", boost::locale::norm_nfd); // ä to a and accent
     test_norm("ä", "ä", boost::locale::norm_nfc);
 }
-
-#endif // no winapi
 
 // boostinspect:noascii

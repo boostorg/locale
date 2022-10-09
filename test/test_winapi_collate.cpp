@@ -4,19 +4,11 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#ifdef BOOST_LOCALE_NO_WINAPI_BACKEND
-#    include <iostream>
-int main()
-{
-    std::cout << "WinAPI Backend is not build... Skipping\n";
-}
-#else
-
-#    include <boost/locale/collator.hpp>
-#    include <boost/locale/generator.hpp>
-#    include <boost/locale/localization_backend.hpp>
-#    include "boostLocale/test/unit_test.hpp"
-#    include <iomanip>
+#include <boost/locale/collator.hpp>
+#include <boost/locale/generator.hpp>
+#include <boost/locale/localization_backend.hpp>
+#include "boostLocale/test/unit_test.hpp"
+#include <iomanip>
 
 template<typename Char>
 void test_comp(std::locale l, std::basic_string<Char> left, std::basic_string<Char> right, int ilevel, int expected)
@@ -62,7 +54,7 @@ void test_comp(std::locale l, std::basic_string<Char> left, std::basic_string<Ch
         TEST(lh != rh);
 }
 
-#    define TEST_COMP(c, _l, _r) test_comp<c>(l, _l, _r, level, expected)
+#define TEST_COMP(c, _l, _r) test_comp<c>(l, _l, _r, level, expected)
 
 void compare(std::string left, std::string right, int level, int expected)
 {
@@ -98,12 +90,15 @@ void test_collate()
 
 void test_main(int /*argc*/, char** /*argv*/)
 {
+#ifdef BOOST_LOCALE_NO_WINAPI_BACKEND
+    std::cout << "WinAPI Backend is not build... Skipping\n";
+    return;
+#endif
     boost::locale::localization_backend_manager mgr = boost::locale::localization_backend_manager::global();
     mgr.select("winapi");
     boost::locale::localization_backend_manager::global(mgr);
 
     test_collate();
 }
-#endif // NO WINAPI
 
 // boostinspect:noascii

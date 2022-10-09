@@ -4,37 +4,38 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#ifdef BOOST_LOCALE_NO_POSIX_BACKEND
-#    include <iostream>
-int main()
-{
-    std::cout << "POSIX Backend is not build... Skipping\n";
-}
-#else
-#    include <boost/locale/encoding.hpp>
-#    include <boost/locale/formatting.hpp>
-#    include <boost/locale/generator.hpp>
-#    include <boost/locale/info.hpp>
-#    include <boost/locale/localization_backend.hpp>
-#    include <ctime>
-#    include <iomanip>
-#    include <iostream>
+#include <boost/locale/encoding.hpp>
+#include <boost/locale/formatting.hpp>
+#include <boost/locale/generator.hpp>
+#include <boost/locale/info.hpp>
+#include <boost/locale/localization_backend.hpp>
+#include <boost/core/ignore_unused.hpp>
+#include <ctime>
+#include <iomanip>
+#include <iostream>
+#ifndef BOOST_LOCALE_NO_POSIX_BACKEND
 #    include <langinfo.h>
 #    include <monetary.h>
+#endif
+#include "boostLocale/test/tools.hpp"
+#include "boostLocale/test/unit_test.hpp"
 
-#    include "boostLocale/test/tools.hpp"
-#    include "boostLocale/test/unit_test.hpp"
-
-//#define DEBUG_FMT
-
-bool equal(const std::string& s1, const std::string& s2, locale_t /*lc*/)
+template<typename CharType>
+std::basic_string<CharType> to_utf(const std::string& s, locale_t lc)
 {
-    return s1 == s2;
+#ifdef BOOST_LOCALE_NO_POSIX_BACKEND
+    const std::string charset = "UTF-8";
+    boost::ignore_unused(lc);
+#else
+    const std::string charset = nl_langinfo_l(CODESET, lc);
+#endif
+    return boost::locale::conv::to_utf<CharType>(s, charset);
 }
 
-bool equal(const std::wstring& s1, const std::string& s2, locale_t lc)
+template<>
+std::basic_string<char> to_utf(const std::string& s, locale_t)
 {
-    return s1 == boost::locale::conv::to_utf<wchar_t>(s2, nl_langinfo_l(CODESET, lc));
+    return s;
 }
 
 template<typename CharType>
@@ -63,11 +64,8 @@ void test_by_char(const std::locale& l, locale_t lreal)
         double n;
         ss >> n;
         TEST(ss);
-        TEST(n == 1045.45);
-        TEST(ss.str() == to_correct_string<CharType>("1045.45", l));
-#    ifdef DEBUG_FMT
-        std::cout << "[" << boost::locale::conv::from_utf(ss.str(), "UTF-8") << "]=\n";
-#    endif
+        TEST_EQ(n, 1045.45);
+        TEST_EQ(ss.str(), to_correct_string<CharType>("1045.45", l));
     }
 
     {
@@ -84,14 +82,16 @@ void test_by_char(const std::locale& l, locale_t lreal)
         TEST(n == 1045.45);
 
         if(std::use_facet<boost::locale::info>(l).country() == "US")
-            TEST(equal(ss.str(), "1,045.45", lreal));
+            TEST_EQ(ss.str(), to_utf<CharType>("1,045.45", lreal));
     }
 
     {
         std::cout << "- Testing as::currency national " << std::endl;
 
-        char buf[64];
+        char buf[64]{};
+#ifndef BOOST_LOCALE_NO_POSIX_BACKEND
         TEST(strfmon_l(buf, sizeof(buf), lreal, "%n", 1043.34) > 0);
+#endif
 
         ss_type ss;
         ss.imbue(l);
@@ -100,17 +100,15 @@ void test_by_char(const std::locale& l, locale_t lreal)
         ss << 1043.34;
         TEST(ss);
 
-        TEST(equal(ss.str(), buf, lreal));
-#    ifdef DEBUG_FMT
-        std::cout << "[" << boost::locale::conv::from_utf(ss.str(), "UTF-8") << "]=\n";
-        std::cout << "[" << boost::locale::conv::from_utf(buf, "UTF-8") << "]\n";
-#    endif
+        TEST_EQ(ss.str(), to_utf<CharType>(buf, lreal));
     }
 
     {
         std::cout << "- Testing as::currency iso" << std::endl;
-        char buf[64];
+        char buf[64]{};
+#ifndef BOOST_LOCALE_NO_POSIX_BACKEND
         TEST(strfmon_l(buf, sizeof(buf), lreal, "%i", 1043.34) > 0);
+#endif
         ss_type ss;
         ss.imbue(l);
 
@@ -118,11 +116,7 @@ void test_by_char(const std::locale& l, locale_t lreal)
         ss << 1043.34;
         TEST(ss);
 
-        TEST(equal(ss.str(), buf, lreal));
-#    ifdef DEBUG_FMT
-        std::cout << "[" << boost::locale::conv::from_utf(ss.str(), "UTF-8") << "]=\n";
-        std::cout << "[" << boost::locale::conv::from_utf(buf, "UTF-8") << "]\n";
-#    endif
+        TEST_EQ(ss.str(), to_utf<CharType>(buf, lreal));
     }
 
     {
@@ -145,20 +139,22 @@ void test_by_char(const std::locale& l, locale_t lreal)
         ss << as::time_zone("GMT+00:15");
         ss << as::ftime(conv_to_char<CharType>("%M")) << a_datetime << CharType('\n');
 
+        char buf[64]{};
+#ifndef BOOST_LOCALE_NO_POSIX_BACKEND
         std::tm tm = *gmtime(&a_datetime);
-        char buf[64];
         TEST(strftime_l(buf, sizeof(buf), "%x\n%X\n%c\n16\n48\n", &tm, lreal) > 0);
-
-        TEST(equal(ss.str(), buf, lreal));
-#    ifdef DEBUG_FMT
-        std::cout << "[" << boost::locale::conv::from_utf(ss.str(), "UTF-8") << "]=\n";
-        std::cout << "[" << boost::locale::conv::from_utf(buf, "UTF-8") << "]\n";
-#    endif
+#endif
+        TEST_EQ(ss.str(), to_utf<CharType>(buf, lreal));
     }
 }
 
+BOOST_LOCALE_DISABLE_UNREACHABLE_CODE_WARNING
 void test_main(int /*argc*/, char** /*argv*/)
 {
+#ifdef BOOST_LOCALE_NO_POSIX_BACKEND
+    std::cout << "POSIX Backend is not build... Skipping\n";
+    return;
+#endif
     boost::locale::localization_backend_manager mgr = boost::locale::localization_backend_manager::global();
     mgr.select("posix");
     boost::locale::localization_backend_manager::global(mgr);
@@ -193,7 +189,5 @@ void test_main(int /*argc*/, char** /*argv*/)
         }
     }
 }
-
-#endif // posix
 
 // boostinspect:noascii

@@ -5,39 +5,32 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#ifndef BOOST_LOCALE_WITH_ICU
-#    include <iostream>
-int main()
-{
-    std::cout << "ICU is not build... Skipping\n";
-}
-#else
+#ifdef _MSC_VER
+#    define _CRT_SECURE_NO_WARNINGS
+#endif
 
-#    ifdef _MSC_VER
-#        define _CRT_SECURE_NO_WARNINGS
-#    endif
+#include <boost/locale/date_time.hpp>
+#include <boost/locale/encoding_utf.hpp>
+#include <boost/locale/format.hpp>
+#include <boost/locale/formatting.hpp>
+#include <boost/locale/generator.hpp>
+#include <iomanip>
+#include <iostream>
+#include <limits>
+#include <memory>
+#include <sstream>
 
-#    include <boost/locale/date_time.hpp>
-#    include <boost/locale/encoding_utf.hpp>
-#    include <boost/locale/format.hpp>
-#    include <boost/locale/formatting.hpp>
-#    include <boost/locale/generator.hpp>
-#    include <iomanip>
-#    include <iostream>
-#    include <limits>
-#    include <memory>
-#    include <sstream>
-#    include <unicode/numfmt.h>
-#    include <unicode/uversion.h>
-
-#    include "../src/boost/locale/icu/time_zone.hpp"
-#    include "boostLocale/test/tools.hpp"
-#    include "boostLocale/test/unit_test.hpp"
-
-#    define BOOST_LOCALE_ICU_VERSION (U_ICU_VERSION_MAJOR_NUM * 100 + U_ICU_VERSION_MINOR_NUM)
-#    define BOOST_LOCALE_ICU_VERSION_EXACT (BOOST_LOCALE_ICU_VERSION * 100 + U_ICU_VERSION_PATCHLEVEL_NUM)
+#include "boostLocale/test/tools.hpp"
+#include "boostLocale/test/unit_test.hpp"
 
 const std::string test_locale_name = "en_US";
+
+#ifdef BOOST_LOCALE_WITH_ICU
+#    include <unicode/numfmt.h>
+#    include <unicode/timezone.h>
+#    include <unicode/uversion.h>
+#    define BOOST_LOCALE_ICU_VERSION (U_ICU_VERSION_MAJOR_NUM * 100 + U_ICU_VERSION_MINOR_NUM)
+#    define BOOST_LOCALE_ICU_VERSION_EXACT (BOOST_LOCALE_ICU_VERSION * 100 + U_ICU_VERSION_PATCHLEVEL_NUM)
 
 const icu::Locale& get_icu_test_locale()
 {
@@ -49,17 +42,21 @@ std::string from_icu_string(const icu::UnicodeString& str)
 {
     return boost::locale::conv::utf_to_utf<char>(str.getBuffer(), str.getBuffer() + str.length());
 }
+#else
+#    define BOOST_LOCALE_ICU_VERSION 0
+#    define BOOST_LOCALE_ICU_VERSION_EXACT 0
+#endif
 
 // Currency style changes between ICU versions, so get "real" value from ICU
-#    if BOOST_LOCALE_ICU_VERSION >= 402
+#if BOOST_LOCALE_ICU_VERSION >= 402
 
 std::string get_icu_currency_iso(const double value)
 {
-#        if BOOST_LOCALE_ICU_VERSION >= 408
+#    if BOOST_LOCALE_ICU_VERSION >= 408
     auto styleIso = UNUM_CURRENCY_ISO;
-#        else
+#    else
     auto styleIso = icu::NumberFormat::kIsoCurrencyStyle;
-#        endif
+#    endif
     UErrorCode err = U_ZERO_ERROR;
     std::unique_ptr<icu::NumberFormat> fmt(icu::NumberFormat::createInstance(get_icu_test_locale(), styleIso, err));
     TEST_REQUIRE(U_SUCCESS(err) && fmt.get());
@@ -68,12 +65,16 @@ std::string get_icu_currency_iso(const double value)
     return from_icu_string(fmt->format(value, tmp));
 }
 
-#    endif
+#endif
 
 std::string get_icu_full_gmt_name()
 {
+#ifdef BOOST_LOCALE_WITH_ICU
     icu::UnicodeString tmp;
     return from_icu_string(icu::TimeZone::getGMT()->getDisplayName(get_icu_test_locale(), tmp));
+#else
+    return "";
+#endif
 }
 
 // This changes between ICU versions, i.e. "GMT" or "Greenwich Mean Time"
@@ -118,127 +119,127 @@ void test_parse_fail_impl(std::basic_istringstream<CharType>& ss, int line)
     test_eq_impl(ss.fail(), true, "ss.fail()", line);
 }
 
-#    define TEST_FMT(manip, value, expected)                                                  \
-        do {                                                                                  \
-            std::basic_ostringstream<CharType> ss;                                            \
-            ss.imbue(loc);                                                                    \
-            ss << manip;                                                                      \
-            test_fmt_impl(ss, (value), to_correct_string<CharType>(expected, loc), __LINE__); \
-            BOOST_LOCALE_START_CONST_CONDITION                                                \
-        } while(0) BOOST_LOCALE_END_CONST_CONDITION
+#define TEST_FMT(manip, value, expected)                                                  \
+    do {                                                                                  \
+        std::basic_ostringstream<CharType> ss;                                            \
+        ss.imbue(loc);                                                                    \
+        ss << manip;                                                                      \
+        test_fmt_impl(ss, (value), to_correct_string<CharType>(expected, loc), __LINE__); \
+        BOOST_LOCALE_START_CONST_CONDITION                                                \
+    } while(0) BOOST_LOCALE_END_CONST_CONDITION
 
-#    define TEST_PARSE_FAILS(manip, actual, type)             \
-        do {                                                  \
-            std::basic_istringstream<CharType> ss;            \
-            ss.imbue(loc);                                    \
-            ss.str(to_correct_string<CharType>(actual, loc)); \
-            ss >> manip;                                      \
-            test_parse_fail_impl<type>(ss, __LINE__);         \
-            BOOST_LOCALE_START_CONST_CONDITION                \
-        } while(0) BOOST_LOCALE_END_CONST_CONDITION
+#define TEST_PARSE_FAILS(manip, actual, type)             \
+    do {                                                  \
+        std::basic_istringstream<CharType> ss;            \
+        ss.imbue(loc);                                    \
+        ss.str(to_correct_string<CharType>(actual, loc)); \
+        ss >> manip;                                      \
+        test_parse_fail_impl<type>(ss, __LINE__);         \
+        BOOST_LOCALE_START_CONST_CONDITION                \
+    } while(0) BOOST_LOCALE_END_CONST_CONDITION
 
-#    define TEST_PARSE(manip, value, expected)                              \
-        do {                                                                \
-            const auto str_value = to_correct_string<CharType>(value, loc); \
-            {                                                               \
-                std::basic_istringstream<CharType> ss;                      \
-                ss.imbue(loc);                                              \
-                ss.str(str_value);                                          \
-                ss >> manip;                                                \
-                test_parse_impl(ss, expected, __LINE__);                    \
-            }                                                               \
-            {                                                               \
-                std::basic_istringstream<CharType> ss;                      \
-                ss.imbue(loc);                                              \
-                ss.str(str_value + CharType('@'));                          \
-                ss >> manip;                                                \
-                test_parse_at_impl(ss, expected, __LINE__);                 \
-            }                                                               \
-            BOOST_LOCALE_START_CONST_CONDITION                              \
-        } while(0) BOOST_LOCALE_END_CONST_CONDITION
+#define TEST_PARSE(manip, value, expected)                              \
+    do {                                                                \
+        const auto str_value = to_correct_string<CharType>(value, loc); \
+        {                                                               \
+            std::basic_istringstream<CharType> ss;                      \
+            ss.imbue(loc);                                              \
+            ss.str(str_value);                                          \
+            ss >> manip;                                                \
+            test_parse_impl(ss, expected, __LINE__);                    \
+        }                                                               \
+        {                                                               \
+            std::basic_istringstream<CharType> ss;                      \
+            ss.imbue(loc);                                              \
+            ss.str(str_value + CharType('@'));                          \
+            ss >> manip;                                                \
+            test_parse_at_impl(ss, expected, __LINE__);                 \
+        }                                                               \
+        BOOST_LOCALE_START_CONST_CONDITION                              \
+    } while(0) BOOST_LOCALE_END_CONST_CONDITION
 
-#    define TEST_FMT_PARSE_1(manip, value_in, value_str) \
-        do {                                             \
-            const std::string value_str_ = value_str;    \
-            TEST_FMT(manip, value_in, value_str_);       \
-            TEST_PARSE(manip, value_str_, value_in);     \
-            BOOST_LOCALE_START_CONST_CONDITION           \
-        } while(0) BOOST_LOCALE_END_CONST_CONDITION
+#define TEST_FMT_PARSE_1(manip, value_in, value_str) \
+    do {                                             \
+        const std::string value_str_ = value_str;    \
+        TEST_FMT(manip, value_in, value_str_);       \
+        TEST_PARSE(manip, value_str_, value_in);     \
+        BOOST_LOCALE_START_CONST_CONDITION           \
+    } while(0) BOOST_LOCALE_END_CONST_CONDITION
 
-#    define TEST_FMT_PARSE_2(m1, m2, value_in, value_str) \
-        do {                                              \
-            const std::string value_str_ = value_str;     \
-            TEST_FMT(m1 << m2, value_in, value_str_);     \
-            TEST_PARSE(m1 >> m2, value_str_, value_in);   \
-            BOOST_LOCALE_START_CONST_CONDITION            \
-        } while(0) BOOST_LOCALE_END_CONST_CONDITION
+#define TEST_FMT_PARSE_2(m1, m2, value_in, value_str) \
+    do {                                              \
+        const std::string value_str_ = value_str;     \
+        TEST_FMT(m1 << m2, value_in, value_str_);     \
+        TEST_PARSE(m1 >> m2, value_str_, value_in);   \
+        BOOST_LOCALE_START_CONST_CONDITION            \
+    } while(0) BOOST_LOCALE_END_CONST_CONDITION
 
-#    define TEST_FMT_PARSE_2_2(m1, m2, value_in, value_str, value_parsed) \
-        do {                                                              \
-            const std::string value_str_ = value_str;                     \
-            TEST_FMT(m1 << m2, value_in, value_str_);                     \
-            TEST_PARSE(m1 >> m2, value_str_, value_parsed);               \
-            BOOST_LOCALE_START_CONST_CONDITION                            \
-        } while(0) BOOST_LOCALE_END_CONST_CONDITION
+#define TEST_FMT_PARSE_2_2(m1, m2, value_in, value_str, value_parsed) \
+    do {                                                              \
+        const std::string value_str_ = value_str;                     \
+        TEST_FMT(m1 << m2, value_in, value_str_);                     \
+        TEST_PARSE(m1 >> m2, value_str_, value_parsed);               \
+        BOOST_LOCALE_START_CONST_CONDITION                            \
+    } while(0) BOOST_LOCALE_END_CONST_CONDITION
 
-#    define TEST_FMT_PARSE_3(m1, m2, m3, value_in, value_str) \
-        do {                                                  \
-            const std::string value_str_ = value_str;         \
-            TEST_FMT(m1 << m2 << m3, value_in, value_str_);   \
-            TEST_PARSE(m1 >> m2 >> m3, value_str_, value_in); \
-            BOOST_LOCALE_START_CONST_CONDITION                \
-        } while(0) BOOST_LOCALE_END_CONST_CONDITION
+#define TEST_FMT_PARSE_3(m1, m2, m3, value_in, value_str) \
+    do {                                                  \
+        const std::string value_str_ = value_str;         \
+        TEST_FMT(m1 << m2 << m3, value_in, value_str_);   \
+        TEST_PARSE(m1 >> m2 >> m3, value_str_, value_in); \
+        BOOST_LOCALE_START_CONST_CONDITION                \
+    } while(0) BOOST_LOCALE_END_CONST_CONDITION
 
-#    define TEST_FMT_PARSE_3_2(m1, m2, m3, value_in, value_str, value_parsed) \
-        do {                                                                  \
-            const std::string value_str_ = value_str;                         \
-            TEST_FMT(m1 << m2 << m3, value_in, value_str_);                   \
-            TEST_PARSE(m1 >> m2 >> m3, value_str_, value_parsed);             \
-            BOOST_LOCALE_START_CONST_CONDITION                                \
-        } while(0) BOOST_LOCALE_END_CONST_CONDITION
+#define TEST_FMT_PARSE_3_2(m1, m2, m3, value_in, value_str, value_parsed) \
+    do {                                                                  \
+        const std::string value_str_ = value_str;                         \
+        TEST_FMT(m1 << m2 << m3, value_in, value_str_);                   \
+        TEST_PARSE(m1 >> m2 >> m3, value_str_, value_parsed);             \
+        BOOST_LOCALE_START_CONST_CONDITION                                \
+    } while(0) BOOST_LOCALE_END_CONST_CONDITION
 
-#    define TEST_FMT_PARSE_4(m1, m2, m3, m4, value_in, value_str)   \
-        do {                                                        \
-            const std::string value_str_ = value_str;               \
-            TEST_FMT(m1 << m2 << m3 << m4, value_in, value_str_);   \
-            TEST_PARSE(m1 >> m2 >> m3 >> m4, value_str_, value_in); \
-            BOOST_LOCALE_START_CONST_CONDITION                      \
-        } while(0) BOOST_LOCALE_END_CONST_CONDITION
+#define TEST_FMT_PARSE_4(m1, m2, m3, m4, value_in, value_str)   \
+    do {                                                        \
+        const std::string value_str_ = value_str;               \
+        TEST_FMT(m1 << m2 << m3 << m4, value_in, value_str_);   \
+        TEST_PARSE(m1 >> m2 >> m3 >> m4, value_str_, value_in); \
+        BOOST_LOCALE_START_CONST_CONDITION                      \
+    } while(0) BOOST_LOCALE_END_CONST_CONDITION
 
-#    define TEST_FMT_PARSE_4_2(m1, m2, m3, m4, value_in, value_str, value_parsed) \
-        do {                                                                      \
-            const std::string value_str_ = value_str;                             \
-            TEST_FMT(m1 << m2 << m3 << m4, value_in, value_str_);                 \
-            TEST_PARSE(m1 >> m2 >> m3 >> m4, value_str_, value_parsed);           \
-            BOOST_LOCALE_START_CONST_CONDITION                                    \
-        } while(0) BOOST_LOCALE_END_CONST_CONDITION
+#define TEST_FMT_PARSE_4_2(m1, m2, m3, m4, value_in, value_str, value_parsed) \
+    do {                                                                      \
+        const std::string value_str_ = value_str;                             \
+        TEST_FMT(m1 << m2 << m3 << m4, value_in, value_str_);                 \
+        TEST_PARSE(m1 >> m2 >> m3 >> m4, value_str_, value_parsed);           \
+        BOOST_LOCALE_START_CONST_CONDITION                                    \
+    } while(0) BOOST_LOCALE_END_CONST_CONDITION
 
-#    define TEST_FORMAT_CLS(fmt_string, fmt_expression, expected_str)                                            \
-        do {                                                                                                     \
-            std::basic_ostringstream<CharType> ss;                                                               \
-            ss.imbue(loc);                                                                                       \
-            const std::basic_string<CharType> fmt = to_correct_string<CharType>(fmt_string, loc);                \
-            const std::basic_string<CharType> expected = to_correct_string<CharType>(expected_str, loc);         \
-            ss << boost::locale::basic_format<CharType>(fmt) % fmt_expression;                                   \
-            TEST_EQ(ss.str(), expected);                                                                         \
-            ss.str(std::basic_string<CharType>());                                                               \
-            ss << boost::locale::basic_format<CharType>(boost::locale::translate(fmt.c_str())) % fmt_expression; \
-            TEST_EQ(ss.str(), expected);                                                                         \
-            TEST_EQ((boost::locale::basic_format<CharType>(fmt) % fmt_expression).str(loc), expected);           \
-            BOOST_LOCALE_START_CONST_CONDITION                                                                   \
-        } while(0) BOOST_LOCALE_END_CONST_CONDITION
+#define TEST_FORMAT_CLS(fmt_string, fmt_expression, expected_str)                                            \
+    do {                                                                                                     \
+        std::basic_ostringstream<CharType> ss;                                                               \
+        ss.imbue(loc);                                                                                       \
+        const std::basic_string<CharType> fmt = to_correct_string<CharType>(fmt_string, loc);                \
+        const std::basic_string<CharType> expected = to_correct_string<CharType>(expected_str, loc);         \
+        ss << boost::locale::basic_format<CharType>(fmt) % fmt_expression;                                   \
+        TEST_EQ(ss.str(), expected);                                                                         \
+        ss.str(std::basic_string<CharType>());                                                               \
+        ss << boost::locale::basic_format<CharType>(boost::locale::translate(fmt.c_str())) % fmt_expression; \
+        TEST_EQ(ss.str(), expected);                                                                         \
+        TEST_EQ((boost::locale::basic_format<CharType>(fmt) % fmt_expression).str(loc), expected);           \
+        BOOST_LOCALE_START_CONST_CONDITION                                                                   \
+    } while(0) BOOST_LOCALE_END_CONST_CONDITION
 
-#    define TEST_MIN_MAX_FMT(type, minval, maxval)                      \
-        TEST_FMT(as::number, std::numeric_limits<type>::min(), minval); \
-        TEST_FMT(as::number, std::numeric_limits<type>::max(), maxval)
+#define TEST_MIN_MAX_FMT(type, minval, maxval)                      \
+    TEST_FMT(as::number, std::numeric_limits<type>::min(), minval); \
+    TEST_FMT(as::number, std::numeric_limits<type>::max(), maxval)
 
-#    define TEST_MIN_MAX_PARSE(type, minval, maxval)                      \
-        TEST_PARSE(as::number, minval, std::numeric_limits<type>::min()); \
-        TEST_PARSE(as::number, maxval, std::numeric_limits<type>::max())
+#define TEST_MIN_MAX_PARSE(type, minval, maxval)                      \
+    TEST_PARSE(as::number, minval, std::numeric_limits<type>::min()); \
+    TEST_PARSE(as::number, maxval, std::numeric_limits<type>::max())
 
-#    define TEST_MIN_MAX(type, minval, maxval)  \
-        TEST_MIN_MAX_FMT(type, minval, maxval); \
-        TEST_MIN_MAX_PARSE(type, minval, maxval)
+#define TEST_MIN_MAX(type, minval, maxval)  \
+    TEST_MIN_MAX_FMT(type, minval, maxval); \
+    TEST_MIN_MAX_PARSE(type, minval, maxval)
 
 bool short_parsing_fails()
 {
@@ -308,10 +309,10 @@ void test_manip(std::string e_charset = "UTF-8")
     TEST_FMT_PARSE_3(as::number, std::left, std::setw(3), 15, "15 ");
     TEST_FMT_PARSE_3(as::number, std::right, std::setw(3), 15, " 15");
     TEST_FMT_PARSE_3(as::number, std::setprecision(3), std::fixed, 13.1, "13.100");
-#    if BOOST_LOCALE_ICU_VERSION < 5601
+#if BOOST_LOCALE_ICU_VERSION < 5601
     // bug #13276
     TEST_FMT_PARSE_3(as::number, std::setprecision(3), std::scientific, 13.1, "1.310E1");
-#    endif
+#endif
 
     TEST_PARSE_FAILS(as::number, "", int);
     TEST_PARSE_FAILS(as::number, "--3", int);
@@ -327,20 +328,20 @@ void test_manip(std::string e_charset = "UTF-8")
 
     TEST_PARSE_FAILS(as::currency, "$", double);
 
-#    if BOOST_LOCALE_ICU_VERSION >= 402
+#if BOOST_LOCALE_ICU_VERSION >= 402
     TEST_FMT_PARSE_2(as::currency, as::currency_national, 1345, "$1,345.00");
     TEST_FMT_PARSE_2(as::currency, as::currency_national, 1345.34, "$1,345.34");
     TEST_FMT_PARSE_2(as::currency, as::currency_iso, 1345, get_icu_currency_iso(1345));
     TEST_FMT_PARSE_2(as::currency, as::currency_iso, 1345.34, get_icu_currency_iso(1345.34));
-#    endif
+#endif
     TEST_FMT_PARSE_1(as::spellout, 10, "ten");
-#    if 402 <= BOOST_LOCALE_ICU_VERSION && BOOST_LOCALE_ICU_VERSION < 408
+#if 402 <= BOOST_LOCALE_ICU_VERSION && BOOST_LOCALE_ICU_VERSION < 408
     if(e_charset == "UTF-8") {
         TEST_FMT(as::ordinal, 1, "1\xcb\xa2\xe1\xb5\x97"); // 1st with st as ligatures
     }
-#    else
+#else
     TEST_FMT(as::ordinal, 1, "1st");
-#    endif
+#endif
 
     time_t a_date = 3600 * 24 * (31 + 4); // Feb 5th
     time_t a_time = 3600 * 15 + 60 * 33;  // 15:33:05
@@ -358,9 +359,9 @@ void test_manip(std::string e_charset = "UTF-8")
     TEST_FMT_PARSE_2_2(as::time, as::gmt, a_datetime, "3:33:13 PM", a_time + a_timesec);
     TEST_FMT_PARSE_3_2(as::time, as::time_short, as::gmt, a_datetime, "3:33 PM", a_time);
     TEST_FMT_PARSE_3_2(as::time, as::time_medium, as::gmt, a_datetime, "3:33:13 PM", a_time + a_timesec);
-#    if BOOST_LOCALE_ICU_VERSION >= 408
+#if BOOST_LOCALE_ICU_VERSION >= 408
     TEST_FMT_PARSE_3_2(as::time, as::time_long, as::gmt, a_datetime, "3:33:13 PM GMT", a_time + a_timesec);
-#        if BOOST_LOCALE_ICU_VERSION_EXACT != 40800
+#    if BOOST_LOCALE_ICU_VERSION_EXACT != 40800
     // know bug #8675
     TEST_FMT_PARSE_3_2(as::time,
                        as::time_full,
@@ -368,11 +369,11 @@ void test_manip(std::string e_charset = "UTF-8")
                        a_datetime,
                        "3:33:13 PM " + icu_full_gmt_name,
                        a_time + a_timesec);
-#        endif
-#    else
+#    endif
+#else
     TEST_FMT_PARSE_3_2(as::time, as::time_long, as::gmt, a_datetime, "3:33:13 PM GMT+00:00", a_time + a_timesec);
     TEST_FMT_PARSE_3_2(as::time, as::time_full, as::gmt, a_datetime, "3:33:13 PM GMT+00:00", a_time + a_timesec);
-#    endif
+#endif
 
     TEST_PARSE_FAILS(as::time, "AM", double);
 
@@ -385,19 +386,19 @@ void test_manip(std::string e_charset = "UTF-8")
                        "4:33:13 PM",
                        a_time + a_timesec);
 
-#    if U_ICU_VERSION_MAJOR_NUM >= 51
-#        define GMT_P100 "GMT+1"
-#    else
-#        define GMT_P100 "GMT+01:00"
-#    endif
+#if U_ICU_VERSION_MAJOR_NUM >= 51
+#    define GMT_P100 "GMT+1"
+#else
+#    define GMT_P100 "GMT+01:00"
+#endif
 
-#    if U_ICU_VERSION_MAJOR_NUM >= 50
-#        define PERIOD ","
-#        define ICUAT " at"
-#    else
-#        define PERIOD ""
-#        define ICUAT ""
-#    endif
+#if U_ICU_VERSION_MAJOR_NUM >= 50
+#    define PERIOD ","
+#    define ICUAT " at"
+#else
+#    define PERIOD ""
+#    define ICUAT ""
+#endif
 
     TEST_FMT_PARSE_3_2(as::time,
                        as::time_long,
@@ -405,16 +406,16 @@ void test_manip(std::string e_charset = "UTF-8")
                        a_datetime,
                        "4:33:13 PM " GMT_P100,
                        a_time + a_timesec);
-#    if BOOST_LOCALE_ICU_VERSION == 308 && defined(__CYGWIN__)
+#if BOOST_LOCALE_ICU_VERSION == 308 && defined(__CYGWIN__)
 // Known failure ICU issue
-#    else
+#else
     TEST_FMT_PARSE_3_2(as::time,
                        as::time_full,
                        as::time_zone("GMT+01:00"),
                        a_datetime,
                        "4:33:13 PM GMT+01:00",
                        a_time + a_timesec);
-#    endif
+#endif
 
     TEST_FMT_PARSE_2(as::datetime, as::gmt, a_datetime, "Feb 5, 1970" PERIOD " 3:33:13 PM");
     TEST_FMT_PARSE_4_2(as::datetime,
@@ -430,14 +431,14 @@ void test_manip(std::string e_charset = "UTF-8")
                      as::gmt,
                      a_datetime,
                      "Feb 5, 1970" PERIOD " 3:33:13 PM");
-#    if BOOST_LOCALE_ICU_VERSION >= 408
+#if BOOST_LOCALE_ICU_VERSION >= 408
     TEST_FMT_PARSE_4(as::datetime,
                      as::date_long,
                      as::time_long,
                      as::gmt,
                      a_datetime,
                      "February 5, 1970" ICUAT " 3:33:13 PM GMT");
-#        if BOOST_LOCALE_ICU_VERSION_EXACT != 40800
+#    if BOOST_LOCALE_ICU_VERSION_EXACT != 40800
     // know bug #8675
     TEST_FMT_PARSE_4(as::datetime,
                      as::date_full,
@@ -445,8 +446,8 @@ void test_manip(std::string e_charset = "UTF-8")
                      as::gmt,
                      a_datetime,
                      "Thursday, February 5, 1970" ICUAT " 3:33:13 PM " + icu_full_gmt_name);
-#        endif
-#    else
+#    endif
+#else
     TEST_FMT_PARSE_4(as::datetime,
                      as::date_long,
                      as::time_long,
@@ -459,7 +460,7 @@ void test_manip(std::string e_charset = "UTF-8")
                      as::gmt,
                      a_datetime,
                      "Thursday, February 5, 1970" PERIOD " 3:33:13 PM GMT+00:00");
-#    endif
+#endif
 
     time_t now = time(0);
     time_t lnow = now + 3600 * 4;
@@ -532,11 +533,11 @@ void test_format_class(std::string charset = "UTF-8")
     TEST_FORMAT_CLS("{1}", 1200.1, "1200.1");
     TEST_FORMAT_CLS("Test {1,num}", 1200.1, "Test 1,200.1");
     TEST_FORMAT_CLS("{{}} {1,number}", 1200.1, "{} 1,200.1");
-#    if BOOST_LOCALE_ICU_VERSION < 5601
+#if BOOST_LOCALE_ICU_VERSION < 5601
     // bug #13276
     TEST_FORMAT_CLS("{1,num=sci,p=3}", 13.1, "1.310E1");
     TEST_FORMAT_CLS("{1,num=scientific,p=3}", 13.1, "1.310E1");
-#    endif
+#endif
     TEST_FORMAT_CLS("{1,num=fix,p=3}", 13.1, "13.100");
     TEST_FORMAT_CLS("{1,num=fixed,p=3}", 13.1, "13.100");
     TEST_FORMAT_CLS("{1,<,w=3,num}", -1, "-1 ");
@@ -546,28 +547,28 @@ void test_format_class(std::string charset = "UTF-8")
     TEST_FORMAT_CLS("{1,cur}", 1234, "$1,234.00");
     TEST_FORMAT_CLS("{1,currency}", 1234, "$1,234.00");
     if(charset == "UTF-8") {
-#    if BOOST_LOCALE_ICU_VERSION >= 400
+#if BOOST_LOCALE_ICU_VERSION >= 400
         TEST_FORMAT_CLS("{1,cur,locale=de_DE}", 10, "10,00\xC2\xA0€");
-#    else
+#else
         TEST_FORMAT_CLS("{1,cur,locale=de_DE}", 10, "10,00 €");
-#    endif
+#endif
     }
-#    if BOOST_LOCALE_ICU_VERSION >= 402
+#if BOOST_LOCALE_ICU_VERSION >= 402
     TEST_FORMAT_CLS("{1,cur=nat}", 1234, "$1,234.00");
     TEST_FORMAT_CLS("{1,cur=national}", 1234, "$1,234.00");
     TEST_FORMAT_CLS("{1,cur=iso}", 1234, get_icu_currency_iso(1234));
-#    endif
+#endif
     TEST_FORMAT_CLS("{1,spell}", 10, "ten");
     TEST_FORMAT_CLS("{1,spellout}", 10, "ten");
-#    if 402 <= BOOST_LOCALE_ICU_VERSION && BOOST_LOCALE_ICU_VERSION < 408
+#if 402 <= BOOST_LOCALE_ICU_VERSION && BOOST_LOCALE_ICU_VERSION < 408
     if(charset == "UTF-8") {
         TEST_FORMAT_CLS("{1,ord}", 1, "1\xcb\xa2\xe1\xb5\x97");
         TEST_FORMAT_CLS("{1,ordinal}", 1, "1\xcb\xa2\xe1\xb5\x97");
     }
-#    else
+#else
     TEST_FORMAT_CLS("{1,ord}", 1, "1st");
     TEST_FORMAT_CLS("{1,ordinal}", 1, "1st");
-#    endif
+#endif
 
     time_t now = time(0);
     time_t lnow = now + 3600 * 4;
@@ -587,21 +588,21 @@ void test_format_class(std::string charset = "UTF-8")
     TEST_FORMAT_CLS("{1,date,gmt};{1,time,gmt};{1,datetime,gmt};{1,dt,gmt}",
                     a_datetime,
                     "Feb 5, 1970;3:33:13 PM;Feb 5, 1970" PERIOD " 3:33:13 PM;Feb 5, 1970" PERIOD " 3:33:13 PM");
-#    if BOOST_LOCALE_ICU_VERSION >= 408
+#if BOOST_LOCALE_ICU_VERSION >= 408
     TEST_FORMAT_CLS("{1,time=short,gmt};{1,time=medium,gmt};{1,time=long,gmt};{1,date=full,gmt}",
                     a_datetime,
                     "3:33 PM;3:33:13 PM;3:33:13 PM GMT;Thursday, February 5, 1970");
     TEST_FORMAT_CLS("{1,time=s,gmt};{1,time=m,gmt};{1,time=l,gmt};{1,date=f,gmt}",
                     a_datetime,
                     "3:33 PM;3:33:13 PM;3:33:13 PM GMT;Thursday, February 5, 1970");
-#    else
+#else
     TEST_FORMAT_CLS("{1,time=short,gmt};{1,time=medium,gmt};{1,time=long,gmt};{1,date=full,gmt}",
                     a_datetime,
                     "3:33 PM;3:33:13 PM;3:33:13 PM GMT+00:00;Thursday, February 5, 1970");
     TEST_FORMAT_CLS("{1,time=s,gmt};{1,time=m,gmt};{1,time=l,gmt};{1,date=f,gmt}",
                     a_datetime,
                     "3:33 PM;3:33:13 PM;3:33:13 PM GMT+00:00;Thursday, February 5, 1970");
-#    endif
+#endif
     TEST_FORMAT_CLS("{1,time=s,tz=GMT+01:00}", a_datetime, "4:33 PM");
     TEST_FORMAT_CLS("{1,time=s,timezone=GMT+01:00}", a_datetime, "4:33 PM");
 
@@ -617,8 +618,14 @@ void test_format_class(std::string charset = "UTF-8")
     TEST_FORMAT_CLS("{1,gmt,ftime='%D'}", a_datetime, "12/31/13");
 }
 
+BOOST_LOCALE_DISABLE_UNREACHABLE_CODE_WARNING
 void test_main(int /*argc*/, char** /*argv*/)
 {
+#ifndef BOOST_LOCALE_WITH_ICU
+    std::cout << "ICU is not build... Skipping\n";
+    return;
+#endif
+
     boost::locale::time_zone::global("GMT+4:00");
     std::cout << "Testing char, UTF-8" << std::endl;
     test_manip<char>();
@@ -631,20 +638,18 @@ void test_main(int /*argc*/, char** /*argv*/)
     test_manip<wchar_t>();
     test_format_class<wchar_t>();
 
-#    ifdef BOOST_LOCALE_ENABLE_CHAR16_T
+#ifdef BOOST_LOCALE_ENABLE_CHAR16_T
     std::cout << "Testing char16_t" << std::endl;
     test_manip<char16_t>();
     test_format_class<char16_t>();
-#    endif
+#endif
 
-#    ifdef BOOST_LOCALE_ENABLE_CHAR32_T
+#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
     std::cout << "Testing char32_t" << std::endl;
     test_manip<char32_t>();
     test_format_class<char32_t>();
-#    endif
+#endif
 }
-
-#endif // NOICU
 
 // boostinspect:noascii
 // boostinspect:nominmax

@@ -4,19 +4,12 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#ifndef BOOST_LOCALE_WITH_ICU
-#    include <iostream>
-int main()
-{
-    std::cout << "ICU is not build... Skipping\n";
-}
-#else
-
-#    include <boost/locale/conversion.hpp>
-#    include <boost/locale/generator.hpp>
-#    include <boost/locale/info.hpp>
-#    include "boostLocale/test/unit_test.hpp"
-#    include <iomanip>
+#include <boost/locale/conversion.hpp>
+#include <boost/locale/generator.hpp>
+#include <boost/locale/info.hpp>
+#include "boostLocale/test/unit_test.hpp"
+#include <iomanip>
+#include <iostream>
 
 template<typename Char>
 void test_normc(std::basic_string<Char> orig, std::basic_string<Char> normal, boost::locale::norm_type type)
@@ -31,45 +24,50 @@ void test_norm(std::string orig, std::string normal, boost::locale::norm_type ty
 {
     test_normc<char>(orig, normal, type);
     test_normc<wchar_t>(to<wchar_t>(orig), to<wchar_t>(normal), type);
-#    ifdef BOOST_LOCALE_ENABLE_CHAR16_T
+#ifdef BOOST_LOCALE_ENABLE_CHAR16_T
     test_normc<char16_t>(to<char16_t>(orig), to<char16_t>(normal), type);
-#    endif
-#    ifdef BOOST_LOCALE_ENABLE_CHAR32_T
+#endif
+#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
     test_normc<char32_t>(to<char32_t>(orig), to<char32_t>(normal), type);
-#    endif
+#endif
 }
 
-#    define TEST_A(Chr, how, source, dest)                                                            \
-        do {                                                                                          \
-            const boost::locale::info& inf = std::use_facet<boost::locale::info>(std::locale());      \
-            std::cout << "Testing " #how " for " #Chr ", lang=" << inf.language();                    \
-            if(std::string("char") == #Chr)                                                           \
-                std::cout << " charset=" << inf.encoding();                                           \
-            std::cout << std::endl;                                                                   \
-            std::basic_string<Chr> source_s = (source), dest_s = (dest);                              \
-            TEST(boost::locale::how(source_s) == dest_s);                                             \
-            TEST(boost::locale::how(source_s.c_str()) == dest_s);                                     \
-            TEST(boost::locale::how(source_s.c_str(), source_s.c_str() + source_s.size()) == dest_s); \
-            BOOST_LOCALE_START_CONST_CONDITION                                                        \
-        } while(0) BOOST_LOCALE_END_CONST_CONDITION
+#define TEST_A(Chr, how, source, dest)                                                            \
+    do {                                                                                          \
+        const boost::locale::info& inf = std::use_facet<boost::locale::info>(std::locale());      \
+        std::cout << "Testing " #how " for " #Chr ", lang=" << inf.language();                    \
+        if(std::string("char") == #Chr)                                                           \
+            std::cout << " charset=" << inf.encoding();                                           \
+        std::cout << std::endl;                                                                   \
+        std::basic_string<Chr> source_s = (source), dest_s = (dest);                              \
+        TEST(boost::locale::how(source_s) == dest_s);                                             \
+        TEST(boost::locale::how(source_s.c_str()) == dest_s);                                     \
+        TEST(boost::locale::how(source_s.c_str(), source_s.c_str() + source_s.size()) == dest_s); \
+        BOOST_LOCALE_START_CONST_CONDITION                                                        \
+    } while(0) BOOST_LOCALE_END_CONST_CONDITION
 
-#    define TEST_ALL_CASES                                    \
-        do {                                                  \
-            eight_bit = true;                                 \
-            std::locale::global(gen("en_US.UTF-8"));          \
-            TEST_V(to_upper, "grüßen i", "GRÜSSEN I");        \
-            TEST_V(to_lower, "Façade", "façade");             \
-            TEST_V(to_title, "façadE world", "Façade World"); \
-            TEST_V(fold_case, "Hello World", "hello world");  \
-            std::locale::global(gen("tr_TR.UTF-8"));          \
-            eight_bit = false;                                \
-            TEST_V(to_upper, "i", "İ");                       \
-            TEST_V(to_lower, "İ", "i");                       \
-            BOOST_LOCALE_START_CONST_CONDITION                \
-        } while(0) BOOST_LOCALE_END_CONST_CONDITION
+#define TEST_ALL_CASES                                    \
+    do {                                                  \
+        eight_bit = true;                                 \
+        std::locale::global(gen("en_US.UTF-8"));          \
+        TEST_V(to_upper, "grüßen i", "GRÜSSEN I");        \
+        TEST_V(to_lower, "Façade", "façade");             \
+        TEST_V(to_title, "façadE world", "Façade World"); \
+        TEST_V(fold_case, "Hello World", "hello world");  \
+        std::locale::global(gen("tr_TR.UTF-8"));          \
+        eight_bit = false;                                \
+        TEST_V(to_upper, "i", "İ");                       \
+        TEST_V(to_lower, "İ", "i");                       \
+        BOOST_LOCALE_START_CONST_CONDITION                \
+    } while(0) BOOST_LOCALE_END_CONST_CONDITION
 
+BOOST_LOCALE_DISABLE_UNREACHABLE_CODE_WARNING
 void test_main(int /*argc*/, char** /*argv*/)
 {
+#ifndef BOOST_LOCALE_WITH_ICU
+    std::cout << "ICU is not build... Skipping\n";
+    return;
+#endif
     {
         using namespace boost::locale;
         std::cout << "Testing Unicode normalization" << std::endl;
@@ -84,37 +82,36 @@ void test_main(int /*argc*/, char** /*argv*/)
     boost::locale::generator gen;
     bool eight_bit = true;
 
-#    define TEST_V(how, source_s, dest_s)                                \
-        do {                                                             \
-            TEST_A(char, how, source_s, dest_s);                         \
-            if(eight_bit) {                                              \
-                std::locale tmp = std::locale();                         \
-                std::locale::global(gen("en_US.ISO8859-1"));             \
-                TEST_A(char, how, to<char>(source_s), to<char>(dest_s)); \
-                std::locale::global(tmp);                                \
-            }                                                            \
-            BOOST_LOCALE_START_CONST_CONDITION                           \
-        } while(0) BOOST_LOCALE_END_CONST_CONDITION
+#define TEST_V(how, source_s, dest_s)                                \
+    do {                                                             \
+        TEST_A(char, how, source_s, dest_s);                         \
+        if(eight_bit) {                                              \
+            std::locale tmp = std::locale();                         \
+            std::locale::global(gen("en_US.ISO8859-1"));             \
+            TEST_A(char, how, to<char>(source_s), to<char>(dest_s)); \
+            std::locale::global(tmp);                                \
+        }                                                            \
+        BOOST_LOCALE_START_CONST_CONDITION                           \
+    } while(0) BOOST_LOCALE_END_CONST_CONDITION
 
+    TEST_ALL_CASES;
+#undef TEST_V
+
+#define TEST_V(how, source_s, dest_s) TEST_A(wchar_t, how, to<wchar_t>(source_s), to<wchar_t>(dest_s))
+    TEST_ALL_CASES;
+#undef TEST_V
+
+#ifdef BOOST_LOCALE_ENABLE_CHAR16_T
+#    define TEST_V(how, source_s, dest_s) TEST_A(char16_t, how, to<char16_t>(source_s), to<char16_t>(dest_s))
     TEST_ALL_CASES;
 #    undef TEST_V
+#endif
 
-#    define TEST_V(how, source_s, dest_s) TEST_A(wchar_t, how, to<wchar_t>(source_s), to<wchar_t>(dest_s))
+#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
+#    define TEST_V(how, source_s, dest_s) TEST_A(char32_t, how, to<char32_t>(source_s), to<char32_t>(dest_s))
     TEST_ALL_CASES;
 #    undef TEST_V
-
-#    ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-#        define TEST_V(how, source_s, dest_s) TEST_A(char16_t, how, to<char16_t>(source_s), to<char16_t>(dest_s))
-    TEST_ALL_CASES;
-#        undef TEST_V
-#    endif
-
-#    ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-#        define TEST_V(how, source_s, dest_s) TEST_A(char32_t, how, to<char32_t>(source_s), to<char32_t>(dest_s))
-    TEST_ALL_CASES;
-#        undef TEST_V
-#    endif
+#endif
 }
-#endif // NO ICU
 
 // boostinspect:noascii

@@ -14,7 +14,6 @@
 #include <unicode/locid.h>
 #include <unicode/normlzr.h>
 #include <unicode/ustring.h>
-#include <unicode/uversion.h>
 #if BOOST_LOCALE_ICU_VERSION >= 308
 #    include <unicode/ucasemap.h>
 #    define BOOST_LOCALE_WITH_CASEMAP

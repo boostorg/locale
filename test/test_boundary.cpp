@@ -4,35 +4,18 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#ifndef BOOST_LOCALE_WITH_ICU
-#    include <iostream>
-int main()
-{
-    std::cout << "ICU is not build... Skipping\n";
-}
-#else
+#define BOOST_LOCALE_ERROR_LIMIT 100000
 
-#    define BOOST_LOCALE_ERROR_LIMIT 100000
-
-#    include <boost/locale/boundary.hpp>
-#    include <boost/locale/generator.hpp>
-#    include "boostLocale/test/tools.hpp"
-#    include "boostLocale/test/unit_test.hpp"
-#    include <list>
+#include <boost/locale/boundary.hpp>
+#include <boost/locale/generator.hpp>
+#include "boostLocale/test/tools.hpp"
+#include "boostLocale/test/unit_test.hpp"
+#include <iostream>
+#include <list>
+#include <vector>
+#ifdef BOOST_LOCALE_WITH_ICU
 #    include <unicode/uversion.h>
-#    include <vector>
-
-// Debugging code
-
-template<typename Char>
-void print_str(const std::basic_string<Char>& /*s*/)
-{}
-
-template<>
-void print_str<char>(const std::basic_string<char>& s)
-{
-    std::cout << "[" << s << "]\n";
-}
+#endif
 
 namespace lb = boost::locale::boundary;
 
@@ -135,10 +118,6 @@ void test_word_container(Iterator begin,
                         break;
                     } else {
                         --p;
-                        if(p->str() != fchunks[i - 1]) {
-                            print_str(p->str());
-                            print_str(fchunks[i - 1]);
-                        }
                         TEST_EQ(p->str(), fchunks[--i]);
                         TEST_EQ(p->rule(), masks[i]);
                     }
@@ -372,14 +351,14 @@ void test_boundaries(std::string* all, int* first, int* second, lb::boundary_typ
     run_word<char>(all, first, second, 0, 0, 0, g("he_IL.cp1255"), t);
     std::cout << " wchar_t" << std::endl;
     run_word<wchar_t>(all, first, second, 0, 0, 0, g("he_IL.UTF-8"), t);
-#    ifdef BOOST_LOCALE_ENABLE_CHAR16_T
+#ifdef BOOST_LOCALE_ENABLE_CHAR16_T
     std::cout << " char16_t" << std::endl;
     run_word<char16_t>(all, first, second, 0, 0, 0, g("he_IL.UTF-8"), t);
-#    endif
-#    ifdef BOOST_LOCALE_ENABLE_CHAR32_T
+#endif
+#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
     std::cout << " char32_t" << std::endl;
     run_word<char32_t>(all, first, second, 0, 0, 0, g("he_IL.UTF-8"), t);
-#    endif
+#endif
 }
 
 void word_boundary()
@@ -431,19 +410,19 @@ void word_boundary()
     run_word<wchar_t>(txt_simple, none_simple, zero, word_simple, zero, zero, utf8_en_locale);
     run_word<wchar_t>(txt_all, none_all, num_all, word_all, kana_all, ideo_all, utf8_jp_locale);
 
-#    ifdef BOOST_LOCALE_ENABLE_CHAR16_T
+#ifdef BOOST_LOCALE_ENABLE_CHAR16_T
     std::cout << " char16_t" << std::endl;
     run_word<char16_t>(txt_empty, zero, zero, zero, zero, zero, g("ja_JP.UTF-8"));
     run_word<char16_t>(txt_simple, none_simple, zero, word_simple, zero, zero, utf8_en_locale);
     run_word<char16_t>(txt_all, none_all, num_all, word_all, kana_all, ideo_all, utf8_jp_locale);
-#    endif
+#endif
 
-#    ifdef BOOST_LOCALE_ENABLE_CHAR32_T
+#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
     std::cout << " char32_t" << std::endl;
     run_word<char32_t>(txt_empty, zero, zero, zero, zero, zero, g("ja_JP.UTF-8"));
     run_word<char32_t>(txt_simple, none_simple, zero, word_simple, zero, zero, utf8_en_locale);
     run_word<char32_t>(txt_all, none_all, num_all, word_all, kana_all, ideo_all, utf8_jp_locale);
-#    endif
+#endif
 }
 void test_op_one_side(const std::string& sl, const std::string& sr, int val)
 {
@@ -508,8 +487,13 @@ void segment_operator()
     test_op("aa", "ab", -1);
 }
 
+BOOST_LOCALE_DISABLE_UNREACHABLE_CODE_WARNING
 void test_main(int /*argc*/, char** /*argv*/)
 {
+#ifndef BOOST_LOCALE_WITH_ICU
+    std::cout << "ICU is not build... Skipping\n";
+    return;
+#endif // !BOOST_LOCALE_WITH_ICU
     std::cout << "Testing segment operators" << std::endl;
     segment_operator();
     std::cout << "Testing word boundary" << std::endl;
@@ -521,7 +505,5 @@ void test_main(int /*argc*/, char** /*argv*/)
     std::cout << "Testing line boundary" << std::endl;
     test_boundaries(line1, line1a, line1b, lb::line);
 }
-
-#endif // NOICU
 
 // boostinspect:noascii

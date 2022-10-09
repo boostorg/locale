@@ -201,4 +201,10 @@ void test_eq_impl(T const& l, U const& r, const char* expr, int line)
 #define TEST_EQ_IMPL(x, y, expr) test_eq_impl(x, y, #expr, __LINE__)
 #define TEST_EQ(x, y) TEST_EQ_IMPL(x, y, x == y)
 
+#ifdef BOOST_MSVC
+#    define BOOST_LOCALE_DISABLE_UNREACHABLE_CODE_WARNING __pragma(warning(disable : 4702))
+#else
+#    define BOOST_LOCALE_DISABLE_UNREACHABLE_CODE_WARNING
+#endif
+
 #endif

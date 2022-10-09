@@ -4,32 +4,29 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#ifndef BOOST_LOCALE_WITH_ICU
-#    include <iostream>
-int main()
-{
-    std::cout << "ICU is not build... Skipping\n";
-}
-#else
-
-#    ifdef _MSC_VER
-#        define _CRT_SECURE_NO_WARNINGS
+#ifdef _MSC_VER
+#    define _CRT_SECURE_NO_WARNINGS
 // Disable this "security crap"
-#    endif
+#endif
 
-#    include <boost/locale/format.hpp>
-#    include <boost/locale/formatting.hpp>
-#    include <boost/locale/generator.hpp>
-#    include <ctime>
-#    include <iomanip>
-#    include <iostream>
-#    include <sstream>
+#include <boost/locale/format.hpp>
+#include <boost/locale/formatting.hpp>
+#include <boost/locale/generator.hpp>
+#include <ctime>
+#include <iomanip>
+#include <iostream>
+#include <sstream>
 
-#    include "boostLocale/test/tools.hpp"
-#    include "boostLocale/test/unit_test.hpp"
+#include "boostLocale/test/tools.hpp"
+#include "boostLocale/test/unit_test.hpp"
 
+BOOST_LOCALE_DISABLE_UNREACHABLE_CODE_WARNING
 void test_main(int /*argc*/, char** /*argv*/)
 {
+#ifndef BOOST_LOCALE_WITH_ICU
+    std::cout << "ICU is not build... Skipping\n";
+    return;
+#endif
     time_t now = time(0);
     boost::locale::generator gen;
     std::locale::global(gen("en_US.UTF-8"));
@@ -46,7 +43,5 @@ void test_main(int /*argc*/, char** /*argv*/)
         TEST(icu_sec == tm->tm_sec);
     }
 }
-
-#endif // NO ICU
 
 // boostinspect:noascii

@@ -308,5 +308,5 @@ namespace boost { namespace locale { namespace impl_icu {
 #endif
 
 #ifdef BOOST_MSVC
-#pragma warning(push)
+#pragma warning(pop)
 #endif

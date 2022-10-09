@@ -8,17 +8,24 @@
 #define BOOST_LOCALE_TEST_TOOLS_HPP
 
 #include <boost/locale/encoding.hpp>
+#include "boostLocale/test/posix_tools.hpp"
 #include <cstdio>
 #include <fstream>
 #include <string>
 
-#ifndef BOOST_LOCALE_NO_POSIX_BACKEND
-#    include "boostLocale/test/posix_tools.hpp"
-#endif
-
 #if defined(BOOST_MSVC) && BOOST_MSVC < 1700
 #    pragma warning(disable : 4428) // universal-character-name encountered in source
 #endif
+
+template<typename C>
+std::string to_utf8(const std::basic_string<C>& s)
+{
+    return boost::locale::conv::from_utf(s, "UTF-8");
+}
+std::string to_utf8(const std::string& s)
+{
+    return s;
+}
 
 template<typename Char>
 std::basic_string<Char> to_correct_string(const std::string& e, std::locale /*l*/)

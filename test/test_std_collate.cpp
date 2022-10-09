@@ -4,23 +4,15 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#ifdef BOOST_LOCALE_NO_STD_BACKEND
-#    include <iostream>
-int main()
-{
-    std::cout << "STD Backend is not build... Skipping\n";
-}
-#else
-
-#    include <boost/locale/config.hpp>
-#    include <boost/locale/conversion.hpp>
-#    include <boost/locale/generator.hpp>
-#    include <boost/locale/info.hpp>
-#    include <boost/locale/localization_backend.hpp>
-#    include "boostLocale/test/tools.hpp"
-#    include "boostLocale/test/unit_test.hpp"
-#    include <iomanip>
-#    include <iostream>
+#include <boost/locale/config.hpp>
+#include <boost/locale/conversion.hpp>
+#include <boost/locale/generator.hpp>
+#include <boost/locale/info.hpp>
+#include <boost/locale/localization_backend.hpp>
+#include "boostLocale/test/tools.hpp"
+#include "boostLocale/test/unit_test.hpp"
+#include <iomanip>
+#include <iostream>
 
 int get_sign(int x)
 {
@@ -63,33 +55,35 @@ void test_char()
 {
     boost::locale::generator gen;
 
-    {
-        std::cout << "- Testing at least C" << std::endl;
-        std::locale l = gen("en_US.UTF-8");
+    std::cout << "- Testing at least C" << std::endl;
+    std::locale l = gen("en_US.UTF-8");
 
-        test_one<CharType>(l, "a", "b", -1);
-        test_one<CharType>(l, "a", "a", 0);
-    }
+    test_one<CharType>(l, "a", "b", -1);
+    test_one<CharType>(l, "a", "a", 0);
 
-#    if defined(_LIBCPP_VERSION) && (defined(__APPLE__) || defined(__FreeBSD__))
+#if defined(_LIBCPP_VERSION) && (defined(__APPLE__) || defined(__FreeBSD__))
     std::cout << "- Collation is broken on this OS's standard C++ library, skipping\n";
-#    else
+#else
     for(const std::string name : {"en_US.UTF-8", "en_US.ISO8859-1"}) {
         const std::string std_name = get_std_name(name);
         if(!std_name.empty()) {
             std::cout << "- Testing " << std_name << std::endl;
-            std::locale l = gen(std_name);
+            l = gen(std_name);
             test_one<CharType>(l, "a", "ç", -1);
             test_one<CharType>(l, "ç", "d", -1);
         } else {
             std::cout << "- " << name << " not supported, skipping" << std::endl;
         }
     }
-#    endif
+#endif
 }
 
 void test_main(int /*argc*/, char** /*argv*/)
 {
+#ifdef BOOST_LOCALE_NO_STD_BACKEND
+    std::cout << "STD Backend is not build... Skipping\n";
+    return;
+#endif
     boost::locale::localization_backend_manager mgr = boost::locale::localization_backend_manager::global();
     mgr.select("std");
     boost::locale::localization_backend_manager::global(mgr);
@@ -98,16 +92,14 @@ void test_main(int /*argc*/, char** /*argv*/)
     test_char<char>();
     std::cout << "Testing wchar_t" << std::endl;
     test_char<wchar_t>();
-#    ifdef BOOST_LOCALE_ENABLE_CHAR16_T
+#ifdef BOOST_LOCALE_ENABLE_CHAR16_T
     std::cout << "Testing char16_t" << std::endl;
     test_char<char16_t>();
-#    endif
-#    ifdef BOOST_LOCALE_ENABLE_CHAR32_T
+#endif
+#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
     std::cout << "Testing char32_t" << std::endl;
     test_char<char32_t>();
-#    endif
+#endif
 }
-
-#endif // NO STD
 
 // boostinspect:noascii

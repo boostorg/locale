@@ -4,22 +4,15 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#ifdef BOOST_LOCALE_NO_POSIX_BACKEND
-#    include <iostream>
-int main()
-{
-    std::cout << "POSIX Backend is not build... Skipping\n";
-}
-#else
-#    include <boost/locale/config.hpp>
-#    include <boost/locale/conversion.hpp>
-#    include <boost/locale/generator.hpp>
-#    include <boost/locale/info.hpp>
-#    include <boost/locale/localization_backend.hpp>
-#    include "boostLocale/test/tools.hpp"
-#    include "boostLocale/test/unit_test.hpp"
-#    include <iomanip>
-#    include <iostream>
+#include <boost/locale/config.hpp>
+#include <boost/locale/conversion.hpp>
+#include <boost/locale/generator.hpp>
+#include <boost/locale/info.hpp>
+#include <boost/locale/localization_backend.hpp>
+#include "boostLocale/test/tools.hpp"
+#include "boostLocale/test/unit_test.hpp"
+#include <iomanip>
+#include <iostream>
 
 int get_sign(int x)
 {
@@ -63,32 +56,34 @@ void test_char()
     boost::locale::generator gen;
 
     std::cout << "- Testing at least C" << std::endl;
-
-    std::locale l = gen("en_US.UTF-8");
-
+    std::locale l = gen("C.UTF-8");
     test_one<CharType>(l, "a", "b", -1);
     test_one<CharType>(l, "a", "a", 0);
 
-    std::string name;
-
-#    if !defined(__APPLE__) && !defined(__FreeBSD__)
+#if !defined(__APPLE__) && !defined(__FreeBSD__)
     for(const std::string locale_name : {"en_US.UTF-8", "en_US.ISO8859-1"}) {
         if(have_locale(locale_name)) {
             std::cout << "- Testing " << locale_name << std::endl;
-            std::locale l = gen(locale_name);
+            l = gen(locale_name);
             test_one<CharType>(l, "a", "ç", -1);
             test_one<CharType>(l, "ç", "d", -1);
         } else {
             std::cout << "- " << locale_name << " not supported, skipping" << std::endl;
         }
     }
-#    else
+#else
     std::cout << "- Collation is broken on this OS C standard library, skipping\n";
-#    endif
+#endif
 }
 
+BOOST_LOCALE_DISABLE_UNREACHABLE_CODE_WARNING
 void test_main(int /*argc*/, char** /*argv*/)
 {
+#ifdef BOOST_LOCALE_NO_POSIX_BACKEND
+    std::cout << "POSIX Backend is not build... Skipping\n";
+    return;
+#endif
+
     boost::locale::localization_backend_manager mgr = boost::locale::localization_backend_manager::global();
     mgr.select("posix");
     boost::locale::localization_backend_manager::global(mgr);
@@ -98,6 +93,5 @@ void test_main(int /*argc*/, char** /*argv*/)
     std::cout << "Testing wchar_t" << std::endl;
     test_char<wchar_t>();
 }
-#endif // NO POSIX
 
 // boostinspect:noascii

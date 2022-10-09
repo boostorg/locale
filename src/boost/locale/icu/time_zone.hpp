@@ -12,7 +12,7 @@
 #    include <stdint.h> // Avoid ICU defining e.g. INT8_MIN causing macro redefinition warnings
 #endif
 #include <string>
-#include <unicode/calendar.h>
+#include <unicode/timezone.h>
 
 namespace boost { namespace locale { namespace impl_icu {
 
