@@ -240,19 +240,14 @@ namespace boost { namespace locale {
         ///
         /// Copy an object
         ///
-        basic_message(const basic_message& other) :
-            n_(other.n_), c_id_(other.c_id_), c_context_(other.c_context_), c_plural_(other.c_plural_), id_(other.id_),
-            context_(other.context_), plural_(other.plural_)
-        {}
+        basic_message(const basic_message& other) = default;
+        basic_message(basic_message&& other) = default;
 
         ///
         /// Assign other message object to this one
         ///
-        basic_message& operator=(basic_message other)
-        {
-            swap(other);
-            return *this;
-        }
+        basic_message& operator=(const basic_message& other) = default;
+        basic_message& operator=(basic_message&& other) = default;
 
         ///
         /// Swap two message objects

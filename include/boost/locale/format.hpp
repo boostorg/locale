@@ -12,6 +12,7 @@
 #include <boost/locale/hold_ptr.hpp>
 #include <boost/locale/message.hpp>
 #include <sstream>
+#include <stdexcept>
 #include <vector>
 
 #ifdef BOOST_MSVC
@@ -39,29 +40,16 @@ namespace boost { namespace locale {
 
             formattible() : pointer_(0), writer_(&formattible::void_write) {}
 
-            formattible(const formattible& other) : pointer_(other.pointer_), writer_(other.writer_) {}
-
-            formattible& operator=(const formattible& other)
-            {
-                if(this != &other) {
-                    pointer_ = other.pointer_;
-                    writer_ = other.writer_;
-                }
-                return *this;
-            }
+            formattible(const formattible& other) = default;
+            formattible(formattible&& other) = default;
+            formattible& operator=(const formattible& other) = default;
+            formattible& operator=(formattible&& other) = default;
 
             template<typename Type>
-            formattible(const Type& value)
+            explicit formattible(const Type& value)
             {
                 pointer_ = static_cast<const void*>(&value);
                 writer_ = &write<Type>;
-            }
-
-            template<typename Type>
-            formattible& operator=(const Type& other)
-            {
-                *this = formattible(other);
-                return *this;
             }
 
             friend stream_type& operator<<(stream_type& out, const formattible& fmt)
@@ -91,6 +79,8 @@ namespace boost { namespace locale {
         public:
             format_parser(std::ios_base& ios, void*, void (*imbuer)(void*, const std::locale&));
             ~format_parser();
+            format_parser(const format_parser&) = delete;
+            format_parser& operator=(const format_parser&) = delete;
 
             unsigned get_position();
 
@@ -108,8 +98,6 @@ namespace boost { namespace locale {
 
         private:
             void imbue(const std::locale&);
-            format_parser(const format_parser&);
-            void operator=(const format_parser&);
 
             std::ios_base& ios_;
             struct data;
@@ -211,14 +199,47 @@ namespace boost { namespace locale {
         {}
         ///
         /// Create a format class using message \a trans. The message if translated first according
-        /// to the rules of target locale and then interpreted as format string
+        /// to the rules of the target locale and then interpreted as a format string
         ///
         basic_format(const message_type& trans) : message_(trans), translate_(true), parameters_count_(0) {}
 
+        /// Non-copyable
+        basic_format(const basic_format& other) = delete;
+        void operator=(const basic_format& other) = delete;
+        basic_format(basic_format&& other) :
+            message_(std::move(other.message_)), format_(std::move(other.format_)), translate_(other.translate_),
+            parameters_count_(0)
+        {
+            if(other.parameters_count_)
+                throw std::invalid_argument("Can't move a basic_format with bound parameters");
+        }
+        basic_format& operator=(basic_format&& other)
+        {
+            if(other.parameters_count_)
+                throw std::invalid_argument("Can't move a basic_format with bound parameters");
+            message_ = std::move(other.message_);
+            format_ = std::move(other.format_);
+            translate_ = other.translate_;
+            parameters_count_ = 0;
+            ext_params_.clear();
+            return *this;
+        }
+
         ///
-        /// Add new parameter to format list. The object should be a type
+        /// Add new parameter to the format list. The object should be a type
         /// with defined expression out << object where \c out is \c std::basic_ostream.
         ///
+        /// A reference to the object is stored, so do not store the format object longer
+        /// than the lifetime of the parameter.
+        /// It is advisable to directly print the result:
+        /// \code
+        /// basic_format<char> fmt("{0}");
+        /// fmt % (5 + 2); // INVALID: Dangling reference
+        /// int i = 42;
+        /// return fmt % i; // INVALID: Dangling reference
+        /// std::cout << fmt % (5 + 2); // OK, print immediately
+        /// return (fmt % (5 + 2)).str(); // OK, convert immediately to string
+        /// \endcode
         template<typename Formattible>
         basic_format& operator%(const Formattible& object)
         {
@@ -372,12 +393,6 @@ namespace boost { namespace locale {
                 }
             }
         }
-
-        //
-        // Non-copyable
-        //
-        basic_format(const basic_format& other);
-        void operator=(const basic_format& other);
 
         void add(const formattible_type& param)
         {

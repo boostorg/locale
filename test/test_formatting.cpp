@@ -550,6 +550,21 @@ void test_format_class(std::string charset = "UTF-8")
         TEST_EQ(fmt.str(), hello); // Not translated in en_US
         std::locale::global(loc_he);
         TEST_EQ(fmt.str(), hello_he); // translated in he_IL
+
+        // Movable
+        {
+            format_type fmt2 = format_type(ascii_to<CharType>("{3} {1} {2}"));
+            int i1 = 1, i2 = 2, i3 = 3;
+            fmt2 % i1 % i2 % i3;
+            fmt2 = format_type(ascii_to<CharType>("{1}"));
+            TEST_EQ(fmt2.str(), ascii_to<CharType>("")); // No bound value
+            TEST_EQ((fmt2 % 42).str(), ascii_to<CharType>("42"));
+
+            fmt2 = format_type(hello);
+            TEST_EQ(fmt2.str(), hello); // Not translated
+            fmt2 = format_type(boost::locale::translate(hello));
+            TEST_EQ(fmt2.str(), hello_he); // Translated
+        }
         // Restore
         std::locale::global(old_locale);
     }
