@@ -15,6 +15,7 @@
 #include <boost/locale/encoding.hpp>
 #include <boost/locale/format.hpp>
 #include <boost/locale/formatting.hpp>
+#include <boost/locale/numpunct.hpp>
 #include <boost/locale/generator.hpp>
 #include <boost/locale/gnu_gettext.hpp>
 #include <boost/locale/info.hpp>
