@@ -207,7 +207,8 @@ namespace boost { namespace locale {
         ///
         /// Create a format class for \a format_string
         ///
-        basic_format(string_type format_string) : format_(format_string), translate_(false), parameters_count_(0) {}
+        basic_format(const string_type& format_string) : format_(format_string), translate_(false), parameters_count_(0)
+        {}
         ///
         /// Create a format class using message \a trans. The message if translated first according
         /// to the rules of target locale and then interpreted as format string

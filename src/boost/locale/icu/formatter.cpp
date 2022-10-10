@@ -9,6 +9,7 @@
 #include "boost/locale/icu/formatter.hpp"
 #include <boost/locale/formatting.hpp>
 #include <boost/locale/info.hpp>
+#include "boost/locale/icu/icu_util.hpp"
 #include "boost/locale/icu/predefined_formatters.hpp"
 #include "boost/locale/icu/time_zone.hpp"
 #include "boost/locale/icu/uconv.hpp"
@@ -33,6 +34,22 @@ namespace boost { namespace locale { namespace impl_icu {
         struct init {
             init() { ignore_unused(std::has_facet<icu_formatters_cache>(std::locale::classic())); }
         } instance;
+
+        // Set the min/max fraction digits for the NumberFormat
+        void set_fraction_digits(icu::NumberFormat& nf, const std::ios_base::fmtflags how, std::streamsize precision)
+        {
+#if BOOST_LOCALE_ICU_VERSION >= 5601
+            // Since ICU 56.1 the integer part counts to the fraction part
+            if(how == std::ios_base::scientific)
+                precision += nf.getMaximumIntegerDigits();
+#endif
+            nf.setMaximumFractionDigits(precision);
+            if(how == std::ios_base::scientific || how == std::ios_base::fixed) {
+                nf.setMinimumFractionDigits(precision);
+            } else {
+                nf.setMinimumFractionDigits(0);
+            }
+        }
     } // namespace
 
     template<typename CharType>
@@ -361,12 +378,7 @@ namespace boost { namespace locale { namespace impl_icu {
                 else
                     nf = cache.number_format(icu_formatters_cache::fmt_number);
 
-                nf->setMaximumFractionDigits(ios.precision());
-                if(how == std::ios_base::scientific || how == std::ios_base::fixed) {
-                    nf->setMinimumFractionDigits(ios.precision());
-                } else {
-                    nf->setMinimumFractionDigits(0);
-                }
+                set_fraction_digits(*nf, how, ios.precision());
                 fmt.reset(new number_format<CharType>(nf, encoding));
             } break;
             case currency: {
@@ -383,13 +395,7 @@ namespace boost { namespace locale { namespace impl_icu {
             } break;
             case percent: {
                 icu::NumberFormat* nf = cache.number_format(icu_formatters_cache::fmt_per);
-                nf->setMaximumFractionDigits(ios.precision());
-                std::ios_base::fmtflags how = (ios.flags() & std::ios_base::floatfield);
-                if(how == std::ios_base::scientific || how == std::ios_base::fixed) {
-                    nf->setMinimumFractionDigits(ios.precision());
-                } else {
-                    nf->setMinimumFractionDigits(0);
-                }
+                set_fraction_digits(*nf, ios.flags() & std::ios_base::floatfield, ios.precision());
                 fmt.reset(new number_format<CharType>(nf, encoding));
 
             } break;

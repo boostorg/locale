@@ -406,7 +406,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
         }
     };
 
-    // By default for wide types the conversion is not requiredyy
+    // By default for wide types the conversion is not required
     template<typename CharType>
     const CharType* runtime_conversion(const CharType* msg,
                                        std::basic_string<CharType>& /*buffer*/,
@@ -460,7 +460,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
             if(plural_forms_.at(domain_id))
                 form = (*plural_forms_[domain_id])(n);
             else
-                form = n == 1 ? 0 : 1; // Fallback to english plural form
+                form = n == 1 ? 0 : 1; // Fallback to English plural form
 
             const CharType* p = ptr.first;
             for(int i = 0; p < ptr.second && i < form; i++) {
@@ -591,14 +591,12 @@ namespace boost { namespace locale { namespace gnu_gettext {
             if(mo_encoding.empty())
                 throw std::runtime_error("Invalid mo-format, encoding is not specified");
 
-            if(!plural.empty()) {
+            if(!plural.empty()) 
                 plural_forms_[idx] = lambda::compile(plural.c_str());
-                ;
-            }
 
-            if(mo_useable_directly(mo_encoding, *mo)) {
+            if(mo_useable_directly(mo_encoding, *mo))
                 mo_catalogs_[idx] = mo;
-            } else {
+            else {
                 converter<CharType> cvt_value(locale_encoding, mo_encoding);
                 converter<CharType> cvt_key(key_encoding, mo_encoding);
                 for(unsigned i = 0; i < mo->size(); i++) {

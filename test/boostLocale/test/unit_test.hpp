@@ -83,58 +83,6 @@ int main(int argc, char** argv)
     return error_counter == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
-inline unsigned utf8_next(const std::string& s, unsigned& pos)
-{
-    unsigned c = (unsigned char)s[pos++];
-    if((unsigned char)(c - 0xc0) >= 0x35)
-        return c;
-    unsigned l;
-    if(c < 192)
-        l = 0;
-    else if(c < 224)
-        l = 1;
-    else if(c < 240)
-        l = 2;
-    else
-        l = 3;
-
-    c &= (1 << (6 - l)) - 1;
-
-    switch(l) {
-        case 3: c = (c << 6) | (((unsigned char)s[pos++]) & 0x3F); BOOST_FALLTHROUGH;
-        case 2: c = (c << 6) | (((unsigned char)s[pos++]) & 0x3F); BOOST_FALLTHROUGH;
-        case 1: c = (c << 6) | (((unsigned char)s[pos++]) & 0x3F);
-    }
-    return c;
-}
-
-template<typename Char>
-std::basic_string<Char> to(const std::string& utf8)
-{
-    std::basic_string<Char> out;
-    unsigned i = 0;
-    while(i < utf8.size()) {
-        unsigned point;
-        unsigned prev = i;
-        point = utf8_next(utf8, i);
-        BOOST_LOCALE_START_CONST_CONDITION
-        if(sizeof(Char) == 1 && point > 255) {
-            std::ostringstream ss;
-            ss << "Can't convert codepoint U" << std::hex << point << "("
-               << std::string(utf8.begin() + prev, utf8.begin() + i) << ") to Latin1";
-            throw std::runtime_error(ss.str());
-        } else if(sizeof(Char) == 2 && point > 0xFFFF) { // Deal with surrogates
-            point -= 0x10000;
-            out += static_cast<Char>(0xD800 | (point >> 10));
-            out += static_cast<Char>(0xDC00 | (point & 0x3FF));
-            continue;
-        }
-        BOOST_LOCALE_END_CONST_CONDITION
-        out += static_cast<Char>(point);
-    }
-    return out;
-}
-
 template<typename T>
 std::string to_string(T const& s)
 {

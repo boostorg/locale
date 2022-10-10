@@ -7,6 +7,7 @@
 #include <boost/locale/collator.hpp>
 #include <boost/locale/generator.hpp>
 #include <boost/locale/localization_backend.hpp>
+#include "boostLocale/test/tools.hpp"
 #include "boostLocale/test/unit_test.hpp"
 #include <iomanip>
 

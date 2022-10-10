@@ -65,7 +65,7 @@ void test_by_char(const std::locale& l, locale_t lreal)
         ss >> n;
         TEST(ss);
         TEST_EQ(n, 1045.45);
-        TEST_EQ(ss.str(), to_correct_string<CharType>("1045.45", l));
+        TEST_EQ(ss.str(), ascii_to<CharType>("1045.45"));
     }
 
     {
