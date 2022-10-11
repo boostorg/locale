@@ -28,14 +28,6 @@
 #include <boost/locale/collator.hpp>
 #include <boost/locale/conversion.hpp>
 
-#define BOOST_LOCALE_WINDOWS_2000_API
-
-#if defined(_WIN32_NT) && _WIN32_NT >= 0x600 && !defined(BOOST_LOCALE_WINDOWS_2000_API)
-#    define BOOST_LOCALE_WINDOWS_VISTA_API
-#else
-#    define BOOST_LOCALE_WINDOWS_2000_API
-#endif
-
 namespace boost { namespace locale { namespace impl_win {
 
     struct numeric_info {
@@ -46,17 +38,13 @@ namespace boost { namespace locale { namespace impl_win {
 
     inline DWORD collation_level_to_flag(collator_base::level_type level)
     {
-        DWORD flags;
         switch(level) {
-            case collator_base::primary: flags = NORM_IGNORESYMBOLS | NORM_IGNORECASE | NORM_IGNORENONSPACE; break;
-            case collator_base::secondary: flags = NORM_IGNORESYMBOLS | NORM_IGNORECASE; break;
-            case collator_base::tertiary: flags = NORM_IGNORESYMBOLS; break;
-            default: flags = 0;
+            case collator_base::primary: return NORM_IGNORESYMBOLS | NORM_IGNORECASE | NORM_IGNORENONSPACE;
+            case collator_base::secondary: return NORM_IGNORESYMBOLS | NORM_IGNORECASE;
+            case collator_base::tertiary: return NORM_IGNORESYMBOLS;
+            default: return 0;
         }
-        return flags;
     }
-
-#ifdef BOOST_LOCALE_WINDOWS_2000_API
 
     class winlocale {
     public:
@@ -85,9 +73,9 @@ namespace boost { namespace locale { namespace impl_win {
             return res;
 
         // limits according to MSDN
-        static const int th_size = 4;
-        static const int de_size = 4;
-        static const int gr_size = 10;
+        constexpr int th_size = 4;
+        constexpr int de_size = 4;
+        constexpr int gr_size = 10;
 
         wchar_t th[th_size] = {0};
         wchar_t de[de_size] = {0};
@@ -154,13 +142,13 @@ namespace boost { namespace locale { namespace impl_win {
     {
         if(le - lb > std::numeric_limits<int>::max() || re - rb > std::numeric_limits<int>::max())
             throw std::length_error("String to long for int type");
-        return CompareStringW(l.lcid,
-                              collation_level_to_flag(level),
-                              lb,
-                              static_cast<int>(le - lb),
-                              rb,
-                              static_cast<int>(re - rb))
-               - 2;
+        const int result = CompareStringW(l.lcid,
+                                          collation_level_to_flag(level),
+                                          lb,
+                                          static_cast<int>(le - lb),
+                                          rb,
+                                          static_cast<int>(re - rb));
+        return result - 2; // Subtract 2 to get the meaning of <0, ==0, and >0
     }
 
     ////////////////////////////////////////////////////////////////////////
@@ -235,8 +223,6 @@ namespace boost { namespace locale { namespace impl_win {
         len = FoldStringW(flags, begin, static_cast<int>(end - begin), &v.front(), len + 1);
         return std::wstring(&v.front(), len);
     }
-
-#endif
 
     inline std::wstring
     wcsxfrm_l(collator_base::level_type level, const wchar_t* begin, const wchar_t* end, const winlocale& l)
