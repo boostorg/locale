@@ -591,7 +591,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
             if(mo_encoding.empty())
                 throw std::runtime_error("Invalid mo-format, encoding is not specified");
 
-            if(!plural.empty()) 
+            if(!plural.empty())
                 plural_forms_[idx] = lambda::compile(plural.c_str());
 
             if(mo_useable_directly(mo_encoding, *mo))

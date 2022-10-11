@@ -10,7 +10,7 @@
 #include "boost/locale/icu/cdata.hpp"
 #include "boost/locale/icu/icu_util.hpp"
 #include "boost/locale/icu/uconv.hpp"
-
+#include <limits>
 #include <unicode/locid.h>
 #include <unicode/normlzr.h>
 #include <unicode/ustring.h>
@@ -74,6 +74,14 @@ namespace boost { namespace locale { namespace impl_icu {
     }; // converter_impl
 
 #ifdef BOOST_LOCALE_WITH_CASEMAP
+    template<typename T>
+    struct get_casemap_size_type;
+
+    template<typename TRes, typename TCaseMap, typename TSize>
+    struct get_casemap_size_type<TRes (*)(TCaseMap*, char*, TSize, const char*, TSize, UErrorCode*)> {
+        using type = TSize;
+    };
+
     class raii_casemap {
     public:
         raii_casemap(const raii_casemap&) = delete;
@@ -90,13 +98,29 @@ namespace boost { namespace locale { namespace impl_icu {
         template<typename Conv>
         std::string convert(Conv func, const char* begin, const char* end) const
         {
-            std::vector<char> buf((end - begin) * 11 / 10 + 1);
+            using size_type = typename get_casemap_size_type<Conv>::type;
+            if((end - begin) >= std::numeric_limits<std::ptrdiff_t>::max() / 11)
+                throw std::range_error("String to long to be converted by ICU");
+            const auto max_converted_size = (end - begin) * 11 / 10 + 1;
+            if(max_converted_size >= std::numeric_limits<size_type>::max())
+                throw std::range_error("String to long to be converted by ICU");
+            std::vector<char> buf(max_converted_size);
             UErrorCode err = U_ZERO_ERROR;
-            int size = func(map_, &buf.front(), buf.size(), begin, end - begin, &err);
+            auto size = func(map_,
+                             &buf.front(),
+                             static_cast<size_type>(buf.size()),
+                             begin,
+                             static_cast<size_type>(end - begin),
+                             &err);
             if(err == U_BUFFER_OVERFLOW_ERROR) {
                 err = U_ZERO_ERROR;
                 buf.resize(size + 1);
-                size = func(map_, &buf.front(), buf.size(), begin, end - begin, &err);
+                size = func(map_,
+                            &buf.front(),
+                            static_cast<size_type>(buf.size()),
+                            begin,
+                            static_cast<size_type>(end - begin),
+                            &err);
             }
             check_and_throw_icu_error(err);
             return std::string(&buf.front(), size);
