@@ -421,20 +421,21 @@ void test_main(int /*argc*/, char** /*argv*/)
 
             // Default constructed time_point
             {
-                time_t current_time = std::time(0);
+                const time_t current_time = std::time(0);
                 date_time time_point_default;
-                // Try to estimate when exactly the construction happened
-                current_time += (std::time(0) - current_time) / 2;
-                const tm current_time_gmt = *std::gmtime(&current_time);
                 // Defaults to current time, i.e. different than a date in 1970
                 date_time time_point_1970 = year(1970) + february() + day(5);
                 TEST(time_point_default != time_point_1970);
-
+                // We can not check an exact time as we can't know
+                // at which exact time the time point was recorded
+                const double time_point_time = time_point_default.time();
+                TEST_GE(time_point_time, current_time);
+                TEST_EQ(static_cast<time_t>(time_point_time / 3600), current_time / 3600); // Roughly match
+                // However at least the date should match
+                const tm current_time_gmt = *std::gmtime(&current_time);
                 TEST_EQ(time_point_default.get(year()), current_time_gmt.tm_year + 1900);
                 TEST_EQ(time_point_default.get(month()), current_time_gmt.tm_mon);
                 TEST_EQ(time_point_default.get(day()), current_time_gmt.tm_mday);
-                TEST_EQ(time_point_default.get(hour()), current_time_gmt.tm_hour);
-                TEST_EQ(time_point_default.get(minute()), current_time_gmt.tm_min);
 
                 // Uses the current global timezone
                 time_zone::global("GMT");
