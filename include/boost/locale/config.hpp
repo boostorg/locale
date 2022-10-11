@@ -65,38 +65,4 @@
 #    define BOOST_LOCALE_END_CONST_CONDITION
 #endif
 
-// Deprecated symbols markup
-#ifdef _MSC_VER
-#    if _MSC_VER >= 1400
-#        define BOOST_LOCALE_DEPRECATED(msg) __declspec(deprecated(msg))
-#    else
-// MSVC 7.1 only supports the attribute without a message
-#        define BOOST_LOCALE_DEPRECATED(msg) __declspec(deprecated)
-#    endif
-#endif
-
-#if !defined(BOOST_LOCALE_DEPRECATED) && defined(__has_extension)
-#    if __has_extension(attribute_deprecated_with_message)
-#        define BOOST_LOCALE_DEPRECATED(msg) __attribute__((deprecated(msg)))
-#    endif
-#endif
-
-#if !defined(BOOST_LOCALE_DEPRECATED) && __cplusplus >= 201402
-#    define BOOST_LOCALE_DEPRECATED(msg) [[deprecated(msg)]]
-#endif
-
-#if !defined(BOOST_LOCALE_DEPRECATED) && defined(__GNUC__)
-#    define BOOST_LOCALE_DEPRECATED(msg) __attribute__((deprecated))
-#endif
-
-#if !defined(BOOST_LOCALE_DEPRECATED) && defined(__has_attribute)
-#    if __has_attribute(deprecated)
-#        define BOOST_LOCALE_DEPRECATED(msg) __attribute__((deprecated))
-#    endif
-#endif
-
-#ifndef BOOST_LOCALE_DEPRECATED
-#    define BOOST_LOCALE_DEPRECATED(msg)
-#endif
-
 #endif // boost/locale/config.hpp

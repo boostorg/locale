@@ -169,7 +169,7 @@ namespace boost { namespace locale {
         ///
         BOOST_LOCALE_DECL std::unique_ptr<base_converter> create_utf8_converter();
 
-        BOOST_LOCALE_DEPRECATED("This function is deprecated, use 'create_utf8_converter()'")
+        BOOST_DEPRECATED("This function is deprecated, use 'create_utf8_converter()'")
         inline std::unique_ptr<base_converter> create_utf8_converter_unique_ptr()
         {
             return create_utf8_converter();
@@ -183,7 +183,7 @@ namespace boost { namespace locale {
         ///
         BOOST_LOCALE_DECL std::unique_ptr<base_converter> create_simple_converter(const std::string& encoding);
 
-        BOOST_LOCALE_DEPRECATED("This function is deprecated, use 'create_simple_converter()'")
+        BOOST_DEPRECATED("This function is deprecated, use 'create_simple_converter()'")
         inline std::unique_ptr<base_converter> create_simple_converter_unique_ptr(const std::string& encoding)
         {
             return create_simple_converter(encoding);
@@ -205,7 +205,7 @@ namespace boost { namespace locale {
         std::locale
         create_codecvt(const std::locale& in, std::unique_ptr<base_converter> cvt, character_facet_type type);
 
-        BOOST_LOCALE_DEPRECATED("This function is deprecated, use 'create_codecvt()'")
+        BOOST_DEPRECATED("This function is deprecated, use 'create_codecvt()'")
         inline std::locale
         create_codecvt_from_pointer(const std::locale& in, base_converter* cvt, character_facet_type type)
         {

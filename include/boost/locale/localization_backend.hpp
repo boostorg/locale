@@ -103,7 +103,7 @@ namespace boost { namespace locale {
         ///
         std::unique_ptr<localization_backend> get() const;
 
-        BOOST_LOCALE_DEPRECATED("This function is deprecated, use 'get()' instead")
+        BOOST_DEPRECATED("This function is deprecated, use 'get()' instead")
         std::unique_ptr<localization_backend> get_unique_ptr() const { return get(); }
 
         ///
