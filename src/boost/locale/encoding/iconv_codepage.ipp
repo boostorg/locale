@@ -8,198 +8,171 @@
 #define BOOST_LOCALE_IMPL_ICONV_CODEPAGE_HPP
 
 #include <boost/locale/encoding.hpp>
-#include <cerrno>
-#include "boost/locale/util/iconv.hpp"
 #include "boost/locale/encoding/conv.hpp"
+#include "boost/locale/util/iconv.hpp"
+#include <cerrno>
 
-namespace boost {
-namespace locale {
-namespace conv {
-namespace impl {
+namespace boost { namespace locale { namespace conv { namespace impl {
 
-class iconverter_base {
-public:
+    class iconverter_base {
+    public:
+        iconverter_base() : cvt_((iconv_t)(-1)) {}
 
-    iconverter_base() :
-    cvt_((iconv_t)(-1)) {}
+        ~iconverter_base() { close(); }
 
-    ~iconverter_base()
-    {
-        close();
-    }
+        size_t conv(const char** inbufc, size_t* inchar_left, char** outbuf, size_t* outchar_left)
+        {
+            char** inbuf = const_cast<char**>(inbufc);
+            return call_iconv(cvt_, inbuf, inchar_left, outbuf, outchar_left);
+        }
 
-    size_t conv(char const **inbufc,size_t *inchar_left,
-                char **outbuf,size_t *outchar_left)
-    {
-        char **inbuf = const_cast<char **>(inbufc);
-        return call_iconv(cvt_,inbuf,inchar_left,outbuf,outchar_left);
-    }
+        bool do_open(const char* to, const char* from, method_type how)
+        {
+            close();
+            cvt_ = iconv_open(to, from);
+            how_ = how;
+            return cvt_ != (iconv_t)(-1);
+        }
 
-    bool do_open(char const *to,char const *from,method_type how)
-    {
-        close();
-        cvt_ = iconv_open(to,from);
-        how_ = how;
-        return cvt_ != (iconv_t)(-1);
-    }
+        template<typename OutChar, typename InChar>
+        std::basic_string<OutChar> real_convert(const InChar* ubegin, const InChar* uend)
+        {
+            std::basic_string<OutChar> sresult;
 
-    template<typename OutChar,typename InChar>
-    std::basic_string<OutChar> real_convert(InChar const *ubegin,InChar const *uend)
-    {
-        std::basic_string<OutChar> sresult;
+            sresult.reserve(uend - ubegin);
 
-        sresult.reserve(uend - ubegin);
+            OutChar result[64];
 
-        OutChar result[64];
+            char* out_start = reinterpret_cast<char*>(&result[0]);
+            const char* begin = reinterpret_cast<const char*>(ubegin);
+            const char* end = reinterpret_cast<const char*>(uend);
 
-        char *out_start   = reinterpret_cast<char *>(&result[0]);
-        char const *begin = reinterpret_cast<char const *>(ubegin);
-        char const *end   = reinterpret_cast<char const *>(uend);
+            enum { normal, unshifting, done } state = normal;
 
-        enum { normal , unshifting , done } state = normal;
+            while(state != done) {
+                size_t in_left = end - begin;
+                size_t out_left = sizeof(result);
 
-        while(state!=done) {
+                char* out_ptr = out_start;
+                size_t res = 0;
+                if(in_left == 0)
+                    state = unshifting;
 
-            size_t in_left = end - begin;
-            size_t out_left = sizeof(result);
+                if(state == normal)
+                    res = conv(&begin, &in_left, &out_ptr, &out_left);
+                else
+                    res = conv(0, 0, &out_ptr, &out_left);
 
-            char *out_ptr = out_start;
-            size_t res = 0;
-            if(in_left == 0)
-                state = unshifting;
+                int err = errno;
 
-            if(state == normal)
-                res = conv(&begin,&in_left,&out_ptr,&out_left);
-            else
-                res = conv(0,0,&out_ptr,&out_left);
+                size_t output_count = (out_ptr - out_start) / sizeof(OutChar);
 
-            int err = errno;
-
-            size_t output_count = (out_ptr - out_start) / sizeof(OutChar);
-
-            if(res!=0 && res!=(size_t)(-1)) {
+                if(res != 0 && res != (size_t)(-1)) {
                     if(how_ == stop) {
                         throw conversion_error();
                     }
-            }
+                }
 
-            sresult.append(&result[0],output_count);
+                sresult.append(&result[0], output_count);
 
-            if(res == (size_t)(-1)) {
-                if(err == EILSEQ || err == EINVAL) {
-                    if(how_ == stop) {
-                        throw conversion_error();
-                    }
+                if(res == (size_t)(-1)) {
+                    if(err == EILSEQ || err == EINVAL) {
+                        if(how_ == stop) {
+                            throw conversion_error();
+                        }
 
-                    if(begin != end) {
-                        begin+=sizeof(InChar);
-                        if(begin >= end)
+                        if(begin != end) {
+                            begin += sizeof(InChar);
+                            if(begin >= end)
+                                break;
+                        } else {
+                            break;
+                        }
+                    } else if(err == E2BIG) {
+                        continue;
+                    } else {
+                        // We should never get there
+                        // but if we do
+                        if(how_ == stop)
+                            throw conversion_error();
+                        else
                             break;
                     }
-                    else {
-                        break;
-                    }
                 }
-                else if (err==E2BIG) {
-                    continue;
-                }
-                else {
-                    // We should never get there
-                    // but if we do
-                    if(how_ == stop)
-                        throw conversion_error();
-                    else
-                        break;
-                }
+                if(state == unshifting)
+                    state = done;
             }
-            if(state == unshifting)
-                state = done;
+            return sresult;
         }
-        return sresult;
-    }
 
-
-private:
-
-    void close()
-    {
-        if(cvt_!=(iconv_t)(-1)) {
-            iconv_close(cvt_);
-            cvt_ = (iconv_t)(-1);
+    private:
+        void close()
+        {
+            if(cvt_ != (iconv_t)(-1)) {
+                iconv_close(cvt_);
+                cvt_ = (iconv_t)(-1);
+            }
         }
-    }
 
-    iconv_t cvt_;
+        iconv_t cvt_;
 
-    method_type how_;
+        method_type how_;
+    };
 
-};
+    template<typename CharType>
+    class iconv_from_utf : public converter_from_utf<CharType> {
+    public:
+        typedef CharType char_type;
 
-template<typename CharType>
-class iconv_from_utf : public converter_from_utf<CharType>
-{
-public:
+        bool open(const char* charset, method_type how) override
+        {
+            return self_.do_open(charset, utf_name<CharType>(), how);
+        }
 
-    typedef CharType char_type;
+        std::string convert(const char_type* ubegin, const char_type* uend) override
+        {
+            return self_.template real_convert<char, char_type>(ubegin, uend);
+        }
 
-    bool open(char const *charset,method_type how) override
-    {
-        return self_.do_open(charset,utf_name<CharType>(),how);
-    }
+    private:
+        iconverter_base self_;
+    };
 
-    std::string convert(char_type const *ubegin,char_type const *uend) override
-    {
-        return self_.template real_convert<char,char_type>(ubegin,uend);
-    }
-private:
-    iconverter_base self_;
-};
+    class iconv_between : public converter_between {
+    public:
+        bool open(const char* to_charset, const char* from_charset, method_type how) override
+        {
+            return self_.do_open(to_charset, from_charset, how);
+        }
+        std::string convert(const char* begin, const char* end) override
+        {
+            return self_.real_convert<char, char>(begin, end);
+        }
 
-class iconv_between:  public converter_between
-{
-public:
-    bool open(char const *to_charset,char const *from_charset,method_type how) override
-    {
-        return self_.do_open(to_charset,from_charset,how);
-    }
-    std::string convert(char const *begin,char const *end) override
-    {
-        return self_.real_convert<char,char>(begin,end);
-    }
-private:
-    iconverter_base self_;
+    private:
+        iconverter_base self_;
+    };
 
-};
+    template<typename CharType>
+    class iconv_to_utf : public converter_to_utf<CharType> {
+    public:
+        typedef CharType char_type;
+        typedef std::basic_string<char_type> string_type;
 
-template<typename CharType>
-class iconv_to_utf :  public converter_to_utf<CharType>
-{
-public:
+        bool open(const char* charset, method_type how) override
+        {
+            return self_.do_open(utf_name<CharType>(), charset, how);
+        }
 
-    typedef CharType char_type;
-    typedef std::basic_string<char_type> string_type;
+        string_type convert(const char* begin, const char* end) override
+        {
+            return self_.template real_convert<char_type, char>(begin, end);
+        }
 
-    bool open(char const *charset,method_type how) override
-    {
-        return self_.do_open(utf_name<CharType>(),charset,how);
-    }
+    private:
+        iconverter_base self_;
+    };
 
-    string_type convert(char const *begin,char const *end) override
-    {
-        return self_.template real_convert<char_type,char>(begin,end);
-    }
-private:
-    iconverter_base self_;
-};
-
-
-
-} // impl
-} // conv
-} // locale
-} // boost
-
-
-
+}}}} // namespace boost::locale::conv::impl
 
 #endif

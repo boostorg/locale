@@ -5,31 +5,32 @@
 // https://www.boost.org/LICENSE_1_0.txt
 
 #ifdef _MSC_VER
-#define _CRT_SECURE_NO_WARNINGS
+#    define _CRT_SECURE_NO_WARNINGS
 #endif
 
 #include <boost/locale/date_time.hpp>
-#include <boost/locale/generator.hpp>
 #include <boost/locale/formatting.hpp>
+#include <boost/locale/generator.hpp>
 #include <boost/locale/localization_backend.hpp>
+#include "boostLocale/test/unit_test.hpp"
 #include <ctime>
 #include <iomanip>
 #include <limits>
-#include "boostLocale/test/unit_test.hpp"
 
 #ifdef BOOST_LOCALE_WITH_ICU
-#include <unicode/uversion.h>
-#define BOOST_LOCALE_ICU_VERSION (U_ICU_VERSION_MAJOR_NUM*100 + U_ICU_VERSION_MINOR_NUM)
+#    include <unicode/uversion.h>
+#    define BOOST_LOCALE_ICU_VERSION (U_ICU_VERSION_MAJOR_NUM * 100 + U_ICU_VERSION_MINOR_NUM)
 #else
-#define BOOST_LOCALE_ICU_VERSION 0
+#    define BOOST_LOCALE_ICU_VERSION 0
 #endif
 
 #ifdef BOOST_MSVC
-#  pragma warning(disable : 4244) // loose data
+#    pragma warning(disable : 4244) // loose data
 #endif
 
-#define TEST_EQ_FMT(t,X)                             \
-    ss.str(""); ss << (t);                           \
+#define TEST_EQ_FMT(t, X) \
+    ss.str("");           \
+    ss << (t);            \
     test_eq_impl(ss.str(), X, #t "==" #X, __LINE__)
 
 void test_main(int /*argc*/, char** /*argv*/)
@@ -37,30 +38,29 @@ void test_main(int /*argc*/, char** /*argv*/)
     using namespace boost::locale;
     using namespace boost::locale::period;
     std::string def[] = {
-    #ifdef BOOST_LOCALE_WITH_ICU
-        "icu",
-    #endif
-    #ifndef BOOST_LOCALE_NO_STD_BACKEND
-        "std",
-    #endif
-    #ifndef BOOST_LOCALE_NO_POSIX_BACKEND
-        "posix",
-    #endif
-    #ifndef BOOST_LOCALE_NO_WINAPI_BACKEND
-        "winapi",
-    #endif
+#ifdef BOOST_LOCALE_WITH_ICU
+      "icu",
+#endif
+#ifndef BOOST_LOCALE_NO_STD_BACKEND
+      "std",
+#endif
+#ifndef BOOST_LOCALE_NO_POSIX_BACKEND
+      "posix",
+#endif
+#ifndef BOOST_LOCALE_NO_WINAPI_BACKEND
+      "winapi",
+#endif
     };
-    for(int type = 0 ; type < int(sizeof(def)/sizeof(def[0])) ; type ++ ) {
+    for(int type = 0; type < int(sizeof(def) / sizeof(def[0])); type++) {
         boost::locale::localization_backend_manager tmp_backend = boost::locale::localization_backend_manager::global();
         tmp_backend.select(def[type]);
         boost::locale::localization_backend_manager::global(tmp_backend);
         const std::string backend_name = def[type];
         std::cout << "Testing for backend: " << backend_name << std::endl;
         {
-
             boost::locale::generator g;
 
-            std::locale loc=g("en_US.UTF-8");
+            std::locale loc = g("en_US.UTF-8");
 
             std::locale::global(loc);
 
@@ -76,7 +76,7 @@ void test_main(int /*argc*/, char** /*argv*/)
             TEST(calendar() == cal);
             TEST(calendar(loc) == cal);
             TEST(calendar(tz) == cal);
-            TEST(calendar(loc,"GMT+01:00") != cal);
+            TEST(calendar(loc, "GMT+01:00") != cal);
             TEST(calendar(g("ru_RU.UTF-8")) != cal);
 
             TEST_EQ(cal.minimum(month()), 0);
@@ -96,7 +96,7 @@ void test_main(int /*argc*/, char** /*argv*/)
             ss << boost::locale::as::time_zone(tz);
 
             const time_t one_h = 60 * 60;
-            const time_t a_date = 24 * one_h * (31+4); // Feb 5th
+            const time_t a_date = 24 * one_h * (31 + 4);     // Feb 5th
             const time_t a_time = 15 * one_h + 60 * 33 + 13; // 15:33:13
             const time_t a_datetime = a_date + a_time;
 
@@ -156,26 +156,26 @@ void test_main(int /*argc*/, char** /*argv*/)
 
             time_point = tp_5_feb_1970_153313;
             time_point += hour();
-            TEST_EQ_FMT(time_point,"1970-02-05 16:33:13");
+            TEST_EQ_FMT(time_point, "1970-02-05 16:33:13");
 
             TEST_EQ(time_point.minimum(day()), 1);
             TEST_EQ(time_point.maximum(day()), 28);
 
             time_point = tp_5_feb_1970_153313;
-            time_point += year() * 2 + 1 *month();
-            TEST_EQ_FMT(time_point,"1972-03-05 15:33:13");
+            time_point += year() * 2 + 1 * month();
+            TEST_EQ_FMT(time_point, "1972-03-05 15:33:13");
 
             time_point = tp_5_feb_1970_153313;
             time_point -= minute();
-            TEST_EQ_FMT( time_point, "1970-02-05 15:32:13");
+            TEST_EQ_FMT(time_point, "1970-02-05 15:32:13");
 
             time_point = tp_5_feb_1970_153313;
             time_point <<= minute() * 30;
-            TEST_EQ_FMT( time_point, "1970-02-05 15:03:13");
+            TEST_EQ_FMT(time_point, "1970-02-05 15:03:13");
 
             time_point = tp_5_feb_1970_153313;
             time_point >>= minute(40);
-            TEST_EQ_FMT( time_point, "1970-02-05 15:53:13");
+            TEST_EQ_FMT(time_point, "1970-02-05 15:53:13");
 
             time_point = tp_5_feb_1970_153313;
             TEST_EQ((time_point + month()) / month(), 2);
@@ -244,21 +244,25 @@ void test_main(int /*argc*/, char** /*argv*/)
             TEST_EQ_FMT(tp_5_april_1990_153313 >> second(60 * 5 + 2), "1990-04-05 15:33:11");
 
             // Add a set of periods
-            TEST_EQ_FMT(tp_5_feb_1970_153313 << (year(2) + month(3) - day(1) + hour(5) + minute(7) + second(9)), "1972-05-04 20:40:22");
-            TEST_EQ_FMT(tp_5_feb_1970_153313 + (year(2) + month(3) - day(1) + hour(5) + minute(7) + second(9)), "1972-05-04 20:40:22");
+            TEST_EQ_FMT(tp_5_feb_1970_153313 << (year(2) + month(3) - day(1) + hour(5) + minute(7) + second(9)),
+                        "1972-05-04 20:40:22");
+            TEST_EQ_FMT(tp_5_feb_1970_153313 + (year(2) + month(3) - day(1) + hour(5) + minute(7) + second(9)),
+                        "1972-05-04 20:40:22");
             // std calendar can't go below 1970
             time_point = tp_5_feb_1970_153313;
             time_point = year(1972) + july();
             TEST_EQ_FMT(time_point, "1972-07-05 15:33:13");
-            TEST_EQ_FMT(time_point >> (year(2) + month(3) - day(11) + hour(5) + minute(7) + second(9)), "1970-04-16 10:26:04");
-            TEST_EQ_FMT(time_point - (year(2) + month(3) - day(11) + hour(5) + minute(7) + second(9)), "1970-04-16 10:26:04");
+            TEST_EQ_FMT(time_point >> (year(2) + month(3) - day(11) + hour(5) + minute(7) + second(9)),
+                        "1970-04-16 10:26:04");
+            TEST_EQ_FMT(time_point - (year(2) + month(3) - day(11) + hour(5) + minute(7) + second(9)),
+                        "1970-04-16 10:26:04");
 
             time_point = tp_5_feb_1970_153313;
             TEST(time_point == tp_5_feb_1970_153313);
             TEST(!(time_point != tp_5_feb_1970_153313));
             TEST_EQ(time_point.get(hour()), 15);
-            TEST_EQ(time_point/hour(), 15);
-            TEST(time_point+year() != time_point);
+            TEST_EQ(time_point / hour(), 15);
+            TEST(time_point + year() != time_point);
             TEST(time_point - minute() <= time_point);
             TEST(time_point <= time_point);
             TEST(time_point + minute() >= time_point);
@@ -276,7 +280,7 @@ void test_main(int /*argc*/, char** /*argv*/)
             TEST_EQ(time_point.get(year()), 1970);
             TEST_EQ(time_point.get(extended_year()), 1970);
             if(backend_name == "icu") {
-                time_point=extended_year(-3);
+                time_point = extended_year(-3);
                 TEST_EQ(time_point.get(era()), 0);
                 TEST_EQ(time_point.get(year()), 4);
             }
@@ -286,8 +290,8 @@ void test_main(int /*argc*/, char** /*argv*/)
             TEST_EQ(time_point.get(day()), 5);
             TEST_EQ(time_point.get(day_of_year()), 36);
             TEST_EQ(time_point.get(day_of_week()), 5);
-            TEST_EQ(time_point.get(day_of_week_in_month()),1);
-            time_point=date_time(a_datetime,calendar(g("ru_RU.UTF-8")));
+            TEST_EQ(time_point.get(day_of_week_in_month()), 1);
+            time_point = date_time(a_datetime, calendar(g("ru_RU.UTF-8")));
             TEST_EQ(time_point.get(day_of_week_local()), 4);
             time_point = year(2026) + january() + day(1);
             TEST_EQ(time_point.get(day_of_week()), 5);
@@ -311,7 +315,7 @@ void test_main(int /*argc*/, char** /*argv*/)
 #else
             const bool ICU_cldr_issue = false;
 #endif
-BOOST_LOCALE_START_CONST_CONDITION
+            BOOST_LOCALE_START_CONST_CONDITION
 
             if((ICU_cldr_issue))
                 TEST_EQ(time_point.get(week_of_month()), 2);
@@ -325,40 +329,40 @@ BOOST_LOCALE_START_CONST_CONDITION
             else
                 TEST_EQ(time_point.get(week_of_year()), 53);
 
-            time_point = year()*2010 + january() + day() * 4;
+            time_point = year() * 2010 + january() + day() * 4;
 
             if((ICU_cldr_issue))
                 TEST_EQ(time_point.get(week_of_year()), 2);
             else
                 TEST_EQ(time_point.get(week_of_year()), 1);
 
-            time_point = year()*2010 + january() + day() * 10;
+            time_point = year() * 2010 + january() + day() * 10;
 
             if((ICU_cldr_issue))
                 TEST_EQ(time_point.get(week_of_year()), 2);
             else
                 TEST_EQ(time_point.get(week_of_year()), 1);
 
-            time_point = year()*2010 + january() + day() * 11;
+            time_point = year() * 2010 + january() + day() * 11;
 
             if((ICU_cldr_issue))
                 TEST_EQ(time_point.get(week_of_year()), 3);
-            else 
+            else
                 TEST_EQ(time_point.get(week_of_year()), 2);
 
-BOOST_LOCALE_END_CONST_CONDITION
+            BOOST_LOCALE_END_CONST_CONDITION
 
             time_point = date_time(a_datetime);
             TEST_EQ(time_point.get(hour()), 15);
-            TEST_EQ(date_time(a_datetime,calendar("GMT+01:00")).get(hour()),16);
+            TEST_EQ(date_time(a_datetime, calendar("GMT+01:00")).get(hour()), 16);
             TEST_EQ(time_point.get(hour_12()), 3);
             TEST_EQ(time_point.get(am_pm()), 1);
             TEST_EQ(time_point.get(minute()), 33);
             TEST_EQ(time_point.get(second()), 13);
-            TEST_EQ(date_time(year() * 1984 + february() + day()).get(week_of_year()),5);
+            TEST_EQ(date_time(year() * 1984 + february() + day()).get(week_of_year()), 5);
             TEST_EQ(time_point.get(week_of_month()), 1);
 
-            time_point.time(24*3600. * 2);
+            time_point.time(24 * 3600. * 2);
 
             time_point = year() * 2011;
             time_point = march();
@@ -417,8 +421,10 @@ BOOST_LOCALE_END_CONST_CONDITION
 
             // Default constructed time_point
             {
+                time_t current_time = std::time(0);
                 date_time time_point_default;
-                const time_t current_time = std::time(0);
+                // Try to estimate when exactly the construction happened
+                current_time += (std::time(0) - current_time) / 2;
                 const tm current_time_gmt = *std::gmtime(&current_time);
                 // Defaults to current time, i.e. different than a date in 1970
                 date_time time_point_1970 = year(1970) + february() + day(5);
@@ -451,7 +457,7 @@ BOOST_LOCALE_END_CONST_CONDITION
             }
 
         } // test
-    }   // for loop
+    }     // for loop
 }
 
 // boostinspect:noascii

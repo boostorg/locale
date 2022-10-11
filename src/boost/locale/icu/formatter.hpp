@@ -9,16 +9,15 @@
 
 #include <boost/locale/config.hpp>
 #include <boost/cstdint.hpp>
-#include <string>
 #include <memory>
+#include <string>
 #include <unicode/locid.h>
 
-namespace boost {
-namespace locale {
-namespace impl_icu {
+namespace boost { namespace locale { namespace impl_icu {
 
     ///
-    /// \brief Special base polymorphic class that is used as a character type independent base for all formatter classes
+    /// \brief Special base polymorphic class that is used as a character type independent base for all formatter
+    /// classes
     ///
 
     class base_formatter {
@@ -38,31 +37,31 @@ namespace impl_icu {
         ///
         /// Format the value and return the number of Unicode code points
         ///
-        virtual string_type format(double value,size_t &code_points) const = 0;
+        virtual string_type format(double value, size_t& code_points) const = 0;
         ///
         /// Format the value and return the number of Unicode code points
         ///
-        virtual string_type format(int64_t value,size_t &code_points) const = 0;
+        virtual string_type format(int64_t value, size_t& code_points) const = 0;
         ///
         /// Format the value and return the number of Unicode code points
         ///
-        virtual string_type format(int32_t value,size_t &code_points) const = 0;
+        virtual string_type format(int32_t value, size_t& code_points) const = 0;
 
         ///
         /// Parse the string and return the number of used characters. If it returns 0
         /// then parsing failed.
         ///
-        virtual size_t parse(string_type const &str,double &value) const = 0;
+        virtual size_t parse(const string_type& str, double& value) const = 0;
         ///
         /// Parse the string and return the number of used characters. If it returns 0
         /// then parsing failed.
         ///
-        virtual size_t parse(string_type const &str,int64_t &value) const = 0;
+        virtual size_t parse(const string_type& str, int64_t& value) const = 0;
         ///
         /// Parse the string and return the number of used characters. If it returns 0
         /// then parsing failed.
         ///
-        virtual size_t parse(string_type const &str,int32_t &value) const = 0;
+        virtual size_t parse(const string_type& str, int32_t& value) const = 0;
 
         ///
         /// Get formatter for the current state of ios_base -- flags and locale,
@@ -84,41 +83,37 @@ namespace impl_icu {
         ///
         /// Would create a new spelling formatter only once.
         ///
-        static formatter *create(std::ios_base &ios,icu::Locale const &l,std::string const &enc);
+        static formatter* create(std::ios_base& ios, const icu::Locale& l, const std::string& enc);
     }; // class formatter
 
     ///
     /// Specialization for real implementation
     ///
     template<>
-    formatter<char> *formatter<char>::create(std::ios_base &ios,icu::Locale const &l,std::string const &enc);
+    formatter<char>* formatter<char>::create(std::ios_base& ios, const icu::Locale& l, const std::string& enc);
 
     ///
     /// Specialization for real implementation
     ///
     template<>
-    formatter<wchar_t> *formatter<wchar_t>::create(std::ios_base &ios,icu::Locale const &l,std::string const &e);
+    formatter<wchar_t>* formatter<wchar_t>::create(std::ios_base& ios, const icu::Locale& l, const std::string& e);
 
-    #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
+#ifdef BOOST_LOCALE_ENABLE_CHAR16_T
     ///
     /// Specialization for real implementation
     ///
     template<>
-    formatter<char16_t> *formatter<char16_t>::create(std::ios_base &ios,icu::Locale const &l,std::string const &e);
-    #endif
+    formatter<char16_t>* formatter<char16_t>::create(std::ios_base& ios, const icu::Locale& l, const std::string& e);
+#endif
 
-    #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
+#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
     ///
     /// Specialization for real implementation
     ///
     template<>
-    formatter<char32_t> *formatter<char32_t>::create(std::ios_base &ios,icu::Locale const &l,std::string const &e);
-    #endif
+    formatter<char32_t>* formatter<char32_t>::create(std::ios_base& ios, const icu::Locale& l, const std::string& e);
+#endif
 
-} // namespace impl_icu
-} // namespace locale
-} // namespace boost
-
-
+}}} // namespace boost::locale::impl_icu
 
 #endif

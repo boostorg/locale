@@ -10,17 +10,15 @@
 
 #include <boost/locale/config.hpp>
 #ifdef BOOST_HAS_STDINT_H
-#include <stdint.h> // Avoid ICU defining e.g. INT8_MIN causing macro redefinition warnings
+#    include <stdint.h> // Avoid ICU defining e.g. INT8_MIN causing macro redefinition warnings
 #endif
+#include <stdexcept>
 #include <unicode/utypes.h>
 #include <unicode/uversion.h>
-#include <stdexcept>
 
 #define BOOST_LOCALE_ICU_VERSION (U_ICU_VERSION_MAJOR_NUM * 100 + U_ICU_VERSION_MINOR_NUM)
 
-namespace boost {
-namespace locale {
-namespace impl_icu {
+namespace boost { namespace locale { namespace impl_icu {
 
     inline void throw_icu_error(UErrorCode err)
     {
@@ -43,8 +41,6 @@ namespace impl_icu {
             result = static_cast<TargetType*>(p);
         return result;
     }
-} // impl
-} // locale
-} // boost
+}}} // namespace boost::locale::impl_icu
 
 #endif

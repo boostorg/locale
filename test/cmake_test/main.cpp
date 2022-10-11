@@ -18,13 +18,11 @@ int main()
     cvt = boost::locale::util::create_utf8_converter();
     cvt.reset(boost::locale::util::create_utf8_converter_new_ptr());
 
-    if(cvt)
-    {
+    if(cvt) {
         std::cout << "Created..." << std::endl;
         BOOST_ASSERT(cvt->is_thread_safe());
         BOOST_ASSERT(cvt->max_len() == 4);
-    }else
-    {
+    } else {
         std::cout << "Failed creation..." << std::endl;
     }
 

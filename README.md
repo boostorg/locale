@@ -38,6 +38,7 @@ Distributed under the [Boost Software License, Version 1.0](https://www.boost.or
 ### Properties
 
 * C++11
+* Formatted with clang-format, see [`tools/format_source.sh`](https://github.com/boostorg/locale/blob/develop/tools/format_source.sh)
 
 ### Build Status
 

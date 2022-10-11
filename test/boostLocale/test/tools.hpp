@@ -8,48 +8,53 @@
 #define BOOST_LOCALE_TEST_TOOLS_HPP
 
 #include <boost/locale/encoding.hpp>
+#include "boostLocale/test/posix_tools.hpp"
 #include <cstdio>
 #include <fstream>
 #include <string>
 
-#ifndef BOOST_LOCALE_NO_POSIX_BACKEND
-#include "boostLocale/test/posix_tools.hpp"
+#if defined(BOOST_MSVC) && BOOST_MSVC < 1700
+#    pragma warning(disable : 4428) // universal-character-name encountered in source
 #endif
 
-#if defined(BOOST_MSVC) && BOOST_MSVC < 1700
-#pragma warning(disable : 4428) // universal-character-name encountered in source
-#endif
+template<typename C>
+std::string to_utf8(const std::basic_string<C>& s)
+{
+    return boost::locale::conv::from_utf(s, "UTF-8");
+}
+std::string to_utf8(const std::string& s)
+{
+    return s;
+}
 
 template<typename Char>
-std::basic_string<Char> to_correct_string(std::string const &e,std::locale /*l*/)
+std::basic_string<Char> to_correct_string(const std::string& e, std::locale /*l*/)
 {
-    return boost::locale::conv::to_utf<Char>(e,"UTF-8");
+    return boost::locale::conv::to_utf<Char>(e, "UTF-8");
 }
-
 
 template<>
-inline std::string to_correct_string(std::string const &e,std::locale l)
+inline std::string to_correct_string(const std::string& e, std::locale l)
 {
-    return boost::locale::conv::from_utf(e,l);
+    return boost::locale::conv::from_utf(e, l);
 }
 
-bool has_std_locale(std::string const &name)
+bool has_std_locale(const std::string& name)
 {
     try {
         std::locale tmp(name.c_str());
         return true;
-    }
-    catch(...) {
+    } catch(...) {
         return false;
     }
 }
 
-inline bool test_std_supports_SJIS_codecvt(std::string const &locale_name)
+inline bool test_std_supports_SJIS_codecvt(const std::string& locale_name)
 {
     bool res = true;
     {
-    // Japan in Shift JIS/cp932
-        char const *japan_932 = "\x93\xfa\x96\x7b";
+        // Japan in Shift JIS/cp932
+        const char* japan_932 = "\x93\xfa\x96\x7b";
         std::ofstream f("test-siftjis.txt");
         f << japan_932;
         f.close();
@@ -63,16 +68,14 @@ inline bool test_std_supports_SJIS_codecvt(std::string const &locale_name)
         std::wstring ref;
         test >> ref;
         res = ref == cmp;
-    }
-    catch(std::exception const &)
-    {
+    } catch(const std::exception&) {
         res = false;
     }
     remove("test-siftjis.txt");
     return res;
 }
 
-std::string get_std_name(std::string const &name,std::string *real_name = 0)
+std::string get_std_name(const std::string& name, std::string* real_name = 0)
 {
     if(has_std_locale(name)) {
         if(real_name)
@@ -80,32 +83,29 @@ std::string get_std_name(std::string const &name,std::string *real_name = 0)
         return name;
     }
 
-    #ifdef BOOST_WINDOWS
-    bool utf8=name.find("UTF-8")!=std::string::npos;
+#ifdef BOOST_WINDOWS
+    bool utf8 = name.find("UTF-8") != std::string::npos;
 
-    if(name=="en_US.UTF-8" || name == "en_US.ISO8859-1") {
+    if(name == "en_US.UTF-8" || name == "en_US.ISO8859-1") {
         if(has_std_locale("English_United States.1252")) {
             if(real_name)
                 *real_name = "English_United States.1252";
             return utf8 ? name : "en_US.windows-1252";
         }
         return "";
-    }
-    else if(name=="he_IL.UTF-8" || name == "he_IL.ISO8859-8")  {
+    } else if(name == "he_IL.UTF-8" || name == "he_IL.ISO8859-8") {
         if(has_std_locale("Hebrew_Israel.1255")) {
             if(real_name)
                 *real_name = "Hebrew_Israel.1255";
             return utf8 ? name : "he_IL.windows-1255";
         }
-    }
-    else if(name=="ru_RU.UTF-8")  {
+    } else if(name == "ru_RU.UTF-8") {
         if(has_std_locale("Russian_Russia.1251")) {
             if(real_name)
                 *real_name = "Russian_Russia.1251";
             return name;
         }
-    }
-    else if(name == "tr_TR.UTF-8") {
+    } else if(name == "tr_TR.UTF-8") {
         if(has_std_locale("Turkish_Turkey.1254")) {
             if(real_name)
                 *real_name = "Turkish_Turkey.1254";
@@ -120,7 +120,7 @@ std::string get_std_name(std::string const &name,std::string *real_name = 0)
         }
         return "";
     }
-    #endif
+#endif
     return "";
 }
 
@@ -151,15 +151,12 @@ char* make4(unsigned v)
     return reinterpret_cast<char*>(buf);
 }
 
-class remove_file_on_exit
-{
+class remove_file_on_exit {
     std::string filename_;
+
 public:
-    explicit remove_file_on_exit(const std::string& filename): filename_(filename){}
-    ~remove_file_on_exit()
-    {
-        std::remove(filename_.c_str());
-    }
+    explicit remove_file_on_exit(const std::string& filename) : filename_(filename) {}
+    ~remove_file_on_exit() { std::remove(filename_.c_str()); }
 };
 
 #endif
