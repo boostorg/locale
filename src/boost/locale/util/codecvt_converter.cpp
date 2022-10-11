@@ -67,7 +67,7 @@ namespace boost { namespace locale { namespace util {
 
     class simple_converter_impl {
     public:
-        static const int hash_table_size = 1024;
+        static constexpr int hash_table_size = 1024;
 
         simple_converter_impl(const std::string& encoding)
         {

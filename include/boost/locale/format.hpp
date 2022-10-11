@@ -400,7 +400,7 @@ namespace boost { namespace locale {
 
         static void imbue_locale(void* ptr, const std::locale& l) { reinterpret_cast<stream_type*>(ptr)->imbue(l); }
 
-        static const unsigned base_params_ = 8;
+        static constexpr unsigned base_params_ = 8;
 
         message_type message_;
         string_type format_;

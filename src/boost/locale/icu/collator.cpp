@@ -129,11 +129,11 @@ namespace boost { namespace locale { namespace impl_icu {
         icu::Collator* get_collator(level_type ilevel) const
         {
             int l = limit(ilevel);
-            static const icu::Collator::ECollationStrength levels[level_count] = {icu::Collator::PRIMARY,
-                                                                                  icu::Collator::SECONDARY,
-                                                                                  icu::Collator::TERTIARY,
-                                                                                  icu::Collator::QUATERNARY,
-                                                                                  icu::Collator::IDENTICAL};
+            constexpr icu::Collator::ECollationStrength levels[level_count] = {icu::Collator::PRIMARY,
+                                                                               icu::Collator::SECONDARY,
+                                                                               icu::Collator::TERTIARY,
+                                                                               icu::Collator::QUATERNARY,
+                                                                               icu::Collator::IDENTICAL};
 
             icu::Collator* col = collates_[l].get();
             if(col)
@@ -151,7 +151,7 @@ namespace boost { namespace locale { namespace impl_icu {
         }
 
     private:
-        static const int level_count = 5;
+        static constexpr int level_count = 5;
         icu_std_converter<CharType> cvt_;
         icu::Locale locale_;
         mutable boost::thread_specific_ptr<icu::Collator> collates_[level_count];

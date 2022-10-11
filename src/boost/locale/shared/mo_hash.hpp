@@ -11,7 +11,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
     struct pj_winberger_hash {
         typedef uint32_t state_type;
 
-        static const state_type initial_state = 0;
+        static constexpr state_type initial_state = 0;
 
         static state_type update_state(state_type value, char c)
         {

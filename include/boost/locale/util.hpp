@@ -79,13 +79,13 @@ namespace boost { namespace locale {
             /// For example if a UCS-32 code-point is in the range reserved for UTF-16 surrogates
             /// or an invalid UTF-8 sequence is found
             ///
-            static const uint32_t illegal = utf::illegal;
+            static constexpr uint32_t illegal = utf::illegal;
 
             ///
             /// This value is returned in following cases: The of incomplete input sequence was found or
             /// insufficient output buffer was provided so complete output could not be written.
             ///
-            static const uint32_t incomplete = utf::incomplete;
+            static constexpr uint32_t incomplete = utf::incomplete;
 
             virtual ~base_converter();
             ///

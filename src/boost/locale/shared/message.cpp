@@ -266,7 +266,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
 
     template<typename CharType>
     struct mo_file_use_traits {
-        static const bool in_use = false;
+        static constexpr bool in_use = false;
         typedef CharType char_type;
         typedef std::pair<const char_type*, const char_type*> pair_type;
         static pair_type use(const mo_file& /*mo*/, const char_type* /*context*/, const char_type* /*key*/)
@@ -277,7 +277,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
 
     template<>
     struct mo_file_use_traits<char> {
-        static const bool in_use = true;
+        static constexpr bool in_use = true;
         typedef char char_type;
         typedef std::pair<const char_type*, const char_type*> pair_type;
         static pair_type use(const mo_file& mo, const char* context, const char* key) { return mo.find(context, key); }

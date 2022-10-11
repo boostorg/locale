@@ -55,7 +55,7 @@ namespace boost { namespace locale { namespace boundary {
 
         template<typename CharType, typename SomeIteratorType>
         struct linear_iterator_traits {
-            static const bool is_linear =
+            static constexpr bool is_linear =
               std::is_same<SomeIteratorType, CharType*>::value || std::is_same<SomeIteratorType, const CharType*>::value
               || std::is_same<SomeIteratorType, typename std::basic_string<CharType>::iterator>::value
               || std::is_same<SomeIteratorType, typename std::basic_string<CharType>::const_iterator>::value
