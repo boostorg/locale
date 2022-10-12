@@ -419,6 +419,7 @@ local cxx_requirements = [ requires
       cxx11_hdr_functional
       cxx11_hdr_type_traits
       cxx11_noexcept
+      cxx11_nullptr
       cxx11_override
       cxx11_range_based_for
       cxx11_rvalue_references
