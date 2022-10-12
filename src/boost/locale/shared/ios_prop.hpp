@@ -8,13 +8,14 @@
 #ifndef BOOST_SRC_LOCALE_IOS_PROP_HPP
 #define BOOST_SRC_LOCALE_IOS_PROP_HPP
 
+#include <boost/locale/config.hpp>
 #include <boost/assert.hpp>
 #include <ios>
 
 namespace boost { namespace locale { namespace impl {
 
     template<typename Property>
-    class ios_prop {
+    class BOOST_SYMBOL_VISIBLE ios_prop {
     public:
         static Property& get(std::ios_base& ios)
         {
@@ -39,20 +40,16 @@ namespace boost { namespace locale { namespace impl {
 
         static void callback(std::ios_base::event ev, std::ios_base& ios, int id)
         {
+            Property* prop = get_impl(ios);
+            if(!prop)
+                return;
             switch(ev) {
-                case std::ios_base::erase_event: delete get_impl(ios); break;
-                case std::ios_base::copyfmt_event: {
-                    Property* prop = get_impl(ios);
-                    if(prop)
-                        ios.pword(id) = new Property(*prop);
+                case std::ios_base::erase_event:
+                    delete prop;
+                    ios.pword(id) = nullptr;
                     break;
-                }
-                case std::ios_base::imbue_event: {
-                    Property* prop = get_impl(ios);
-                    if(prop)
-                        prop->on_imbue();
-                    break;
-                }
+                case std::ios_base::copyfmt_event: ios.pword(id) = new Property(*prop); break;
+                case std::ios_base::imbue_event: prop->on_imbue(); break;
                 default: break;
             }
         }

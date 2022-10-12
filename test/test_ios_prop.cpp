@@ -61,6 +61,14 @@ void test_main(int /*argc*/, char** /*argv*/)
             TEST_EQ(imbued, 0);
             ss2.imbue(std::locale::classic());
             TEST_EQ(imbued, 1);
+            // Copy again over existing
+            ss2.copyfmt(ss);
+            TEST_EQ(counter, 2);
+            TEST_EQ(prop_type::get(ss).x, 1);
+            TEST_EQ(prop_type::get(ss2).x, 1); // Copied
+            prop_type::get(ss2).x = 2;
+            TEST_EQ(prop_type::get(ss).x, 1);
+            TEST_EQ(prop_type::get(ss2).x, 2); // Only this changed
         }
         // Copy from unset removes the property
         {
