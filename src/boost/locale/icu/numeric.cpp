@@ -16,76 +16,45 @@
 #include <limits>
 #include <locale>
 #include <string>
+#include <type_traits>
 
 namespace boost { namespace locale { namespace impl_icu {
 
     namespace detail {
-        template<typename V, int n = std::numeric_limits<V>::digits, bool integer = std::numeric_limits<V>::is_integer>
-        struct cast_traits;
+        template<typename T, bool integer = std::numeric_limits<T>::is_integer>
+        struct icu_format_type;
 
-        template<typename v>
-        struct cast_traits<v, 7, true> {
-            typedef int32_t cast_type;
+        template<typename T>
+        struct icu_format_type<T, true> {
+            // ICU supports 32 and 64 bit ints, use the former as long as it fits, else the latter
+            typedef typename std::conditional<std::numeric_limits<T>::digits <= 31, int32_t, int64_t>::type type;
         };
-        template<typename v>
-        struct cast_traits<v, 8, true> {
-            typedef int32_t cast_type;
-        };
-
-        template<typename v>
-        struct cast_traits<v, 15, true> {
-            typedef int32_t cast_type;
-        };
-        template<typename v>
-        struct cast_traits<v, 16, true> {
-            typedef int32_t cast_type;
-        };
-        template<typename v>
-        struct cast_traits<v, 31, true> {
-            typedef int32_t cast_type;
-        };
-        template<typename v>
-        struct cast_traits<v, 32, true> {
-            typedef int64_t cast_type;
-        };
-        template<typename v>
-        struct cast_traits<v, 63, true> {
-            typedef int64_t cast_type;
-        };
-        template<typename v>
-        struct cast_traits<v, 64, true> {
-            typedef int64_t cast_type;
-        };
-        template<typename V, int u>
-        struct cast_traits<V, u, false> {
-            typedef double cast_type;
+        template<typename T>
+        struct icu_format_type<T, false> {
+            // Only float type ICU supports is double
+            typedef double type;
         };
 
-        // ICU does not support uint64_t values so fallback
-        // to POSIX formatting
-        template<typename V,
-                 bool Sig = std::numeric_limits<V>::is_signed,
-                 bool Int = std::numeric_limits<V>::is_integer,
-                 bool Big = (sizeof(V) >= 8)>
+        // ICU does not support uint64_t values so fall back to the parent/std formatting
+        // if the numer is to large to fit into an int64_t
+        template<typename T,
+                 bool BigUInt = !std::numeric_limits<T>::is_signed && std::numeric_limits<T>::is_integer
+                                && (sizeof(T) >= sizeof(uint64_t))>
         struct use_parent_traits {
-            static bool use(V /*v*/) { return false; }
+            static bool use(T /*v*/) { return false; }
         };
-        template<typename V>
-        struct use_parent_traits<V, false, true, true> {
-            static bool use(V v) { return static_cast<int64_t>(v) < 0; }
+        template<typename T>
+        struct use_parent_traits<T, true> {
+            static bool use(T v) { return v > static_cast<T>(std::numeric_limits<int64_t>::max()); }
         };
 
-    } // namespace detail
-
-    class num_base {
-    protected:
         template<typename ValueType>
         static bool use_parent(std::ios_base& ios, ValueType v)
         {
-            uint64_t flg = ios_info::get(ios).display_flags();
+            const uint64_t flg = ios_info::get(ios).display_flags();
             if(flg == flags::posix)
                 return true;
-            if(detail::use_parent_traits<ValueType>::use(v))
+            if(use_parent_traits<ValueType>::use(v))
                 return true;
 
             if(!std::numeric_limits<ValueType>::is_integer)
@@ -96,10 +65,10 @@ namespace boost { namespace locale { namespace impl_icu {
             }
             return false;
         }
-    };
+    } // namespace detail
 
     template<typename CharType>
-    class num_format : public std::num_put<CharType>, protected num_base {
+    class num_format : public std::num_put<CharType> {
     public:
         typedef typename std::num_put<CharType>::iter_type iter_type;
         typedef std::basic_string<CharType> string_type;
@@ -127,7 +96,7 @@ namespace boost { namespace locale { namespace impl_icu {
             return do_real_put(out, ios, fill, val);
         }
 
-        iter_type do_put(iter_type out, std::ios_base& ios, char_type fill, long long val) const BOOST_OVERRIDE
+        iter_type do_put(iter_type out, std::ios_base& ios, char_type fill, long long val) const override
         {
             return do_real_put(out, ios, fill, val);
         }
@@ -140,7 +109,7 @@ namespace boost { namespace locale { namespace impl_icu {
         template<typename ValueType>
         iter_type do_real_put(iter_type out, std::ios_base& ios, char_type fill, ValueType val) const
         {
-            if(use_parent<ValueType>(ios, val))
+            if(detail::use_parent(ios, val))
                 return std::num_put<char_type>::do_put(out, ios, fill, val);
 
             formatter_ptr formatter(formatter_type::create(ios, loc_, enc_));
@@ -149,8 +118,8 @@ namespace boost { namespace locale { namespace impl_icu {
                 return std::num_put<char_type>::do_put(out, ios, fill, val);
 
             size_t code_points;
-            typedef typename detail::cast_traits<ValueType>::cast_type cast_type;
-            const string_type& str = formatter->format(static_cast<cast_type>(val), code_points);
+            typedef typename detail::icu_format_type<ValueType>::type icu_type;
+            const string_type& str = formatter->format(static_cast<icu_type>(val), code_points);
             std::streamsize on_left = 0, on_right = 0, points = code_points;
             if(points < ios.width()) {
                 std::streamsize n = ios.width() - points;
@@ -184,7 +153,7 @@ namespace boost { namespace locale { namespace impl_icu {
     }; /// num_format
 
     template<typename CharType>
-    class num_parse : public std::num_get<CharType>, protected num_base {
+    class num_parse : public std::num_get<CharType> {
     public:
         num_parse(const cdata& d, size_t refs = 0) : std::num_get<CharType>(refs), loc_(d.locale), enc_(d.encoding) {}
 
@@ -277,7 +246,7 @@ namespace boost { namespace locale { namespace impl_icu {
         do_real_get(iter_type in, iter_type end, std::ios_base& ios, std::ios_base::iostate& err, ValueType& val) const
         {
             stream_type* stream_ptr = dynamic_cast<stream_type*>(&ios);
-            if(!stream_ptr || use_parent<ValueType>(ios, 0)) {
+            if(!stream_ptr || detail::use_parent(ios, ValueType(0))) {
                 return std::num_get<CharType>::do_get(in, end, ios, err, val);
             }
 
@@ -286,7 +255,6 @@ namespace boost { namespace locale { namespace impl_icu {
                 return std::num_get<CharType>::do_get(in, end, ios, err, val);
             }
 
-            typedef typename detail::cast_traits<ValueType>::cast_type cast_type;
             string_type tmp;
             tmp.reserve(64);
 
@@ -298,10 +266,11 @@ namespace boost { namespace locale { namespace impl_icu {
                 tmp += *in++;
             }
 
-            cast_type value;
+            typedef typename detail::icu_format_type<ValueType>::type icu_type;
+            icu_type value;
             size_t parsed_chars;
 
-            if((parsed_chars = formatter->parse(tmp, value)) == 0 || !valid<ValueType>(value)) {
+            if((parsed_chars = formatter->parse(tmp, value)) == 0 || !is_losless_castable<ValueType>(value)) {
                 err |= std::ios_base::failbit;
             } else {
                 val = static_cast<ValueType>(value);
@@ -319,24 +288,24 @@ namespace boost { namespace locale { namespace impl_icu {
         }
 
         BOOST_LOCALE_START_CONST_CONDITION
-        template<typename ValueType, typename CastedType>
-        bool valid(CastedType v) const
+        template<typename TargetType, typename SrcType>
+        bool is_losless_castable(SrcType v) const
         {
-            typedef std::numeric_limits<ValueType> value_limits;
-            typedef std::numeric_limits<CastedType> casted_limits;
-            if(v < 0 && value_limits::is_signed == false)
+            typedef std::numeric_limits<TargetType> target_limits;
+            typedef std::numeric_limits<SrcType> casted_limits;
+            if(v < 0 && !target_limits::is_signed)
                 return false;
 
-            constexpr CastedType max_val = static_cast<CastedType>(value_limits::max());
+            constexpr TargetType max_val = target_limits::max();
 
-            if(sizeof(CastedType) > sizeof(ValueType) && v > max_val)
+            if(sizeof(SrcType) > sizeof(TargetType) && v > static_cast<SrcType>(max_val))
                 return false;
 
-            if(value_limits::is_integer == casted_limits::is_integer) {
+            if(target_limits::is_integer == casted_limits::is_integer)
                 return true;
-            }
-            if(value_limits::is_integer) { // and casted is not
-                if(static_cast<CastedType>(static_cast<ValueType>(v)) != v)
+
+            if(target_limits::is_integer) { // and source is not
+                if(static_cast<SrcType>(static_cast<TargetType>(v)) != v)
                     return false;
             }
             return true;
