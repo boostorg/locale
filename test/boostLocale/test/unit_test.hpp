@@ -22,6 +22,8 @@ int test_counter = 0;
 #    define BOOST_LOCALE_ERROR_LIMIT 20
 #endif
 
+#define BOOST_LOCALE_STRINGIZE(x) #x
+
 #define THROW_IF_TOO_BIG(X)            \
     if((X) > BOOST_LOCALE_ERROR_LIMIT) \
     throw std::runtime_error("Error limits reached, stopping unit test")
@@ -189,17 +191,37 @@ std::string to_string(const char32_t c)
 }
 
 template<typename T, typename U>
-void test_eq_impl(T const& l, U const& r, const char* expr, int line)
+void test_impl(bool success, T const& l, U const& r, const char* expr, const char* fail_expr, int line)
 {
     test_counter++;
-    if(l != r) {
+    if(!success) {
         std::cerr << "Error in line " << line << ": " << expr << std::endl;
-        std::cerr << "---- [" << to_string(l) << "] != [" << to_string(r) << "]" << std::endl;
+        std::cerr << "---- [" << to_string(l) << "] " << fail_expr << " [" << to_string(r) << "]" << std::endl;
         THROW_IF_TOO_BIG(error_counter++);
     }
 }
-#define TEST_EQ_IMPL(x, y, expr) test_eq_impl(x, y, #expr, __LINE__)
-#define TEST_EQ(x, y) TEST_EQ_IMPL(x, y, x == y)
+
+template<typename T, typename U>
+void test_eq_impl(T const& l, U const& r, const char* expr, int line)
+{
+    test_impl(l == r, l, r, expr, "!=", line);
+}
+
+template<typename T, typename U>
+void test_le_impl(T const& l, U const& r, const char* expr, int line)
+{
+    test_impl(l <= r, l, r, expr, ">", line);
+}
+
+template<typename T, typename U>
+void test_ge_impl(T const& l, U const& r, const char* expr, int line)
+{
+    test_impl(l >= r, l, r, expr, "<", line);
+}
+
+#define TEST_EQ(x, y) test_eq_impl(x, y, BOOST_LOCALE_STRINGIZE(x == y), __LINE__)
+#define TEST_LE(x, y) test_le_impl(x, y, BOOST_LOCALE_STRINGIZE(x <= y), __LINE__)
+#define TEST_GE(x, y) test_ge_impl(x, y, BOOST_LOCALE_STRINGIZE(x >= y), __LINE__)
 
 #ifdef BOOST_MSVC
 #    define BOOST_LOCALE_DISABLE_UNREACHABLE_CODE_WARNING __pragma(warning(disable : 4702))
