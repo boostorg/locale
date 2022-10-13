@@ -496,6 +496,10 @@ namespace boost { namespace locale { namespace util {
             posix_time pt = {time_, 0};
             return pt;
         }
+        double get_time_ms() const override
+        {
+            return time_ * 1e3;
+        }
 
         ///
         /// Set option for calendar, for future use
@@ -606,13 +610,13 @@ namespace boost { namespace locale { namespace util {
         ///
         /// Calculate the difference between this calendar  and \a other in \a p units
         ///
-        int difference(const abstract_calendar* other_cal, period::marks::period_mark m) const override
+        int difference(const abstract_calendar& other_cal, period::marks::period_mark m) const override
         {
             hold_ptr<gregorian_calendar> keeper;
-            const gregorian_calendar* other = dynamic_cast<const gregorian_calendar*>(other_cal);
+            const gregorian_calendar* other = dynamic_cast<const gregorian_calendar*>(&other_cal);
             if(!other) {
                 keeper.reset(clone());
-                keeper->set_time(other_cal->get_time());
+                keeper->set_time(other_cal.get_time());
                 other = keeper.get();
             }
 

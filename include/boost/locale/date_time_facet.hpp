@@ -147,8 +147,8 @@ namespace boost { namespace locale {
         ///
         /// Set specific \a value for period \a p, note not all values are settable.
         ///
-        /// After call of set_value you may want to call normalize() function to make sure
-        /// vall periods are updated, if you set sereral fields that are part of single
+        /// After calling set_value you may want to call normalize() function to make sure
+        /// all periods are updated, if you set several fields that are part of a single
         /// date/time representation you should call set_value several times and then
         /// call normalize().
         ///
@@ -174,6 +174,8 @@ namespace boost { namespace locale {
         /// Get current time point
         ///
         virtual posix_time get_time() const = 0;
+        // Get current time since epoch in milliseconds
+        virtual double get_time_ms() const = 0;
 
         ///
         /// Set option for calendar, for future use
@@ -193,7 +195,7 @@ namespace boost { namespace locale {
         ///
         /// Calculate the difference between this calendar  and \a other in \a p units
         ///
-        virtual int difference(const abstract_calendar* other, period::marks::period_mark m) const = 0;
+        virtual int difference(const abstract_calendar& other, period::marks::period_mark m) const = 0;
 
         ///
         /// Set time zone, empty - use system

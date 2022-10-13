@@ -303,23 +303,28 @@ namespace boost { namespace locale {
 
     double date_time::time() const
     {
-        posix_time ptime = impl_->get_time();
-        return double(ptime.seconds) + 1e-9 * ptime.nanoseconds;
+        return impl_->get_time_ms() / 1000.;
     }
 
     void date_time::time(double v)
     {
-        double dseconds = floor(v);
-        int64_t seconds = static_cast<int64_t>(dseconds);
-        double fract = v - dseconds;
-        int nano = static_cast<int>(fract * 1e9);
+        double seconds;
+        const double fract_seconds = std::modf(v, &seconds); // v = seconds + fract_seconds
+        posix_time ptime;
+        ptime.seconds = static_cast<int64_t>(seconds);
+        int64_t nano = static_cast<int64_t>(fract_seconds * 1e9);
+
+        constexpr int64_t ns_in_s = static_cast<int64_t>(1000) * 1000 * 1000;
+        if(seconds < 0 && nano != 0) {
+            assert(nano < 0); // Same sign
+            seconds -= 1;
+            nano = ns_in_s + nano;
+        }
         if(nano < 0)
             nano = 0;
-        else if(nano > 999999999)
-            nano = 999999999;
-        posix_time ptime;
-        ptime.seconds = seconds;
-        ptime.nanoseconds = nano;
+        else if(nano >= ns_in_s)
+            nano = ns_in_s - 1;
+        ptime.nanoseconds = static_cast<uint32_t>(nano);
         impl_->set_time(ptime);
     }
 
@@ -375,7 +380,7 @@ namespace boost { namespace locale {
 
     int date_time::difference(const date_time& other, period_type f) const
     {
-        return impl_->difference(other.impl_.get(), f.mark());
+        return impl_->difference(*other.impl_.get(), f.mark());
     }
 
     int date_time::maximum(period_type f) const
