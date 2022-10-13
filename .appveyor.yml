@@ -132,7 +132,7 @@ build: off
 test_script:
   - set B2_TARGETS=libs/locale/test//show_config --verbose-test
   - ci\build.bat
-  - set B2_TARGETS=
+  - set B2_TARGETS=libs/locale/test
   - ci\build.bat
 
 for:
