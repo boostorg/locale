@@ -14,6 +14,7 @@
 #include <boost/locale/format.hpp>
 #include <boost/locale/formatting.hpp>
 #include <boost/locale/generator.hpp>
+#include <cstdint>
 #include <iomanip>
 #include <iostream>
 #include <limits>
@@ -229,18 +230,15 @@ void test_parse_fail_impl(std::basic_istringstream<CharType>& ss, int line)
     TEST_MIN_MAX_FMT(type, minval, maxval); \
     TEST_MIN_MAX_PARSE(type, minval, maxval)
 
-bool short_parsing_fails()
+bool stdlib_correctly_errors_on_out_of_range_int16()
 {
-    static bool fails = false;
-    static bool get_result = false;
-    if(get_result)
-        return fails;
-    std::stringstream ss("65000");
-    ss.imbue(std::locale::classic());
-    short v = 0;
-    ss >> v;
-    fails = ss.fail();
-    get_result = true;
+    static bool fails = []() -> bool {
+        std::stringstream ss("65000");
+        ss.imbue(std::locale::classic());
+        int16_t v = 0;
+        ss >> v;
+        return ss.fail();
+    }();
     return fails;
 }
 
@@ -257,43 +255,22 @@ void test_manip(std::string e_charset = "UTF-8")
     TEST_FMT(as::number << std::left << std::setfill(CharType('_')) << std::setw(6), 1534, "1,534_");
 
     // Ranges
-    BOOST_LOCALE_START_CONST_CONDITION
-    if(sizeof(short) == 2) {
-        TEST_MIN_MAX(short, "-32,768", "32,767");
-        TEST_MIN_MAX(unsigned short, "0", "65,535");
-        TEST_PARSE_FAILS(as::number, "-1", unsigned short);
-        if(short_parsing_fails()) {
-            TEST_PARSE_FAILS(as::number, "65,535", short);
-        }
+    TEST_MIN_MAX(int16_t, "-32,768", "32,767");
+    TEST_MIN_MAX(uint16_t, "0", "65,535");
+    TEST_PARSE_FAILS(as::number, "-1", uint16_t);
+    if(stdlib_correctly_errors_on_out_of_range_int16()) {
+        TEST_PARSE_FAILS(as::number, "65,535", int16_t);
     }
-    if(sizeof(int) == 4) {
-        TEST_MIN_MAX(int, "-2,147,483,648", "2,147,483,647");
-        TEST_MIN_MAX(unsigned int, "0", "4,294,967,295");
-        TEST_PARSE_FAILS(as::number, "-1", unsigned int);
-        TEST_PARSE_FAILS(as::number, "4,294,967,295", int);
-    }
-    if(sizeof(long) == 4) {
-        TEST_MIN_MAX(long, "-2,147,483,648", "2,147,483,647");
-        TEST_MIN_MAX(unsigned long, "0", "4,294,967,295");
-        TEST_PARSE_FAILS(as::number, "-1", unsigned long);
-        TEST_PARSE_FAILS(as::number, "4,294,967,295", long);
-    }
-    if(sizeof(long) == 8) {
-        TEST_MIN_MAX(long, "-9,223,372,036,854,775,808", "9,223,372,036,854,775,807");
-        TEST_MIN_MAX_FMT(unsigned long, "0", "18446744073709551615"); // Unsupported range by icu - ensure fallback
-        TEST_PARSE_FAILS(as::number, "-1", unsigned long);
-    }
-    if(sizeof(long long) == 8) {
-        TEST_MIN_MAX(long long, "-9,223,372,036,854,775,808", "9,223,372,036,854,775,807");
-        // we can't really parse this as ICU does not support this range, only format
-        TEST_MIN_MAX_FMT(unsigned long long, "0", "18446744073709551615"); // Unsupported range by icu - ensure fallback
-        TEST_FMT(as::number, 9223372036854775807ULL, "9,223,372,036,854,775,807");
-        TEST_FMT(as::number,
-                 9223372036854775808ULL,
-                 "9223372036854775808"); // Unsupported range by icu - ensure fallback
-        TEST_PARSE_FAILS(as::number, "-1", unsigned long long);
-    }
-    BOOST_LOCALE_END_CONST_CONDITION
+
+    TEST_MIN_MAX(int32_t, "-2,147,483,648", "2,147,483,647");
+    TEST_MIN_MAX(uint32_t, "0", "4,294,967,295");
+    TEST_PARSE_FAILS(as::number, "-1", uint32_t);
+    TEST_PARSE_FAILS(as::number, "4,294,967,295", int32_t);
+
+    TEST_MIN_MAX(int64_t, "-9,223,372,036,854,775,808", "9,223,372,036,854,775,807");
+    // ICU does not support uint64, but we have a fallback to format it at least
+    TEST_MIN_MAX_FMT(uint64_t, "0", "18446744073709551615");
+    TEST_PARSE_FAILS(as::number, "-1", uint64_t);
 
     TEST_FMT_PARSE_3(as::number, std::left, std::setw(3), 15, "15 ");
     TEST_FMT_PARSE_3(as::number, std::right, std::setw(3), 15, " 15");
