@@ -18,6 +18,7 @@
 namespace bl = boost::locale;
 
 std::string backend;
+std::string message_path = "./";
 
 bool file_loader_is_actually_called = false;
 
@@ -329,6 +330,9 @@ bool iso_8859_8_not_supported = false;
 
 void test_main(int argc, char** argv)
 {
+    if(argc == 2)
+        message_path = argv[1];
+
     std::string def[] = {
 #ifdef BOOST_LOCALE_WITH_ICU
       "icu",
@@ -356,10 +360,7 @@ void test_main(int argc, char** argv)
         g.add_messages_domain("simple");
         g.add_messages_domain("full");
         g.add_messages_domain("fall");
-        if(argc == 2)
-            g.add_messages_path(argv[1]);
-        else
-            g.add_messages_path("./");
+        g.add_messages_path(message_path);
         g.set_default_messages_domain("default");
 
         for(const std::string locale_name : {"he_IL.UTF-8", "he_IL.ISO8859-8"}) {

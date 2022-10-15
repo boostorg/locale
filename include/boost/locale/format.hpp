@@ -207,7 +207,8 @@ namespace boost { namespace locale {
         ///
         /// Create a format class for \a format_string
         ///
-        basic_format(string_type format_string) : format_(format_string), translate_(false), parameters_count_(0) {}
+        basic_format(const string_type& format_string) : format_(format_string), translate_(false), parameters_count_(0)
+        {}
         ///
         /// Create a format class using message \a trans. The message if translated first according
         /// to the rules of target locale and then interpreted as format string
@@ -399,7 +400,7 @@ namespace boost { namespace locale {
 
         static void imbue_locale(void* ptr, const std::locale& l) { reinterpret_cast<stream_type*>(ptr)->imbue(l); }
 
-        static const unsigned base_params_ = 8;
+        static constexpr unsigned base_params_ = 8;
 
         message_type message_;
         string_type format_;

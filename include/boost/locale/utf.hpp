@@ -25,12 +25,12 @@ namespace boost { namespace locale {
         ///
         /// \brief Special constant that defines illegal code point
         ///
-        static const code_point illegal = 0xFFFFFFFFu;
+        constexpr code_point illegal = 0xFFFFFFFFu;
 
         ///
         /// \brief Special constant that defines incomplete code point
         ///
-        static const code_point incomplete = 0xFFFFFFFEu;
+        constexpr code_point incomplete = 0xFFFFFFFEu;
 
         ///
         /// \brief the function checks if \a v is a valid code point
@@ -78,7 +78,7 @@ namespace boost { namespace locale {
             /// - UTF-16 - 2
             /// - UTF-32 - 1
             ///
-            static const int max_width;
+            static constexpr int max_width;
             ///
             /// The width of specific code point in the code units.
             ///
@@ -148,7 +148,7 @@ namespace boost { namespace locale {
                 return -1;
             }
 
-            static const int max_width = 4;
+            static constexpr int max_width = 4;
 
             static int width(code_point value)
             {
@@ -340,7 +340,7 @@ namespace boost { namespace locale {
                 return combine_surrogate(w1, w2);
             }
 
-            static const int max_width = 2;
+            static constexpr int max_width = 2;
             static int width(code_point u) { return u >= 0x10000 ? 2 : 1; }
             template<typename It>
             static It encode(code_point u, It out)
@@ -384,7 +384,7 @@ namespace boost { namespace locale {
                     return boost::locale::utf::illegal;
                 return c;
             }
-            static const int max_width = 1;
+            static constexpr int max_width = 1;
             static int width(code_point /*u*/) { return 1; }
             template<typename It>
             static It encode(code_point u, It out)

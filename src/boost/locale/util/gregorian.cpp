@@ -40,27 +40,30 @@ namespace boost { namespace locale { namespace util {
 
         int days_in_month(int year, int month)
         {
-            static const int tbl[2][12] = {{31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
-                                           {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}};
+            constexpr int tbl[2][12] = {{31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
+                                        {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}};
             return tbl[is_leap(year)][month - 1];
         }
 
-        inline int days_from_0(int year)
+        constexpr int days_from_0_impl(int year_m1)
         {
-            year--;
-            return 365 * year + (year / 400) - (year / 100) + (year / 4);
+            return 365 * year_m1 + (year_m1 / 400) - (year_m1 / 100) + (year_m1 / 4);
+        }
+        constexpr int days_from_0(int year)
+        {
+            return days_from_0_impl(year - 1);
         }
 
-        int days_from_1970(int year)
+        constexpr int days_from_0_to_1970 = days_from_0(1970);
+        constexpr int days_from_1970(int year)
         {
-            static const int days_from_0_to_1970 = days_from_0(1970);
             return days_from_0(year) - days_from_0_to_1970;
         }
 
         int days_from_1jan(int year, int month, int day)
         {
-            static const int days[2][12] = {{0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334},
-                                            {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335}};
+            constexpr int days[2][12] = {{0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334},
+                                         {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335}};
             return days[is_leap(year)][month - 1] + day - 1;
         }
 
@@ -110,11 +113,11 @@ namespace boost { namespace locale { namespace util {
 
         int first_day_of_week(const char* terr)
         {
-            static const char* const sat[] = {"AE", "AF", "BH", "DJ", "DZ", "EG", "ER", "ET", "IQ", "IR", "JO", "KE",
-                                              "KW", "LY", "MA", "OM", "QA", "SA", "SD", "SO", "SY", "TN", "YE"};
-            static const char* const sunday[] = {"AR", "AS", "AZ", "BW", "CA", "CN", "FO", "GE", "GL", "GU", "HK", "IL",
-                                                 "IN", "JM", "JP", "KG", "KR", "LA", "MH", "MN", "MO", "MP", "MT", "NZ",
-                                                 "PH", "PK", "SG", "TH", "TT", "TW", "UM", "US", "UZ", "VI", "ZW"};
+            constexpr const char* sat[] = {"AE", "AF", "BH", "DJ", "DZ", "EG", "ER", "ET", "IQ", "IR", "JO", "KE",
+                                           "KW", "LY", "MA", "OM", "QA", "SA", "SD", "SO", "SY", "TN", "YE"};
+            constexpr const char* sunday[] = {"AR", "AS", "AZ", "BW", "CA", "CN", "FO", "GE", "GL", "GU", "HK", "IL",
+                                              "IN", "JM", "JP", "KG", "KR", "LA", "MH", "MN", "MO", "MP", "MT", "NZ",
+                                              "PH", "PK", "SG", "TH", "TT", "TW", "UM", "US", "UZ", "VI", "ZW"};
             if(strcmp(terr, "MV") == 0)
                 return 5; // fri
             if(std::binary_search<const char* const*>(sat, sat + sizeof(sat) / (sizeof(sat[0])), terr, comparator))
@@ -249,7 +252,7 @@ namespace boost { namespace locale { namespace util {
         {
             /// This is the number of days that are considered within
             /// period such that the week belongs there
-            static const int days_in_full_week = 4;
+            constexpr int days_in_full_week = 4;
 
             // Always use local week start
             int current_dow = (wday - first_day_of_week_ + 7) % 7;
@@ -493,6 +496,10 @@ namespace boost { namespace locale { namespace util {
             posix_time pt = {time_, 0};
             return pt;
         }
+        double get_time_ms() const override
+        {
+            return time_ * 1e3;
+        }
 
         ///
         /// Set option for calendar, for future use
@@ -603,13 +610,13 @@ namespace boost { namespace locale { namespace util {
         ///
         /// Calculate the difference between this calendar  and \a other in \a p units
         ///
-        int difference(const abstract_calendar* other_cal, period::marks::period_mark m) const override
+        int difference(const abstract_calendar& other_cal, period::marks::period_mark m) const override
         {
             hold_ptr<gregorian_calendar> keeper;
-            const gregorian_calendar* other = dynamic_cast<const gregorian_calendar*>(other_cal);
+            const gregorian_calendar* other = dynamic_cast<const gregorian_calendar*>(&other_cal);
             if(!other) {
                 keeper.reset(clone());
-                keeper->set_time(other_cal->get_time());
+                keeper->set_time(other_cal.get_time());
                 other = keeper.get();
             }
 

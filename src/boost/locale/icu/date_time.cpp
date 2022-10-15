@@ -128,21 +128,24 @@ namespace boost { namespace locale { namespace impl_icu {
         }
         posix_time get_time() const override
         {
+            const double timeMs = get_time_ms();
+            posix_time res;
+            res.seconds = static_cast<int64_t>(std::floor(timeMs / 1e3));
+            const double remainTimeMs = std::fmod(timeMs, 1e3); // = timeMs - seconds * 1000
+            constexpr uint32_t ns_in_s = static_cast<uint32_t>(1000) * 1000 * 1000;
+            res.nanoseconds = std::min(static_cast<uint32_t>(remainTimeMs * 1e6), ns_in_s - 1u);
+            return res;
+        }
+        double get_time_ms() const override
+        {
             UErrorCode code = U_ZERO_ERROR;
-            double rtime = 0;
+            double result;
             {
                 guard l(lock_);
-                rtime = calendar_->getTime(code);
+                result = calendar_->getTime(code);
             }
             check_and_throw_dt(code);
-            rtime /= 1000.0;
-            double secs = floor(rtime);
-            posix_time res;
-            res.seconds = static_cast<int64_t>(secs);
-            res.nanoseconds = static_cast<uint32_t>((rtime - secs) / 1e9);
-            if(res.nanoseconds > 999999999)
-                res.nanoseconds = 999999999;
-            return res;
+            return result;
         }
         void set_option(calendar_option_type opt, int /*v*/) override
         {
@@ -175,27 +178,16 @@ namespace boost { namespace locale { namespace impl_icu {
             }
             check_and_throw_dt(err);
         }
-        int difference(const abstract_calendar* other_ptr, period::marks::period_mark m) const override
+        int difference(const abstract_calendar& other, period::marks::period_mark m) const override
         {
             UErrorCode err = U_ZERO_ERROR;
-            double other_time = 0;
-            //
+            const double other_time_ms = other.get_time_ms();
+
             // fieldDifference has side effect of moving calendar (WTF?)
             // So we clone it for performing this operation
-            //
             hold_ptr<icu::Calendar> self(calendar_->clone());
 
-            const calendar_impl* other_cal = dynamic_cast<const calendar_impl*>(other_ptr);
-            if(other_cal) {
-                guard l(other_cal->lock_);
-                other_time = other_cal->calendar_->getTime(err);
-                check_and_throw_dt(err);
-            } else {
-                posix_time o_time = other_ptr->get_time();
-                other_time = o_time.seconds * 1000.0 + o_time.nanoseconds / 1000000.0;
-            }
-
-            int diff = self->fieldDifference(other_time, to_icu(m), err);
+            int diff = self->fieldDifference(other_time_ms, to_icu(m), err);
 
             check_and_throw_dt(err);
             return diff;

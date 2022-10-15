@@ -26,13 +26,13 @@ int main()
     start.set(period::month(), now.minimum(period::month()));
     start.set(period::day(), start.minimum(period::day()));
 
-    int current_year = period::year(now);
+    const int current_year = period::year(now);
 
     // Display current year
     std::cout << format("{1,ftime='%Y'}") % now << std::endl;
 
     //
-    // Run forward untill current year is the date
+    // Run forward until current year is the date
     //
     for(now = start; period::year(now) == current_year;) {
         // Print heading of month
@@ -43,7 +43,7 @@ int main()
                            % now % date_time(now, now.maximum(period::day()) * period::day())
                       << std::endl;
 
-        int first = calendar().first_day_of_week();
+        const int first = calendar().first_day_of_week();
 
         // Print weeks days
         for(int i = 0; i < 7; i++) {
@@ -52,8 +52,8 @@ int main()
         }
         std::cout << std::endl;
 
-        int current_month = now / period::month();
-        int skip = now / period::day_of_week_local() - 1;
+        const int current_month = now / period::month();
+        const int skip = now / period::day_of_week_local() - 1;
         for(int i = 0; i < skip * 9; i++)
             std::cout << ' ';
         for(; now / period::month() == current_month; now += period::day()) {

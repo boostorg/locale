@@ -266,7 +266,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
 
     template<typename CharType>
     struct mo_file_use_traits {
-        static const bool in_use = false;
+        static constexpr bool in_use = false;
         typedef CharType char_type;
         typedef std::pair<const char_type*, const char_type*> pair_type;
         static pair_type use(const mo_file& /*mo*/, const char_type* /*context*/, const char_type* /*key*/)
@@ -277,7 +277,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
 
     template<>
     struct mo_file_use_traits<char> {
-        static const bool in_use = true;
+        static constexpr bool in_use = true;
         typedef char char_type;
         typedef std::pair<const char_type*, const char_type*> pair_type;
         static pair_type use(const mo_file& mo, const char* context, const char* key) { return mo.find(context, key); }
@@ -406,7 +406,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
         }
     };
 
-    // By default for wide types the conversion is not requiredyy
+    // By default for wide types the conversion is not required
     template<typename CharType>
     const CharType* runtime_conversion(const CharType* msg,
                                        std::basic_string<CharType>& /*buffer*/,
@@ -460,7 +460,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
             if(plural_forms_.at(domain_id))
                 form = (*plural_forms_[domain_id])(n);
             else
-                form = n == 1 ? 0 : 1; // Fallback to english plural form
+                form = n == 1 ? 0 : 1; // Fallback to English plural form
 
             const CharType* p = ptr.first;
             for(int i = 0; p < ptr.second && i < form; i++) {
@@ -591,14 +591,12 @@ namespace boost { namespace locale { namespace gnu_gettext {
             if(mo_encoding.empty())
                 throw std::runtime_error("Invalid mo-format, encoding is not specified");
 
-            if(!plural.empty()) {
+            if(!plural.empty())
                 plural_forms_[idx] = lambda::compile(plural.c_str());
-                ;
-            }
 
-            if(mo_useable_directly(mo_encoding, *mo)) {
+            if(mo_useable_directly(mo_encoding, *mo))
                 mo_catalogs_[idx] = mo;
-            } else {
+            else {
                 converter<CharType> cvt_value(locale_encoding, mo_encoding);
                 converter<CharType> cvt_key(key_encoding, mo_encoding);
                 for(unsigned i = 0; i < mo->size(); i++) {

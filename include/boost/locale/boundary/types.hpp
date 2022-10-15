@@ -51,8 +51,8 @@ namespace boost { namespace locale {
         /// \anchor bl_boundary_word_rules
         /// \name Flags that describe a type of word selected
         /// @{
-        static const rule_type word_none = 0x0000F, ///< Not a word, like white space or punctuation mark
-          word_number = 0x000F0,                    ///< Word that appear to be a number
+        constexpr rule_type word_none = 0x0000F, ///< Not a word, like white space or punctuation mark
+          word_number = 0x000F0,                 ///< Word that appear to be a number
           word_letter = 0x00F00,    ///< Word that contains letters, excluding kana and ideographic characters
           word_kana = 0x0F000,      ///< Word that contains kana characters
           word_ideo = 0xF0000,      ///< Word that contains ideographic characters
@@ -66,10 +66,10 @@ namespace boost { namespace locale {
         /// \anchor bl_boundary_line_rules
         /// \name Flags that describe a type of line break
         /// @{
-        static const rule_type line_soft = 0x0F, ///< Soft line break: optional but not required
-          line_hard = 0xF0,                      ///< Hard line break: like break is required (as per CR/LF)
-          line_any = 0xFF,                       ///< Soft or Hard line break
-          line_mask = 0xFF;                      ///< Select all types of line breaks
+        constexpr rule_type line_soft = 0x0F, ///< Soft line break: optional but not required
+          line_hard = 0xF0,                   ///< Hard line break: like break is required (as per CR/LF)
+          line_any = 0xFF,                    ///< Soft or Hard line break
+          line_mask = 0xFF;                   ///< Select all types of line breaks
 
         /// @}
 
@@ -78,9 +78,8 @@ namespace boost { namespace locale {
         /// \name Flags that describe a type of sentence break
         ///
         /// @{
-        static const rule_type sentence_term =
-                                 0x0F, ///< \brief The sentence was terminated with a sentence terminator
-                                       ///  like ".", "!" possible followed by hard separator like CR, LF, PS
+        constexpr rule_type sentence_term = 0x0F, ///< \brief The sentence was terminated with a sentence terminator
+                                                  ///  like ".", "!" possible followed by hard separator like CR, LF, PS
           sentence_sep =
             0xF0, ///< \brief The sentence does not contain terminator like ".", "!" but ended with hard separator
                   ///  like CR, LF, PS or end of input.
@@ -95,8 +94,8 @@ namespace boost { namespace locale {
         /// At this point break iterator does not distinguish different
         /// kinds of characters so it is used for consistency.
         ///@{
-        static const rule_type character_any = 0xF, ///< Not in use, just for consistency
-          character_mask = 0xF;                     ///< Select all character breaking points
+        constexpr rule_type character_any = 0xF, ///< Not in use, just for consistency
+          character_mask = 0xF;                  ///< Select all character breaking points
 
         ///@}
 

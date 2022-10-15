@@ -11,12 +11,39 @@
 #include "boostLocale/test/posix_tools.hpp"
 #include <cstdio>
 #include <fstream>
+#include <sstream>
 #include <string>
 
 #if defined(BOOST_MSVC) && BOOST_MSVC < 1700
 #    pragma warning(disable : 4428) // universal-character-name encountered in source
 #endif
 
+inline unsigned utf8_next(const std::string& s, unsigned& pos)
+{
+    unsigned c = (unsigned char)s[pos++];
+    if((unsigned char)(c - 0xc0) >= 0x35)
+        return c;
+    unsigned l;
+    if(c < 192)
+        l = 0;
+    else if(c < 224)
+        l = 1;
+    else if(c < 240)
+        l = 2;
+    else
+        l = 3;
+
+    c &= (1 << (6 - l)) - 1;
+
+    switch(l) {
+        case 3: c = (c << 6) | (((unsigned char)s[pos++]) & 0x3F); BOOST_FALLTHROUGH;
+        case 2: c = (c << 6) | (((unsigned char)s[pos++]) & 0x3F); BOOST_FALLTHROUGH;
+        case 1: c = (c << 6) | (((unsigned char)s[pos++]) & 0x3F);
+    }
+    return c;
+}
+
+/// Convert/decode an UTF-8 encoded string to the given char type
 template<typename C>
 std::string to_utf8(const std::basic_string<C>& s)
 {
@@ -28,15 +55,52 @@ std::string to_utf8(const std::string& s)
 }
 
 template<typename Char>
-std::basic_string<Char> to_correct_string(const std::string& e, std::locale /*l*/)
+std::basic_string<Char> to(const std::string& utf8)
 {
-    return boost::locale::conv::to_utf<Char>(e, "UTF-8");
+    std::basic_string<Char> out;
+    unsigned i = 0;
+    while(i < utf8.size()) {
+        unsigned point;
+        unsigned prev = i;
+        point = utf8_next(utf8, i);
+        BOOST_LOCALE_START_CONST_CONDITION
+        if(sizeof(Char) == 1 && point > 255) {
+            std::ostringstream ss;
+            ss << "Can't convert codepoint U" << std::hex << point << "("
+               << std::string(utf8.begin() + prev, utf8.begin() + i) << ") to Latin1";
+            throw std::runtime_error(ss.str());
+        } else if(sizeof(Char) == 2 && point > 0xFFFF) { // Deal with surrogates
+            point -= 0x10000;
+            out += static_cast<Char>(0xD800 | (point >> 10));
+            out += static_cast<Char>(0xDC00 | (point & 0x3FF));
+            continue;
+        }
+        BOOST_LOCALE_END_CONST_CONDITION
+        out += static_cast<Char>(point);
+    }
+    return out;
 }
 
-template<>
-inline std::string to_correct_string(const std::string& e, std::locale l)
+/// Convert an ASCII string to the given char type (i.e. copy only)
+template<typename Char, size_t size>
+inline std::basic_string<Char> ascii_to(const char (&str)[size])
 {
-    return boost::locale::conv::from_utf(e, l);
+    return std::basic_string<Char>(str, str + size - 1);
+}
+
+/// Convert an UTF-8 encoded string to another UTF encoding
+/// or to a narrow string encoded using the given locale
+template<typename Char>
+std::basic_string<Char> to_correct_string(const std::string& utf8_str, std::locale /*l*/)
+{
+    return to<Char>(utf8_str);
+}
+
+/// Specialization to convert an UTF-8 encoded string to a locale specific encoded string
+template<>
+inline std::string to_correct_string(const std::string& utf8_str, std::locale l)
+{
+    return boost::locale::conv::from_utf(utf8_str, l);
 }
 
 bool has_std_locale(const std::string& name)

@@ -7,6 +7,7 @@
 #include <boost/locale/conversion.hpp>
 #include <boost/locale/generator.hpp>
 #include <boost/locale/info.hpp>
+#include "boostLocale/test/tools.hpp"
 #include "boostLocale/test/unit_test.hpp"
 #include <iomanip>
 #include <iostream>

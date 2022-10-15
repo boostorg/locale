@@ -18,8 +18,8 @@
 #include "boostLocale/test/tools.hpp"
 #include "boostLocale/test/unit_test.hpp"
 
-static const unsigned illegal = 0xFFFFFFFF;
-static const unsigned incomplete = 0xFFFFFFFE;
+constexpr auto illegal = boost::locale::util::base_converter::illegal;
+constexpr auto incomplete = boost::locale::util::base_converter::incomplete;
 
 bool test_to(boost::locale::util::base_converter& cvt, const char* s, unsigned codepoint)
 {
@@ -43,7 +43,7 @@ bool test_incomplete(boost::locale::util::base_converter& cvt, unsigned codepoin
 {
     char buf[32] = {0};
     unsigned res = cvt.from_unicode(codepoint, buf, buf + len);
-    return res == incomplete;
+    return res == boost::locale::util::base_converter::incomplete;
 }
 
 #define TEST_TO(str, codepoint) TEST(test_to(*cvt, str, codepoint))
