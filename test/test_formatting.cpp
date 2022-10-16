@@ -554,6 +554,21 @@ void test_format_class(std::string charset = "UTF-8")
         std::locale::global(old_locale);
     }
 
+    // Not passed placeholders are removed
+    TEST_EQ((format_type(ascii_to<CharType>("{1}{3}{2}")) % "hello" % "world").str(loc),
+            ascii_to<CharType>("helloworld"));
+    TEST_EQ(format_type(ascii_to<CharType>("{1}")).str(loc), ascii_to<CharType>(""));
+    // Unexpected closing brace and other chars are ignored
+    TEST_EQ(format_type(ascii_to<CharType>(" = , } 3")).str(loc), ascii_to<CharType>(" = , } 3"));
+    // Trailing opening brace is ignored
+    TEST_EQ(format_type(ascii_to<CharType>("End {")).str(loc), ascii_to<CharType>("End "));
+    // Trailing closing brace is added like any other char
+    TEST_EQ(format_type(ascii_to<CharType>("End}")).str(loc), ascii_to<CharType>("End}"));
+    // Escaped trailing closing brace added once
+    TEST_EQ(format_type(ascii_to<CharType>("End}}")).str(loc), ascii_to<CharType>("End}"));
+    // ...and twice when another trailing brace is added
+    TEST_EQ(format_type(ascii_to<CharType>("End}}}")).str(loc), ascii_to<CharType>("End}}"));
+
     // format with multiple types
     TEST_EQ((format_type(ascii_to<CharType>("{1} {2}")) % "hello" % 2).str(loc), ascii_to<CharType>("hello 2"));
 
