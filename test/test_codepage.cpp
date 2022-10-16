@@ -399,18 +399,18 @@ void test_main(int /*argc*/, char** /*argv*/)
             "en");
     TEST_THROWS(to<char>("€"), std::runtime_error);
 
-    std::vector<std::string> def;
+    std::vector<std::string> backends;
 #ifdef BOOST_LOCALE_WITH_ICU
-    def.push_back("icu");
+    backends.push_back("icu");
 #endif
 #ifndef BOOST_LOCALE_NO_STD_BACKEND
-    def.push_back("std");
+    backends.push_back("std");
 #endif
 #ifndef BOOST_LOCALE_NO_WINAPI_BACKEND
-    def.push_back("winapi");
+    backends.push_back("winapi");
 #endif
 #ifndef BOOST_LOCALE_NO_POSIX_BACKEND
-    def.push_back("posix");
+    backends.push_back("posix");
 #endif
 
 #if !defined(BOOST_LOCALE_WITH_ICU) && !defined(BOOST_LOCALE_WITH_ICONV) \
@@ -420,14 +420,12 @@ void test_main(int /*argc*/, char** /*argv*/)
 
     test_simple_conversions();
 
-    for(int type = 0; type < int(def.size()); type++) {
+    for(const std::string& backendName : backends) {
         boost::locale::localization_backend_manager tmp_backend = boost::locale::localization_backend_manager::global();
-        tmp_backend.select(def[type]);
+        tmp_backend.select(backendName);
         boost::locale::localization_backend_manager::global(tmp_backend);
 
-        std::string bname = def[type];
-
-        if(bname == "std") {
+        if(backendName == "std") {
             en_us_8bit = get_std_name("en_US.ISO8859-1");
             he_il_8bit = get_std_name("he_IL.ISO8859-8");
             ja_jp_shiftjis = get_std_name("ja_JP.SJIS");
@@ -442,24 +440,24 @@ void test_main(int /*argc*/, char** /*argv*/)
             ja_jp_shiftjis = "ja_JP.SJIS";
         }
 
-        std::cout << "Testing for backend " << def[type] << std::endl;
+        std::cout << "Testing for backend " << backendName << std::endl;
 
         test_iso = true;
-        if(bname == "std" && (he_il_8bit.empty() || en_us_8bit.empty())) {
+        if(backendName == "std" && (he_il_8bit.empty() || en_us_8bit.empty())) {
             std::cout << "no ISO locales available, passing" << std::endl;
             test_iso = false;
         }
         test_sjis = true;
-        if(bname == "std" && ja_jp_shiftjis.empty()) {
+        if(backendName == "std" && ja_jp_shiftjis.empty()) {
             test_sjis = false;
         }
-        if(bname == "winapi") {
+        if(backendName == "winapi") {
             test_iso = false;
             test_sjis = false;
         }
         test_utf = true;
 #ifndef BOOST_LOCALE_NO_POSIX_BACKEND
-        if(bname == "posix") {
+        if(backendName == "posix") {
             {
                 locale_holder l(newlocale(LC_ALL_MASK, he_il_8bit.c_str(), 0));
                 if(!l)
@@ -487,7 +485,7 @@ void test_main(int /*argc*/, char** /*argv*/)
         }
 #endif
 
-        if(def[type] == "std" && (get_std_name("en_US.UTF-8").empty() || get_std_name("he_IL.UTF-8").empty())) {
+        if(backendName == "std" && (get_std_name("en_US.UTF-8").empty() || get_std_name("he_IL.UTF-8").empty())) {
             test_utf = false;
         }
 
@@ -499,13 +497,13 @@ void test_main(int /*argc*/, char** /*argv*/)
         std::cout << "  wchar_t" << std::endl;
         test_to<wchar_t>();
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-        if(bname == "icu" || bname == "std") {
+        if(backendName == "icu" || backendName == "std") {
             std::cout << "  char16_t" << std::endl;
             test_to<char16_t>();
         }
 #endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-        if(bname == "icu" || bname == "std") {
+        if(backendName == "icu" || backendName == "std") {
             std::cout << "  char32_t" << std::endl;
             test_to<char32_t>();
         }
