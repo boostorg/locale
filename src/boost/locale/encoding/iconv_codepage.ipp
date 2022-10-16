@@ -17,14 +17,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
     class iconverter_base {
     public:
         iconverter_base() : cvt_((iconv_t)(-1)) {}
-
         ~iconverter_base() { close(); }
-
-        size_t conv(const char** inbufc, size_t* inchar_left, char** outbuf, size_t* outchar_left)
-        {
-            char** inbuf = const_cast<char**>(inbufc);
-            return call_iconv(cvt_, inbuf, inchar_left, outbuf, outchar_left);
-        }
 
         bool do_open(const char* to, const char* from, method_type how)
         {
@@ -114,8 +107,12 @@ namespace boost { namespace locale { namespace conv { namespace impl {
             }
         }
 
-        iconv_t cvt_;
+        size_t conv(const char** inbuf, size_t* inchar_left, char** outbuf, size_t* outchar_left)
+        {
+            return call_iconv(cvt_, inbuf, inchar_left, outbuf, outchar_left);
+        }
 
+        iconv_t cvt_;
         method_type how_;
     };
 

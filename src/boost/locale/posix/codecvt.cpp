@@ -36,26 +36,22 @@ namespace boost { namespace locale { namespace impl_posix {
                     throw std::runtime_error("Unsupported encoding" + encoding);
                 }
                 for(unsigned c = 0; c < 256; c++) {
-                    char ibuf[2] = {char(c), 0};
-                    char* in = ibuf;
-                    size_t insize = 2;
+                    const char ibuf[2] = {char(c), 0};
+                    size_t insize = sizeof(ibuf);
                     uint32_t obuf[2] = {illegal, illegal};
-                    char* out = reinterpret_cast<char*>(obuf);
-                    size_t outsize = 8;
+                    size_t outsize = sizeof(obuf);
                     // Basic single codepoint conversion
-                    call_iconv(d, &in, &insize, &out, &outsize);
+                    call_iconv(d, ibuf, &insize, reinterpret_cast<char*>(obuf), &outsize);
                     if(insize == 0 && outsize == 0 && obuf[1] == 0) {
                         first_byte_table.push_back(obuf[0]);
                         continue;
                     }
 
                     // Test if this is illegal first byte or incomplete
-                    in = ibuf;
                     insize = 1;
-                    out = reinterpret_cast<char*>(obuf);
-                    outsize = 8;
-                    call_iconv(d, 0, 0, 0, 0);
-                    size_t res = call_iconv(d, &in, &insize, &out, &outsize);
+                    outsize = sizeof(obuf);
+                    call_iconv(d, nullptr, nullptr, nullptr, nullptr);
+                    size_t res = call_iconv(d, ibuf, &insize, reinterpret_cast<char*>(obuf), &outsize);
 
                     // Now if this single byte starts a sequence we add incomplete
                     // to know to ask that we need two bytes, otherwise it may only be
@@ -114,13 +110,11 @@ namespace boost { namespace locale { namespace impl_posix {
 
             // maybe illegal or may be double byte
 
-            char inseq[3] = {static_cast<char>(seq0), begin[1], 0};
-            char* inbuf = inseq;
-            size_t insize = 3;
+            const char inseq[3] = {static_cast<char>(seq0), begin[1], 0};
+            size_t insize = sizeof(inseq);
             uint32_t result[2] = {illegal, illegal};
-            size_t outsize = 8;
-            char* outbuf = reinterpret_cast<char*>(result);
-            call_iconv(to_utf_, &inbuf, &insize, &outbuf, &outsize);
+            size_t outsize = sizeof(result);
+            call_iconv(to_utf_, inseq, &insize, reinterpret_cast<char*>(result), &outsize);
             if(outsize == 0 && insize == 0 && result[1] == 0) {
                 begin += 2;
                 return result[0];
@@ -141,14 +135,12 @@ namespace boost { namespace locale { namespace impl_posix {
 
             open(from_utf_, encoding_.c_str(), utf32_encoding());
 
-            uint32_t codepoints[2] = {cp, 0};
-            char* inbuf = reinterpret_cast<char*>(codepoints);
-            size_t insize = sizeof(codepoints);
+            const uint32_t inbuf[2] = {cp, 0};
+            size_t insize = sizeof(inbuf);
             char outseq[3] = {0};
-            char* outbuf = outseq;
             size_t outsize = 3;
 
-            call_iconv(from_utf_, &inbuf, &insize, &outbuf, &outsize);
+            call_iconv(from_utf_, reinterpret_cast<const char*>(inbuf), &insize, outseq, &outsize);
 
             if(insize != 0 || outsize > 1)
                 return illegal;
