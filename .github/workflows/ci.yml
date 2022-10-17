@@ -86,39 +86,39 @@ jobs:
           # Linux, gcc
           # GCC 5 is the first to have enough C++11 support, so don't test anything older except for one to verify the checks
           - { compiler: gcc-4.9,   cxxstd: '03,11',          os: ubuntu-20.04, container: 'ubuntu:16.04' }
-          - { compiler: gcc-5,     cxxstd: '03,11,14,1z',    os: ubuntu-18.04 }
-          - { compiler: gcc-6,     cxxstd: '11,14,17',       os: ubuntu-18.04 }
-          - { compiler: gcc-7,     cxxstd: '11,14,17',       os: ubuntu-18.04 }
-          - { compiler: gcc-8,     cxxstd: '11,14,17,2a',    os: ubuntu-18.04 }
-          - { compiler: gcc-9,     cxxstd: '11,14,17,2a',    os: ubuntu-18.04 }
+          - { compiler: gcc-5,     cxxstd: '03,11,14,1z',    os: ubuntu-22.04, container: 'ubuntu:18.04' }
+          - { compiler: gcc-6,     cxxstd: '11,14,17',       os: ubuntu-22.04, container: 'ubuntu:18.04' }
+          - { compiler: gcc-7,     cxxstd: '11,14,17',       os: ubuntu-22.04, container: 'ubuntu:18.04' }
+          - { compiler: gcc-8,     cxxstd: '11,14,17,2a',    os: ubuntu-22.04, container: 'ubuntu:18.04' }
+          - { compiler: gcc-9,     cxxstd: '11,14,17,2a',    os: ubuntu-22.04, container: 'ubuntu:18.04' }
           - { compiler: gcc-10,    cxxstd: '11,14,17,20',    os: ubuntu-20.04 }
           - { compiler: gcc-11,    cxxstd: '11,14,17,20',    os: ubuntu-20.04 }
           - { name: GCC w/ sanitizers, sanitize: yes,
-              compiler: gcc-12,    cxxstd: '03,11,14,17,20', os: ubuntu-22.04 }
+              compiler: gcc-12,    cxxstd: '11,14,17,20',    os: ubuntu-22.04 }
           - { name: Collect coverage, coverage: yes,
-              compiler: gcc-8,     cxxstd: '03,11',          os: ubuntu-20.04, install: 'g++-8-multilib', address-model: '32,64' }
+              compiler: gcc-8,     cxxstd: '11',             os: ubuntu-20.04, install: 'g++-8-multilib', address-model: '32,64' }
 
           # Linux, clang
           - { compiler: clang-3.5, cxxstd: '03,11',          os: ubuntu-20.04, container: 'ubuntu:16.04' }
           - { compiler: clang-3.6, cxxstd: '11,14',          os: ubuntu-20.04, container: 'ubuntu:16.04' }
           - { compiler: clang-3.7, cxxstd: '11,14',          os: ubuntu-20.04, container: 'ubuntu:16.04' }
           - { compiler: clang-3.8, cxxstd: '11,14',          os: ubuntu-20.04, container: 'ubuntu:16.04' }
-          - { compiler: clang-3.9, cxxstd: '11,14',          os: ubuntu-18.04 }
-          - { compiler: clang-4.0, cxxstd: '11,14',          os: ubuntu-18.04 }
-          - { compiler: clang-5.0, cxxstd: '11,14,1z',       os: ubuntu-18.04 }
-          - { compiler: clang-6.0, cxxstd: '11,14,17',       os: ubuntu-18.04 }
-          - { compiler: clang-7,   cxxstd: '11,14,17',       os: ubuntu-18.04 }
+          - { compiler: clang-3.9, cxxstd: '11,14',          os: ubuntu-22.04, container: 'ubuntu:18.04' }
+          - { compiler: clang-4.0, cxxstd: '11,14',          os: ubuntu-22.04, container: 'ubuntu:18.04' }
+          - { compiler: clang-5.0, cxxstd: '11,14,1z',       os: ubuntu-22.04, container: 'ubuntu:18.04' }
+          - { compiler: clang-6.0, cxxstd: '11,14,17',       os: ubuntu-22.04, container: 'ubuntu:18.04' }
+          - { compiler: clang-7,   cxxstd: '11,14,17',       os: ubuntu-22.04, container: 'ubuntu:18.04' }
           # Note: clang-8 does not fully support C++20, so it is not compatible with some libstdc++ versions in this mode
-          - { compiler: clang-8,   cxxstd: '11,14,17,2a',    os: ubuntu-18.04, install: 'clang-8 g++-7', gcc_toolchain: 7 }
+          - { compiler: clang-8,   cxxstd: '11,14,17,2a',    os: ubuntu-22.04, container: 'ubuntu:18.04', install: 'clang-8 g++-7', gcc_toolchain: 7 }
           - { compiler: clang-9,   cxxstd: '11,14,17,2a',    os: ubuntu-20.04 }
           - { compiler: clang-10,  cxxstd: '11,14,17,20',    os: ubuntu-20.04 }
           - { compiler: clang-11,  cxxstd: '11,14,17,20',    os: ubuntu-20.04 }
           - { compiler: clang-12,  cxxstd: '11,14,17,20',    os: ubuntu-20.04 }
           - { compiler: clang-13,  cxxstd: '11,14,17,20',    os: ubuntu-22.04 }
-          - { compiler: clang-14,  cxxstd: '03,11,14,17,20', os: ubuntu-22.04 }
+          - { compiler: clang-14,  cxxstd: '11,14,17,20',    os: ubuntu-22.04 }
 
           # libc++
-          - { compiler: clang-6.0, cxxstd: '03,11,14',       os: ubuntu-18.04, stdlib: libc++, install: 'clang-6.0 libc++-dev libc++abi-dev' }
+          - { compiler: clang-6.0, cxxstd: '03,11,14',       os: ubuntu-22.04, container: 'ubuntu:18.04', stdlib: libc++, install: 'clang-6.0 libc++-dev libc++abi-dev' }
           - { name: Clang w/ sanitizers, sanitize: yes,
               compiler: clang-12,  cxxstd: '03,11,14,17,20', os: ubuntu-20.04, stdlib: libc++, install: 'clang-12 libc++-12-dev libc++abi-12-dev' }
 
@@ -140,9 +140,9 @@ jobs:
             fi
             if [ -n "${{matrix.container}}" ] && [ -f "/etc/debian_version" ]; then
                 apt-get -o Acquire::Retries=$NET_RETRY_COUNT update
-                apt-get -o Acquire::Retries=$NET_RETRY_COUNT install -y sudo software-properties-common
+                apt-get -o Acquire::Retries=$NET_RETRY_COUNT install -y sudo software-properties-common curl
                 # Need (newer) git, and the older Ubuntu container may require requesting the key manually using port 80
-                apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys E1DD270288B4E6030699E45FA1715D88E1DF1F24
+                curl -sSL --retry ${NET_RETRY_COUNT:-5} 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0xE1DD270288B4E6030699E45FA1715D88E1DF1F24' | sudo gpg --dearmor > /etc/apt/trusted.gpg.d/git-core_ubuntu_ppa.gpg
                 for i in {1..${NET_RETRY_COUNT:-3}}; do sudo -E add-apt-repository -y ppa:git-core/ppa && break || sleep 10; done
                 apt-get -o Acquire::Retries=$NET_RETRY_COUNT update
                 apt-get -o Acquire::Retries=$NET_RETRY_COUNT install -y g++ python libpython-dev git locales
@@ -188,7 +188,8 @@ jobs:
             SOURCES+=(ppa:ubuntu-toolchain-r/test)
             for key in "${SOURCE_KEYS[@]}"; do
                 for i in {1..$NET_RETRY_COUNT}; do
-                    wget -O - "$key" | sudo apt-key add - && break || sleep 10
+                    keyfilename=$(basename -s .key $key)
+                    curl -sSL --retry ${NET_RETRY_COUNT:-5} "$key" | sudo gpg --dearmor > /etc/apt/trusted.gpg.d/${keyfilename} && break || sleep 10
                 done
             done
             for source in "${SOURCES[@]}"; do
@@ -210,6 +211,9 @@ jobs:
         run: |
             GCC_TOOLCHAIN_ROOT="$HOME/gcc-toolchain"
             echo "GCC_TOOLCHAIN_ROOT=$GCC_TOOLCHAIN_ROOT" >> $GITHUB_ENV
+            if ! command -v dpkg-architecture; then
+                apt-get install -y dpkg-dev
+            fi
             MULTIARCH_TRIPLET="$(dpkg-architecture -qDEB_HOST_MULTIARCH)"
             mkdir -p "$GCC_TOOLCHAIN_ROOT"
             ln -s /usr/include "$GCC_TOOLCHAIN_ROOT/include"
@@ -252,11 +256,12 @@ jobs:
           # Used by test_boundary
           if ! echo "$locales" | grep -q "ja_JP.sjis"; then
             echo "Creating ja_JP.sjis"
-            if [ -n "${{matrix.container}}" ]; then
-              sudo localedef -f SHIFT_JIS -i ja_JP ja_JP.sjis
+            if localedef --help | grep -q -- "--no-warnings="; then
+              no_warnings="--no-warnings=ascii"
             else
-              sudo localedef --no-warnings=ascii -f SHIFT_JIS -i ja_JP ja_JP.sjis
+              no_warnings=""
             fi
+            sudo localedef $no_warnings -f SHIFT_JIS -i ja_JP ja_JP.sjis
           fi
           echo "Installed locales: $(locale -a)"
 
@@ -370,7 +375,7 @@ jobs:
 
       - name: Upload coverage
         if: matrix.coverage
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
         with:
           files: __out/cobertura.xml
 
