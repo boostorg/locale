@@ -9,10 +9,6 @@
 #include <unicode/utypes.h>
 #include <unicode/uversion.h>
 
-#if defined(_MSC_VER) && !defined(_DLL)
-#    error "Mixing ICU with a static runtime doesn't work"
-#endif
-
 int main()
 {
     icu::Locale loc;
