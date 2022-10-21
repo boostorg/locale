@@ -14,7 +14,6 @@
 #include <boost/cstdint.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 #include <algorithm>
-#include <iostream>
 #include <iterator>
 #include <locale>
 #include <memory>
