@@ -17,22 +17,16 @@
 
 namespace boost { namespace locale {
 
-    ///
     /// \brief This namespase contains all operations required for boundary analysis of text
-    ///
     namespace boundary {
-        ///
         /// \defgroup boundary Boundary Analysis
         ///
         /// This module contains all operations required for boundary analysis of text: character, word, like and
         /// sentence boundaries
         ///
         /// @{
-        ///
 
-        ///
         /// This type describes a possible boundary analysis alternatives.
-        ///
         enum boundary_type {
             character, ///< Analyse the text for character boundaries
             word,      ///< Analyse the text for word boundaries
@@ -40,14 +34,11 @@ namespace boost { namespace locale {
             line       ///< Analyse the text for positions suitable for line breaks
         };
 
-        ///
         /// \brief Flags used with word boundary analysis -- the type of the word, line or sentence boundary found.
         ///
         /// It is a bit-mask that represents various combinations of rules used to select this specific boundary.
-        ///
         typedef uint32_t rule_type;
 
-        ///
         /// \anchor bl_boundary_word_rules
         /// \name Flags that describe a type of word selected
         /// @{
@@ -62,7 +53,6 @@ namespace boost { namespace locale {
           word_mask = 0xFFFFF;      ///< Full word mask - select all possible variants
         /// @}
 
-        ///
         /// \anchor bl_boundary_line_rules
         /// \name Flags that describe a type of line break
         /// @{
@@ -73,7 +63,6 @@ namespace boost { namespace locale {
 
         /// @}
 
-        ///
         /// \anchor bl_boundary_sentence_rules
         /// \name Flags that describe a type of sentence break
         ///
@@ -88,7 +77,6 @@ namespace boost { namespace locale {
 
         ///@}
 
-        ///
         /// \name  Flags that describe a type of character break.
         ///
         /// At this point break iterator does not distinguish different
@@ -99,9 +87,7 @@ namespace boost { namespace locale {
 
         ///@}
 
-        ///
         /// This function returns the mask that covers all variants for specific boundary type
-        ///
         inline rule_type boundary_rule(boundary_type t)
         {
             switch(t) {
@@ -113,10 +99,7 @@ namespace boost { namespace locale {
             return 0;
         }
 
-        ///
         ///@}
-        ///
-
     } // namespace boundary
 }}    // namespace boost::locale
 

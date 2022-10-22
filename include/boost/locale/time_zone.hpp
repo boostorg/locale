@@ -16,23 +16,16 @@
 #endif
 
 namespace boost { namespace locale {
-    ///
     /// \addtogroup date_time
     ///
     /// @{
 
-    ///
     /// \brief namespace that holds functions for operating with global
     /// time zone
-    ///
     namespace time_zone {
-        ///
         /// Get global time zone identifier. If empty, system time zone is used
-        ///
         BOOST_LOCALE_DECL std::string global();
-        ///
         /// Set global time zone identifier returning previous one. If empty, system time zone is used
-        ///
         BOOST_LOCALE_DECL std::string global(const std::string& new_tz);
     } // namespace time_zone
 

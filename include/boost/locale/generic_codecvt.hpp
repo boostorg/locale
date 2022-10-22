@@ -26,21 +26,16 @@ namespace boost { namespace locale {
 #    define BOOST_LOCALE_DO_LENGTH_MBSTATE_CONST
 #endif
 
-    ///
     /// \brief A base class that used to define constants for generic_codecvt
-    ///
     class generic_codecvt_base {
     public:
-        ///
         /// Initial state for converting to or from unicode code points, used by initial_state in derived classes
-        ///
         enum initial_convertion_state {
             to_unicode_state,  ///< The state would be used by to_unicode functions
             from_unicode_state ///< The state would be used by from_unicode functions
         };
     };
 
-    ///
     /// \brief Generic codecvt facet for various stateless encodings to UTF-16 and UTF-32 using wchar_t, char32_t
     /// and char16_t
     ///
@@ -144,18 +139,15 @@ namespace boost { namespace locale {
     /// };
     /// \endcode
     ///
-    ///
     template<typename CharType, typename CodecvtImpl, int CharSize = sizeof(CharType)>
     class generic_codecvt;
 
-    ///
     /// \brief UTF-16 to/from UTF-8 codecvt facet to use with char16_t or wchar_t on Windows
     ///
     /// Note in order to fit the requirements of usability by std::wfstream it uses mbstate_t
     /// to handle intermediate states in handling of variable length UTF-16 sequences
     ///
     /// Its member functions implement standard virtual functions of basic codecvt
-    ///
     template<typename CharType, typename CodecvtImpl>
     class generic_codecvt<CharType, CodecvtImpl, 2> : public std::codecvt<CharType, char, std::mbstate_t>,
                                                       public generic_codecvt_base {
@@ -330,7 +322,6 @@ namespace boost { namespace locale {
             //
             // State: state!=0 - a first surrogate pair was observerd (state = first pair),
             // we expect the second one to come and then zero the state
-            ///
             boost::uint16_t& state = *reinterpret_cast<boost::uint16_t*>(&std_state);
             typename CodecvtImpl::state_type cvt_state =
               implementation().initial_state(generic_codecvt_base::from_unicode_state);
@@ -411,12 +402,10 @@ namespace boost { namespace locale {
         }
     };
 
-    ///
     /// \brief UTF-32 to/from UTF-8 codecvt facet to use with char32_t or wchar_t on POSIX platforms
     ///
     /// Its member functions implement standard virtual functions of basic codecvt.
     /// mbstate_t is not used for UTF-32 handling due to fixed length encoding
-    ///
     template<typename CharType, typename CodecvtImpl>
     class generic_codecvt<CharType, CodecvtImpl, 4> : public std::codecvt<CharType, char, std::mbstate_t>,
                                                       public generic_codecvt_base {

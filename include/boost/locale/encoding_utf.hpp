@@ -18,14 +18,11 @@
 #endif
 
 namespace boost { namespace locale { namespace conv {
-    ///
     /// \addtogroup codepage
     ///
     /// @{
 
-    ///
     /// Convert a Unicode text in range [begin,end) to other Unicode encoding
-    ///
     template<typename CharOut, typename CharIn>
     std::basic_string<CharOut> utf_to_utf(const CharIn* begin, const CharIn* end, method_type how = default_method)
     {
@@ -46,18 +43,14 @@ namespace boost { namespace locale { namespace conv {
         return result;
     }
 
-    ///
     /// Convert a Unicode NULL terminated string \a str other Unicode encoding
-    ///
     template<typename CharOut, typename CharIn>
     std::basic_string<CharOut> utf_to_utf(const CharIn* str, method_type how = default_method)
     {
         return utf_to_utf<CharOut, CharIn>(str, util::str_end(str), how);
     }
 
-    ///
     /// Convert a Unicode string \a str other Unicode encoding
-    ///
     template<typename CharOut, typename CharIn>
     std::basic_string<CharOut> utf_to_utf(const std::basic_string<CharIn>& str, method_type how = default_method)
     {

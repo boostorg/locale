@@ -280,10 +280,8 @@ namespace boost { namespace locale { namespace util {
         return in;
     }
 
-    ///
     /// Install utf8 codecvt to UTF-16 or UTF-32 into locale \a in and return
     /// new locale that is based on \a in and uses new facet.
-    ///
     std::locale create_utf8_codecvt(const std::locale& in, char_facet_t type)
     {
         switch(type) {
@@ -300,7 +298,6 @@ namespace boost { namespace locale { namespace util {
         return in;
     }
 
-    ///
     /// This function installs codecvt that can be used for conversion between single byte
     /// character encodings like ISO-8859-1, koi8-r, windows-1255 and Unicode code points,
     ///

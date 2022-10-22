@@ -22,7 +22,6 @@
 
 namespace boost { namespace locale {
 
-    ///
     /// \brief this class represents a localization backend that can be used for localizing your application.
     ///
     /// Backends are usually registered inside the localization backends manager and allow transparent support
@@ -39,8 +38,6 @@ namespace boost { namespace locale {
     ///
     /// Each backend can be installed with a different default priotiry so when you work with two different backends,
     /// you can specify priotiry so this backend will be chosen according to their priority.
-    ///
-
     class localization_backend {
         localization_backend(const localization_backend&);
         void operator=(const localization_backend&);
@@ -50,107 +47,71 @@ namespace boost { namespace locale {
 
         virtual ~localization_backend() {}
 
-        ///
         /// Make a polymorphic copy of the backend
-        ///
         virtual localization_backend* clone() const = 0;
 
-        ///
         /// Set option for backend, for example "locale" or "encoding"
-        ///
         virtual void set_option(const std::string& name, const std::string& value) = 0;
 
-        ///
         /// Clear all options
-        ///
         virtual void clear_options() = 0;
 
-        ///
         /// Create a facet for category \a category and character type \a type
-        ///
         virtual std::locale install(const std::locale& base, category_t category, char_facet_t type) = 0;
 
     }; // localization_backend
 
-    ///
     /// \brief Localization backend manager is a class that holds various backend and allows creation
     /// of their combination or selection
-    ///
-
     class BOOST_LOCALE_DECL localization_backend_manager {
     public:
-        ///
         /// New empty localization_backend_manager
-        ///
         localization_backend_manager();
-        ///
         /// Copy localization_backend_manager
-        ///
         localization_backend_manager(const localization_backend_manager&);
-        ///
         /// Assign localization_backend_manager
-        ///
         localization_backend_manager& operator=(const localization_backend_manager&);
 
-        ///
         /// Destructor
-        ///
         ~localization_backend_manager();
 
-        ///
         /// Create new localization backend according to current settings.
-        ///
         std::unique_ptr<localization_backend> get() const;
 
         BOOST_DEPRECATED("This function is deprecated, use 'get()' instead")
         std::unique_ptr<localization_backend> get_unique_ptr() const { return get(); }
 
-        ///
         /// Add new backend to the manager, each backend should be uniquely defined by its name.
         ///
         /// This library provides: "icu", "posix", "winapi" and "std" backends.
-        ///
         void add_backend(const std::string& name, std::unique_ptr<localization_backend> backend);
 
-        ///
         /// Create new localization backend according to current settings. Ownership is passed to caller
-        ///
         localization_backend* create() const;
-        ///
+
         /// Add new backend to the manager, each backend should be uniquely defined by its name.
         /// ownership on backend is transfered
         ///
         /// This library provides: "icu", "posix", "winapi" and "std" backends.
-        ///
         void adopt_backend(const std::string& name, localization_backend* backend);
 
-        ///
         /// Clear backend
-        ///
         void remove_all_backends();
 
-        ///
         /// Get list of all available backends
-        ///
         std::vector<std::string> get_all_backends() const;
 
-        ///
         /// Select specific backend by name for a category \a category. It allows combining different
         /// backends for user preferences.
-        ///
         void select(const std::string& backend_name, category_t category = all_categories);
 
-        ///
         /// Set new global backend manager, the old one is returned.
         ///
         /// This function is thread safe
-        ///
         static localization_backend_manager global(const localization_backend_manager&);
-        ///
         /// Get global backend manager
         ///
         /// This function is thread safe
-        ///
         static localization_backend_manager global();
 
     private:

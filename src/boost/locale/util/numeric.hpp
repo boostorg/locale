@@ -214,10 +214,8 @@ namespace boost { namespace locale { namespace util {
 
                 std::ios_base::fmtflags flags = ios.flags() & std::ios_base::adjustfield;
 
-                //
                 // we do not really know internal point, so we assume that it does not
                 // exist. so according to the standard field should be right aligned
-                //
                 if(flags != std::ios_base::left)
                     on_left = n;
                 on_right = n - on_left;

@@ -95,36 +95,23 @@ namespace locale {
     /// caching. This class const member functions are thread safe if locale class implementation is thread safe.
     class BOOST_LOCALE_DECL generator {
     public:
-        ///
         /// Create new generator using global localization_backend_manager
-        ///
         generator();
-        ///
         /// Create new generator using specific localization_backend_manager
-        ///
         generator(const localization_backend_manager&);
 
         ~generator();
 
-        ///
         /// Set types of facets that should be generated, default all
-        ///
         void categories(category_t cats);
-        ///
         /// Get types of facets that should be generated, default all
-        ///
         category_t categories() const;
 
-        ///
         /// Set the characters type for which the facets should be generated, default all supported
-        ///
         void characters(char_facet_t chars);
-        ///
         /// Get the characters type for which the facets should be generated, default all supported
-        ///
         char_facet_t characters() const;
 
-        ///
         /// Add a new domain of messages that would be generated. It should be set in order to enable
         /// messages support.
         ///
@@ -142,21 +129,15 @@ namespace locale {
         /// do not specify the encoding part. So for example if the provided
         /// domain name was "blog/windows-1255" then for translation
         /// you should use dgettext("blog","Hello")
-        ///
-        ///
         void add_messages_domain(const std::string& domain);
-        ///
+
         /// Set default message domain. If this member was not called, the first added messages domain is used.
         /// If the domain \a domain is not added yet it is added.
-        ///
         void set_default_messages_domain(const std::string& domain);
 
-        ///
         /// Remove all added domains from the list
-        ///
         void clear_domains();
 
-        ///
         /// Add a search path where dictionaries are looked in.
         ///
         /// \note
@@ -169,65 +150,42 @@ namespace locale {
         /// - Under POSIX platforms all paths passed as-is regardless of encoding as narrow
         ///   encodings are the native encodings for POSIX platforms.
         ///
-        ///
         void add_messages_path(const std::string& path);
 
-        ///
         /// Remove all added paths
-        ///
         void clear_paths();
 
-        ///
         /// Remove all cached locales
-        ///
         void clear_cache();
 
-        ///
         /// Turn locale caching ON
-        ///
         void locale_cache_enabled(bool on);
 
-        ///
         /// Get locale cache option
-        ///
         bool locale_cache_enabled() const;
 
-        ///
         /// Check if by default ANSI encoding is selected or UTF-8 onces. The default is false.
-        ///
         bool use_ansi_encoding() const;
 
-        ///
         /// Select ANSI encodings as default system encoding rather then UTF-8 by default
         /// under Windows.
         ///
         /// The default is the most portable and most powerful encoding, UTF-8, but the user
         /// can select "system" one if dealing with legacy applications
-        ///
         void use_ansi_encoding(bool enc);
 
-        ///
         /// Generate a locale with id \a id
-        ///
         std::locale generate(const std::string& id) const;
-        ///
         /// Generate a locale with id \a id. Use \a base as a locale to which all facets are added,
         /// instead of std::locale::classic().
-        ///
         std::locale generate(const std::locale& base, const std::string& id) const;
-        ///
         /// Shortcut to generate(id)
-        ///
         std::locale operator()(const std::string& id) const { return generate(id); }
 
-        ///
         /// Set backend specific option
-        ///
         void set_option(const std::string& name, const std::string& value);
 
-        ///
         /// Clear backend specific options
-        ///
         void clear_options();
 
     private:

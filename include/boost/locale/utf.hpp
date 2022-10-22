@@ -11,30 +11,19 @@
 #include <boost/cstdint.hpp>
 
 namespace boost { namespace locale {
-    ///
     /// \brief Namespace that holds basic operations on UTF encoded sequences
     ///
     /// All functions defined in this namespace do not require linking with Boost.Locale library
-    ///
     namespace utf {
-        ///
         /// \brief The integral type that can hold a Unicode code point
-        ///
         typedef uint32_t code_point;
 
-        ///
         /// \brief Special constant that defines illegal code point
-        ///
         constexpr code_point illegal = 0xFFFFFFFFu;
-
-        ///
         /// \brief Special constant that defines incomplete code point
-        ///
         constexpr code_point incomplete = 0xFFFFFFFEu;
 
-        ///
         /// \brief the function checks if \a v is a valid code point
-        ///
         inline bool is_valid_codepoint(code_point v)
         {
             if(v > 0x10FFFF)
@@ -45,16 +34,13 @@ namespace boost { namespace locale {
         }
 
 #ifdef BOOST_LOCALE_DOXYGEN
-        ///
+
         /// \brief UTF Traits class - functions to convert UTF sequences to and from Unicode code points
-        ///
         template<typename CharType, int size = sizeof(CharType)>
         struct utf_traits {
-            ///
             /// The type of the character
-            ///
             typedef CharType char_type;
-            ///
+
             /// Read one code point from the range [p,e) and return it.
             ///
             /// - If the sequence that was read is incomplete sequence returns \ref incomplete,
@@ -67,42 +53,31 @@ namespace boost { namespace locale {
             /// Postconditions
             ///
             /// - p points to the last consumed character
-            ///
             template<typename Iterator>
             static code_point decode(Iterator& p, Iterator e);
 
-            ///
             /// Maximal width of valid sequence in the code units:
             ///
             /// - UTF-8  - 4
             /// - UTF-16 - 2
             /// - UTF-32 - 1
-            ///
             static constexpr int max_width;
-            ///
+
             /// The width of specific code point in the code units.
             ///
             /// Requirement: value is a valid Unicode code point
             /// Returns value in range [1..max_width]
-            ///
             static int width(code_point value);
 
-            ///
             /// Get the size of the trail part of variable length encoded sequence.
             ///
             /// Returns -1 if C is not valid lead character
-            ///
             static int trail_length(char_type c);
-            ///
             /// Returns true if c is trail code unit, always false for UTF-32
-            ///
             static bool is_trail(char_type c);
-            ///
             /// Returns true if c is lead code unit, always true of UTF-32
-            ///
             static bool is_lead(char_type c);
 
-            ///
             /// Convert valid Unicode code point \a value to the UTF sequence.
             ///
             /// Requirements:
@@ -111,14 +86,12 @@ namespace boost { namespace locale {
             /// - \a out is an output iterator should be able to accept at least width(value) units
             ///
             /// Returns the iterator past the last written code unit.
-            ///
             template<typename Iterator>
             static Iterator encode(code_point value, Iterator out);
-            ///
+
             /// Decodes valid UTF sequence that is pointed by p into code point.
             ///
             /// If the sequence is invalid or points to end the behavior is undefined
-            ///
             template<typename Iterator>
             static code_point decode_valid(Iterator& p);
         };
@@ -185,10 +158,8 @@ namespace boost { namespace locale {
                 if(BOOST_UNLIKELY(trail_size < 0))
                     return illegal;
 
-                //
                 // Ok as only ASCII may be of size = 0
                 // also optimize for ASCII text
-                //
                 if(trail_size == 0)
                     return lead;
 
@@ -302,13 +273,10 @@ namespace boost { namespace locale {
                     return -1;
                 return 0;
             }
-            ///
+
             /// Returns true if c is trail code unit, always false for UTF-32
-            ///
             static bool is_trail(char_type c) { return is_second_surrogate(c); }
-            ///
             /// Returns true if c is lead code unit, always true of UTF-32
-            ///
             static bool is_lead(char_type c) { return !is_second_surrogate(c); }
 
             template<typename It>

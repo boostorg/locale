@@ -17,14 +17,13 @@
 #endif
 
 namespace boost { namespace locale {
-    ///
+
     /// \brief Namespace that contains various types for manipulation with dates
-    ///
     namespace period {
-        ///
+
         /// \brief This namespace holds a enum of various period types like era, year, month, etc..
-        ///
         namespace marks {
+
             /// \brief the type that defines a flag that holds a period identifier
             enum period_mark {
                 invalid,       ///< Special invalid value, should not be used directly
@@ -54,7 +53,6 @@ namespace boost { namespace locale {
 
         } // namespace marks
 
-        ///
         /// \brief This class holds a type that represents certain period of time like
         /// year, hour, second and so on.
         ///
@@ -64,26 +62,17 @@ namespace boost { namespace locale {
         /// Basically it represents the same object as enum marks::period_mark but allows to
         /// provide save operator overloading that would not collide with casing of enum to
         /// numeric values.
-        ///
         class period_type {
         public:
-            ///
             /// Create a period of specific type, default is invalid.
-            ///
             period_type(marks::period_mark m = marks::invalid) : mark_(m) {}
 
-            ///
             /// Get the value of marks::period_mark it was created with.
-            ///
             marks::period_mark mark() const { return mark_; }
 
-            ///
             /// Check if two periods are the same
-            ///
             bool operator==(const period_type& other) const { return mark() == other.mark(); }
-            ///
             /// Check if two periods are different
-            ///
             bool operator!=(const period_type& other) const { return mark() != other.mark(); }
 
         private:
@@ -92,26 +81,19 @@ namespace boost { namespace locale {
 
     } // namespace period
 
-    ///
     /// Structure that define POSIX time, seconds and milliseconds
     /// since Jan 1, 1970, 00:00 not including leap seconds.
-    ///
     struct posix_time {
         int64_t seconds;      ///< Seconds since epoch
         uint32_t nanoseconds; ///< Nanoseconds resolution
     };
 
-    ///
     /// This class defines generic calendar class, it is used by date_time and calendar
     /// objects internally. It is less useful for end users, but it is build for localization
     /// backend implementation
-    ///
-
     class abstract_calendar {
     public:
-        ///
         /// Type that defines how to fetch the value
-        ///
         typedef enum {
             absolute_minimum, ///< Absolute possible minimum for the value, for example for day is 1
             actual_minimum,   ///< Actual minimal value for this period.
@@ -123,28 +105,21 @@ namespace boost { namespace locale {
             absolute_maximum, ///< Maximal value, for Gregorian day it would be 31.
         } value_type;
 
-        ///
         /// A way to update the value
-        ///
         typedef enum {
             move, ///< Change the value up or down effecting others for example 1990-12-31 + 1 day = 1991-01-01
             roll, ///< Change the value up or down not effecting others for example 1990-12-31 + 1 day = 1990-12-01
         } update_type;
 
-        ///
         /// Information about calendar
-        ///
         typedef enum {
             is_gregorian, ///< Check if the calendar is Gregorian
             is_dst        ///< Check if the current time is in daylight time savings
         } calendar_option_type;
 
-        ///
         /// Make a polymorphic copy of the calendar
-        ///
         virtual abstract_calendar* clone() const = 0;
 
-        ///
         /// Set specific \a value for period \a p, note not all values are settable.
         ///
         /// After calling set_value you may want to call normalize() function to make sure
@@ -153,84 +128,53 @@ namespace boost { namespace locale {
         /// call normalize().
         ///
         /// If normalize() is not called after set_value, the behavior is undefined
-        ///
         virtual void set_value(period::marks::period_mark m, int value) = 0;
 
-        ///
         /// Recalculate all periods after setting them, should be called after use of set_value() function.
-        ///
         virtual void normalize() = 0;
 
-        ///
         /// Get specific value for period \a p according to a value_type \a v
-        ///
         virtual int get_value(period::marks::period_mark m, value_type v) const = 0;
 
-        ///
         /// Set current time point
-        ///
         virtual void set_time(const posix_time& p) = 0;
-        ///
         /// Get current time point
-        ///
         virtual posix_time get_time() const = 0;
         // Get current time since epoch in milliseconds
         virtual double get_time_ms() const = 0;
 
-        ///
         /// Set option for calendar, for future use
-        ///
         virtual void set_option(calendar_option_type opt, int v) = 0;
-        ///
         /// Get option for calendar, currently only check if it is Gregorian calendar
-        ///
         virtual int get_option(calendar_option_type opt) const = 0;
 
-        ///
         /// Adjust period's \a p value by \a difference items using a update_type \a u.
         /// Note: not all values are adjustable
-        ///
         virtual void adjust_value(period::marks::period_mark m, update_type u, int difference) = 0;
 
-        ///
         /// Calculate the difference between this calendar  and \a other in \a p units
-        ///
         virtual int difference(const abstract_calendar& other, period::marks::period_mark m) const = 0;
 
-        ///
         /// Set time zone, empty - use system
-        ///
         virtual void set_timezone(const std::string& tz) = 0;
-        ///
         /// Get current time zone, empty - system one
-        ///
         virtual std::string get_timezone() const = 0;
 
-        ///
         /// Check of two calendars have same rules
-        ///
         virtual bool same(const abstract_calendar* other) const = 0;
 
         virtual ~abstract_calendar() {}
     };
 
-    ///
     /// \brief the facet that generates calendar for specific locale
-    ///
     class BOOST_LOCALE_DECL calendar_facet : public std::locale::facet {
     public:
-        ///
         /// Basic constructor
-        ///
         calendar_facet(size_t refs = 0) : std::locale::facet(refs) {}
-        ///
         /// Create a new calendar that points to current point of time.
-        ///
         virtual abstract_calendar* create_calendar() const = 0;
 
-        ///
         /// Locale id (needed to work with std::locale)
-        ///
         static std::locale::id id;
     };
 

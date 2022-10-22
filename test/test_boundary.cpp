@@ -62,9 +62,7 @@ void test_word_container(Iterator begin,
             }
         }
 
-        //
         // segment iterator tests
-        //
         {
             lb::segment_index<Iterator> map(bt, begin, end, l);
             typedef typename lb::segment_index<Iterator>::iterator iter_type;

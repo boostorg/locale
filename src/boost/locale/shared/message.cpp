@@ -63,13 +63,11 @@ namespace boost { namespace locale { namespace gnu_gettext {
         {
             close();
 
-            //
             // Under windows we have to use "_wfopen" to get
             // access to path's with Unicode in them
             //
             // As not all standard C++ libraries support nonstandard std::istream::open(wchar_t const *)
             // we would use old and good stdio and _wfopen CRTL functions
-            //
 
             std::wstring wfile_name = conv::to_utf<wchar_t>(file_name, encoding);
             file = _wfopen(wfile_name.c_str(), L"rb");
@@ -488,9 +486,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
             const std::vector<messages_info::domain>& domains = inf.domains;
             const std::vector<std::string>& search_paths = inf.paths;
 
-            //
             // List of fallbacks: en_US@euro, en@euro, en_US, en.
-            //
             std::vector<std::string> paths;
 
             if(!variant.empty() && !country.empty())

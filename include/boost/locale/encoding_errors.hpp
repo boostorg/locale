@@ -17,23 +17,18 @@
 #endif
 
 namespace boost { namespace locale { namespace conv {
-    ///
     /// \addtogroup codepage
     ///
     /// @{
 
-    ///
     /// \brief The exception that is thrown in case of conversion error
-    ///
     class BOOST_SYMBOL_VISIBLE conversion_error : public std::runtime_error {
     public:
         conversion_error() : std::runtime_error("Conversion failed") {}
     };
 
-    ///
     /// \brief This exception is thrown in case of use of unsupported
     /// or invalid character set
-    ///
     class BOOST_SYMBOL_VISIBLE invalid_charset_error : public std::runtime_error {
     public:
         /// Create an error for charset \a charset
@@ -42,9 +37,7 @@ namespace boost { namespace locale { namespace conv {
         {}
     };
 
-    ///
     /// enum that defines conversion policy
-    ///
     typedef enum {
         skip = 0,             ///< Skip illegal/unconvertible characters
         stop = 1,             ///< Stop conversion and throw conversion_error

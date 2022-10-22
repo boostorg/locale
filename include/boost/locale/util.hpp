@@ -16,13 +16,10 @@
 #include <typeinfo>
 
 namespace boost { namespace locale {
-    ///
     /// \brief This namespace provides various utility function useful for Boost.Locale backends
     /// implementations
-    ///
     namespace util {
 
-        ///
         /// \brief Return default system locale name in POSIX format.
         ///
         /// This function tries to detect the locale using, LC_CTYPE, LC_ALL and LANG environment
@@ -34,11 +31,9 @@ namespace boost { namespace locale {
         /// If \a use_utf8_on_windows is true it sets the encoding to UTF-8, otherwise, if system
         /// locale supports ANSI code-page it defines the ANSI encoding like windows-1252, otherwise it fall-backs
         /// to UTF-8 encoding if ANSI code-page is not available.
-        ///
         BOOST_LOCALE_DECL
         std::string get_system_locale(bool use_utf8_on_windows = false);
 
-        ///
         /// \brief Installs information facet to locale in based on locale name \a name
         ///
         /// This function installs boost::locale::info facet into the locale \a in and returns
@@ -54,11 +49,9 @@ namespace boost { namespace locale {
         ///
         /// If some parameters are missing they are specified as blanks, default encoding
         /// is assumed to be US-ASCII and missing language is assumed to be "C"
-        ///
         BOOST_LOCALE_DECL
         std::locale create_info(const std::locale& in, const std::string& name);
 
-        ///
         /// \brief This class represent a simple stateless converter from UCS-4 and to UCS-4 for
         ///  each single code point
         ///
@@ -71,29 +64,23 @@ namespace boost { namespace locale {
         /// encoders (most notably iconv) can actually compose several code-point into one or
         /// decompose them in case composite characters are found. So be very careful when implementing
         /// these converters for certain character set.
-        ///
         class BOOST_LOCALE_DECL base_converter {
         public:
-            ///
             /// This value should be returned when an illegal input sequence or code-point is observed:
             /// For example if a UCS-32 code-point is in the range reserved for UTF-16 surrogates
             /// or an invalid UTF-8 sequence is found
-            ///
             static constexpr uint32_t illegal = utf::illegal;
 
-            ///
             /// This value is returned in following cases: The of incomplete input sequence was found or
             /// insufficient output buffer was provided so complete output could not be written.
-            ///
             static constexpr uint32_t incomplete = utf::incomplete;
 
             virtual ~base_converter();
-            ///
+
             /// Return the maximal length that one Unicode code-point can be converted to, for example
             /// for UTF-8 it is 4, for Shift-JIS it is 2 and ISO-8859-1 is 1
-            ///
             virtual int max_len() const { return 1; }
-            ///
+
             /// Returns true if calling the functions from_unicode, to_unicode, and max_len is thread safe.
             ///
             /// Rule of thumb: if this class' implementation uses simple tables that are unchanged
@@ -101,18 +88,15 @@ namespace boost { namespace locale {
             /// independent to_unicode, from_unicode calls, you may set it to true, otherwise,
             /// for example if you use iconv_t descriptor or UConverter as conversion object return false,
             /// and this object will be cloned for each use.
-            ///
             virtual bool is_thread_safe() const { return false; }
-            ///
+
             /// Create a polymorphic copy of this object, usually called only if is_thread_safe() return false
-            ///
             virtual base_converter* clone() const
             {
                 BOOST_ASSERT(typeid(*this) == typeid(base_converter));
                 return new base_converter();
             }
 
-            ///
             /// Convert a single character starting at begin and ending at most at end to Unicode code-point.
             ///
             /// if valid input sequence found in [\a begin,\a code_point_end) such as \a begin < \a code_point_end && \a
@@ -127,8 +111,6 @@ namespace boost { namespace locale {
             /// if invalid input sequence found, i.e. there is a sequence [\a begin, \a code_point_end) such as \a
             /// code_point_end <= \a end that is illegal for this encoding, \a illegal is returned and begin stays
             /// unchanged. For example if *begin = 0xFF and begin < end for UTF-8, then \a illegal is returned.
-            ///
-            ///
             virtual uint32_t to_unicode(const char*& begin, const char* end)
             {
                 if(begin == end)
@@ -140,7 +122,7 @@ namespace boost { namespace locale {
                 }
                 return illegal;
             }
-            ///
+
             /// Convert a single code-point \a u into encoding and store it in [begin,end) range.
             ///
             /// If u is invalid Unicode code-point, or it can not be mapped correctly to represented character set,
@@ -151,7 +133,6 @@ namespace boost { namespace locale {
             /// -# If end - begin >= N, c1, ... cN are written starting at begin and N is returned
             /// -# If end - begin < N, incomplete is returned, it is unspecified what would be
             ///    stored in bytes in range [begin,end)
-
             virtual uint32_t from_unicode(uint32_t u, char* begin, const char* end)
             {
                 if(begin == end)
@@ -163,10 +144,8 @@ namespace boost { namespace locale {
             }
         };
 
-        ///
         /// This function creates a \a base_converter that can be used for conversion between UTF-8 and
         /// unicode code points
-        ///
         BOOST_LOCALE_DECL std::unique_ptr<base_converter> create_utf8_converter();
 
         BOOST_DEPRECATED("This function is deprecated, use 'create_utf8_converter()'")
@@ -174,13 +153,12 @@ namespace boost { namespace locale {
         {
             return create_utf8_converter();
         }
-        ///
+
         /// This function creates a \a base_converter that can be used for conversion between single byte
         /// character encodings like ISO-8859-1, koi8-r, windows-1255 and Unicode code points,
         ///
         /// If \a encoding is not supported, empty pointer is returned.
         /// So you should check whether the returned pointer is valid/non-NULL
-        ///
         BOOST_LOCALE_DECL std::unique_ptr<base_converter> create_simple_converter(const std::string& encoding);
 
         BOOST_DEPRECATED("This function is deprecated, use 'create_simple_converter()'")
@@ -189,7 +167,6 @@ namespace boost { namespace locale {
             return create_simple_converter(encoding);
         }
 
-        ///
         /// Install codecvt facet into locale \a in and return new locale that is based on \a in and uses new
         /// facet.
         ///
@@ -200,7 +177,6 @@ namespace boost { namespace locale {
         /// Note: the codecvt facet handles both UTF-16 and UTF-32 wide encodings, it knows to break and join
         /// Unicode code-points above 0xFFFF to and from surrogate pairs correctly. \a cvt should be unaware
         /// of wide encoding type
-        ///
         BOOST_LOCALE_DECL
         std::locale create_codecvt(const std::locale& in, std::unique_ptr<base_converter> cvt, char_facet_t type);
 
@@ -210,28 +186,22 @@ namespace boost { namespace locale {
             return create_codecvt(in, std::unique_ptr<base_converter>(cvt), type);
         }
 
-        ///
         /// This function creates a \a base_converter that can be used for conversion between UTF-8 and
         /// unicode code points
-        ///
         BOOST_LOCALE_DECL base_converter* create_utf8_converter_new_ptr();
-        ///
+
         /// This function creates a \a base_converter that can be used for conversion between single byte
         /// character encodings like ISO-8859-1, koi8-r, windows-1255 and Unicode code points,
         ///
         /// If \a encoding is not supported, empty pointer is returned. You should check if
         /// the returned pointer is NULL.
-        ///
         BOOST_LOCALE_DECL base_converter* create_simple_converter_new_ptr(const std::string& encoding);
 
-        ///
         /// Install utf8 codecvt to UTF-16 or UTF-32 into locale \a in and return
         /// new locale that is based on \a in and uses new facet.
-        ///
         BOOST_LOCALE_DECL
         std::locale create_utf8_codecvt(const std::locale& in, char_facet_t type);
 
-        ///
         /// This function installs codecvt that can be used for conversion between single byte
         /// character encodings like ISO-8859-1, koi8-r, windows-1255 and Unicode code points,
         ///
