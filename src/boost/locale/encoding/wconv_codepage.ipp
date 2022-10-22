@@ -138,13 +138,12 @@ namespace boost { namespace locale { namespace conv { namespace impl {
 
     int encoding_to_windows_codepage(const char* ccharset)
     {
-        std::string charset = normalize_encoding(ccharset);
-        windows_encoding ref;
-        ref.name = charset.c_str();
-        size_t n = sizeof(all_windows_encodings) / sizeof(all_windows_encodings[0]);
+        constexpr size_t n = sizeof(all_windows_encodings) / sizeof(all_windows_encodings[0]);
         windows_encoding* begin = all_windows_encodings;
         windows_encoding* end = all_windows_encodings + n;
-        windows_encoding* ptr = std::lower_bound(begin, end, ref);
+
+        const std::string charset = normalize_encoding(ccharset);
+        windows_encoding* ptr = std::lower_bound(begin, end, charset.c_str());
         if(ptr != end && strcmp(ptr->name, charset.c_str()) == 0) {
             if(ptr->was_tested) {
                 return ptr->codepage;

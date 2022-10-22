@@ -42,7 +42,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
         }
     }
 
-    std::string normalize_encoding(const char* encoding);
+    BOOST_LOCALE_DECL std::string normalize_encoding(const char* encoding);
 
     inline int compare_encodings(const char* l, const char* r)
     {

@@ -8,6 +8,7 @@
 #include <boost/locale/generator.hpp>
 #include <boost/locale/info.hpp>
 #include <boost/locale/localization_backend.hpp>
+#include <algorithm>
 #include <fstream>
 #include <vector>
 
@@ -391,6 +392,8 @@ void test_simple_conversions()
     }
 }
 
+void test_win_codepages();
+
 void test_main(int /*argc*/, char** /*argv*/)
 {
     // Sanity check to<char>
@@ -398,6 +401,7 @@ void test_main(int /*argc*/, char** /*argv*/)
          == "gr\xFC\xDF"
             "en");
     TEST_THROWS(to<char>("€"), std::runtime_error);
+    test_win_codepages();
 
     std::vector<std::string> backends;
 #ifdef BOOST_LOCALE_WITH_ICU
@@ -511,6 +515,34 @@ void test_main(int /*argc*/, char** /*argv*/)
 
         test_all_combinations();
     }
+}
+
+// Internal tests, keep those out of the above scope
+
+#include "../src/boost/locale/encoding/conv.hpp"
+#include "../src/boost/locale/encoding/win_codepages.hpp"
+
+void test_win_codepages()
+{
+    using namespace boost::locale::conv::impl;
+
+    constexpr size_t n = sizeof(all_windows_encodings) / sizeof(all_windows_encodings[0]);
+    for(const windows_encoding *it = all_windows_encodings, *end = all_windows_encodings + n; it != end; ++it) {
+        TEST_EQ(normalize_encoding(it->name), it->name); // Must be normalized
+        auto is_same_win_codepage = [&it](const boost::locale::conv::impl::windows_encoding& rhs) -> bool {
+            return it->codepage == rhs.codepage && std::strcmp(it->name, rhs.name) == 0;
+        };
+        const auto* it2 = std::find_if(it + 1, end, is_same_win_codepage);
+        TEST(it2 == end);
+        if(it2 != end)
+            std::cerr << "Duplicate entry: " << it->name << ':' << it->codepage << '\n';
+    }
+    const auto cmp = [](const boost::locale::conv::impl::windows_encoding& rhs,
+                        const boost::locale::conv::impl::windows_encoding& lhs) -> bool { return rhs < lhs.name; };
+    const auto* it = std::is_sorted_until(all_windows_encodings, all_windows_encodings + n, cmp);
+    TEST(it == all_windows_encodings + n);
+    if(it != all_windows_encodings + n)
+        std::cerr << "First wrongly sorted element: " << it->name << '\n';
 }
 
 // boostinspect:noascii
