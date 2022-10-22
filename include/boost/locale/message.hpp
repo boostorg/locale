@@ -8,6 +8,7 @@
 #define BOOST_LOCALE_MESSAGE_HPP_INCLUDED
 
 #include <boost/locale/formatting.hpp>
+#include <boost/locale/util/string.hpp>
 #include <locale>
 #include <memory>
 #include <set>

@@ -11,6 +11,7 @@
 #include <boost/locale/encoding_errors.hpp>
 #include <boost/locale/encoding_utf.hpp>
 #include <boost/locale/info.hpp>
+#include <boost/locale/util/string.hpp>
 
 #ifdef BOOST_MSVC
 #    pragma warning(push)
@@ -99,10 +100,7 @@ namespace boost { namespace locale {
         std::basic_string<CharType>
         to_utf(const char* text, const std::string& charset, method_type how = default_method)
         {
-            const char* text_end = text;
-            while(*text_end)
-                text_end++;
-            return to_utf<CharType>(text, text_end, charset, how);
+            return to_utf<CharType>(text, util::str_end(text), charset, how);
         }
 
         ///
@@ -111,10 +109,7 @@ namespace boost { namespace locale {
         template<typename CharType>
         std::string from_utf(const CharType* text, const std::string& charset, method_type how = default_method)
         {
-            const CharType* text_end = text;
-            while(*text_end)
-                text_end++;
-            return from_utf(text, text_end, charset, how);
+            return from_utf(text, util::str_end(text), charset, how);
         }
 
         ///
@@ -149,10 +144,7 @@ namespace boost { namespace locale {
         template<typename CharType>
         std::basic_string<CharType> to_utf(const char* text, const std::locale& loc, method_type how = default_method)
         {
-            const char* text_end = text;
-            while(*text_end)
-                text_end++;
-            return to_utf<CharType>(text, text_end, loc, how);
+            return to_utf<CharType>(text, util::str_end(text), loc, how);
         }
 
         ///
@@ -163,10 +155,7 @@ namespace boost { namespace locale {
         template<typename CharType>
         std::string from_utf(const CharType* text, const std::locale& loc, method_type how = default_method)
         {
-            const CharType* text_end = text;
-            while(*text_end)
-                text_end++;
-            return from_utf(text, text_end, loc, how);
+            return from_utf(text, util::str_end(text), loc, how);
         }
 
         ///
@@ -189,10 +178,7 @@ namespace boost { namespace locale {
                                    const std::string& from_encoding,
                                    method_type how = default_method)
         {
-            const char* end = text;
-            while(*end)
-                end++;
-            return boost::locale::conv::between(text, end, to_encoding, from_encoding, how);
+            return boost::locale::conv::between(text, util::str_end(text), to_encoding, from_encoding, how);
         }
 
         ///

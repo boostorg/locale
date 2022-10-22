@@ -5,6 +5,7 @@
 // https://www.boost.org/LICENSE_1_0.txt
 
 #include <boost/locale/utf.hpp>
+#include <boost/locale/util/string.hpp>
 #include "boostLocale/test/tools.hpp"
 #include "boostLocale/test/unit_test.hpp"
 #include <boost/detail/workaround.hpp>
@@ -53,20 +54,11 @@ const char32_t* c32_seq(boost::uint32_t a)
     return buf;
 }
 
-// Get end of C-String, i.e. the NULL byte
-template<typename CharType>
-const CharType* str_end(const CharType* s)
-{
-    while(*s)
-        s++;
-    return s;
-}
-
 template<typename CharType>
 void test_from_utf(const CharType* const s, unsigned codepoint)
 {
     const CharType* cur = s;
-    const CharType* const end = str_end(s);
+    const CharType* const end = boost::locale::util::str_end(s);
 
     typedef utf_traits<CharType> tr;
 
@@ -104,7 +96,7 @@ void test_to_utf(const CharType* str, unsigned codepoint)
     CharType buf[5] = {1, 1, 1, 1, 1};
     CharType* p = buf;
     p = utf_traits<CharType>::template encode<CharType*>(codepoint, p);
-    const CharType* const end = str_end(str);
+    const CharType* const end = boost::locale::util::str_end(str);
     TEST(end - str == p - buf);
     TEST(*p);
     *p = 0;

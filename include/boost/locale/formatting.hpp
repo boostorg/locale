@@ -9,6 +9,8 @@
 
 #include <boost/locale/config.hpp>
 #include <boost/locale/time_zone.hpp>
+#include <boost/locale/util/string.hpp>
+#include <boost/assert.hpp>
 #include <boost/cstdint.hpp>
 #include <cstring>
 #include <istream>
@@ -221,14 +223,11 @@ namespace boost { namespace locale {
             template<typename Char>
             void set(const Char* s)
             {
+                BOOST_ASSERT(s);
                 delete[] ptr;
-                ptr = 0;
+                ptr = nullptr;
                 type = &typeid(Char);
-                const Char* end = s;
-                while(*end != 0)
-                    end++;
-                // if ptr = 0 it does not matter what is value of size
-                size = sizeof(Char) * (end - s + 1);
+                size = sizeof(Char) * (util::str_end(s) - s + 1);
                 ptr = new char[size];
                 memcpy(ptr, s, size);
             }
