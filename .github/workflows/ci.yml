@@ -32,6 +32,7 @@ env:
   B2_LINK: shared,static
   LCOV_BRANCH_COVERAGE: 0
   CODECOV_NAME: Github Actions
+  CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
 jobs:
   CheckFormatting:
