@@ -144,17 +144,16 @@ namespace boost { namespace locale { namespace conv { namespace impl {
 
         const std::string charset = normalize_encoding(ccharset);
         windows_encoding* ptr = std::lower_bound(begin, end, charset.c_str());
-        if(ptr != end && strcmp(ptr->name, charset.c_str()) == 0) {
-            if(ptr->was_tested) {
+        while(ptr != end && strcmp(ptr->name, charset.c_str()) == 0) {
+            if(ptr->was_tested)
                 return ptr->codepage;
-            } else if(IsValidCodePage(ptr->codepage)) {
+            else if(IsValidCodePage(ptr->codepage)) {
                 // the thread safety is not an issue, maximum
                 // it would be checked more then once
                 ptr->was_tested = 1;
                 return ptr->codepage;
-            } else {
-                return -1;
-            }
+            } else
+                ++ptr;
         }
         return -1;
     }
