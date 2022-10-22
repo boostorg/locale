@@ -17,7 +17,6 @@
 #include "boost/locale/icu/uconv.hpp"
 #include <boost/thread.hpp>
 #include <cmath>
-#include <iostream>
 #include <memory>
 #include <unicode/calendar.h>
 #include <unicode/gregocal.h>

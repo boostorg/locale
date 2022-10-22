@@ -15,11 +15,6 @@
 
 #include "boost/locale/encoding/conv.hpp"
 
-//#define DEBUG_CODECVT
-#ifdef DEBUG_CODECVT
-#    include <iostream>
-#endif
-
 #ifdef BOOST_MSVC
 #    pragma warning(disable : 4244 4996) // loose data
 #endif

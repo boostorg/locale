@@ -2,7 +2,7 @@
 # Distributed under the Boost Software License, Version 1.0.
 # https://www.boost.org/LICENSE_1_0.txt
 
-cmake_minimum_required(VERSION 3.5...3.20)
+cmake_minimum_required(VERSION 3.11...3.20)
 
 project(boost_locale VERSION "${BOOST_SUPERPROJECT_VERSION}" LANGUAGES CXX)
 
@@ -62,22 +62,38 @@ endif()
 
 # Build Options
 
-find_package(Iconv QUIET) # requires CMake 3.11
 find_package(ICU COMPONENTS data i18n uc QUIET)
+option(BOOST_LOCALE_ENABLE_ICU "Boost.Locale: enable ICU backend" ${ICU_FOUND})
 
-set(_default_posix OFF)
+# Workaround for an issue e.g. on FreeBSD where including ICU may change the used libiconv
+if(UNIX AND NOT DEFINED Iconv_INCLUDE_DIR AND BOOST_LOCALE_ENABLE_ICU AND EXISTS "${ICU_INCLUDE_DIRS}/iconv.h")
+  set(Iconv_INCLUDE_DIR "${ICU_INCLUDE_DIRS}" CACHE PATH "Path to iconv headers")
+  find_package(Iconv QUIET)
+  if(NOT ICONV_FOUND)
+    # Unset and retry below
+    unset(Iconv_INCLUDE_DIR CACHE)
+  endif()
+endif()
+
+find_package(Iconv QUIET)
+option(BOOST_LOCALE_ENABLE_ICONV "Boost.Locale: enable iconv backend" ${ICONV_FOUND})
 
 if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin")
   set(_default_posix ON)
+elseif(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
+  include (CheckIncludeFileCXX)
+  check_include_file_cxx ("xlocale.h" HAVE_XLOCALE_H)
+  set(_default_posix ${HAVE_XLOCALE_H})
+else()
+  set(_default_posix OFF)
 endif()
 
-option(BOOST_LOCALE_ENABLE_ICONV "Boost.Locale: enable iconv backend" ${ICONV_FOUND})
-option(BOOST_LOCALE_ENABLE_ICU "Boost.Locale: enable ICU backend" ${ICU_FOUND})
 option(BOOST_LOCALE_ENABLE_POSIX "Boost.Locale: enable POSIX backend" ${_default_posix})
+unset(_default_posix)
+
 option(BOOST_LOCALE_ENABLE_STD "Boost.Locale: enable std::locale backend" ON)
 option(BOOST_LOCALE_ENABLE_WINAPI "Boost.Locale: enable Windows API backend" ${WIN32})
 
-unset(_default_posix)
 
 if(BOOST_LOCALE_ENABLE_ICONV)
 

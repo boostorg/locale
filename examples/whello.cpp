@@ -5,9 +5,8 @@
 // https://www.boost.org/LICENSE_1_0.txt
 
 #include <boost/locale.hpp>
-#include <iostream>
-
 #include <ctime>
+#include <iostream>
 
 int main()
 {
