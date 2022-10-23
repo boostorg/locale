@@ -485,8 +485,7 @@ namespace boost { namespace locale {
             //
             // if 0 no code above >0xFFFF observed, of 1 a code above 0xFFFF observerd
             // and first pair is written, but no input consumed
-            typedef typename CodecvtImpl::state_type state_type;
-            state_type cvt_state = implementation().initial_state(generic_codecvt_base::to_unicode_state);
+            auto cvt_state = implementation().initial_state(generic_codecvt_base::to_unicode_state);
             while(to < to_end && from < from_end) {
 #ifdef DEBUG_CODECVT
                 std::cout << "Entering IN--------------\n";
@@ -536,8 +535,7 @@ namespace boost { namespace locale {
                                          char*& to_next) const override
         {
             std::codecvt_base::result r = std::codecvt_base::ok;
-            typedef typename CodecvtImpl::state_type state_type;
-            state_type cvt_state = implementation().initial_state(generic_codecvt_base::from_unicode_state);
+            auto cvt_state = implementation().initial_state(generic_codecvt_base::from_unicode_state);
             while(to < to_end && from < from_end) {
 #ifdef DEBUG_CODECVT
                 std::cout << "Entering OUT --------------\n";

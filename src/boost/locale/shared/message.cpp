@@ -451,7 +451,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
         {
             pair_type ptr = get_string(domain_id, context, single_id);
             if(!ptr.first)
-                return 0;
+                return nullptr;
             int form = 0;
             if(plural_forms_.at(domain_id))
                 form = (*plural_forms_[domain_id])(n);
@@ -460,13 +460,13 @@ namespace boost { namespace locale { namespace gnu_gettext {
 
             const CharType* p = ptr.first;
             for(int i = 0; p < ptr.second && i < form; i++) {
-                p = std::find(p, ptr.second, 0);
+                p = std::find(p, ptr.second, CharType(0));
                 if(p == ptr.second)
-                    return 0;
+                    return nullptr;
                 ++p;
             }
             if(p >= ptr.second)
-                return 0;
+                return nullptr;
             return p;
         }
 

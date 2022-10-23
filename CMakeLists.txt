@@ -243,6 +243,11 @@ elseif(NOT DEFINED BOOST_LOCALE_WARNING_OPTIONS)
 endif()
 target_compile_options(boost_locale PRIVATE ${BOOST_LOCALE_WARNING_OPTIONS})
 
+option(BOOST_LOCALE_ENABLE_CXX11_CHAR_TYPES "Enable C++11 char16/char32 type support (experimental)" OFF)
+if(BOOST_LOCALE_ENABLE_CXX11_CHAR_TYPES)
+    target_compile_definitions(boost_locale PUBLIC BOOST_LOCALE_ENABLE_CHAR16_T BOOST_LOCALE_ENABLE_CHAR32_T)
+endif()
+
 # Testing
 
 if(BUILD_TESTING AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/test/CMakeLists.txt")
