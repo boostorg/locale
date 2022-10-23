@@ -349,21 +349,15 @@ void test_to()
     test_with_0<Char>();
 }
 
-void test_skip(const char* enc, const char* utf, const char* name, const char* opt = 0)
+void test_convert(const char* enc, const char* utf, const char* name)
 {
-    if(opt != 0) {
-        if(boost::locale::conv::to_utf<char>(enc, name) == opt) {
-            test_skip(enc, opt, name);
-            return;
-        }
-    }
-    TEST(boost::locale::conv::to_utf<char>(enc, name) == utf);
-    TEST(boost::locale::conv::to_utf<wchar_t>(enc, name) == boost::locale::conv::utf_to_utf<wchar_t>(utf));
+    TEST_EQ(boost::locale::conv::to_utf<char>(enc, name), utf);
+    TEST_EQ(boost::locale::conv::to_utf<wchar_t>(enc, name), boost::locale::conv::utf_to_utf<wchar_t>(utf));
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-    TEST(boost::locale::conv::to_utf<char16_t>(enc, name) == boost::locale::conv::utf_to_utf<char16_t>(utf));
+    TEST_EQ(boost::locale::conv::to_utf<char16_t>(enc, name), boost::locale::conv::utf_to_utf<char16_t>(utf));
 #endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-    TEST(boost::locale::conv::to_utf<char32_t>(enc, name) == boost::locale::conv::utf_to_utf<char32_t>(utf));
+    TEST_EQ(boost::locale::conv::to_utf<char32_t>(enc, name), boost::locale::conv::utf_to_utf<char32_t>(utf));
 #endif
 }
 
@@ -373,19 +367,26 @@ void test_simple_conversions()
     std::cout << "- Testing correct invalid bytes skipping\n";
     try {
         std::cout << "-- ISO-8859-8" << std::endl;
-        test_skip("test \xE0\xE1\xFB-", "test \xd7\x90\xd7\x91-", "ISO-8859-8");
-        test_skip("\xFB", "", "ISO-8859-8");
-        test_skip("test \xE0\xE1\xFB", "test \xd7\x90\xd7\x91", "ISO-8859-8");
-        test_skip("\xFB-", "-", "ISO-8859-8");
+        test_convert("\xFB", "", "ISO-8859-8");
+        test_convert("\xFB-", "-", "ISO-8859-8");
+        test_convert("test \xE0\xE1\xFB", "test \xd7\x90\xd7\x91", "ISO-8859-8");
+        test_convert("test \xE0\xE1\xFB-", "test \xd7\x90\xd7\x91-", "ISO-8859-8");
     } catch(const blc::invalid_charset_error&) {
         std::cout << "--- not supported\n"; // LCOV_EXCL_LINE
     }
     try {
         std::cout << "-- cp932" << std::endl;
-        test_skip("test\xE0\xA0 \x83\xF8-", "test\xe7\x87\xbf -", "cp932", "test\xe7\x87\xbf ");
-        test_skip("\x83\xF8", "", "cp932");
-        test_skip("test\xE0\xA0 \x83\xF8", "test\xe7\x87\xbf ", "cp932");
-        test_skip("\x83\xF8-", "-", "cp932", "");
+        test_convert("\x83\xF8", "", "cp932");
+        test_convert("\x83\xF8-", "-", "cp932");
+        test_convert("test\xE0\xA0 \x83\xF8", "test\xe7\x87\xbf ", "cp932");
+        test_convert("test\xE0\xA0 \x83\xF8-", "test\xe7\x87\xbf -", "cp932");
+    } catch(const blc::invalid_charset_error&) {
+        std::cout << "--- not supported\n"; // LCOV_EXCL_LINE
+    }
+    try {
+        // Testing a codepage which may be an issue on Windows, see issue #121
+        std::cout << "-- iso-2022-jp" << std::endl;
+        test_convert("\x1b$BE_5(\x1b(B", "冬季", "iso-2022-jp");
     } catch(const blc::invalid_charset_error&) {
         std::cout << "--- not supported\n"; // LCOV_EXCL_LINE
     }

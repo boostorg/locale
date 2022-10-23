@@ -9,6 +9,7 @@
 
 #include <boost/locale/encoding_errors.hpp>
 #include <boost/locale/utf.hpp>
+#include <boost/locale/util/string.hpp>
 #include <iterator>
 
 #ifdef BOOST_MSVC
@@ -46,15 +47,12 @@ namespace boost { namespace locale { namespace conv {
     }
 
     ///
-    /// Convert a Unicode NUL terminated string \a str other Unicode encoding
+    /// Convert a Unicode NULL terminated string \a str other Unicode encoding
     ///
     template<typename CharOut, typename CharIn>
     std::basic_string<CharOut> utf_to_utf(const CharIn* str, method_type how = default_method)
     {
-        const CharIn* end = str;
-        while(*end)
-            end++;
-        return utf_to_utf<CharOut, CharIn>(str, end, how);
+        return utf_to_utf<CharOut, CharIn>(str, util::str_end(str), how);
     }
 
     ///

@@ -89,7 +89,7 @@ For more details on normalization forms, read <a href="http://unicode.org/report
     character width. So be careful when using non-UTF encodings as they may be treated incorrectly.
 -   \ref boost::locale::fold_case() "fold_case" is generally a locale-independent operation, but it receives a locale as a parameter to
     determine the 8-bit encoding.
--   All of these functions can work with an STL string, a NUL terminated string, or a range defined by two pointers. They always
+-   All of these functions can work with an STL string, a NULL terminated string, or a range defined by two pointers. They always
     return a newly created STL string.
 -   The length of the string may change, see the above example.
 */

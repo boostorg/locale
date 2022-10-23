@@ -18,15 +18,6 @@
 #    pragma warning(disable : 4996)
 #endif
 
-template<typename CharType>
-std::basic_string<CharType> conv_to_char(const char* p)
-{
-    std::basic_string<CharType> r;
-    while(*p)
-        r += CharType(*p++);
-    return r;
-}
-
 template<typename CharType, typename RefCharType>
 void test_by_char(const std::locale& l, const std::locale& lreal)
 {
@@ -140,14 +131,14 @@ void test_by_char(const std::locale& l, const std::locale& lreal)
         ss << as::time << a_datetime << CharType('\n');
         ss << as::datetime << a_datetime << CharType('\n');
         ss << as::time_zone("GMT+01:00");
-        ss << as::ftime(conv_to_char<CharType>("%H")) << a_datetime << CharType('\n');
+        ss << as::ftime(ascii_to<CharType>("%H")) << a_datetime << CharType('\n');
         ss << as::time_zone("GMT+00:15");
-        ss << as::ftime(conv_to_char<CharType>("%M")) << a_datetime << CharType('\n');
+        ss << as::ftime(ascii_to<CharType>("%M")) << a_datetime << CharType('\n');
 
         ss_ref_type ss_ref;
         ss_ref.imbue(lreal);
 
-        std::basic_string<RefCharType> rfmt(conv_to_char<RefCharType>("%x\n%X\n%c\n16\n48\n"));
+        std::basic_string<RefCharType> rfmt(ascii_to<RefCharType>("%x\n%X\n%c\n16\n48\n"));
 
         std::tm tm = *gmtime(&a_datetime);
 

@@ -91,10 +91,9 @@ namespace boost { namespace locale { namespace impl_icu {
         }
 
         struct uconv {
-            uconv(const uconv& other);
-            void operator=(const uconv& other);
+            uconv(const uconv& other) = delete;
+            void operator=(const uconv& other) = delete;
 
-        public:
             uconv(const std::string& charset, cpcvt_type cvt_type = cvt_skip)
             {
                 UErrorCode err = U_ZERO_ERROR;

@@ -20,6 +20,9 @@
 #include <boost/locale/gnu_gettext.hpp>
 #include <boost/locale/hold_ptr.hpp>
 #include <boost/locale/message.hpp>
+#include <boost/locale/util/string.hpp>
+#include "boost/locale/shared/mo_hash.hpp"
+#include "boost/locale/shared/mo_lambda.hpp"
 #include <boost/version.hpp>
 #include <algorithm>
 #include <cstdio>
@@ -29,9 +32,6 @@
 #include <memory>
 #include <unordered_map>
 #include <vector>
-
-#include "boost/locale/shared/mo_hash.hpp"
-#include "boost/locale/shared/mo_lambda.hpp"
 
 #ifdef BOOST_MSVC
 #    pragma warning(disable : 4996)
@@ -387,18 +387,14 @@ namespace boost { namespace locale { namespace gnu_gettext {
             pj_winberger_hash::state_type state = pj_winberger_hash::initial_state;
             const CharType* p = msg.context();
             if(*p != 0) {
-                const CharType* e = p;
-                while(*e)
-                    e++;
+                const CharType* e = util::str_end(p);
                 state = pj_winberger_hash::update_state(state,
                                                         reinterpret_cast<const char*>(p),
                                                         reinterpret_cast<const char*>(e));
                 state = pj_winberger_hash::update_state(state, '\4');
             }
             p = msg.key();
-            const CharType* e = p;
-            while(*e)
-                e++;
+            const CharType* e = util::str_end(p);
             state = pj_winberger_hash::update_state(state,
                                                     reinterpret_cast<const char*>(p),
                                                     reinterpret_cast<const char*>(e));

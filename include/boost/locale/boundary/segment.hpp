@@ -8,6 +8,7 @@
 #define BOOST_LOCALE_BOUNDARY_SEGMENT_HPP_INCLUDED
 
 #include <boost/locale/config.hpp>
+#include <boost/locale/util/string.hpp>
 #include <iosfwd>
 #include <iterator>
 #include <locale>
@@ -54,19 +55,13 @@ namespace boost { namespace locale { namespace boundary {
         template<typename Left, typename Char>
         int compare_string(const Left& l, const Char* begin)
         {
-            const Char* end = begin;
-            while(*end != 0)
-                end++;
-            return compare_text(l.begin(), l.end(), begin, end);
+            return compare_text(l.begin(), l.end(), begin, util::str_end(begin));
         }
 
         template<typename Right, typename Char>
         int compare_string(const Char* begin, const Right& r)
         {
-            const Char* end = begin;
-            while(*end != 0)
-                end++;
-            return compare_text(begin, end, r.begin(), r.end());
+            return compare_text(begin, util::str_end(begin), r.begin(), r.end());
         }
 
     } // namespace detail

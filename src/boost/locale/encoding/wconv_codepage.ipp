@@ -67,13 +67,18 @@ namespace boost { namespace locale { namespace conv { namespace impl {
     void multibyte_to_wide_one_by_one(int codepage, const char* begin, const char* end, std::vector<wchar_t>& buf)
     {
         buf.reserve(end - begin);
+        DWORD flags = MB_ERR_INVALID_CHARS;
         while(begin != end) {
             wchar_t wide_buf[4];
             int n = 0;
             int len = IsDBCSLeadByteEx(codepage, *begin) ? 2 : 1;
             if(len == 2 && begin + 1 == end)
                 return;
-            n = MultiByteToWideChar(codepage, MB_ERR_INVALID_CHARS, begin, len, wide_buf, 4);
+            n = MultiByteToWideChar(codepage, flags, begin, len, wide_buf, 4);
+            if(n == 0 && flags != 0 && GetLastError() == ERROR_INVALID_FLAGS) {
+                flags = 0;
+                n = MultiByteToWideChar(codepage, flags, begin, len, wide_buf, 4);
+            }
             for(int i = 0; i < n; i++)
                 buf.push_back(wide_buf[i]);
             begin += len;
@@ -87,7 +92,13 @@ namespace boost { namespace locale { namespace conv { namespace impl {
         const std::ptrdiff_t num_chars = end - begin;
         if(num_chars > std::numeric_limits<int>::max())
             throw conversion_error();
-        int n = MultiByteToWideChar(codepage, MB_ERR_INVALID_CHARS, begin, static_cast<int>(num_chars), 0, 0);
+        DWORD flags = MB_ERR_INVALID_CHARS;
+        int n = MultiByteToWideChar(codepage, flags, begin, static_cast<int>(num_chars), 0, 0);
+        if(n == 0 && GetLastError() == ERROR_INVALID_FLAGS) {
+            flags = 0;
+            n = MultiByteToWideChar(codepage, flags, begin, static_cast<int>(num_chars), 0, 0);
+        }
+
         if(n == 0) {
             if(do_skip) {
                 multibyte_to_wide_one_by_one(codepage, begin, end, buf);
@@ -97,8 +108,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
         }
 
         buf.resize(n);
-        if(MultiByteToWideChar(codepage, MB_ERR_INVALID_CHARS, begin, static_cast<int>(num_chars), &buf.front(), n)
-           == 0)
+        if(MultiByteToWideChar(codepage, flags, begin, static_cast<int>(num_chars), &buf.front(), n) == 0)
             throw conversion_error();
     }
 
