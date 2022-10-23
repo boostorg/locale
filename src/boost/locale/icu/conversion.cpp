@@ -165,21 +165,21 @@ namespace boost { namespace locale { namespace impl_icu {
 
 #endif // BOOST_LOCALE_WITH_CASEMAP
 
-    std::locale create_convert(const std::locale& in, const cdata& cd, character_facet_type type)
+    std::locale create_convert(const std::locale& in, const cdata& cd, char_facet_t type)
     {
         switch(type) {
-            case char_facet:
+            case char_facet_t::char_f:
 #ifdef BOOST_LOCALE_WITH_CASEMAP
                 if(cd.utf8)
                     return std::locale(in, new utf8_converter_impl(cd));
 #endif
                 return std::locale(in, new converter_impl<char>(cd));
-            case wchar_t_facet: return std::locale(in, new converter_impl<wchar_t>(cd));
+            case char_facet_t::wchar_f: return std::locale(in, new converter_impl<wchar_t>(cd));
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-            case char16_t_facet: return std::locale(in, new converter_impl<char16_t>(cd));
+            case char_facet_t::char16_f: return std::locale(in, new converter_impl<char16_t>(cd));
 #endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-            case char32_t_facet: return std::locale(in, new converter_impl<char32_t>(cd));
+            case char_facet_t::char32_f: return std::locale(in, new converter_impl<char32_t>(cd));
 #endif
             default: return in;
         }

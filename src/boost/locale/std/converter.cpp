@@ -92,10 +92,10 @@ namespace boost { namespace locale { namespace impl_std {
     };
 
     std::locale
-    create_convert(const std::locale& in, const std::string& locale_name, character_facet_type type, utf8_support utf)
+    create_convert(const std::locale& in, const std::string& locale_name, char_facet_t type, utf8_support utf)
     {
         switch(type) {
-            case char_facet: {
+            case char_facet_t::char_f: {
                 if(utf == utf8_native_with_wide || utf == utf8_from_wide) {
                     std::locale base(std::locale::classic(), new std::ctype_byname<wchar_t>(locale_name.c_str()));
                     return std::locale(in, new utf8_converter(base));
@@ -103,18 +103,18 @@ namespace boost { namespace locale { namespace impl_std {
                 std::locale base(std::locale::classic(), new std::ctype_byname<char>(locale_name.c_str()));
                 return std::locale(in, new std_converter<char>(base));
             }
-            case wchar_t_facet: {
+            case char_facet_t::wchar_f: {
                 std::locale base(std::locale::classic(), new std::ctype_byname<wchar_t>(locale_name.c_str()));
                 return std::locale(in, new std_converter<wchar_t>(base));
             }
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-            case char16_t_facet: {
+            case char_facet_t::char16_f: {
                 std::locale base(std::locale::classic(), new std::ctype_byname<char16_t>(locale_name.c_str()));
                 return std::locale(in, new std_converter<char16_t>(base));
             }
 #endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-            case char32_t_facet: {
+            case char_facet_t::char32_f: {
                 std::locale base(std::locale::classic(), new std::ctype_byname<char32_t>(locale_name.c_str()));
                 return std::locale(in, new std_converter<char32_t>(base));
             }

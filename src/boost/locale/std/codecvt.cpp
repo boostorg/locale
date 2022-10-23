@@ -17,19 +17,19 @@ namespace boost { namespace locale { namespace impl_std {
     }
 
     std::locale
-    create_codecvt(const std::locale& in, const std::string& locale_name, character_facet_type type, utf8_support utf)
+    create_codecvt(const std::locale& in, const std::string& locale_name, char_facet_t type, utf8_support utf)
     {
         if(utf == utf8_from_wide) {
             return util::create_utf8_codecvt(in, type);
         }
         switch(type) {
-            case char_facet: return codecvt_bychar<char>(in, locale_name);
-            case wchar_t_facet: return codecvt_bychar<wchar_t>(in, locale_name);
+            case char_facet_t::char_f: return codecvt_bychar<char>(in, locale_name);
+            case char_facet_t::wchar_f: return codecvt_bychar<wchar_t>(in, locale_name);
 #if defined(BOOST_LOCALE_ENABLE_CHAR16_T)
-            case char16_t_facet: return codecvt_bychar<char16_t>(in, locale_name);
+            case char_facet_t::char16_f: return codecvt_bychar<char16_t>(in, locale_name);
 #endif
 #if defined(BOOST_LOCALE_ENABLE_CHAR32_T)
-            case char32_t_facet: return codecvt_bychar<char32_t>(in, locale_name);
+            case char_facet_t::char32_f: return codecvt_bychar<char32_t>(in, locale_name);
 #endif
             default: return in;
         }

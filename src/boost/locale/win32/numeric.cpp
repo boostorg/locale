@@ -176,20 +176,32 @@ namespace boost { namespace locale { namespace impl_win {
         return tmp;
     }
 
-    std::locale create_formatting(const std::locale& in, const winlocale& lc, character_facet_type type)
+    std::locale create_formatting(const std::locale& in, const winlocale& lc, char_facet_t type)
     {
         switch(type) {
-            case char_facet: return create_formatting_impl<char>(in, lc);
-            case wchar_t_facet: return create_formatting_impl<wchar_t>(in, lc);
+            case char_facet_t::char_f: return create_formatting_impl<char>(in, lc);
+            case char_facet_t::wchar_f: return create_formatting_impl<wchar_t>(in, lc);
+#ifdef BOOST_LOCALE_ENABLE_CHAR16_T
+            case char_facet_t::char16_f: return create_formatting_impl<char16_t>(in, lc);
+#endif
+#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
+            case char_facet_t::char32_f: return create_formatting_impl<char32_t>(in, lc);
+#endif
             default: return in;
         }
     }
 
-    std::locale create_parsing(const std::locale& in, const winlocale& lc, character_facet_type type)
+    std::locale create_parsing(const std::locale& in, const winlocale& lc, char_facet_t type)
     {
         switch(type) {
-            case char_facet: return create_parsing_impl<char>(in, lc);
-            case wchar_t_facet: return create_parsing_impl<wchar_t>(in, lc);
+            case char_facet_t::char_f: return create_parsing_impl<char>(in, lc);
+            case char_facet_t::wchar_f: return create_parsing_impl<wchar_t>(in, lc);
+#ifdef BOOST_LOCALE_ENABLE_CHAR16_T
+            case char_facet_t::char16_f: return create_parsing_impl<char16_t>(in, lc);
+#endif
+#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
+            case char_facet_t::char32_f: return create_parsing_impl<char32_t>(in, lc);
+#endif
             default: return in;
         }
     }

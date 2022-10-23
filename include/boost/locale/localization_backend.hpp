@@ -68,8 +68,7 @@ namespace boost { namespace locale {
         ///
         /// Create a facet for category \a category and character type \a type
         ///
-        virtual std::locale
-        install(const std::locale& base, locale_category_type category, character_facet_type type = nochar_facet) = 0;
+        virtual std::locale install(const std::locale& base, category_t category, char_facet_t type) = 0;
 
     }; // localization_backend
 
@@ -139,7 +138,7 @@ namespace boost { namespace locale {
         /// Select specific backend by name for a category \a category. It allows combining different
         /// backends for user preferences.
         ///
-        void select(const std::string& backend_name, locale_category_type category = all_categories);
+        void select(const std::string& backend_name, category_t category = all_categories);
 
         ///
         /// Set new global backend manager, the old one is returned.

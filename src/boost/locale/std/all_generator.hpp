@@ -16,27 +16,27 @@ namespace boost { namespace locale { namespace impl_std {
 
     std::locale create_convert(const std::locale& in,
                                const std::string& locale_name,
-                               character_facet_type type,
+                               char_facet_t type,
                                utf8_support utf = utf8_none);
 
     std::locale create_collate(const std::locale& in,
                                const std::string& locale_name,
-                               character_facet_type type,
+                               char_facet_t type,
                                utf8_support utf = utf8_none);
 
     std::locale create_formatting(const std::locale& in,
                                   const std::string& locale_name,
-                                  character_facet_type type,
+                                  char_facet_t type,
                                   utf8_support utf = utf8_none);
 
     std::locale create_parsing(const std::locale& in,
                                const std::string& locale_name,
-                               character_facet_type type,
+                               char_facet_t type,
                                utf8_support utf = utf8_none);
 
     std::locale create_codecvt(const std::locale& in,
                                const std::string& locale_name,
-                               character_facet_type type,
+                               char_facet_t type,
                                utf8_support utf = utf8_none);
 
 }}} // namespace boost::locale::impl_std

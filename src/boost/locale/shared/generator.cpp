@@ -25,8 +25,8 @@ namespace boost { namespace locale {
         mutable cached_type cached;
         mutable boost::mutex cached_lock;
 
-        locale_category_type cats;
-        character_facet_type chars;
+        category_t cats;
+        char_facet_t chars;
 
         bool caching_enabled;
         bool use_ansi_encoding;
@@ -43,21 +43,21 @@ namespace boost { namespace locale {
     generator::generator() : d(new generator::data(localization_backend_manager::global())) {}
     generator::~generator() = default;
 
-    locale_category_type generator::categories() const
+    category_t generator::categories() const
     {
         return d->cats;
     }
-    void generator::categories(locale_category_type t)
+    void generator::categories(category_t t)
     {
         d->cats = t;
     }
 
-    void generator::characters(character_facet_type t)
+    void generator::characters(char_facet_t t)
     {
         d->chars = t;
     }
 
-    character_facet_type generator::characters() const
+    char_facet_t generator::characters() const
     {
         return d->chars;
     }
@@ -114,26 +114,20 @@ namespace boost { namespace locale {
         set_all_options(*backend, id);
 
         std::locale result = base;
-        locale_category_type facets = d->cats;
-        character_facet_type chars = d->chars;
+        category_t facets = d->cats;
+        char_facet_t chars = d->chars;
 
-        for(locale_category_type facet = per_character_facet_first; facet <= per_character_facet_last && facet != 0;
-            facet <<= 1)
-        {
+        for(category_t facet = per_character_facet_first; facet <= per_character_facet_last; ++facet) {
             if(!(facets & facet))
                 continue;
-            for(character_facet_type ch = character_first_facet; ch <= character_last_facet; ch <<= 1) {
-                if(!(ch & chars))
-                    continue;
-                result = backend->install(result, facet, ch);
+            for(char_facet_t ch = character_facet_first; ch <= character_facet_last; ++ch) {
+                if(ch & chars)
+                    result = backend->install(result, facet, ch);
             }
         }
-        for(locale_category_type facet = non_character_facet_first; facet <= non_character_facet_last && facet != 0;
-            facet <<= 1)
-        {
-            if(!(facets & facet))
-                continue;
-            result = backend->install(result, facet);
+        for(category_t facet = non_character_facet_first; facet <= non_character_facet_last; ++facet) {
+            if(facets & facet)
+                result = backend->install(result, facet, char_facet_t::nochar);
         }
         if(d->caching_enabled) {
             boost::unique_lock<boost::mutex> guard(d->cached_lock);
@@ -174,5 +168,26 @@ namespace boost { namespace locale {
         for(size_t i = 0; i < d->paths.size(); i++)
             backend.set_option("message_path", d->paths[i]);
     }
+
+    // Sanity check
+
+    static_assert((char_facet_t::char_f | char_facet_t::wchar_f) & char_facet_t::char_f, "!");
+    static_assert((char_facet_t::char_f | char_facet_t::wchar_f) & char_facet_t::wchar_f, "!");
+    static_assert(!((all_characters ^ char_facet_t::wchar_f) & char_facet_t::wchar_f), "!");
+
+    static_assert((category_t::calendar | category_t::convert) & category_t::calendar, "!");
+    static_assert((category_t::calendar | category_t::convert) & category_t::convert, "!");
+    static_assert(!((all_categories ^ category_t::calendar) & category_t::calendar), "!");
+
+#ifndef BOOST_NO_CXX14_CONSTEXPR
+    template<typename T>
+    constexpr T inc_enum(T v)
+    {
+        return ++v;
+    }
+    static_assert(inc_enum(char_facet_t::nochar) == char_facet_t::char_f, "!");
+    static_assert(inc_enum(char_facet_t::char_f) == char_facet_t::wchar_f, "!");
+    static_assert(inc_enum(category_t::convert) == category_t::collation, "!");
+#endif
 
 }} // namespace boost::locale

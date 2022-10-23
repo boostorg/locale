@@ -202,12 +202,10 @@ namespace boost { namespace locale {
         /// of wide encoding type
         ///
         BOOST_LOCALE_DECL
-        std::locale
-        create_codecvt(const std::locale& in, std::unique_ptr<base_converter> cvt, character_facet_type type);
+        std::locale create_codecvt(const std::locale& in, std::unique_ptr<base_converter> cvt, char_facet_t type);
 
         BOOST_DEPRECATED("This function is deprecated, use 'create_codecvt()'")
-        inline std::locale
-        create_codecvt_from_pointer(const std::locale& in, base_converter* cvt, character_facet_type type)
+        inline std::locale create_codecvt_from_pointer(const std::locale& in, base_converter* cvt, char_facet_t type)
         {
             return create_codecvt(in, std::unique_ptr<base_converter>(cvt), type);
         }
@@ -231,7 +229,7 @@ namespace boost { namespace locale {
         /// new locale that is based on \a in and uses new facet.
         ///
         BOOST_LOCALE_DECL
-        std::locale create_utf8_codecvt(const std::locale& in, character_facet_type type);
+        std::locale create_utf8_codecvt(const std::locale& in, char_facet_t type);
 
         ///
         /// This function installs codecvt that can be used for conversion between single byte
@@ -240,8 +238,7 @@ namespace boost { namespace locale {
         /// Throws boost::locale::conv::invalid_charset_error if the chacater set is not supported or isn't single byte
         /// character set
         BOOST_LOCALE_DECL
-        std::locale
-        create_simple_codecvt(const std::locale& in, const std::string& encoding, character_facet_type type);
+        std::locale create_simple_codecvt(const std::locale& in, const std::string& encoding, char_facet_t type);
     } // namespace util
 }}    // namespace boost::locale
 

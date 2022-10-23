@@ -70,19 +70,17 @@ namespace boost { namespace locale { namespace impl_icu {
             variant_ = d.variant;
         }
 
-        std::locale install(const std::locale& base,
-                            locale_category_type category,
-                            character_facet_type type = nochar_facet) override
+        std::locale install(const std::locale& base, category_t category, char_facet_t type) override
         {
             prepare_data();
 
             switch(category) {
-                case convert_facet: return create_convert(base, data_, type);
-                case collation_facet: return create_collate(base, data_, type);
-                case formatting_facet: return create_formatting(base, data_, type);
-                case parsing_facet: return create_parsing(base, data_, type);
-                case codepage_facet: return create_codecvt(base, data_.encoding, type);
-                case message_facet: {
+                case category_t::convert: return create_convert(base, data_, type);
+                case category_t::collation: return create_collate(base, data_, type);
+                case category_t::formatting: return create_formatting(base, data_, type);
+                case category_t::parsing: return create_parsing(base, data_, type);
+                case category_t::codepage: return create_codecvt(base, data_.encoding, type);
+                case category_t::message: {
                     gnu_gettext::messages_info minf;
                     minf.language = language_;
                     minf.country = country_;
@@ -93,22 +91,24 @@ namespace boost { namespace locale { namespace impl_icu {
                               std::back_inserter<gnu_gettext::messages_info::domains_type>(minf.domains));
                     minf.paths = paths_;
                     switch(type) {
-                        case char_facet: return std::locale(base, gnu_gettext::create_messages_facet<char>(minf));
-                        case wchar_t_facet: return std::locale(base, gnu_gettext::create_messages_facet<wchar_t>(minf));
+                        case char_facet_t::char_f:
+                            return std::locale(base, gnu_gettext::create_messages_facet<char>(minf));
+                        case char_facet_t::wchar_f:
+                            return std::locale(base, gnu_gettext::create_messages_facet<wchar_t>(minf));
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-                        case char16_t_facet:
+                        case char_facet_t::char16_f:
                             return std::locale(base, gnu_gettext::create_messages_facet<char16_t>(minf));
 #endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-                        case char32_t_facet:
+                        case char_facet_t::char32_f:
                             return std::locale(base, gnu_gettext::create_messages_facet<char32_t>(minf));
 #endif
                         default: return base;
                     }
                 }
-                case boundary_facet: return create_boundary(base, data_, type);
-                case calendar_facet: return create_calendar(base, data_);
-                case information_facet: return util::create_info(base, real_id_);
+                case category_t::boundary: return create_boundary(base, data_, type);
+                case category_t::calendar: return create_calendar(base, data_);
+                case category_t::information: return util::create_info(base, real_id_);
                 default: return base;
             }
         }

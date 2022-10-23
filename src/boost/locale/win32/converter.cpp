@@ -64,11 +64,11 @@ namespace boost { namespace locale { namespace impl_win {
         winlocale lc_;
     };
 
-    std::locale create_convert(const std::locale& in, const winlocale& lc, character_facet_type type)
+    std::locale create_convert(const std::locale& in, const winlocale& lc, char_facet_t type)
     {
         switch(type) {
-            case char_facet: return std::locale(in, new utf8_converter(lc));
-            case wchar_t_facet: return std::locale(in, new utf16_converter(lc));
+            case char_facet_t::char_f: return std::locale(in, new utf8_converter(lc));
+            case char_facet_t::wchar_f: return std::locale(in, new utf16_converter(lc));
             default: return in;
         }
     }

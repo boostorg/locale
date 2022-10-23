@@ -9,16 +9,19 @@
 \page changelog Changelog
 
 - 1.81.0
-    - Require C++11 or higher
-    - Modernize code (C++11 features instead of Boost replacements, consistent formatting)
-    - Error on use of `-sICU_LINK_LOCALE` and `-sICU_LINK`, use `-sICU_*_NAME` when `-sICU_PATH` is not enough
-    - Fix build on macOS with iconv
-    - Fix int-overflow on negative roll of years in `date_time`
-    - Assume and use UTF-16 encoding for Windows `wchar_t-codecvt`
-    - Fix rounding issues with calendar time
-    - Make `basic_format` movable allowing it to be returned from functions
-    - Fix conversion of e.g. codepage iso-2022-jp on Windows
-    - Add more Windows codepages, e.g. cp1025, and various ISO and IBM codepages
+    - Breaking changes
+        - Require C++11 or higher
+        - Modernize code (C++11 features instead of Boost replacements, consistent formatting)
+        - Error on use of `-sICU_LINK_LOCALE` and `-sICU_LINK`, use `-sICU_*_NAME` when `-sICU_PATH` is not enough
+        - Convert `character_facet_type` & `locale_category_type` to the enum classes `char_facet_t` & `category_t`
+    - Other improvements and fixes
+        - Fix build on macOS with iconv
+        - Fix int-overflow on negative roll of years in `date_time`
+        - Assume and use UTF-16 encoding for Windows `wchar_t-codecvt`
+        - Fix rounding issues with calendar time
+        - Make `basic_format` movable allowing it to be returned from functions
+    	- Fix conversion of e.g. codepage iso-2022-jp on Windows
+    	- Add more Windows codepages, e.g. cp1025, and various ISO and IBM codepages
 - 1.80.0
     - Deprecated support for C++03 and earlier, C++11 will be required in the next release
     - Provide `-sICU_LINK_LOCALE` as a temporary replacement for `-sICU_LINK` which is incompatible with Boost.Regex.

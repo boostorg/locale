@@ -92,17 +92,23 @@ namespace boost { namespace locale { namespace impl_win {
         winlocale lc_;
     };
 
-    std::locale create_collate(const std::locale& in, const winlocale& lc, character_facet_type type)
+    std::locale create_collate(const std::locale& in, const winlocale& lc, char_facet_t type)
     {
         if(lc.is_c()) {
             switch(type) {
-                case char_facet: return std::locale(in, new std::collate_byname<char>("C"));
-                case wchar_t_facet: return std::locale(in, new std::collate_byname<wchar_t>("C"));
+                case char_facet_t::char_f: return std::locale(in, new std::collate_byname<char>("C"));
+                case char_facet_t::wchar_f: return std::locale(in, new std::collate_byname<wchar_t>("C"));
+#ifdef BOOST_LOCALE_ENABLE_CHAR16_T
+                case char_facet_t::char16_f: return std::locale(in, new collate_byname<char16_t>("C"));
+#endif
+#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
+                case char_facet_t::char32_f: return std::locale(in, new collate_byname<char32_t>("C"));
+#endif
             }
         } else {
             switch(type) {
-                case char_facet: return std::locale(in, new utf8_collator(lc));
-                case wchar_t_facet: return std::locale(in, new utf16_collator(lc));
+                case char_facet_t::char_f: return std::locale(in, new utf8_collator(lc));
+                case char_facet_t::wchar_f: return std::locale(in, new utf16_collator(lc));
             }
         }
         return in;

@@ -193,17 +193,17 @@ namespace boost { namespace locale {
     }} // namespace boundary::impl_icu
 
     namespace impl_icu {
-        std::locale create_boundary(const std::locale& in, const cdata& cd, character_facet_type type)
+        std::locale create_boundary(const std::locale& in, const cdata& cd, char_facet_t type)
         {
             using namespace boost::locale::boundary::impl_icu;
             switch(type) {
-                case char_facet: return std::locale(in, new boundary_indexing_impl<char>(cd));
-                case wchar_t_facet: return std::locale(in, new boundary_indexing_impl<wchar_t>(cd));
+                case char_facet_t::char_f: return std::locale(in, new boundary_indexing_impl<char>(cd));
+                case char_facet_t::wchar_f: return std::locale(in, new boundary_indexing_impl<wchar_t>(cd));
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-                case char16_t_facet: return std::locale(in, new boundary_indexing_impl<char16_t>(cd));
+                case char_facet_t::char16_f: return std::locale(in, new boundary_indexing_impl<char16_t>(cd));
 #endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-                case char32_t_facet: return std::locale(in, new boundary_indexing_impl<char32_t>(cd));
+                case char_facet_t::char32_f: return std::locale(in, new boundary_indexing_impl<char32_t>(cd));
 #endif
                 default: return in;
             }

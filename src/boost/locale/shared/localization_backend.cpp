@@ -67,16 +67,17 @@ namespace boost { namespace locale {
             }
         }
 
-        void select(const std::string& backend_name, locale_category_type category = all_categories)
+        void select(const std::string& backend_name, category_t category = all_categories)
         {
             unsigned id;
-            for(id = 0; id < all_backends_.size(); id++) {
+            for(id = 0; id < all_backends_.size(); ++id) {
                 if(all_backends_[id].first == backend_name)
                     break;
             }
             if(id == all_backends_.size())
                 return;
-            for(unsigned flag = 1, i = 0; i < default_backends_.size(); flag <<= 1, i++) {
+            category_t flag = category_first;
+            for(unsigned i = 0; i < default_backends_.size(); ++flag, ++i) {
                 if(category & flag) {
                     default_backends_[i] = id;
                 }
@@ -123,21 +124,14 @@ namespace boost { namespace locale {
                 for(unsigned i = 0; i < backends_.size(); i++)
                     backends_[i]->clear_options();
             }
-            std::locale install(const std::locale& l,
-                                locale_category_type category,
-                                character_facet_type type = nochar_facet) override
+            std::locale install(const std::locale& l, category_t category, char_facet_t type) override
             {
-                int id;
-                unsigned v;
-                for(v = 1, id = 0; v != 0; v <<= 1, id++) {
-                    if(category == v)
-                        break;
+                unsigned id = 0;
+                for(category_t v = category_first; v != category; ++v, ++id) {
+                    if(v == category_last)
+                        return l;
                 }
-                if(v == 0)
-                    return l;
-                if(unsigned(id) >= index_.size())
-                    return l;
-                if(index_[id] == -1)
+                if(id >= index_.size() || index_[id] == -1)
                     return l;
                 return backends_[index_[id]]->install(l, category, type);
             }
@@ -193,7 +187,7 @@ namespace boost { namespace locale {
     {
         return pimpl_->get_all_backends();
     }
-    void localization_backend_manager::select(const std::string& backend_name, locale_category_type category)
+    void localization_backend_manager::select(const std::string& backend_name, category_t category)
     {
         pimpl_->select(backend_name, category);
     }

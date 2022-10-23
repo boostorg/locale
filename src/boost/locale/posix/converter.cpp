@@ -111,10 +111,10 @@ namespace boost { namespace locale { namespace impl_posix {
         std::shared_ptr<locale_t> lc_;
     };
 
-    std::locale create_convert(const std::locale& in, std::shared_ptr<locale_t> lc, character_facet_type type)
+    std::locale create_convert(const std::locale& in, std::shared_ptr<locale_t> lc, char_facet_t type)
     {
         switch(type) {
-            case char_facet: {
+            case char_facet_t::char_f: {
                 std::string encoding = nl_langinfo_l(CODESET, *lc);
                 for(unsigned i = 0; i < encoding.size(); i++)
                     if('A' <= encoding[i] && encoding[i] <= 'Z')
@@ -124,7 +124,13 @@ namespace boost { namespace locale { namespace impl_posix {
                 }
                 return std::locale(in, new std_converter<char>(std::move(lc)));
             }
-            case wchar_t_facet: return std::locale(in, new std_converter<wchar_t>(std::move(lc)));
+            case char_facet_t::wchar_f: return std::locale(in, new std_converter<wchar_t>(std::move(lc)));
+#ifdef BOOST_LOCALE_ENABLE_CHAR16_T
+            case char_facet_t::char16_f: return std::locale(in, new std_converter<char16_t>(std::move(lc)));
+#endif
+#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
+            case char_facet_t::char32_f: return std::locale(in, new std_converter<char32_t>(std::move(lc)));
+#endif
             default: return in;
         }
     }
