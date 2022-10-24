@@ -15,7 +15,7 @@ template<typename Char>
 void test_comp(std::locale l, std::basic_string<Char> left, std::basic_string<Char> right, int ilevel, int expected)
 {
     typedef std::basic_string<Char> string_type;
-    boost::locale::collator_base::level_type level = static_cast<boost::locale::collator_base::level_type>(ilevel);
+    boost::locale::collate_level level = static_cast<boost::locale::collate_level>(ilevel);
     TEST(boost::locale::comparator<Char>(l, level)(left, right) == (expected < 0));
     if(ilevel == 4) {
         const std::collate<Char>& coll = std::use_facet<std::collate<Char>>(l);

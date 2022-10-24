@@ -36,14 +36,14 @@ namespace boost { namespace locale { namespace impl_win {
         std::string grouping;
     };
 
-    inline DWORD collation_level_to_flag(collator_base::level_type level)
+    inline DWORD collation_level_to_flag(collate_level level)
     {
         switch(level) {
-            case collator_base::primary: return NORM_IGNORESYMBOLS | NORM_IGNORECASE | NORM_IGNORENONSPACE;
-            case collator_base::secondary: return NORM_IGNORESYMBOLS | NORM_IGNORECASE;
-            case collator_base::tertiary: return NORM_IGNORESYMBOLS;
-            case collator_base::quaternary:
-            case collator_base::identical: return 0;
+            case collate_level::primary: return NORM_IGNORESYMBOLS | NORM_IGNORECASE | NORM_IGNORENONSPACE;
+            case collate_level::secondary: return NORM_IGNORESYMBOLS | NORM_IGNORECASE;
+            case collate_level::tertiary: return NORM_IGNORESYMBOLS;
+            case collate_level::quaternary:
+            case collate_level::identical: return 0;
         }
         return 0;
     }
@@ -135,7 +135,7 @@ namespace boost { namespace locale { namespace impl_win {
     ///
     ////////////////////////////////////////////////////////////////////////
 
-    inline int wcscoll_l(collator_base::level_type level,
+    inline int wcscoll_l(collate_level level,
                          const wchar_t* lb,
                          const wchar_t* le,
                          const wchar_t* rb,
@@ -225,8 +225,7 @@ namespace boost { namespace locale { namespace impl_win {
         return std::wstring(&v.front(), len);
     }
 
-    inline std::wstring
-    wcsxfrm_l(collator_base::level_type level, const wchar_t* begin, const wchar_t* end, const winlocale& l)
+    inline std::wstring wcsxfrm_l(collate_level level, const wchar_t* begin, const wchar_t* end, const winlocale& l)
     {
         int flag = LCMAP_SORTKEY | collation_level_to_flag(level);
 

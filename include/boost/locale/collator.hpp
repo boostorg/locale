@@ -26,22 +26,23 @@ namespace boost { namespace locale {
     ///
     /// @{
 
-    ///
-    /// \brief a base class that includes collation level flags
-    ///
+    /// Unicode collation level types
+    enum class collate_level {
+        primary = 0,    ///< 1st collation level: base letters
+        secondary = 1,  ///< 2nd collation level: letters and accents
+        tertiary = 2,   ///< 3rd collation level: letters, accents and case
+        quaternary = 3, ///< 4th collation level: letters, accents, case and punctuation
+        identical = 4   ///< identical collation level: include code-point comparison
+    };
 
-    class collator_base {
+    class BOOST_DEPRECATED("Use collate_level") collator_base {
     public:
-        ///
-        /// Unicode collation level types
-        ///
-        typedef enum {
-            primary = 0,    ///< 1st collation level: base letters
-            secondary = 1,  ///< 2nd collation level: letters and accents
-            tertiary = 2,   ///< 3rd collation level: letters, accents and case
-            quaternary = 3, ///< 4th collation level: letters, accents, case and punctuation
-            identical = 4   ///< identical collation level: include code-point comparison
-        } level_type;
+        using level_type = collate_level;
+        static constexpr auto primary = collate_level::primary;
+        static constexpr auto secondary = collate_level::secondary;
+        static constexpr auto tertiary = collate_level::tertiary;
+        static constexpr auto quaternary = collate_level::quaternary;
+        static constexpr auto identical = collate_level::identical;
     };
 
     ///
@@ -51,7 +52,7 @@ namespace boost { namespace locale {
     /// allowing usage of std::locale for direct string comparison
     ///
     template<typename CharType>
-    class collator : public std::collate<CharType>, public collator_base {
+    class collator : public std::collate<CharType> {
     public:
         ///
         /// Type of the underlying character
@@ -68,7 +69,7 @@ namespace boost { namespace locale {
         /// Returns -1 if the first of the two strings sorts before the seconds, returns 1 if sorts after and 0 if
         /// they considered equal.
         ///
-        int compare(level_type level,
+        int compare(collate_level level,
                     const char_type* b1,
                     const char_type* e1,
                     const char_type* b2,
@@ -87,7 +88,7 @@ namespace boost { namespace locale {
         ///
         /// Calls do_transform
         ///
-        string_type transform(level_type level, const char_type* b, const char_type* e) const
+        string_type transform(collate_level level, const char_type* b, const char_type* e) const
         {
             return do_transform(level, b, e);
         }
@@ -99,7 +100,7 @@ namespace boost { namespace locale {
         ///
         /// Calls do_hash
         ///
-        long hash(level_type level, const char_type* b, const char_type* e) const { return do_hash(level, b, e); }
+        long hash(collate_level level, const char_type* b, const char_type* e) const { return do_hash(level, b, e); }
 
         ///
         /// Compare two strings \a l and \a r using collation level \a level
@@ -108,7 +109,7 @@ namespace boost { namespace locale {
         /// they considered equal.
         ///
         ///
-        int compare(level_type level, const string_type& l, const string_type& r) const
+        int compare(collate_level level, const string_type& l, const string_type& r) const
         {
             return do_compare(level, l.data(), l.data() + l.size(), r.data(), r.data() + r.size());
         }
@@ -119,7 +120,7 @@ namespace boost { namespace locale {
         /// If compare(level,s1,s2) == 0 then hash(level,s1) == hash(level,s2)
         ///
 
-        long hash(level_type level, const string_type& s) const
+        long hash(collate_level level, const string_type& s) const
         {
             return do_hash(level, s.data(), s.data() + s.size());
         }
@@ -132,7 +133,7 @@ namespace boost { namespace locale {
         ///   compare(level,s1,s2) == sign( transform(level,s1).compare(transform(level,s2)) );
         /// \endcode
         ///
-        string_type transform(level_type level, const string_type& s) const
+        string_type transform(collate_level level, const string_type& s) const
         {
             return do_transform(level, s.data(), s.data() + s.size());
         }
@@ -150,7 +151,7 @@ namespace boost { namespace locale {
         int
         do_compare(const char_type* b1, const char_type* e1, const char_type* b2, const char_type* e2) const override
         {
-            return do_compare(identical, b1, e1, b2, e2);
+            return do_compare(collate_level::identical, b1, e1, b2, e2);
         }
         ///
         /// This function is used to override default collation function that does not take in account collation level.
@@ -158,19 +159,22 @@ namespace boost { namespace locale {
         ///
         string_type do_transform(const char_type* b, const char_type* e) const override
         {
-            return do_transform(identical, b, e);
+            return do_transform(collate_level::identical, b, e);
         }
         ///
         /// This function is used to override default collation function that does not take in account collation level.
         /// Uses primary level
         ///
-        long do_hash(const char_type* b, const char_type* e) const override { return do_hash(identical, b, e); }
+        long do_hash(const char_type* b, const char_type* e) const override
+        {
+            return do_hash(collate_level::identical, b, e);
+        }
 
         ///
         /// Actual function that performs comparison between the strings. For details see compare member function. Can
         /// be overridden.
         ///
-        virtual int do_compare(level_type level,
+        virtual int do_compare(collate_level level,
                                const char_type* b1,
                                const char_type* e1,
                                const char_type* b2,
@@ -178,11 +182,11 @@ namespace boost { namespace locale {
         ///
         /// Actual function that performs transformation. For details see transform member function. Can be overridden.
         ///
-        virtual string_type do_transform(level_type level, const char_type* b, const char_type* e) const = 0;
+        virtual string_type do_transform(collate_level level, const char_type* b, const char_type* e) const = 0;
         ///
         /// Actual function that calculates hash. For details see hash member function. Can be overridden.
         ///
-        virtual long do_hash(level_type level, const char_type* b, const char_type* e) const = 0;
+        virtual long do_hash(collate_level level, const char_type* b, const char_type* e) const = 0;
     };
 
     ///
@@ -192,12 +196,12 @@ namespace boost { namespace locale {
     /// For example:
     ///
     /// \code
-    ///  std::map<std::string,std::string,comparator<char,collator_base::secondary> > data;
+    ///  std::map<std::string,std::string,comparator<char,collate_level::secondary> > data;
     /// \endcode
     ///
     /// Would create a map the keys of which are sorted using secondary collation level
     ///
-    template<typename CharType, collator_base::level_type default_level = collator_base::identical>
+    template<typename CharType, collate_level default_level = collate_level::identical>
     struct comparator {
     public:
         ///
@@ -205,7 +209,7 @@ namespace boost { namespace locale {
         ///
         /// \note throws std::bad_cast if l does not have \ref collator facet installed
         ///
-        comparator(const std::locale& l = std::locale(), collator_base::level_type level = default_level) :
+        comparator(const std::locale& l = std::locale(), collate_level level = default_level) :
             locale_(l), level_(level)
         {}
 
@@ -219,7 +223,7 @@ namespace boost { namespace locale {
 
     private:
         std::locale locale_;
-        collator_base::level_type level_;
+        collate_level level_;
     };
 
     ///
