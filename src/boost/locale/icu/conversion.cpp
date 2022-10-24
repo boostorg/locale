@@ -63,7 +63,6 @@ namespace boost { namespace locale { namespace impl_icu {
                 case converter_base::lower_case: str.toLower(locale_); break;
                 case converter_base::title_case: str.toTitle(0, locale_); break;
                 case converter_base::case_folding: str.foldCase(); break;
-                default:;
             }
             return cvt.std(str);
         }
@@ -138,13 +137,6 @@ namespace boost { namespace locale { namespace impl_icu {
         std::string
         convert(converter_base::conversion_type how, const char* begin, const char* end, int flags = 0) const override
         {
-            if(how == converter_base::normalization) {
-                icu_std_converter<char> cvt("UTF-8");
-                icu::UnicodeString str = cvt.icu(begin, end);
-                normalize_string(str, flags);
-                return cvt.std(str);
-            }
-
             switch(how) {
                 case converter_base::upper_case: return map_.convert(ucasemap_utf8ToUpper, begin, end);
                 case converter_base::lower_case: return map_.convert(ucasemap_utf8ToLower, begin, end);
@@ -154,8 +146,14 @@ namespace boost { namespace locale { namespace impl_icu {
                     return map.convert(ucasemap_utf8ToTitle, begin, end);
                 }
                 case converter_base::case_folding: return map_.convert(ucasemap_utf8FoldCase, begin, end);
-                default: return std::string(begin, end - begin);
+                case converter_base::normalization: {
+                    icu_std_converter<char> cvt("UTF-8");
+                    icu::UnicodeString str = cvt.icu(begin, end);
+                    normalize_string(str, flags);
+                    return cvt.std(str);
+                }
             }
+            return std::string(begin, end - begin);
         }
 
     private:
@@ -168,6 +166,7 @@ namespace boost { namespace locale { namespace impl_icu {
     std::locale create_convert(const std::locale& in, const cdata& cd, char_facet_t type)
     {
         switch(type) {
+            case char_facet_t::nochar: break;
             case char_facet_t::char_f:
 #ifdef BOOST_LOCALE_WITH_CASEMAP
                 if(cd.utf8)
@@ -181,8 +180,8 @@ namespace boost { namespace locale { namespace impl_icu {
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
             case char_facet_t::char32_f: return std::locale(in, new converter_impl<char32_t>(cd));
 #endif
-            default: return in;
         }
+        return in;
     }
 
 }}} // namespace boost::locale::impl_icu

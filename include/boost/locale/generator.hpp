@@ -32,18 +32,29 @@ namespace locale {
     ///
     /// Supports bitwise OR and bitwise AND (the latter returning if the type is set)
     enum class char_facet_t : uint32_t {
-        nochar = 0,        ///< Unspecified character category for character independent facets
-        char_f = 1 << 0,   ///< 8-bit character facets
-        wchar_f = 1 << 1,  ///< wide character facets
+        nochar = 0,       ///< Unspecified character category for character independent facets
+        char_f = 1 << 0,  ///< 8-bit character facets
+        wchar_f = 1 << 1, ///< wide character facets
+#ifdef BOOST_LOCALE_ENABLE_CHAR16_T
         char16_f = 1 << 2, ///< C++11 char16_t facets
+#endif
+#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
         char32_f = 1 << 3, ///< C++11 char32_t facets
+#endif
     };
     typedef BOOST_DEPRECATED("Use char_facet_t") char_facet_t character_facet_type;
 
     /// First facet specific for character type
     constexpr char_facet_t character_facet_first = char_facet_t::char_f;
     /// Last facet specific for character type
-    constexpr char_facet_t character_facet_last = char_facet_t::char32_f;
+    constexpr char_facet_t character_facet_last =
+#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
+      char_facet_t::char32_f;
+#elif defined BOOST_LOCALE_ENABLE_CHAR16_T
+      char_facet_t::char16_f;
+#else
+      char_facet_t::wchar_f;
+#endif
     /// Special mask -- generate all
     constexpr char_facet_t all_characters = char_facet_t(0xFFFFFFFFu);
 

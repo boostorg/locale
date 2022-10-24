@@ -23,6 +23,7 @@ namespace boost { namespace locale { namespace impl_std {
             return util::create_utf8_codecvt(in, type);
         }
         switch(type) {
+            case char_facet_t::nochar: break;
             case char_facet_t::char_f: return codecvt_bychar<char>(in, locale_name);
             case char_facet_t::wchar_f: return codecvt_bychar<wchar_t>(in, locale_name);
 #if defined(BOOST_LOCALE_ENABLE_CHAR16_T)
@@ -31,8 +32,8 @@ namespace boost { namespace locale { namespace impl_std {
 #if defined(BOOST_LOCALE_ENABLE_CHAR32_T)
             case char_facet_t::char32_f: return codecvt_bychar<char32_t>(in, locale_name);
 #endif
-            default: return in;
         }
+        return in;
     }
 
 }}} // namespace boost::locale::impl_std

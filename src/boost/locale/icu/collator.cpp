@@ -177,6 +177,7 @@ namespace boost { namespace locale { namespace impl_icu {
     std::locale create_collate(const std::locale& in, const cdata& cd, char_facet_t type)
     {
         switch(type) {
+            case char_facet_t::nochar: break;
             case char_facet_t::char_f: return std::locale(in, new collate_impl<char>(cd));
             case char_facet_t::wchar_f: return std::locale(in, new collate_impl<wchar_t>(cd));
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
@@ -185,8 +186,8 @@ namespace boost { namespace locale { namespace impl_icu {
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
             case char_facet_t::char32_f: return std::locale(in, new collate_impl<char32_t>(cd));
 #endif
-            default: return in;
         }
+        return in;
     }
 
 }}} // namespace boost::locale::impl_icu

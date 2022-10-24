@@ -267,6 +267,7 @@ namespace boost { namespace locale { namespace util {
         if(!cvt)
             cvt.reset(new base_converter());
         switch(type) {
+            case char_facet_t::nochar: break;
             case char_facet_t::char_f: return std::locale(in, new code_converter<char>(std::move(cvt)));
             case char_facet_t::wchar_f: return std::locale(in, new code_converter<wchar_t>(std::move(cvt)));
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
@@ -275,8 +276,8 @@ namespace boost { namespace locale { namespace util {
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
             case char_facet_t::char32_f: return std::locale(in, new code_converter<char32_t>(std::move(cvt)));
 #endif
-            default: return in;
         }
+        return in;
     }
 
     ///
@@ -286,6 +287,7 @@ namespace boost { namespace locale { namespace util {
     std::locale create_utf8_codecvt(const std::locale& in, char_facet_t type)
     {
         switch(type) {
+            case char_facet_t::nochar: break;
             case char_facet_t::char_f: return std::locale(in, new utf8_codecvt<char>());
             case char_facet_t::wchar_f: return std::locale(in, new utf8_codecvt<wchar_t>());
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
@@ -294,8 +296,8 @@ namespace boost { namespace locale { namespace util {
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
             case char_facet_t::char32_f: return std::locale(in, new utf8_codecvt<char32_t>());
 #endif
-            default: return in;
         }
+        return in;
     }
 
     ///
@@ -310,6 +312,7 @@ namespace boost { namespace locale { namespace util {
             throw boost::locale::conv::invalid_charset_error("Invalid simple encoding " + encoding);
 
         switch(type) {
+            case char_facet_t::nochar: break;
             case char_facet_t::char_f: return std::locale(in, new simple_codecvt<char>(encoding));
             case char_facet_t::wchar_f: return std::locale(in, new simple_codecvt<wchar_t>(encoding));
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
@@ -318,8 +321,8 @@ namespace boost { namespace locale { namespace util {
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
             case char_facet_t::char32_f: return std::locale(in, new simple_codecvt<char32_t>(encoding));
 #endif
-            default: return in;
         }
+        return in;
     }
 
 }}} // namespace boost::locale::util

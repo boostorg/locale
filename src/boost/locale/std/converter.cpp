@@ -49,8 +49,10 @@ namespace boost { namespace locale { namespace impl_std {
                         ct.tolower(lbegin, lbegin + len);
                     return string_type(lbegin, len);
                 }
-                default: return string_type(begin, end - begin);
+                case converter_base::normalization:
+                case converter_base::title_case: break;
             }
+            return string_type(begin, end - begin);
         }
 
     private:
@@ -83,8 +85,10 @@ namespace boost { namespace locale { namespace impl_std {
                         ct.tolower(lbegin, lbegin + len);
                     return conv::from_utf<wchar_t>(lbegin, lbegin + len, "UTF-8");
                 }
-                default: return std::string(begin, end - begin);
+                case title_case:
+                case normalization: break;
             }
+            return std::string(begin, end - begin);
         }
 
     private:
@@ -95,6 +99,7 @@ namespace boost { namespace locale { namespace impl_std {
     create_convert(const std::locale& in, const std::string& locale_name, char_facet_t type, utf8_support utf)
     {
         switch(type) {
+            case char_facet_t::nochar: break;
             case char_facet_t::char_f: {
                 if(utf == utf8_native_with_wide || utf == utf8_from_wide) {
                     std::locale base(std::locale::classic(), new std::ctype_byname<wchar_t>(locale_name.c_str()));
@@ -119,8 +124,8 @@ namespace boost { namespace locale { namespace impl_std {
                 return std::locale(in, new std_converter<char32_t>(base));
             }
 #endif
-            default: return in;
         }
+        return in;
     }
 
 }}} // namespace boost::locale::impl_std

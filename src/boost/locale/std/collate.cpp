@@ -66,6 +66,7 @@ namespace boost { namespace locale { namespace impl_std {
     create_collate(const std::locale& in, const std::string& locale_name, char_facet_t type, utf8_support utf)
     {
         switch(type) {
+            case char_facet_t::nochar: break;
             case char_facet_t::char_f: {
                 if(utf == utf8_from_wide) {
                     std::locale base =
@@ -85,8 +86,8 @@ namespace boost { namespace locale { namespace impl_std {
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
             case char_facet_t::char32_f: return std::locale(in, new std::collate_byname<char32_t>(locale_name.c_str()));
 #endif
-            default: return in;
         }
+        return in;
     }
 
 }}} // namespace boost::locale::impl_std

@@ -339,6 +339,7 @@ namespace boost { namespace locale { namespace impl_icu {
     std::locale create_formatting(const std::locale& in, const cdata& cd, char_facet_t type)
     {
         switch(type) {
+            case char_facet_t::nochar: break;
             case char_facet_t::char_f: return install_formatting_facets<char>(in, cd);
             case char_facet_t::wchar_f: return install_formatting_facets<wchar_t>(in, cd);
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
@@ -347,13 +348,14 @@ namespace boost { namespace locale { namespace impl_icu {
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
             case char_facet_t::char32_f: return install_formatting_facets<char32_t>(in, cd);
 #endif
-            default: return in;
         }
+        return in;
     }
 
     std::locale create_parsing(const std::locale& in, const cdata& cd, char_facet_t type)
     {
         switch(type) {
+            case char_facet_t::nochar: break;
             case char_facet_t::char_f: return install_parsing_facets<char>(in, cd);
             case char_facet_t::wchar_f: return install_parsing_facets<wchar_t>(in, cd);
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
@@ -362,8 +364,8 @@ namespace boost { namespace locale { namespace impl_icu {
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
             case char_facet_t::char32_f: return install_parsing_facets<char32_t>(in, cd);
 #endif
-            default: return in;
         }
+        return in;
     }
 
 }}} // namespace boost::locale::impl_icu

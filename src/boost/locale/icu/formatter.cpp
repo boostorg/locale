@@ -16,6 +16,7 @@
 #include "boost/locale/icu/uconv.hpp"
 #include <boost/core/ignore_unused.hpp>
 #include <limits>
+#include <memory>
 #include <unicode/datefmt.h>
 #include <unicode/decimfmt.h>
 #include <unicode/numfmt.h>

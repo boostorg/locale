@@ -179,6 +179,7 @@ namespace boost { namespace locale { namespace impl_win {
     std::locale create_formatting(const std::locale& in, const winlocale& lc, char_facet_t type)
     {
         switch(type) {
+            case char_facet_t::nochar: break;
             case char_facet_t::char_f: return create_formatting_impl<char>(in, lc);
             case char_facet_t::wchar_f: return create_formatting_impl<wchar_t>(in, lc);
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
@@ -187,13 +188,14 @@ namespace boost { namespace locale { namespace impl_win {
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
             case char_facet_t::char32_f: return create_formatting_impl<char32_t>(in, lc);
 #endif
-            default: return in;
         }
+        return in;
     }
 
     std::locale create_parsing(const std::locale& in, const winlocale& lc, char_facet_t type)
     {
         switch(type) {
+            case char_facet_t::nochar: break;
             case char_facet_t::char_f: return create_parsing_impl<char>(in, lc);
             case char_facet_t::wchar_f: return create_parsing_impl<wchar_t>(in, lc);
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
@@ -202,8 +204,8 @@ namespace boost { namespace locale { namespace impl_win {
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
             case char_facet_t::char32_f: return create_parsing_impl<char32_t>(in, lc);
 #endif
-            default: return in;
         }
+        return in;
     }
 
 }}} // namespace boost::locale::impl_win

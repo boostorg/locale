@@ -166,6 +166,7 @@ namespace boost { namespace locale { namespace impl_std {
                               std::back_inserter<gnu_gettext::messages_info::domains_type>(minf.domains));
                     minf.paths = paths_;
                     switch(type) {
+                        case char_facet_t::nochar: break;
                         case char_facet_t::char_f:
                             return std::locale(base, gnu_gettext::create_messages_facet<char>(minf));
                         case char_facet_t::wchar_f:
@@ -178,12 +179,13 @@ namespace boost { namespace locale { namespace impl_std {
                         case char_facet_t::char32_f:
                             return std::locale(base, gnu_gettext::create_messages_facet<char32_t>(minf));
 #endif
-                        default: return base;
                     }
+                    return base;
                 }
                 case category_t::information: return util::create_info(base, in_use_id_);
-                default: return base;
+                case category_t::boundary: break; // Not implemented
             }
+            return base;
         }
 
     private:

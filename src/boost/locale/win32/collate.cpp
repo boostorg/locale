@@ -96,6 +96,7 @@ namespace boost { namespace locale { namespace impl_win {
     {
         if(lc.is_c()) {
             switch(type) {
+                case char_facet_t::nochar: break;
                 case char_facet_t::char_f: return std::locale(in, new std::collate_byname<char>("C"));
                 case char_facet_t::wchar_f: return std::locale(in, new std::collate_byname<wchar_t>("C"));
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
@@ -107,8 +108,15 @@ namespace boost { namespace locale { namespace impl_win {
             }
         } else {
             switch(type) {
+                case char_facet_t::nochar: break;
                 case char_facet_t::char_f: return std::locale(in, new utf8_collator(lc));
                 case char_facet_t::wchar_f: return std::locale(in, new utf16_collator(lc));
+#ifdef BOOST_LOCALE_ENABLE_CHAR16_T
+                case char_facet_t::char16_f: break;
+#endif
+#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
+                case char_facet_t::char32_f: break;
+#endif
             }
         }
         return in;

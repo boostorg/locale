@@ -42,8 +42,10 @@ namespace boost { namespace locale { namespace impl_win {
             case collator_base::primary: return NORM_IGNORESYMBOLS | NORM_IGNORECASE | NORM_IGNORENONSPACE;
             case collator_base::secondary: return NORM_IGNORESYMBOLS | NORM_IGNORECASE;
             case collator_base::tertiary: return NORM_IGNORESYMBOLS;
-            default: return 0;
+            case collator_base::quaternary:
+            case collator_base::identical: return 0;
         }
+        return 0;
     }
 
     class winlocale {
@@ -203,13 +205,12 @@ namespace boost { namespace locale { namespace impl_win {
     {
         // We use FoldString, under Vista it actually does normalization;
         // under XP and below it does something similar, half job, better then nothing
-        unsigned flags = 0;
+        unsigned flags = MAP_PRECOMPOSED;
         switch(norm) {
             case norm_nfd: flags = MAP_COMPOSITE; break;
             case norm_nfc: flags = MAP_PRECOMPOSED; break;
             case norm_nfkd: flags = MAP_FOLDCZONE; break;
             case norm_nfkc: flags = MAP_FOLDCZONE | MAP_COMPOSITE; break;
-            default: flags = MAP_PRECOMPOSED;
         }
 
         if(end - begin > std::numeric_limits<int>::max())

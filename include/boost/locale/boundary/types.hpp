@@ -109,8 +109,8 @@ namespace boost { namespace locale {
                 case word: return word_mask;
                 case sentence: return sentence_mask;
                 case line: return line_mask;
-                default: return 0;
             }
+            return 0;
         }
 
         ///

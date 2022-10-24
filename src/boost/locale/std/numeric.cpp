@@ -254,6 +254,7 @@ namespace boost { namespace locale { namespace impl_std {
     create_formatting(const std::locale& in, const std::string& locale_name, char_facet_t type, utf8_support utf)
     {
         switch(type) {
+            case char_facet_t::nochar: break;
             case char_facet_t::char_f: {
                 if(utf == utf8_from_wide) {
                     std::locale base = std::locale(locale_name.c_str());
@@ -304,14 +305,15 @@ namespace boost { namespace locale { namespace impl_std {
                 return tmp;
             }
 #endif
-            default: return in;
         }
+        return in;
     }
 
     std::locale
     create_parsing(const std::locale& in, const std::string& locale_name, char_facet_t type, utf8_support utf)
     {
         switch(type) {
+            case char_facet_t::nochar: break;
             case char_facet_t::char_f: {
                 if(utf == utf8_from_wide) {
                     std::locale base = std::locale::classic();
@@ -361,8 +363,8 @@ namespace boost { namespace locale { namespace impl_std {
                 return tmp;
             }
 #endif
-            default: return in;
         }
+        return in;
     }
 
 }}} // namespace boost::locale::impl_std

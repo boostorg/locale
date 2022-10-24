@@ -68,8 +68,10 @@ namespace boost { namespace locale { namespace impl_posix {
                     }
                     return res;
                 }
-                default: return string_type(begin, end - begin);
+                case converter_base::normalization:
+                case converter_base::title_case: break;
             }
+            return string_type(begin, end - begin);
         }
 
     private:
@@ -103,8 +105,10 @@ namespace boost { namespace locale { namespace impl_posix {
                         wres += towlower_l(tmp[i], *lc_);
                     return conv::from_utf<wchar_t>(wres, "UTF-8");
                 }
-                default: return std::string(begin, end - begin);
+                case normalization:
+                case title_case: break;
             }
+            return std::string(begin, end - begin);
         }
 
     private:
@@ -114,6 +118,7 @@ namespace boost { namespace locale { namespace impl_posix {
     std::locale create_convert(const std::locale& in, std::shared_ptr<locale_t> lc, char_facet_t type)
     {
         switch(type) {
+            case char_facet_t::nochar: break;
             case char_facet_t::char_f: {
                 std::string encoding = nl_langinfo_l(CODESET, *lc);
                 for(unsigned i = 0; i < encoding.size(); i++)
@@ -131,8 +136,8 @@ namespace boost { namespace locale { namespace impl_posix {
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
             case char_facet_t::char32_f: return std::locale(in, new std_converter<char32_t>(std::move(lc)));
 #endif
-            default: return in;
         }
+        return in;
     }
 
 }}} // namespace boost::locale::impl_posix

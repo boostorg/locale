@@ -29,16 +29,16 @@ namespace boost { namespace locale { namespace util {
                 case variant_property: return d.variant;
                 case encoding_property: return d.encoding;
                 case name_property: return name_;
-                default: return "";
-            };
+            }
+            return "";
         }
 
         int get_integer_property(integer_property v) const override
         {
             switch(v) {
                 case utf8_property: return d.utf8;
-                default: return 0;
             }
+            return 0;
         }
 
     private:
