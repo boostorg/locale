@@ -45,32 +45,12 @@ namespace boost { namespace locale {
         return *this;
     }
 
-    struct ios_info::data {};
+    ios_info::ios_info() : flags_(0), domain_id_(0), time_zone_(time_zone::global()) {}
 
-    ios_info::ios_info() : flags_(0), domain_id_(0), d(0)
-    {
-        time_zone_ = time_zone::global();
-    }
-    ios_info::~ios_info() {}
+    ios_info::~ios_info() = default;
 
-    ios_info::ios_info(const ios_info& other)
-    {
-        flags_ = other.flags_;
-        domain_id_ = other.domain_id_;
-        time_zone_ = other.time_zone_;
-        datetime_ = other.datetime_;
-    }
-
-    ios_info& ios_info::operator=(const ios_info& other)
-    {
-        if(this != &other) {
-            flags_ = other.flags_;
-            domain_id_ = other.domain_id_;
-            time_zone_ = other.time_zone_;
-            datetime_ = other.datetime_;
-        }
-        return *this;
-    }
+    ios_info::ios_info(const ios_info& other) = default;
+    ios_info& ios_info::operator=(const ios_info& other) = default;
 
     void ios_info::display_flags(uint64_t f)
     {

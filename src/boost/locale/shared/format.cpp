@@ -42,7 +42,7 @@ namespace boost { namespace locale { namespace detail {
         d->imbuer(d->cookie, l);
     }
 
-    format_parser::~format_parser() {}
+    format_parser::~format_parser() = default;
 
     void format_parser::restore()
     {

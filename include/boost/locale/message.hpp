@@ -89,7 +89,7 @@ namespace boost { namespace locale {
         virtual const char_type* convert(const char_type* msg, string_type& buffer) const = 0;
 
     protected:
-        virtual ~message_format() {}
+        virtual ~message_format() = default;
     };
 
     /// \cond INTERNAL
@@ -506,12 +506,14 @@ namespace boost { namespace locale {
     template<>
     struct BOOST_LOCALE_DECL base_message_format<char> : public std::locale::facet {
         base_message_format(size_t refs = 0) : std::locale::facet(refs) {}
+        ~base_message_format();
         static std::locale::id id;
     };
 
     template<>
     struct BOOST_LOCALE_DECL base_message_format<wchar_t> : public std::locale::facet {
         base_message_format(size_t refs = 0) : std::locale::facet(refs) {}
+        ~base_message_format();
         static std::locale::id id;
     };
 
@@ -520,6 +522,7 @@ namespace boost { namespace locale {
     template<>
     struct BOOST_LOCALE_DECL base_message_format<char16_t> : public std::locale::facet {
         base_message_format(size_t refs = 0) : std::locale::facet(refs) {}
+        ~base_message_format();
         static std::locale::id id;
     };
 
@@ -530,6 +533,7 @@ namespace boost { namespace locale {
     template<>
     struct BOOST_LOCALE_DECL base_message_format<char32_t> : public std::locale::facet {
         base_message_format(size_t refs = 0) : std::locale::facet(refs) {}
+        ~base_message_format();
         static std::locale::id id;
     };
 

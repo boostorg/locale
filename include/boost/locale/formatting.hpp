@@ -206,9 +206,6 @@ namespace boost { namespace locale {
         int domain_id_;
         std::string time_zone_;
         string_set datetime_;
-
-        struct data;
-        data* d;
     };
 
     /// \brief This namespace includes all manipulators that can be used on IO streams

@@ -17,49 +17,57 @@ namespace boost { namespace locale {
 
     std::locale::id info::id;
     // Make sure we have the VTable here (Export/Import issues)
-    info::~info() {}
+    info::~info() = default;
+
     std::locale::id calendar_facet::id;
+    calendar_facet::~calendar_facet() = default;
+
+    abstract_calendar::~abstract_calendar() = default;
 
     std::locale::id converter<char>::id;
-    converter<char>::~converter() {}
+    converter<char>::~converter() = default;
     std::locale::id base_message_format<char>::id;
+    base_message_format<char>::~base_message_format() = default;
 
     std::locale::id converter<wchar_t>::id;
-    converter<wchar_t>::~converter() {}
+    converter<wchar_t>::~converter() = default;
     std::locale::id base_message_format<wchar_t>::id;
+    base_message_format<wchar_t>::~base_message_format() = default;
 
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
 
     std::locale::id converter<char16_t>::id;
-    converter<char16_t>::~converter() {}
+    converter<char16_t>::~converter() = default;
     std::locale::id base_message_format<char16_t>::id;
+    base_message_format<char16_t>::~base_message_format() = default;
 
 #endif
 
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
 
     std::locale::id converter<char32_t>::id;
-    converter<char32_t>::~converter() {}
+    converter<char32_t>::~converter() = default;
     std::locale::id base_message_format<char32_t>::id;
+    base_message_format<char32_t>::~base_message_format() = default;
 
 #endif
 
     namespace boundary {
 
         std::locale::id boundary_indexing<char>::id;
-        boundary_indexing<char>::~boundary_indexing() {}
+        boundary_indexing<char>::~boundary_indexing() = default;
 
         std::locale::id boundary_indexing<wchar_t>::id;
-        boundary_indexing<wchar_t>::~boundary_indexing() {}
+        boundary_indexing<wchar_t>::~boundary_indexing() = default;
 
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
         std::locale::id boundary_indexing<char16_t>::id;
-        boundary_indexing<char16_t>::~boundary_indexing() {}
+        boundary_indexing<char16_t>::~boundary_indexing() = default;
 #endif
 
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
         std::locale::id boundary_indexing<char32_t>::id;
-        boundary_indexing<char32_t>::~boundary_indexing() {}
+        boundary_indexing<char32_t>::~boundary_indexing() = default;
 #endif
     } // namespace boundary
 

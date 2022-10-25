@@ -21,7 +21,7 @@
 
 namespace boost { namespace locale { namespace util {
 
-    base_converter::~base_converter() {}
+    base_converter::~base_converter() = default;
 
     class utf8_converter : public base_converter {
     public:

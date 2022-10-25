@@ -38,14 +38,14 @@ namespace boost { namespace locale {
     ///
     /// Each backend can be installed with a different default priotiry so when you work with two different backends,
     /// you can specify priotiry so this backend will be chosen according to their priority.
-    class localization_backend {
-        localization_backend(const localization_backend&);
-        void operator=(const localization_backend&);
+    class BOOST_LOCALE_DECL localization_backend {
+    protected:
+        localization_backend(const localization_backend&) = default;
+        localization_backend& operator=(const localization_backend&) = default;
 
     public:
-        localization_backend() {}
-
-        virtual ~localization_backend() {}
+        localization_backend() = default;
+        virtual ~localization_backend();
 
         /// Make a polymorphic copy of the backend
         virtual localization_backend* clone() const = 0;

@@ -29,6 +29,8 @@
 #endif
 
 namespace boost { namespace locale {
+    localization_backend::~localization_backend() = default;
+
     class localization_backend_manager::impl {
     public:
         impl(const impl& other) : default_backends_(other.default_backends_)

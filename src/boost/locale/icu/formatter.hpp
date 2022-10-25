@@ -19,7 +19,7 @@ namespace boost { namespace locale { namespace impl_icu {
     /// classes
     class base_formatter {
     public:
-        virtual ~base_formatter() {}
+        virtual ~base_formatter() = default;
     };
 
     /// \brief A class that is used for formatting numbers, currency and dates/times
