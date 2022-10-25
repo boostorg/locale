@@ -202,7 +202,7 @@ namespace boost { namespace locale { namespace util {
                     tm_updated_.tm_mday += diff;
                 } break;
                 case period::marks::first_day_of_week: ///< For example Sunday in US, Monday in France
-                default: return;
+                case invalid: return;
             }
             normalized_ = false;
         }
@@ -477,9 +477,9 @@ namespace boost { namespace locale { namespace util {
                             }
                             return 5;
                         case current: return (tm_.tm_mday - 1) / 7 + 1;
-                        default:;
                     }
-                default:;
+                    break;
+                case invalid: BOOST_ASSERT_MSG(false, "Shouldn't use 'invalid' value."); break;
             }
             return 0;
         }
@@ -509,7 +509,6 @@ namespace boost { namespace locale { namespace util {
             switch(opt) {
                 case is_gregorian: throw date_time_error("is_gregorian is not settable options for calendar");
                 case is_dst: throw date_time_error("is_dst is not settable options for calendar");
-                default:;
             }
         }
         ///
@@ -520,8 +519,8 @@ namespace boost { namespace locale { namespace util {
             switch(opt) {
                 case is_gregorian: return 1;
                 case is_dst: return tm_.tm_isdst == 1;
-                default: return 0;
-            };
+            }
+            return 0;
         }
 
         ///
@@ -563,7 +562,9 @@ namespace boost { namespace locale { namespace util {
                         case day_of_week_in_month: ///< Original number of the day of the week in month.
                             tm_updated_.tm_mday += difference * 7;
                             break;
-                        default:; // Not all values are adjustable
+                        case era:
+                        case period::marks::first_day_of_week:
+                        case invalid: break; // Not adjustable and ignored
                     }
                     normalized_ = false;
                     normalize();
@@ -584,7 +585,6 @@ namespace boost { namespace locale { namespace util {
                     set_value(m, value + cur_min);
                     normalize();
                 }
-                default:;
             }
         }
 
@@ -652,8 +652,10 @@ namespace boost { namespace locale { namespace util {
                 case hour_12: return static_cast<int>((other->time_ - time_) / 3600);
                 case minute: return static_cast<int>((other->time_ - time_) / 60);
                 case second: return static_cast<int>(other->time_ - time_);
-                default: return 0;
-            };
+                case invalid:
+                case period::marks::first_day_of_week: break; // Not adjustable
+            }
+            return 0;
         }
 
         ///

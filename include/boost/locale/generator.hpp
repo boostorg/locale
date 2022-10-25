@@ -28,47 +28,71 @@ namespace locale {
     class localization_backend;
     class localization_backend_manager;
 
-    constexpr uint32_t nochar_facet = 0;        ///< Unspecified character category for character independent facets
-    constexpr uint32_t char_facet = 1 << 0;     ///< 8-bit character facets
-    constexpr uint32_t wchar_t_facet = 1 << 1;  ///< wide character facets
-    constexpr uint32_t char16_t_facet = 1 << 2; ///< C++11 char16_t facets
-    constexpr uint32_t char32_t_facet = 1 << 3; ///< C++11 char32_t facets
-
-    constexpr uint32_t character_first_facet = char_facet;    ///< First facet specific for character type
-    constexpr uint32_t character_last_facet = char32_t_facet; ///< Last facet specific for character type
-    constexpr uint32_t all_characters = 0xFFFF;               ///< Special mask -- generate all
-
-    typedef uint32_t character_facet_type; ///< type that specifies the character type that locales can be generated for
-
-    constexpr uint32_t convert_facet = 1 << 0;    ///< Generate conversion facets
-    constexpr uint32_t collation_facet = 1 << 1;  ///< Generate collation facets
-    constexpr uint32_t formatting_facet = 1 << 2; ///< Generate numbers, currency, date-time formatting facets
-    constexpr uint32_t parsing_facet = 1 << 3;    ///< Generate numbers, currency, date-time formatting facets
-    constexpr uint32_t message_facet = 1 << 4;    ///< Generate message facets
-    constexpr uint32_t codepage_facet = 1
-                                        << 5; ///< Generate character set conversion facets (derived from std::codecvt)
-    constexpr uint32_t boundary_facet = 1 << 6; ///< Generate boundary analysis facet
-
-    constexpr uint32_t per_character_facet_first = convert_facet; ///< First facet specific for character
-    constexpr uint32_t per_character_facet_last = boundary_facet; ///< Last facet specific for character
-
-    constexpr uint32_t calendar_facet = 1 << 16;    ///< Generate boundary analysis facet
-    constexpr uint32_t information_facet = 1 << 17; ///< Generate general locale information facet
-
-    constexpr uint32_t non_character_facet_first = calendar_facet;   ///< First character independent facet
-    constexpr uint32_t non_character_facet_last = information_facet; ///< Last character independent facet
-
-    constexpr uint32_t all_categories = 0xFFFFFFFFu; ///< Generate all of them
-
-    typedef uint32_t locale_category_type; ///< a type used for more fine grained generation of facets
-
+    /// Type that specifies the character type that locales can be generated for
     ///
+    /// Supports bitwise OR and bitwise AND (the latter returning if the type is set)
+    enum class char_facet_t : uint32_t {
+        nochar = 0,       ///< Unspecified character category for character independent facets
+        char_f = 1 << 0,  ///< 8-bit character facets
+        wchar_f = 1 << 1, ///< wide character facets
+#ifdef BOOST_LOCALE_ENABLE_CHAR16_T
+        char16_f = 1 << 2, ///< C++11 char16_t facets
+#endif
+#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
+        char32_f = 1 << 3, ///< C++11 char32_t facets
+#endif
+    };
+    typedef BOOST_DEPRECATED("Use char_facet_t") char_facet_t character_facet_type;
+
+    /// First facet specific for character type
+    constexpr char_facet_t character_facet_first = char_facet_t::char_f;
+    /// Last facet specific for character type
+    constexpr char_facet_t character_facet_last =
+#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
+      char_facet_t::char32_f;
+#elif defined BOOST_LOCALE_ENABLE_CHAR16_T
+      char_facet_t::char16_f;
+#else
+      char_facet_t::wchar_f;
+#endif
+    /// Special mask -- generate all
+    constexpr char_facet_t all_characters = char_facet_t(0xFFFFFFFFu);
+
+    /// Type used for more fine grained generation of facets
+    ///
+    /// Supports bitwise OR and bitwise AND (the latter returning if the type is set)
+    enum class category_t : uint32_t {
+        convert = 1 << 0,      ///< Generate conversion facets
+        collation = 1 << 1,    ///< Generate collation facets
+        formatting = 1 << 2,   ///< Generate numbers, currency, date-time formatting facets
+        parsing = 1 << 3,      ///< Generate numbers, currency, date-time formatting facets
+        message = 1 << 4,      ///< Generate message facets
+        codepage = 1 << 5,     ///< Generate character set conversion facets (derived from std::codecvt)
+        boundary = 1 << 6,     ///< Generate boundary analysis facet
+        calendar = 1 << 16,    ///< Generate boundary analysis facet
+        information = 1 << 17, ///< Generate general locale information facet
+    };
+    typedef BOOST_DEPRECATED("Use category_t") category_t locale_category_type;
+
+    /// First facet specific for character
+    constexpr category_t per_character_facet_first = category_t::convert;
+    /// Last facet specific for character
+    constexpr category_t per_character_facet_last = category_t::boundary;
+    /// First character independent facet
+    constexpr category_t non_character_facet_first = category_t::calendar;
+    /// Last character independent facet
+    constexpr category_t non_character_facet_last = category_t::information;
+    /// First category facet
+    constexpr category_t category_first = category_t::convert;
+    /// Last category facet
+    constexpr category_t category_last = category_t::information;
+    /// Generate all of them
+    constexpr category_t all_categories = category_t(0xFFFFFFFFu);
+
     /// \brief the major class used for locale generation
     ///
     /// This class is used for specification of all parameters required for locale generation and
     /// caching. This class const member functions are thread safe if locale class implementation is thread safe.
-    ///
-
     class BOOST_LOCALE_DECL generator {
     public:
         ///
@@ -85,20 +109,20 @@ namespace locale {
         ///
         /// Set types of facets that should be generated, default all
         ///
-        void categories(locale_category_type cats);
+        void categories(category_t cats);
         ///
         /// Get types of facets that should be generated, default all
         ///
-        locale_category_type categories() const;
+        category_t categories() const;
 
         ///
         /// Set the characters type for which the facets should be generated, default all supported
         ///
-        void characters(character_facet_type chars);
+        void characters(char_facet_t chars);
         ///
         /// Get the characters type for which the facets should be generated, default all supported
         ///
-        character_facet_type characters() const;
+        char_facet_t characters() const;
 
         ///
         /// Add a new domain of messages that would be generated. It should be set in order to enable
@@ -216,6 +240,41 @@ namespace locale {
         hold_ptr<data> d;
     };
 
+    constexpr char_facet_t operator|(const char_facet_t lhs, const char_facet_t rhs)
+    {
+        return char_facet_t(static_cast<uint32_t>(lhs) | static_cast<uint32_t>(rhs));
+    }
+    constexpr char_facet_t operator^(const char_facet_t lhs, const char_facet_t rhs)
+    {
+        return char_facet_t(static_cast<uint32_t>(lhs) ^ static_cast<uint32_t>(rhs));
+    }
+    constexpr bool operator&(const char_facet_t lhs, const char_facet_t rhs)
+    {
+        return (static_cast<uint32_t>(lhs) & static_cast<uint32_t>(rhs)) != 0u;
+    }
+    // Prefix increment: Return the next value
+    BOOST_CXX14_CONSTEXPR inline char_facet_t& operator++(char_facet_t& v)
+    {
+        return v = char_facet_t(static_cast<uint32_t>(v) ? static_cast<uint32_t>(v) << 1 : 1);
+    }
+
+    constexpr category_t operator|(const category_t lhs, const category_t rhs)
+    {
+        return category_t(static_cast<uint32_t>(lhs) | static_cast<uint32_t>(rhs));
+    }
+    constexpr category_t operator^(const category_t lhs, const category_t rhs)
+    {
+        return category_t(static_cast<uint32_t>(lhs) ^ static_cast<uint32_t>(rhs));
+    }
+    constexpr bool operator&(const category_t lhs, const category_t rhs)
+    {
+        return (static_cast<uint32_t>(lhs) & static_cast<uint32_t>(rhs)) != 0u;
+    }
+    // Prefix increment: Return the next value
+    BOOST_CXX14_CONSTEXPR inline category_t& operator++(category_t& v)
+    {
+        return v = category_t(static_cast<uint32_t>(v) << 1);
+    }
 } // namespace locale
 } // namespace boost
 #ifdef BOOST_MSVC

@@ -144,20 +144,18 @@ namespace boost { namespace locale { namespace impl_std {
             }
         }
 
-        std::locale install(const std::locale& base,
-                            locale_category_type category,
-                            character_facet_type type = nochar_facet) override
+        std::locale install(const std::locale& base, category_t category, char_facet_t type) override
         {
             prepare_data();
 
             switch(category) {
-                case convert_facet: return create_convert(base, name_, type, utf_mode_);
-                case collation_facet: return create_collate(base, name_, type, utf_mode_);
-                case formatting_facet: return create_formatting(base, name_, type, utf_mode_);
-                case parsing_facet: return create_parsing(base, name_, type, utf_mode_);
-                case codepage_facet: return create_codecvt(base, name_, type, utf_mode_);
-                case calendar_facet: return util::install_gregorian_calendar(base, data_.country);
-                case message_facet: {
+                case category_t::convert: return create_convert(base, name_, type, utf_mode_);
+                case category_t::collation: return create_collate(base, name_, type, utf_mode_);
+                case category_t::formatting: return create_formatting(base, name_, type, utf_mode_);
+                case category_t::parsing: return create_parsing(base, name_, type, utf_mode_);
+                case category_t::codepage: return create_codecvt(base, name_, type, utf_mode_);
+                case category_t::calendar: return util::install_gregorian_calendar(base, data_.country);
+                case category_t::message: {
                     gnu_gettext::messages_info minf;
                     minf.language = data_.language;
                     minf.country = data_.country;
@@ -168,22 +166,26 @@ namespace boost { namespace locale { namespace impl_std {
                               std::back_inserter<gnu_gettext::messages_info::domains_type>(minf.domains));
                     minf.paths = paths_;
                     switch(type) {
-                        case char_facet: return std::locale(base, gnu_gettext::create_messages_facet<char>(minf));
-                        case wchar_t_facet: return std::locale(base, gnu_gettext::create_messages_facet<wchar_t>(minf));
+                        case char_facet_t::nochar: break;
+                        case char_facet_t::char_f:
+                            return std::locale(base, gnu_gettext::create_messages_facet<char>(minf));
+                        case char_facet_t::wchar_f:
+                            return std::locale(base, gnu_gettext::create_messages_facet<wchar_t>(minf));
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-                        case char16_t_facet:
+                        case char_facet_t::char16_f:
                             return std::locale(base, gnu_gettext::create_messages_facet<char16_t>(minf));
 #endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-                        case char32_t_facet:
+                        case char_facet_t::char32_f:
                             return std::locale(base, gnu_gettext::create_messages_facet<char32_t>(minf));
 #endif
-                        default: return base;
                     }
+                    return base;
                 }
-                case information_facet: return util::create_info(base, in_use_id_);
-                default: return base;
+                case category_t::information: return util::create_info(base, in_use_id_);
+                case category_t::boundary: break; // Not implemented
             }
+            return base;
         }
 
     private:

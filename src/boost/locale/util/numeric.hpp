@@ -128,9 +128,9 @@ namespace boost { namespace locale { namespace util {
                 case flags::number:
                 case flags::percent:
                 case flags::spellout:
-                case flags::ordinal:
-                default: return super::do_put(out, ios, fill, val);
+                case flags::ordinal: break;
             }
+            return super::do_put(out, ios, fill, val);
         }
 
         virtual iter_type
@@ -358,9 +358,9 @@ namespace boost { namespace locale { namespace util {
                 case flags::number:
                 case flags::percent:
                 case flags::spellout:
-                case flags::ordinal:
-                default: return super::do_get(in, end, ios, err, val);
+                case flags::ordinal: break;
             }
+            return super::do_get(in, end, ios, err, val);
         }
 
         template<bool intl>

@@ -14,15 +14,15 @@ namespace boost { namespace locale { namespace impl_win {
 
     class winlocale;
 
-    std::locale create_convert(const std::locale& in, const winlocale& lc, character_facet_type type);
+    std::locale create_convert(const std::locale& in, const winlocale& lc, char_facet_t type);
 
-    std::locale create_collate(const std::locale& in, const winlocale& lc, character_facet_type type);
+    std::locale create_collate(const std::locale& in, const winlocale& lc, char_facet_t type);
 
-    std::locale create_formatting(const std::locale& in, const winlocale& lc, character_facet_type type);
+    std::locale create_formatting(const std::locale& in, const winlocale& lc, char_facet_t type);
 
-    std::locale create_parsing(const std::locale& in, const winlocale& lc, character_facet_type type);
+    std::locale create_parsing(const std::locale& in, const winlocale& lc, char_facet_t type);
 
-    std::locale create_codecvt(const std::locale& in, character_facet_type type);
+    std::locale create_codecvt(const std::locale& in, char_facet_t type);
 
 }}} // namespace boost::locale::impl_win
 

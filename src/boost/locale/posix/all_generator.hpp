@@ -18,14 +18,14 @@
 
 namespace boost { namespace locale { namespace impl_posix {
 
-    std::locale create_convert(const std::locale& in, std::shared_ptr<locale_t> lc, character_facet_type type);
+    std::locale create_convert(const std::locale& in, std::shared_ptr<locale_t> lc, char_facet_t type);
 
-    std::locale create_collate(const std::locale& in, std::shared_ptr<locale_t> lc, character_facet_type type);
+    std::locale create_collate(const std::locale& in, std::shared_ptr<locale_t> lc, char_facet_t type);
 
-    std::locale create_formatting(const std::locale& in, std::shared_ptr<locale_t> lc, character_facet_type type);
+    std::locale create_formatting(const std::locale& in, std::shared_ptr<locale_t> lc, char_facet_t type);
 
-    std::locale create_parsing(const std::locale& in, std::shared_ptr<locale_t> lc, character_facet_type type);
-    std::locale create_codecvt(const std::locale& in, const std::string& encoding, character_facet_type type);
+    std::locale create_parsing(const std::locale& in, std::shared_ptr<locale_t> lc, char_facet_t type);
+    std::locale create_codecvt(const std::locale& in, const std::string& encoding, char_facet_t type);
 
 }}} // namespace boost::locale::impl_posix
 

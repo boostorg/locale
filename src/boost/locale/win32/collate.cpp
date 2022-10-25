@@ -18,22 +18,19 @@ namespace boost { namespace locale { namespace impl_win {
     class utf8_collator : public collator<char> {
     public:
         utf8_collator(winlocale lc, size_t refs = 0) : collator<char>(refs), lc_(lc) {}
-        int do_compare(collator_base::level_type level,
-                       const char* lb,
-                       const char* le,
-                       const char* rb,
-                       const char* re) const override
+        int
+        do_compare(collate_level level, const char* lb, const char* le, const char* rb, const char* re) const override
         {
             std::wstring l = conv::to_utf<wchar_t>(lb, le, "UTF-8");
             std::wstring r = conv::to_utf<wchar_t>(rb, re, "UTF-8");
             return wcscoll_l(level, l.c_str(), l.c_str() + l.size(), r.c_str(), r.c_str() + r.size(), lc_);
         }
-        long do_hash(collator_base::level_type level, const char* b, const char* e) const override
+        long do_hash(collate_level level, const char* b, const char* e) const override
         {
             std::string key = do_transform(level, b, e);
             return gnu_gettext::pj_winberger_hash_function(key.c_str(), key.c_str() + key.size());
         }
-        std::string do_transform(collator_base::level_type level, const char* b, const char* e) const override
+        std::string do_transform(collate_level level, const char* b, const char* e) const override
         {
             std::wstring tmp = conv::to_utf<wchar_t>(b, e, "UTF-8");
             std::wstring wkey = wcsxfrm_l(level, tmp.c_str(), tmp.c_str() + tmp.size(), lc_);
@@ -68,7 +65,7 @@ namespace boost { namespace locale { namespace impl_win {
     public:
         typedef std::collate<wchar_t> wfacet;
         utf16_collator(winlocale lc, size_t refs = 0) : collator<wchar_t>(refs), lc_(lc) {}
-        int do_compare(collator_base::level_type level,
+        int do_compare(collate_level level,
                        const wchar_t* lb,
                        const wchar_t* le,
                        const wchar_t* rb,
@@ -76,14 +73,14 @@ namespace boost { namespace locale { namespace impl_win {
         {
             return wcscoll_l(level, lb, le, rb, re, lc_);
         }
-        long do_hash(collator_base::level_type level, const wchar_t* b, const wchar_t* e) const override
+        long do_hash(collate_level level, const wchar_t* b, const wchar_t* e) const override
         {
             std::wstring key = do_transform(level, b, e);
             const char* begin = reinterpret_cast<const char*>(key.c_str());
             const char* end = begin + key.size() * sizeof(wchar_t);
             return gnu_gettext::pj_winberger_hash_function(begin, end);
         }
-        std::wstring do_transform(collator_base::level_type level, const wchar_t* b, const wchar_t* e) const override
+        std::wstring do_transform(collate_level level, const wchar_t* b, const wchar_t* e) const override
         {
             return wcsxfrm_l(level, b, e, lc_);
         }
@@ -92,17 +89,31 @@ namespace boost { namespace locale { namespace impl_win {
         winlocale lc_;
     };
 
-    std::locale create_collate(const std::locale& in, const winlocale& lc, character_facet_type type)
+    std::locale create_collate(const std::locale& in, const winlocale& lc, char_facet_t type)
     {
         if(lc.is_c()) {
             switch(type) {
-                case char_facet: return std::locale(in, new std::collate_byname<char>("C"));
-                case wchar_t_facet: return std::locale(in, new std::collate_byname<wchar_t>("C"));
+                case char_facet_t::nochar: break;
+                case char_facet_t::char_f: return std::locale(in, new std::collate_byname<char>("C"));
+                case char_facet_t::wchar_f: return std::locale(in, new std::collate_byname<wchar_t>("C"));
+#ifdef BOOST_LOCALE_ENABLE_CHAR16_T
+                case char_facet_t::char16_f: return std::locale(in, new collate_byname<char16_t>("C"));
+#endif
+#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
+                case char_facet_t::char32_f: return std::locale(in, new collate_byname<char32_t>("C"));
+#endif
             }
         } else {
             switch(type) {
-                case char_facet: return std::locale(in, new utf8_collator(lc));
-                case wchar_t_facet: return std::locale(in, new utf16_collator(lc));
+                case char_facet_t::nochar: break;
+                case char_facet_t::char_f: return std::locale(in, new utf8_collator(lc));
+                case char_facet_t::wchar_f: return std::locale(in, new utf16_collator(lc));
+#ifdef BOOST_LOCALE_ENABLE_CHAR16_T
+                case char_facet_t::char16_f: break;
+#endif
+#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
+                case char_facet_t::char32_f: break;
+#endif
             }
         }
         return in;
