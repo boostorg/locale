@@ -94,7 +94,7 @@ namespace boost { namespace locale {
     class abstract_calendar {
     public:
         /// Type that defines how to fetch the value
-        typedef enum {
+        enum value_type {
             absolute_minimum, ///< Absolute possible minimum for the value, for example for day is 1
             actual_minimum,   ///< Actual minimal value for this period.
             greatest_minimum, ///< Maximal minimum value that can be for this period
@@ -103,19 +103,19 @@ namespace boost { namespace locale {
                               ///< day it is 28
             actual_maximum,   ///< Actual maximum, for it can be 28, 29, 30, 31 for day according to current month
             absolute_maximum, ///< Maximal value, for Gregorian day it would be 31.
-        } value_type;
+        };
 
         /// A way to update the value
-        typedef enum {
+        enum update_type {
             move, ///< Change the value up or down effecting others for example 1990-12-31 + 1 day = 1991-01-01
             roll, ///< Change the value up or down not effecting others for example 1990-12-31 + 1 day = 1990-12-01
-        } update_type;
+        };
 
         /// Information about calendar
-        typedef enum {
+        enum calendar_option_type {
             is_gregorian, ///< Check if the calendar is Gregorian
             is_dst        ///< Check if the current time is in daylight time savings
-        } calendar_option_type;
+        };
 
         /// Make a polymorphic copy of the calendar
         virtual abstract_calendar* clone() const = 0;

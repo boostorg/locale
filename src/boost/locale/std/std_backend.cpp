@@ -85,28 +85,28 @@ namespace boost { namespace locale { namespace impl_std {
                         && win_codepage == conv::impl::encoding_to_windows_codepage(data_.encoding.c_str()))
                     name_ = win_name;
 #endif
-                utf_mode_ = utf8_none;
+                utf_mode_ = utf8_support::none;
             } else {
                 if(loadable(lid)) {
                     name_ = lid;
-                    utf_mode_ = utf8_native_with_wide;
+                    utf_mode_ = utf8_support::native_with_wide;
 #if defined(BOOST_WINDOWS)
                     // This isn't fully correct:
                     // It will treat the 2-Byte wchar_t as UTF-16 encoded while it may be UCS-2
                     // std::basic_filebuf explicitely disallows using suche multi-byte codecvts
                     // but it works in practice so far, so use it instead of failing for codepoints above U+FFFF
-                    utf_mode_ = utf8_from_wide;
+                    utf_mode_ = utf8_support::from_wide;
 #endif
                 }
 #if defined(BOOST_WINDOWS)
                 else if(loadable(win_name))
                 {
                     name_ = win_name;
-                    utf_mode_ = utf8_from_wide;
+                    utf_mode_ = utf8_support::from_wide;
                 }
 #endif
                 else
-                    utf_mode_ = utf8_none;
+                    utf_mode_ = utf8_support::none;
             }
         }
 

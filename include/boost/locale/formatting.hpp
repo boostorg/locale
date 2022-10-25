@@ -31,7 +31,7 @@ namespace boost { namespace locale {
 
         /// Formatting flags, each one of them has corresponding manipulation
         /// in namespace \a as
-        typedef enum {
+        enum display_flags_type {
             posix = 0,
             number = 1,
             currency = 2,
@@ -67,18 +67,18 @@ namespace boost { namespace locale {
 
             datetime_flags_mask = date_flags_mask | time_flags_mask
 
-        } display_flags_type;
+        };
 
         /// Special string patterns that can be used for text formatting
-        typedef enum {
+        enum pattern_type {
             datetime_pattern, ///< strftime like formatting
             time_zone_id      ///< time zone name
-        } pattern_type;
+        };
 
         /// Special integer values that can be used for formatting
-        typedef enum {
+        enum value_type {
             domain_id ///< Domain code - for message formatting
-        } value_type;
+        };
 
     } // namespace flags
 

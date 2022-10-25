@@ -101,7 +101,7 @@ namespace boost { namespace locale { namespace impl_std {
         switch(type) {
             case char_facet_t::nochar: break;
             case char_facet_t::char_f: {
-                if(utf == utf8_native_with_wide || utf == utf8_from_wide) {
+                if(utf == utf8_support::native_with_wide || utf == utf8_support::from_wide) {
                     std::locale base(std::locale::classic(), new std::ctype_byname<wchar_t>(locale_name.c_str()));
                     return std::locale(in, new utf8_converter(base));
                 }

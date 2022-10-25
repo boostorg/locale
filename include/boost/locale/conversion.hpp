@@ -27,13 +27,13 @@ namespace boost { namespace locale {
     class converter_base {
     public:
         /// The flag used for facet - the type of operation to perform
-        typedef enum {
+        enum conversion_type {
             normalization, ///< Apply Unicode normalization on the text
             upper_case,    ///< Convert text to upper case
             lower_case,    ///< Convert text to lower case
             case_folding,  ///< Fold case in the text
             title_case     ///< Convert text to title case
-        } conversion_type;
+        };
     };
 
     template<typename CharType>

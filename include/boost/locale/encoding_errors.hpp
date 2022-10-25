@@ -38,11 +38,11 @@ namespace boost { namespace locale { namespace conv {
     };
 
     /// enum that defines conversion policy
-    typedef enum {
+    enum method_type {
         skip = 0,             ///< Skip illegal/unconvertible characters
         stop = 1,             ///< Stop conversion and throw conversion_error
         default_method = skip ///< Default method - skip
-    } method_type;
+    };
 
     /// @}
 

@@ -19,9 +19,9 @@ namespace boost { namespace locale { namespace impl_std {
     std::locale
     create_codecvt(const std::locale& in, const std::string& locale_name, char_facet_t type, utf8_support utf)
     {
-        if(utf == utf8_from_wide) {
+        if(utf == utf8_support::from_wide)
             return util::create_utf8_codecvt(in, type);
-        }
+
         switch(type) {
             case char_facet_t::nochar: break;
             case char_facet_t::char_f: return codecvt_bychar<char>(in, locale_name);
