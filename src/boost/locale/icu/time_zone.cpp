@@ -56,13 +56,11 @@ namespace boost { namespace locale { namespace impl_icu {
 
 #else
 
-    //
     // This is a workaround for an ICU timezone detection bug.
     // It is \b very ICU specific and should not be used
     // in general. It is also designed to work only on
     // specific patforms: Linux, BSD and Apple, where this bug may actually
     // occur
-    //
     namespace {
 
         // Under BSD, Linux and Mac OS X dirent has normal size
@@ -166,7 +164,6 @@ namespace boost { namespace locale { namespace impl_icu {
             return r;
         }
 
-        //
         // Using pthread as:
         // - This bug is relevant for only Linux, BSD, Mac OS X and
         //  pthreads are native threading API
@@ -174,7 +171,6 @@ namespace boost { namespace locale { namespace impl_icu {
         //   more recent ICU versions (so TLS would not be needed)
         //
         // This the dependency on Boost.Thread is eliminated
-        //
 
         pthread_once_t init_tz = PTHREAD_ONCE_INIT;
         std::string default_time_zone_name;

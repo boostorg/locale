@@ -16,19 +16,15 @@ namespace boost { namespace locale {
     /// \addtogroup message
     /// @{
 
-    ///
     /// \brief This namespace holds classes that provide GNU Gettext message catalogs support.
-    ///
     namespace gnu_gettext {
 
-        ///
         /// \brief This structure holds all information required for creating gnu-gettext message catalogs,
         ///
         /// The user is expected to set its parameters to load these catalogs correctly. This structure
         /// also allows providing functions for charset conversion. Note, you need to provide them,
         /// so this structure is not useful for wide characters without subclassing and it will also
         /// ignore gettext catalogs that use a charset different from \a encoding.
-        ///
         struct messages_info {
             messages_info() : language("C"), locale_category("LC_MESSAGES") {}
 
@@ -49,13 +45,12 @@ namespace boost { namespace locale {
             struct domain {
                 std::string name;     ///< The name of the domain
                 std::string encoding; ///< The character encoding for the domain
-                domain() {}
-                ///
+                domain() = default;
+
                 /// Create a domain object from the name that can hold an encoding after symbol "/"
                 /// such that if n is "hello/cp1255" then the name would be "hello" and "encoding" would
                 /// be "cp1255" and if n is "hello" then the name would be the same but encoding would be
                 /// "UTF-8"
-                ///
                 domain(const std::string& n)
                 {
                     size_t pos = n.find('/');
@@ -68,13 +63,9 @@ namespace boost { namespace locale {
                     }
                 }
 
-                ///
                 /// Check whether two objects are equivalent, only names are compared, encoding is ignored
-                ///
                 bool operator==(const domain& other) const { return name == other.name; }
-                ///
                 /// Check whether two objects are distinct, only names are compared, encoding is ignored
-                ///
                 bool operator!=(const domain& other) const { return !(*this == other); }
             };
 
@@ -85,7 +76,6 @@ namespace boost { namespace locale {
             std::vector<std::string> paths; ///< Paths to search files in. Under MS Windows it uses encoding
                                             ///< parameter to convert them to wide OS specific paths.
 
-            ///
             /// The callback for custom file system support. This callback should read the file named \a file_name
             /// encoded in \a encoding character set into std::vector<char> and return it.
             ///
@@ -94,22 +84,16 @@ namespace boost { namespace locale {
             ///
             /// \note The user should support only the encodings the locales are created for. So if the user
             /// uses only one encoding or the file system is encoding agnostic, he may ignore the \a encoding parameter.
-            ///
             typedef std::function<std::vector<char>(const std::string& file_name, const std::string& encoding)>
               callback_type;
 
-            ///
             /// The callback for handling custom file systems, if it is empty, the real OS file-system
             /// is being used.
-            ///
             callback_type callback;
         };
 
-        ///
         /// Create a message_format facet using GNU Gettext catalogs. It uses \a info structure to get
         /// information about where to read them from and uses it for character set conversion (if needed)
-        ///
-
         template<typename CharType>
         message_format<CharType>* create_messages_facet(const messages_info& info);
 

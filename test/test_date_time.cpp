@@ -33,6 +33,38 @@
     ss << (t);            \
     test_eq_impl(ss.str(), X, #t "==" #X, __LINE__)
 
+// Very simple container for a part of the tests. Counts its instances
+struct mock_calendar : public boost::locale::abstract_calendar {
+    using period_mark = boost::locale::period::marks::period_mark;
+
+    mock_calendar() : time(0) { ++num_instances; }
+    mock_calendar(const mock_calendar& other) : time(other.time) { ++num_instances; }
+    ~mock_calendar() { --num_instances; }
+
+    abstract_calendar* clone() const override { return new mock_calendar(*this); }
+    void set_value(period_mark, int) override {}                        // LCOV_EXCL_LINE
+    void normalize() override {}                                        // LCOV_EXCL_LINE
+    int get_value(period_mark, value_type) const override { return 0; } // LCOV_EXCL_LINE
+    void set_time(const boost::locale::posix_time&) override {}         // LCOV_EXCL_LINE
+    boost::locale::posix_time get_time() const override { return {}; }  // LCOV_EXCL_LINE
+    double get_time_ms() const override { return time; }
+    void set_option(calendar_option_type, int) override {}                             // LCOV_EXCL_LINE
+    int get_option(calendar_option_type) const override { return 0; }                  // LCOV_EXCL_LINE
+    void adjust_value(period_mark, update_type, int) override {}                       // LCOV_EXCL_LINE
+    int difference(const abstract_calendar&, period_mark) const override { return 0; } // LCOV_EXCL_LINE
+    void set_timezone(const std::string&) override {}
+    std::string get_timezone() const override { return "mock TZ"; }
+    bool same(const abstract_calendar*) const override { return false; } // LCOV_EXCL_LINE
+
+    static int num_instances;
+    double time;
+};
+int mock_calendar::num_instances = 0;
+struct mock_calendar_facet : boost::locale::calendar_facet {
+    boost::locale::abstract_calendar* create_calendar() const { return proto_cal.clone(); }
+    mock_calendar proto_cal;
+};
+
 void test_main(int /*argc*/, char** /*argv*/)
 {
     using namespace boost::locale;
@@ -51,6 +83,51 @@ void test_main(int /*argc*/, char** /*argv*/)
       "winapi",
 #endif
     };
+    {
+        auto* cal_facet = new mock_calendar_facet;
+        std::locale old_loc = std::locale::global(std::locale(std::locale(), cal_facet));
+        mock_calendar::num_instances = 0;
+        {
+            cal_facet->proto_cal.time = 42 * 1e3;
+            date_time t1;
+            TEST_EQ(t1.time(), 42);
+            TEST_EQ(mock_calendar::num_instances, 1);
+            cal_facet->proto_cal.time = 99 * 1e3;
+            date_time t2;
+            TEST_EQ(t2.time(), 99);
+            TEST_EQ(mock_calendar::num_instances, 2);
+            // Copy construct
+            date_time t3 = t1;
+            TEST_EQ(t1.time(), 42);
+            TEST_EQ(t2.time(), 99);
+            TEST_EQ(t3.time(), 42);
+            TEST_EQ(mock_calendar::num_instances, 3);
+            // Copy assign
+            t3 = t2;
+            TEST_EQ(t3.time(), 99);
+            TEST_EQ(mock_calendar::num_instances, 3); // No new
+            {
+                // Move construct
+                date_time t4 = std::move(t1);
+                TEST_EQ(t4.time(), 42);
+                TEST_EQ(mock_calendar::num_instances, 3); // No new
+                // Move assign
+                t2 = std::move(t4);
+                TEST_EQ(t2.time(), 42);
+                TEST_LE(mock_calendar::num_instances, 3); // maybe destroy old t2
+            }
+            // Unchanged after t4 (or old t2) is destroyed
+            TEST_EQ(t2.time(), 42);
+            TEST_EQ(mock_calendar::num_instances, 2);
+            // Self move, via reference to avoid triggering a compiler warning
+            date_time& t2_ref = t2;
+            t2_ref = std::move(t2);
+            TEST_EQ(t2.time(), 42);
+            TEST_EQ(mock_calendar::num_instances, 2);
+        }
+        TEST_EQ(mock_calendar::num_instances, 0); // No leaks
+        std::locale::global(old_loc);
+    }
     for(int type = 0; type < int(sizeof(def) / sizeof(def[0])); type++) {
         boost::locale::localization_backend_manager tmp_backend = boost::locale::localization_backend_manager::global();
         tmp_backend.select(def[type]);

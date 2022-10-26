@@ -26,8 +26,9 @@ namespace boost { namespace locale { namespace conv { namespace impl {
         {
             close();
             try {
-                cvt_from_.reset(new from_type(charset, how == skip ? impl_icu::cvt_skip : impl_icu::cvt_stop));
-                cvt_to_.reset(new to_type("UTF-8", how == skip ? impl_icu::cvt_skip : impl_icu::cvt_stop));
+                using impl_icu::cpcvt_type;
+                cvt_from_.reset(new from_type(charset, how == skip ? cpcvt_type::skip : cpcvt_type::stop));
+                cvt_to_.reset(new to_type("UTF-8", how == skip ? cpcvt_type::skip : cpcvt_type::stop));
             } catch(const std::exception& /*e*/) {
                 close();
                 return false;
@@ -65,8 +66,9 @@ namespace boost { namespace locale { namespace conv { namespace impl {
         {
             close();
             try {
-                cvt_from_.reset(new from_type("UTF-8", how == skip ? impl_icu::cvt_skip : impl_icu::cvt_stop));
-                cvt_to_.reset(new to_type(charset, how == skip ? impl_icu::cvt_skip : impl_icu::cvt_stop));
+                using impl_icu::cpcvt_type;
+                cvt_from_.reset(new from_type("UTF-8", how == skip ? cpcvt_type::skip : cpcvt_type::stop));
+                cvt_to_.reset(new to_type(charset, how == skip ? cpcvt_type::skip : cpcvt_type::stop));
             } catch(const std::exception& /*e*/) {
                 close();
                 return false;
@@ -102,8 +104,9 @@ namespace boost { namespace locale { namespace conv { namespace impl {
         {
             close();
             try {
-                cvt_from_.reset(new from_type(from_charset, how == skip ? impl_icu::cvt_skip : impl_icu::cvt_stop));
-                cvt_to_.reset(new to_type(to_charset, how == skip ? impl_icu::cvt_skip : impl_icu::cvt_stop));
+                using impl_icu::cpcvt_type;
+                cvt_from_.reset(new from_type(from_charset, how == skip ? cpcvt_type::skip : cpcvt_type::stop));
+                cvt_to_.reset(new to_type(to_charset, how == skip ? cpcvt_type::skip : cpcvt_type::stop));
             } catch(const std::exception& /*e*/) {
                 close();
                 return false;

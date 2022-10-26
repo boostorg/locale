@@ -42,7 +42,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
         }
     }
 
-    std::string normalize_encoding(const char* encoding);
+    BOOST_LOCALE_DECL std::string normalize_encoding(const char* encoding);
 
     inline int compare_encodings(const char* l, const char* r)
     {
@@ -56,42 +56,39 @@ namespace boost { namespace locale { namespace conv { namespace impl {
     class converter_between {
     public:
         typedef char char_type;
-
         typedef std::string string_type;
 
         virtual bool open(const char* to_charset, const char* from_charset, method_type how) = 0;
 
         virtual std::string convert(const char* begin, const char* end) = 0;
 
-        virtual ~converter_between() {}
+        virtual ~converter_between() = default;
     };
 
     template<typename CharType>
     class converter_from_utf {
     public:
         typedef CharType char_type;
-
         typedef std::basic_string<char_type> string_type;
 
         virtual bool open(const char* charset, method_type how) = 0;
 
         virtual std::string convert(const CharType* begin, const CharType* end) = 0;
 
-        virtual ~converter_from_utf() {}
+        virtual ~converter_from_utf() = default;
     };
 
     template<typename CharType>
     class converter_to_utf {
     public:
         typedef CharType char_type;
-
         typedef std::basic_string<char_type> string_type;
 
         virtual bool open(const char* charset, method_type how) = 0;
 
         virtual string_type convert(const char* begin, const char* end) = 0;
 
-        virtual ~converter_to_utf() {}
+        virtual ~converter_to_utf() = default;
     };
 }}}} // namespace boost::locale::conv::impl
 

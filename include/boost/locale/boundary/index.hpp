@@ -14,7 +14,6 @@
 #include <boost/cstdint.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 #include <algorithm>
-#include <iostream>
 #include <iterator>
 #include <locale>
 #include <memory>
@@ -71,12 +70,10 @@ namespace boost { namespace locale { namespace boundary {
             {
                 index_type result;
 
-                //
                 // Optimize for most common cases
                 //
                 // C++11 requires that string is continuous in memory and all known
                 // string implementations do this because of c_str() support.
-                //
 
                 if(linear_iterator_traits<char_type, IteratorType>::is_linear && b != e) {
                     const char_type* begin = &*b;
@@ -421,7 +418,6 @@ namespace boost { namespace locale { namespace boundary {
     template<typename BaseIterator>
     class boundary_point_index;
 
-    ///
     /// \brief This class holds an index of segments in the text range and allows to iterate over them
     ///
     /// This class is provides \ref begin() and \ref end() member functions that return bidirectional iterators
@@ -471,17 +467,14 @@ namespace boost { namespace locale { namespace boundary {
     /// - \ref boundary_point_index
     /// - \ref segment
     /// - \ref boundary_point
-    ///
 
     template<typename BaseIterator>
     class segment_index {
     public:
-        ///
         /// The type of the iterator used to iterate over the original text
-        ///
         typedef BaseIterator base_iterator;
+
 #ifdef BOOST_LOCALE_DOXYGEN
-        ///
         /// The bidirectional iterator that iterates over \ref value_type objects.
         ///
         /// -   The iterators may be invalidated by use of any non-const member function
@@ -494,23 +487,17 @@ namespace boost { namespace locale { namespace boundary {
         ///     ++p;
         ///     std::cout << t.str() << std::endl;
         ///     \endcode
-        ///
         typedef unspecified_iterator_type iterator;
-        ///
         /// \copydoc iterator
-        ///
         typedef unspecified_iterator_type const_iterator;
 #else
         typedef detail::segment_index_iterator<base_iterator> iterator;
         typedef detail::segment_index_iterator<base_iterator> const_iterator;
 #endif
-        ///
         /// The type dereferenced by the \ref iterator and \ref const_iterator. It is
         /// an object that represents selected segment.
-        ///
         typedef segment<base_iterator> value_type;
 
-        ///
         /// Default constructor.
         ///
         /// \note
@@ -518,12 +505,9 @@ namespace boost { namespace locale { namespace boundary {
         /// When this object is constructed by default it does not include a valid index, thus
         /// calling \ref begin(), \ref end() or \ref find() member functions would lead to undefined
         /// behavior
-        ///
         segment_index() : mask_(0xFFFFFFFFu), full_select_(false) {}
-        ///
         /// Create a segment_index for %boundary analysis \ref boundary_type "type" of the text
         /// in range [begin,end) using a rule \a mask for locale \a loc.
-        ///
         segment_index(boundary_type type,
                       base_iterator begin,
                       base_iterator end,
@@ -532,10 +516,8 @@ namespace boost { namespace locale { namespace boundary {
             map_(type, begin, end, loc),
             mask_(mask), full_select_(false)
         {}
-        ///
         /// Create a segment_index for %boundary analysis \ref boundary_type "type" of the text
         /// in range [begin,end) selecting all possible segments (full mask) for locale \a loc.
-        ///
         segment_index(boundary_type type,
                       base_iterator begin,
                       base_iterator end,
@@ -544,7 +526,6 @@ namespace boost { namespace locale { namespace boundary {
             mask_(0xFFFFFFFFu), full_select_(false)
         {}
 
-        ///
         /// Create a segment_index from a \ref boundary_point_index. It copies all indexing information
         /// and used default rule (all possible segments)
         ///
@@ -553,9 +534,8 @@ namespace boost { namespace locale { namespace boundary {
         /// range twice.
         ///
         /// \note \ref rule() flags are not copied
-        ///
         segment_index(const boundary_point_index<base_iterator>&);
-        ///
+
         /// Copy an index from a \ref boundary_point_index. It copies all indexing information
         /// and uses the default rule (all possible segments)
         ///
@@ -564,21 +544,17 @@ namespace boost { namespace locale { namespace boundary {
         /// range twice.
         ///
         /// \note \ref rule() flags are not copied
-        ///
         segment_index& operator=(const boundary_point_index<base_iterator>&);
 
-        ///
         /// Create a new index for %boundary analysis \ref boundary_type "type" of the text
         /// in range [begin,end) for locale \a loc.
         ///
         /// \note \ref rule() and \ref full_select() remain unchanged.
-        ///
         void map(boundary_type type, base_iterator begin, base_iterator end, const std::locale& loc = std::locale())
         {
             map_ = mapping_type(type, begin, end, loc);
         }
 
-        ///
         /// Get the \ref iterator on the beginning of the segments range.
         ///
         /// Preconditions: the segment_index should have a mapping
@@ -586,25 +562,21 @@ namespace boost { namespace locale { namespace boundary {
         /// \note
         ///
         /// The returned iterator is invalidated by access to any non-const member functions of this object
-        ///
         iterator begin() const
         {
             return iterator(true, &map_, mask_, full_select_);
         }
 
-        ///
         /// Get the \ref iterator on the ending of the segments range.
         ///
         /// Preconditions: the segment_index should have a mapping
         ///
         /// The returned iterator is invalidated by access to any non-const member functions of this object
-        ///
         iterator end() const
         {
             return iterator(false, &map_, mask_, full_select_);
         }
 
-        ///
         /// Find a first valid segment following a position \a p.
         ///
         /// If \a p is inside a valid segment this segment is selected:
@@ -620,28 +592,22 @@ namespace boost { namespace locale { namespace boundary {
         /// to the text in the mapped range.
         ///
         /// The returned iterator is invalidated by access to any non-const member functions of this object
-        ///
         iterator find(base_iterator p) const
         {
             return iterator(p, &map_, mask_, full_select_);
         }
 
-        ///
         /// Get the mask of rules that are used
-        ///
         rule_type rule() const
         {
             return mask_;
         }
-        ///
         /// Set the mask of rules that are used
-        ///
         void rule(rule_type v)
         {
             mask_ = v;
         }
 
-        ///
         /// Get the full_select property value -  should segment include in the range
         /// values that not belong to specific \ref rule() or not.
         ///
@@ -652,14 +618,11 @@ namespace boost { namespace locale { namespace boundary {
         /// because "How\n" is selected %as sentence by a rule spits the text by line feed. If full_select()
         /// is true the returned segments are "Hello! ", "How\nare you?" where "How\n" is joined with the
         /// following part "are you?"
-        ///
-
         bool full_select() const
         {
             return full_select_;
         }
 
-        ///
         /// Set the full_select property value -  should segment include in the range
         /// values that not belong to specific \ref rule() or not.
         ///
@@ -670,8 +633,6 @@ namespace boost { namespace locale { namespace boundary {
         /// because "How\n" is selected %as sentence by a rule spits the text by line feed. If full_select()
         /// is true the returned segments are "Hello! ", "How\nare you?" where "How\n" is joined with the
         /// following part "are you?"
-        ///
-
         void full_select(bool v)
         {
             full_select_ = v;
@@ -685,7 +646,6 @@ namespace boost { namespace locale { namespace boundary {
         bool full_select_;
     };
 
-    ///
     /// \brief This class holds an index of \ref boundary_point "boundary points" and allows iterating
     /// over them.
     ///
@@ -730,17 +690,13 @@ namespace boost { namespace locale { namespace boundary {
     /// - \ref segment_index
     /// - \ref boundary_point
     /// - \ref segment
-    ///
-
     template<typename BaseIterator>
     class boundary_point_index {
     public:
-        ///
         /// The type of the iterator used to iterate over the original text
-        ///
         typedef BaseIterator base_iterator;
+
 #ifdef BOOST_LOCALE_DOXYGEN
-        ///
         /// The bidirectional iterator that iterates over \ref value_type objects.
         ///
         /// -   The iterators may be invalidated by use of any non-const member function
@@ -755,21 +711,16 @@ namespace boost { namespace locale { namespace boundary {
         ///     \endcode
         ///
         typedef unspecified_iterator_type iterator;
-        ///
         /// \copydoc iterator
-        ///
         typedef unspecified_iterator_type const_iterator;
 #else
         typedef detail::boundary_point_index_iterator<base_iterator> iterator;
         typedef detail::boundary_point_index_iterator<base_iterator> const_iterator;
 #endif
-        ///
         /// The type dereferenced by the \ref iterator and \ref const_iterator. It is
         /// an object that represents the selected \ref boundary_point "boundary point".
-        ///
         typedef boundary_point<base_iterator> value_type;
 
-        ///
         /// Default constructor.
         ///
         /// \note
@@ -777,13 +728,10 @@ namespace boost { namespace locale { namespace boundary {
         /// When this object is constructed by default it does not include a valid index, thus
         /// calling \ref begin(), \ref end() or \ref find() member functions would lead to undefined
         /// behavior
-        ///
         boundary_point_index() : mask_(0xFFFFFFFFu) {}
 
-        ///
         /// Create a segment_index for %boundary analysis \ref boundary_type "type" of the text
         /// in range [begin,end) using a rule \a mask for locale \a loc.
-        ///
         boundary_point_index(boundary_type type,
                              base_iterator begin,
                              base_iterator end,
@@ -792,10 +740,8 @@ namespace boost { namespace locale { namespace boundary {
             map_(type, begin, end, loc),
             mask_(mask)
         {}
-        ///
         /// Create a segment_index for %boundary analysis \ref boundary_type "type" of the text
         /// in range [begin,end) selecting all possible %boundary points (full mask) for locale \a loc.
-        ///
         boundary_point_index(boundary_type type,
                              base_iterator begin,
                              base_iterator end,
@@ -804,7 +750,6 @@ namespace boost { namespace locale { namespace boundary {
             mask_(0xFFFFFFFFu)
         {}
 
-        ///
         /// Create a boundary_point_index from a \ref segment_index. It copies all indexing information
         /// and uses the default rule (all possible %boundary points)
         ///
@@ -813,9 +758,7 @@ namespace boost { namespace locale { namespace boundary {
         /// range twice.
         ///
         /// \note \ref rule() flags are not copied
-        ///
         boundary_point_index(const segment_index<base_iterator>& other);
-        ///
         /// Copy a boundary_point_index from a \ref segment_index. It copies all indexing information
         /// and keeps the current \ref rule() unchanged
         ///
@@ -824,21 +767,17 @@ namespace boost { namespace locale { namespace boundary {
         /// range twice.
         ///
         /// \note \ref rule() flags are not copied
-        ///
         boundary_point_index& operator=(const segment_index<base_iterator>& other);
 
-        ///
         /// Create a new index for %boundary analysis \ref boundary_type "type" of the text
         /// in range [begin,end) for locale \a loc.
         ///
         /// \note \ref rule() remains unchanged.
-        ///
         void map(boundary_type type, base_iterator begin, base_iterator end, const std::locale& loc = std::locale())
         {
             map_ = mapping_type(type, begin, end, loc);
         }
 
-        ///
         /// Get the \ref iterator on the beginning of the %boundary points range.
         ///
         /// Preconditions: this boundary_point_index should have a mapping
@@ -846,13 +785,11 @@ namespace boost { namespace locale { namespace boundary {
         /// \note
         ///
         /// The returned iterator is invalidated by access to any non-const member functions of this object
-        ///
         iterator begin() const
         {
             return iterator(true, &map_, mask_);
         }
 
-        ///
         /// Get the \ref iterator on the ending of the %boundary points range.
         ///
         /// Preconditions: this boundary_point_index should have a mapping
@@ -860,13 +797,11 @@ namespace boost { namespace locale { namespace boundary {
         /// \note
         ///
         /// The returned iterator is invalidated by access to any non-const member functions of this object
-        ///
         iterator end() const
         {
             return iterator(false, &map_, mask_);
         }
 
-        ///
         /// Find a first valid %boundary point on a position \a p or following it.
         ///
         /// For example: For \ref word %boundary analysis of the text "to be or"
@@ -878,22 +813,17 @@ namespace boost { namespace locale { namespace boundary {
         /// to the text in the mapped range.
         ///
         /// The returned iterator is invalidated by access to any non-const member functions of this object
-        ///
         iterator find(base_iterator p) const
         {
             return iterator(p, &map_, mask_);
         }
 
-        ///
         /// Get the mask of rules that are used
-        ///
         rule_type rule() const
         {
             return mask_;
         }
-        ///
         /// Set the mask of rules that are used
-        ///
         void rule(rule_type v)
         {
             mask_ = v;

@@ -10,7 +10,7 @@
 #include "boost/locale/icu/all_generator.hpp"
 #include "boost/locale/icu/cdata.hpp"
 #include "boost/locale/icu/formatter.hpp"
-#include "boost/locale/icu/predefined_formatters.hpp"
+#include "boost/locale/icu/formatters_cache.hpp"
 #include <algorithm>
 #include <ios>
 #include <limits>
@@ -126,10 +126,8 @@ namespace boost { namespace locale { namespace impl_icu {
 
                 std::ios_base::fmtflags flags = ios.flags() & std::ios_base::adjustfield;
 
-                //
                 // We do not really know internal point, so we assume that it does not
                 // exist. So according to the standard field should be right aligned
-                //
                 if(flags != std::ios_base::left)
                     on_left = n;
                 on_right = n - on_left;
@@ -320,8 +318,8 @@ namespace boost { namespace locale { namespace impl_icu {
     std::locale install_formatting_facets(const std::locale& in, const cdata& cd)
     {
         std::locale tmp = std::locale(in, new num_format<CharType>(cd));
-        if(!std::has_facet<icu_formatters_cache>(in)) {
-            tmp = std::locale(tmp, new icu_formatters_cache(cd.locale));
+        if(!std::has_facet<formatters_cache>(in)) {
+            tmp = std::locale(tmp, new formatters_cache(cd.locale));
         }
         return tmp;
     }
@@ -330,40 +328,42 @@ namespace boost { namespace locale { namespace impl_icu {
     std::locale install_parsing_facets(const std::locale& in, const cdata& cd)
     {
         std::locale tmp = std::locale(in, new num_parse<CharType>(cd));
-        if(!std::has_facet<icu_formatters_cache>(in)) {
-            tmp = std::locale(tmp, new icu_formatters_cache(cd.locale));
+        if(!std::has_facet<formatters_cache>(in)) {
+            tmp = std::locale(tmp, new formatters_cache(cd.locale));
         }
         return tmp;
     }
 
-    std::locale create_formatting(const std::locale& in, const cdata& cd, character_facet_type type)
+    std::locale create_formatting(const std::locale& in, const cdata& cd, char_facet_t type)
     {
         switch(type) {
-            case char_facet: return install_formatting_facets<char>(in, cd);
-            case wchar_t_facet: return install_formatting_facets<wchar_t>(in, cd);
+            case char_facet_t::nochar: break;
+            case char_facet_t::char_f: return install_formatting_facets<char>(in, cd);
+            case char_facet_t::wchar_f: return install_formatting_facets<wchar_t>(in, cd);
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-            case char16_t_facet: return install_formatting_facets<char16_t>(in, cd);
+            case char_facet_t::char16_f: return install_formatting_facets<char16_t>(in, cd);
 #endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-            case char32_t_facet: return install_formatting_facets<char32_t>(in, cd);
+            case char_facet_t::char32_f: return install_formatting_facets<char32_t>(in, cd);
 #endif
-            default: return in;
         }
+        return in;
     }
 
-    std::locale create_parsing(const std::locale& in, const cdata& cd, character_facet_type type)
+    std::locale create_parsing(const std::locale& in, const cdata& cd, char_facet_t type)
     {
         switch(type) {
-            case char_facet: return install_parsing_facets<char>(in, cd);
-            case wchar_t_facet: return install_parsing_facets<wchar_t>(in, cd);
+            case char_facet_t::nochar: break;
+            case char_facet_t::char_f: return install_parsing_facets<char>(in, cd);
+            case char_facet_t::wchar_f: return install_parsing_facets<wchar_t>(in, cd);
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-            case char16_t_facet: return install_parsing_facets<char16_t>(in, cd);
+            case char_facet_t::char16_f: return install_parsing_facets<char16_t>(in, cd);
 #endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-            case char32_t_facet: return install_parsing_facets<char32_t>(in, cd);
+            case char_facet_t::char32_f: return install_parsing_facets<char32_t>(in, cd);
 #endif
-            default: return in;
         }
+        return in;
     }
 
 }}} // namespace boost::locale::impl_icu

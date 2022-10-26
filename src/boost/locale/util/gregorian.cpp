@@ -101,7 +101,6 @@ namespace boost { namespace locale { namespace util {
             return strcmp(left, right) < 0;
         }
 
-        //
         // Ref: CLDR 1.9 common/supplemental/supplementalData.xml
         //
         // monday - default
@@ -109,7 +108,6 @@ namespace boost { namespace locale { namespace util {
         // sat - AE AF BH DJ DZ EG ER ET IQ IR JO KE KW LY MA OM QA SA SD SO SY TN YE
         // sun - AR AS AZ BW CA CN FO GE GL GU HK IL IN JM JP KG KR LA MH MN MO MP MT NZ PH PK SG TH TT TW UM US UZ VI
         // ZW
-        //
 
         int first_day_of_week(const char* terr)
         {
@@ -143,14 +141,10 @@ namespace boost { namespace locale { namespace util {
             from_time(time_);
         }
 
-        ///
         /// Make a polymorphic copy of the calendar
-        ///
         gregorian_calendar* clone() const override { return new gregorian_calendar(*this); }
 
-        ///
         /// Set specific \a value for period \a p, note not all values are settable.
-        ///
         void set_value(period::marks::period_mark m, int value) override
         {
             using namespace period::marks;
@@ -202,7 +196,7 @@ namespace boost { namespace locale { namespace util {
                     tm_updated_.tm_mday += diff;
                 } break;
                 case period::marks::first_day_of_week: ///< For example Sunday in US, Monday in France
-                default: return;
+                case invalid: return;
             }
             normalized_ = false;
         }
@@ -272,9 +266,7 @@ namespace boost { namespace locale { namespace util {
             return week_number_in_days / 7 + 1;
         }
 
-        ///
         /// Get specific value for period \a p according to a value_type \a v
-        ///
         int get_value(period::marks::period_mark m, value_type v) const override
         {
             using namespace period::marks;
@@ -477,16 +469,14 @@ namespace boost { namespace locale { namespace util {
                             }
                             return 5;
                         case current: return (tm_.tm_mday - 1) / 7 + 1;
-                        default:;
                     }
-                default:;
+                    break;
+                case invalid: BOOST_ASSERT_MSG(false, "Shouldn't use 'invalid' value."); break;
             }
             return 0;
         }
 
-        ///
         /// Set current time point
-        ///
         void set_time(const posix_time& p) override
         {
             from_time(static_cast<std::time_t>(p.seconds));
@@ -501,33 +491,26 @@ namespace boost { namespace locale { namespace util {
             return time_ * 1e3;
         }
 
-        ///
         /// Set option for calendar, for future use
-        ///
         void set_option(calendar_option_type opt, int /*v*/) override
         {
             switch(opt) {
                 case is_gregorian: throw date_time_error("is_gregorian is not settable options for calendar");
                 case is_dst: throw date_time_error("is_dst is not settable options for calendar");
-                default:;
             }
         }
-        ///
         /// Get option for calendar, currently only check if it is Gregorian calendar
-        ///
         int get_option(calendar_option_type opt) const override
         {
             switch(opt) {
                 case is_gregorian: return 1;
                 case is_dst: return tm_.tm_isdst == 1;
-                default: return 0;
-            };
+            }
+            return 0;
         }
 
-        ///
         /// Adjust period's \a p value by \a difference items using a update_type \a u.
         /// Note: not all values are adjustable
-        ///
         void adjust_value(period::marks::period_mark m, update_type u, int difference) override
         {
             switch(u) {
@@ -563,7 +546,9 @@ namespace boost { namespace locale { namespace util {
                         case day_of_week_in_month: ///< Original number of the day of the week in month.
                             tm_updated_.tm_mday += difference * 7;
                             break;
-                        default:; // Not all values are adjustable
+                        case era:
+                        case period::marks::first_day_of_week:
+                        case invalid: break; // Not adjustable and ignored
                     }
                     normalized_ = false;
                     normalize();
@@ -584,7 +569,6 @@ namespace boost { namespace locale { namespace util {
                     set_value(m, value + cur_min);
                     normalize();
                 }
-                default:;
             }
         }
 
@@ -607,9 +591,7 @@ namespace boost { namespace locale { namespace util {
             }
         }
 
-        ///
         /// Calculate the difference between this calendar  and \a other in \a p units
-        ///
         int difference(const abstract_calendar& other_cal, period::marks::period_mark m) const override
         {
             hold_ptr<gregorian_calendar> keeper;
@@ -652,13 +634,13 @@ namespace boost { namespace locale { namespace util {
                 case hour_12: return static_cast<int>((other->time_ - time_) / 3600);
                 case minute: return static_cast<int>((other->time_ - time_) / 60);
                 case second: return static_cast<int>(other->time_ - time_);
-                default: return 0;
-            };
+                case invalid:
+                case period::marks::first_day_of_week: break; // Not adjustable
+            }
+            return 0;
         }
 
-        ///
         /// Set time zone, empty - use system
-        ///
         void set_timezone(const std::string& tz) override
         {
             if(tz.empty()) {

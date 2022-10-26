@@ -26,7 +26,7 @@
 
 namespace boost { namespace locale { namespace impl_icu {
 
-    typedef enum { cvt_skip, cvt_stop } cpcvt_type;
+    enum class cpcvt_type { skip, stop };
 
     template<typename CharType, int char_size = sizeof(CharType)>
     class icu_std_converter {
@@ -34,7 +34,7 @@ namespace boost { namespace locale { namespace impl_icu {
         typedef CharType char_type;
         typedef std::basic_string<char_type> string_type;
 
-        icu_std_converter(std::string charset, cpcvt_type cv = cvt_skip);
+        icu_std_converter(std::string charset, cpcvt_type cv = cpcvt_type::skip);
         icu::UnicodeString icu(const char_type* begin, const char_type* end) const;
         string_type std(const icu::UnicodeString& str) const;
         size_t cut(const icu::UnicodeString& str,
@@ -72,7 +72,8 @@ namespace boost { namespace locale { namespace impl_icu {
             return cvt.go(str.getBuffer(), str.length(), max_len_);
         }
 
-        icu_std_converter(std::string charset, cpcvt_type cvt_type = cvt_skip) : charset_(charset), cvt_type_(cvt_type)
+        icu_std_converter(std::string charset, cpcvt_type cvt_type = cpcvt_type::skip) :
+            charset_(charset), cvt_type_(cvt_type)
         {
             uconv cvt(charset_, cvt_type);
             max_len_ = cvt.max_char_size();
@@ -91,11 +92,10 @@ namespace boost { namespace locale { namespace impl_icu {
         }
 
         struct uconv {
-            uconv(const uconv& other);
-            void operator=(const uconv& other);
+            uconv(const uconv& other) = delete;
+            void operator=(const uconv& other) = delete;
 
-        public:
-            uconv(const std::string& charset, cpcvt_type cvt_type = cvt_skip)
+            uconv(const std::string& charset, cpcvt_type cvt_type = cpcvt_type::skip)
             {
                 UErrorCode err = U_ZERO_ERROR;
                 cvt_ = ucnv_open(charset.c_str(), &err);
@@ -106,7 +106,7 @@ namespace boost { namespace locale { namespace impl_icu {
                 }
 
                 try {
-                    if(cvt_type == cvt_skip) {
+                    if(cvt_type == cpcvt_type::skip) {
                         ucnv_setFromUCallBack(cvt_, UCNV_FROM_U_CALLBACK_SKIP, 0, 0, 0, &err);
                         check_and_throw_icu_error(err);
 
@@ -200,7 +200,7 @@ namespace boost { namespace locale { namespace impl_icu {
         }
         void throw_if_needed() const
         {
-            if(mode_ == cvt_stop)
+            if(mode_ == cpcvt_type::stop)
                 throw conv::conversion_error();
         }
         icu::UnicodeString icu(const char_type* vb, const char_type* ve) const
@@ -226,7 +226,7 @@ namespace boost { namespace locale { namespace impl_icu {
             return n;
         }
 
-        icu_std_converter(std::string /*charset*/, cpcvt_type mode = cvt_skip) : mode_(mode) {}
+        icu_std_converter(std::string /*charset*/, cpcvt_type mode = cpcvt_type::skip) : mode_(mode) {}
 
     private:
         cpcvt_type mode_;
@@ -252,7 +252,7 @@ namespace boost { namespace locale { namespace impl_icu {
         }
         void throw_if_needed() const
         {
-            if(mode_ == cvt_stop)
+            if(mode_ == cpcvt_type::stop)
                 throw conv::conversion_error();
         }
 
@@ -298,7 +298,7 @@ namespace boost { namespace locale { namespace impl_icu {
             return str.countChar32(from_u, n);
         }
 
-        icu_std_converter(std::string /*charset*/, cpcvt_type mode = cvt_skip) : mode_(mode) {}
+        icu_std_converter(std::string /*charset*/, cpcvt_type mode = cpcvt_type::skip) : mode_(mode) {}
 
     private:
         cpcvt_type mode_;

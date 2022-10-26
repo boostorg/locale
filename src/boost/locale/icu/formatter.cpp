@@ -8,14 +8,15 @@
 #define BOOST_LOCALE_SOURCE
 #include "boost/locale/icu/formatter.hpp"
 #include <boost/locale/formatting.hpp>
+#include <boost/locale/hold_ptr.hpp>
 #include <boost/locale/info.hpp>
+#include "boost/locale/icu/formatters_cache.hpp"
 #include "boost/locale/icu/icu_util.hpp"
-#include "boost/locale/icu/predefined_formatters.hpp"
 #include "boost/locale/icu/time_zone.hpp"
 #include "boost/locale/icu/uconv.hpp"
 #include <boost/core/ignore_unused.hpp>
-#include <iostream>
 #include <limits>
+#include <memory>
 #include <unicode/datefmt.h>
 #include <unicode/decimfmt.h>
 #include <unicode/numfmt.h>
@@ -28,11 +29,11 @@
 
 namespace boost { namespace locale { namespace impl_icu {
 
-    std::locale::id icu_formatters_cache::id;
+    std::locale::id formatters_cache::id;
 
     namespace {
         struct init {
-            init() { ignore_unused(std::has_facet<icu_formatters_cache>(std::locale::classic())); }
+            init() { ignore_unused(std::has_facet<formatters_cache>(std::locale::classic())); }
         } instance;
 
         // Set the min/max fraction digits for the NumberFormat
@@ -223,7 +224,7 @@ namespace boost { namespace locale { namespace impl_icu {
 
     icu::UnicodeString strftime_to_icu_full(icu::DateFormat* dfin, const char* alt)
     {
-        hold_ptr<icu::DateFormat> df(dfin);
+        std::unique_ptr<icu::DateFormat> df(dfin);
         icu::SimpleDateFormat* sdf = icu_cast<icu::SimpleDateFormat>(df.get());
         icu::UnicodeString result;
         if(sdf)
@@ -233,7 +234,7 @@ namespace boost { namespace locale { namespace impl_icu {
         return result;
     }
 
-    icu::UnicodeString strftime_to_icu_symbol(char c, const icu::Locale& locale, const icu_formatters_cache* cache = 0)
+    icu::UnicodeString strftime_to_icu_symbol(char c, const icu::Locale& locale, const formatters_cache* cache = 0)
     {
         switch(c) {
             case 'a': // Abbr Weekday
@@ -357,11 +358,11 @@ namespace boost { namespace locale { namespace impl_icu {
     {
         using namespace boost::locale::flags;
 
-        hold_ptr<formatter<CharType>> fmt;
+        std::unique_ptr<formatter<CharType>> fmt;
         ios_info& info = ios_info::get(ios);
         uint64_t disp = info.display_flags();
 
-        const icu_formatters_cache& cache = std::use_facet<icu_formatters_cache>(ios.getloc());
+        const formatters_cache& cache = std::use_facet<formatters_cache>(ios.getloc());
 
         if(disp == posix)
             return fmt.release();
@@ -374,9 +375,9 @@ namespace boost { namespace locale { namespace impl_icu {
                 icu::NumberFormat* nf = 0;
 
                 if(how == std::ios_base::scientific)
-                    nf = cache.number_format(icu_formatters_cache::fmt_sci);
+                    nf = cache.number_format(formatters_cache::fmt_sci);
                 else
-                    nf = cache.number_format(icu_formatters_cache::fmt_number);
+                    nf = cache.number_format(formatters_cache::fmt_number);
 
                 set_fraction_digits(*nf, how, ios.precision());
                 fmt.reset(new number_format<CharType>(nf, encoding));
@@ -387,30 +388,30 @@ namespace boost { namespace locale { namespace impl_icu {
                 uint64_t curr = info.currency_flags();
 
                 if(curr == currency_default || curr == currency_national)
-                    nf = cache.number_format(icu_formatters_cache::fmt_curr_nat);
+                    nf = cache.number_format(formatters_cache::fmt_curr_nat);
                 else
-                    nf = cache.number_format(icu_formatters_cache::fmt_curr_iso);
+                    nf = cache.number_format(formatters_cache::fmt_curr_iso);
 
                 fmt.reset(new number_format<CharType>(nf, encoding));
             } break;
             case percent: {
-                icu::NumberFormat* nf = cache.number_format(icu_formatters_cache::fmt_per);
+                icu::NumberFormat* nf = cache.number_format(formatters_cache::fmt_per);
                 set_fraction_digits(*nf, ios.flags() & std::ios_base::floatfield, ios.precision());
                 fmt.reset(new number_format<CharType>(nf, encoding));
 
             } break;
             case spellout:
-                fmt.reset(new number_format<CharType>(cache.number_format(icu_formatters_cache::fmt_spell), encoding));
+                fmt.reset(new number_format<CharType>(cache.number_format(formatters_cache::fmt_spell), encoding));
                 break;
             case ordinal:
-                fmt.reset(new number_format<CharType>(cache.number_format(icu_formatters_cache::fmt_ord), encoding));
+                fmt.reset(new number_format<CharType>(cache.number_format(formatters_cache::fmt_ord), encoding));
                 break;
             case date:
             case time:
             case datetime:
             case strftime: {
                 using namespace flags;
-                hold_ptr<icu::DateFormat> adf;
+                std::unique_ptr<icu::DateFormat> adf;
                 icu::DateFormat* df = 0;
                 icu::SimpleDateFormat* sdf = cache.date_formatter();
                 // try to use cached first

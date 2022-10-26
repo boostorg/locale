@@ -24,15 +24,6 @@
 #include "boostLocale/test/unit_test.hpp"
 
 template<typename CharType>
-std::basic_string<CharType> conv_to_char(const char* p)
-{
-    std::basic_string<CharType> r;
-    while(*p)
-        r += CharType(*p++);
-    return r;
-}
-
-template<typename CharType>
 void test_by_char(const std::locale& l, std::string name, int lcid)
 {
     typedef std::basic_stringstream<CharType> ss_type;
@@ -114,9 +105,9 @@ void test_by_char(const std::locale& l, std::string name, int lcid)
         ss << as::time << a_datetime << CharType('\n');
         ss << as::datetime << a_datetime << CharType('\n');
         ss << as::time_zone("GMT+01:00");
-        ss << as::ftime(conv_to_char<CharType>("%H")) << a_datetime << CharType('\n');
+        ss << as::ftime(ascii_to<CharType>("%H")) << a_datetime << CharType('\n');
         ss << as::time_zone("GMT+00:15");
-        ss << as::ftime(conv_to_char<CharType>("%M")) << a_datetime << CharType('\n');
+        ss << as::ftime(ascii_to<CharType>("%M")) << a_datetime << CharType('\n');
 
 #ifndef BOOST_LOCALE_NO_WINAPI_BACKEND
         wchar_t time_buf[256];

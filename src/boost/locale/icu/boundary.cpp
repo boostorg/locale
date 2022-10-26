@@ -8,7 +8,6 @@
 #define BOOST_LOCALE_SOURCE
 #include <boost/locale/boundary.hpp>
 #include <boost/locale/generator.hpp>
-#include <boost/locale/hold_ptr.hpp>
 #include "boost/locale/icu/all_generator.hpp"
 #include "boost/locale/icu/cdata.hpp"
 #include "boost/locale/icu/icu_util.hpp"
@@ -16,6 +15,7 @@
 #if BOOST_LOCALE_ICU_VERSION >= 306
 #    include <unicode/utext.h>
 #endif
+#include <memory>
 #include <unicode/brkiter.h>
 #include <unicode/rbbi.h>
 #include <vector>
@@ -94,7 +94,7 @@ namespace boost { namespace locale {
                                 else if(UBRK_SENTENCE_SEP <= buf[i] && buf[i] < UBRK_SENTENCE_SEP_LIMIT)
                                     indx.back().rule |= sentence_sep;
                                 break;
-                            default:;
+                            case character: BOOST_UNREACHABLE_RETURN(0);
                         }
                     }
                 } else {
@@ -104,21 +104,20 @@ namespace boost { namespace locale {
             return indx;
         }
 
-        icu::BreakIterator* get_iterator(boundary_type t, const icu::Locale& loc)
+        std::unique_ptr<icu::BreakIterator> get_iterator(boundary_type t, const icu::Locale& loc)
         {
             UErrorCode err = U_ZERO_ERROR;
-            hold_ptr<icu::BreakIterator> bi;
+            std::unique_ptr<icu::BreakIterator> bi;
             switch(t) {
                 case character: bi.reset(icu::BreakIterator::createCharacterInstance(loc, err)); break;
                 case word: bi.reset(icu::BreakIterator::createWordInstance(loc, err)); break;
                 case sentence: bi.reset(icu::BreakIterator::createSentenceInstance(loc, err)); break;
                 case line: bi.reset(icu::BreakIterator::createLineInstance(loc, err)); break;
-                default: throw std::runtime_error("Invalid iteration type");
             }
             check_and_throw_icu_error(err);
-            if(!bi.get())
+            if(!bi)
                 throw std::runtime_error("Failed to create break iterator");
-            return bi.release();
+            return bi;
         }
 
         template<typename CharType>
@@ -129,7 +128,7 @@ namespace boost { namespace locale {
                           const std::string& encoding)
         {
             index_type indx;
-            hold_ptr<icu::BreakIterator> bi(get_iterator(t, loc));
+            std::unique_ptr<icu::BreakIterator> bi = get_iterator(t, loc);
 
 #if BOOST_LOCALE_ICU_VERSION >= 306
             UErrorCode err = U_ZERO_ERROR;
@@ -193,20 +192,21 @@ namespace boost { namespace locale {
     }} // namespace boundary::impl_icu
 
     namespace impl_icu {
-        std::locale create_boundary(const std::locale& in, const cdata& cd, character_facet_type type)
+        std::locale create_boundary(const std::locale& in, const cdata& cd, char_facet_t type)
         {
             using namespace boost::locale::boundary::impl_icu;
             switch(type) {
-                case char_facet: return std::locale(in, new boundary_indexing_impl<char>(cd));
-                case wchar_t_facet: return std::locale(in, new boundary_indexing_impl<wchar_t>(cd));
+                case char_facet_t::nochar: break;
+                case char_facet_t::char_f: return std::locale(in, new boundary_indexing_impl<char>(cd));
+                case char_facet_t::wchar_f: return std::locale(in, new boundary_indexing_impl<wchar_t>(cd));
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-                case char16_t_facet: return std::locale(in, new boundary_indexing_impl<char16_t>(cd));
+                case char_facet_t::char16_f: return std::locale(in, new boundary_indexing_impl<char16_t>(cd));
 #endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-                case char32_t_facet: return std::locale(in, new boundary_indexing_impl<char32_t>(cd));
+                case char_facet_t::char32_f: return std::locale(in, new boundary_indexing_impl<char32_t>(cd));
 #endif
-                default: return in;
             }
+            return in;
         }
     } // namespace impl_icu
 

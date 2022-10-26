@@ -17,7 +17,6 @@
 #include "boost/locale/icu/uconv.hpp"
 #include <boost/thread.hpp>
 #include <cmath>
-#include <iostream>
 #include <memory>
 #include <unicode/calendar.h>
 #include <unicode/gregocal.h>
@@ -54,8 +53,10 @@ namespace boost { namespace locale { namespace impl_icu {
             case second: return UCAL_SECOND;
             case week_of_year: return UCAL_WEEK_OF_YEAR;
             case week_of_month: return UCAL_WEEK_OF_MONTH;
-            default: throw std::invalid_argument("Invalid date_time period type");
+            case first_day_of_week:
+            case invalid: break;
         }
+        throw std::invalid_argument("Invalid date_time period type");
     }
 
     class calendar_impl : public abstract_calendar {
@@ -152,7 +153,6 @@ namespace boost { namespace locale { namespace impl_icu {
             switch(opt) {
                 case is_gregorian: throw date_time_error("is_gregorian is not settable options for calendar");
                 case is_dst: throw date_time_error("is_dst is not settable options for calendar");
-                default:;
             }
         }
         int get_option(calendar_option_type opt) const override
@@ -166,8 +166,8 @@ namespace boost { namespace locale { namespace impl_icu {
                     check_and_throw_dt(err);
                     return res;
                 }
-                default: return 0;
             }
+            return 0;
         }
         void adjust_value(period::marks::period_mark p, update_type u, int difference) override
         {

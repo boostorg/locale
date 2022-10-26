@@ -9,6 +9,8 @@
 
 #include <boost/locale/config.hpp>
 #include <boost/locale/time_zone.hpp>
+#include <boost/locale/util/string.hpp>
+#include <boost/assert.hpp>
 #include <boost/cstdint.hpp>
 #include <cstring>
 #include <istream>
@@ -22,16 +24,14 @@
 #endif
 
 namespace boost { namespace locale {
-    ///
+
     /// \brief This namespace holds additional formatting
     /// flags that can be set using ios_info.
-    ///
     namespace flags {
-        ///
+
         /// Formatting flags, each one of them has corresponding manipulation
         /// in namespace \a as
-        ///
-        typedef enum {
+        enum display_flags_type {
             posix = 0,
             number = 1,
             currency = 2,
@@ -67,87 +67,60 @@ namespace boost { namespace locale {
 
             datetime_flags_mask = date_flags_mask | time_flags_mask
 
-        } display_flags_type;
+        };
 
-        ///
-        /// Special string patters that can be used
-        /// for text formatting
-        ///
-        typedef enum {
+        /// Special string patterns that can be used for text formatting
+        enum pattern_type {
             datetime_pattern, ///< strftime like formatting
             time_zone_id      ///< time zone name
-        } pattern_type;
+        };
 
-        ///
         /// Special integer values that can be used for formatting
-        ///
-        typedef enum {
+        enum value_type {
             domain_id ///< Domain code - for message formatting
-        } value_type;
+        };
 
     } // namespace flags
 
-    ///
     /// \brief This class holds an external data - beyond existing fmtflags that std::ios_base holds
     ///
     /// You should almost never create this object directly. Instead, you should access it via
     /// ios_info::get(stream_object) static member function. It automatically creates default formatting data for that
     /// stream
-    ///
     class BOOST_LOCALE_DECL ios_info {
     public:
         /// \cond INTERNAL
-
         ios_info();
         ios_info(const ios_info&);
         ios_info& operator=(const ios_info&);
         ~ios_info();
-
         /// \endcond
 
-        ///
         /// Get ios_info instance for specific stream object
-        ///
         static ios_info& get(std::ios_base& ios);
 
-        ///
         /// Set a flags that define a way for format data like number, spell, currency etc.
-        ///
         void display_flags(uint64_t flags);
 
-        ///
         /// Set a flags that define how to format currency
-        ///
         void currency_flags(uint64_t flags);
 
-        ///
         /// Set a flags that define how to format date
-        ///
         void date_flags(uint64_t flags);
 
-        ///
         /// Set a flags that define how to format time
-        ///
         void time_flags(uint64_t flags);
 
-        ///
         /// Set a flags that define how to format both date and time
-        ///
         void datetime_flags(uint64_t flags);
 
-        ///
         /// Set special message domain identification
-        ///
         void domain_id(int);
 
-        ///
         /// Set time zone for formatting dates and time
-        ///
         void time_zone(const std::string&);
 
-        ///
         /// Set date/time pattern (strftime like)
-        ///
         template<typename CharType>
         void date_time_pattern(const std::basic_string<CharType>& str)
         {
@@ -155,44 +128,28 @@ namespace boost { namespace locale {
             s.set<CharType>(str.c_str());
         }
 
-        ///
         /// Get a flags that define a way for format data like number, spell, currency etc.
-        ///
         uint64_t display_flags() const;
 
-        ///
         /// Get a flags that define how to format currency
-        ///
         uint64_t currency_flags() const;
 
-        ///
         /// Get a flags that define how to format date
-        ///
         uint64_t date_flags() const;
 
-        ///
         /// Get a flags that define how to format time
-        ///
         uint64_t time_flags() const;
 
-        ///
         /// Get a flags that define how to format both date and time
-        ///
         uint64_t datetime_flags() const;
 
-        ///
         /// Get special message domain identification
-        ///
         int domain_id() const;
 
-        ///
         /// Get time zone for formatting dates and time
-        ///
         std::string time_zone() const;
 
-        ///
         /// Get date/time pattern (strftime like)
-        ///
         template<typename CharType>
         std::basic_string<CharType> date_time_pattern() const
         {
@@ -221,14 +178,11 @@ namespace boost { namespace locale {
             template<typename Char>
             void set(const Char* s)
             {
+                BOOST_ASSERT(s);
                 delete[] ptr;
-                ptr = 0;
+                ptr = nullptr;
                 type = &typeid(Char);
-                const Char* end = s;
-                while(*end != 0)
-                    end++;
-                // if ptr = 0 it does not matter what is value of size
-                size = sizeof(Char) * (end - s + 1);
+                size = sizeof(Char) * (util::str_end(s) - s + 1);
                 ptr = new char[size];
                 memcpy(ptr, s, size);
             }
@@ -252,226 +206,172 @@ namespace boost { namespace locale {
         int domain_id_;
         std::string time_zone_;
         string_set datetime_;
-
-        struct data;
-        data* d;
     };
 
-    ///
     /// \brief This namespace includes all manipulators that can be used on IO streams
-    ///
     namespace as {
-        ///
         /// \defgroup manipulators I/O Stream manipulators
         ///
         /// @{
-        ///
 
-        ///
         /// Format values with "POSIX" or "C"  locale. Note, if locale was created with additional non-classic locale
         /// then These numbers may be localized
-        ///
-
         inline std::ios_base& posix(std::ios_base& ios)
         {
             ios_info::get(ios).display_flags(flags::posix);
             return ios;
         }
 
-        ///
         /// Format a number. Note, unlike standard number formatting, integers would be treated like real numbers when
         /// std::fixed or std::scientific manipulators were applied
-        ///
         inline std::ios_base& number(std::ios_base& ios)
         {
             ios_info::get(ios).display_flags(flags::number);
             return ios;
         }
 
-        ///
         /// Format currency, number is treated like amount of money
-        ///
         inline std::ios_base& currency(std::ios_base& ios)
         {
             ios_info::get(ios).display_flags(flags::currency);
             return ios;
         }
 
-        ///
         /// Format percent, value 0.3 is treated as 30%.
-        ///
         inline std::ios_base& percent(std::ios_base& ios)
         {
             ios_info::get(ios).display_flags(flags::percent);
             return ios;
         }
 
-        ///
         /// Format a date, number is treated as POSIX time
-        ///
         inline std::ios_base& date(std::ios_base& ios)
         {
             ios_info::get(ios).display_flags(flags::date);
             return ios;
         }
 
-        ///
         /// Format a time, number is treated as POSIX time
-        ///
         inline std::ios_base& time(std::ios_base& ios)
         {
             ios_info::get(ios).display_flags(flags::time);
             return ios;
         }
 
-        ///
         /// Format a date and time, number is treated as POSIX time
-        ///
         inline std::ios_base& datetime(std::ios_base& ios)
         {
             ios_info::get(ios).display_flags(flags::datetime);
             return ios;
         }
 
-        ///
         /// Create formatted date time, Please note, this manipulator only changes formatting mode,
         /// and not format itself, so you are probably looking for ftime manipulator
-        ///
         inline std::ios_base& strftime(std::ios_base& ios)
         {
             ios_info::get(ios).display_flags(flags::strftime);
             return ios;
         }
 
-        ///
         /// Spell the number, like "one hundred and ten"
-        ///
         inline std::ios_base& spellout(std::ios_base& ios)
         {
             ios_info::get(ios).display_flags(flags::spellout);
             return ios;
         }
 
-        ///
         /// Write an order of the number like 4th.
-        ///
         inline std::ios_base& ordinal(std::ios_base& ios)
         {
             ios_info::get(ios).display_flags(flags::ordinal);
             return ios;
         }
 
-        ///
         /// Set default currency formatting style -- national, like "$"
-        ///
         inline std::ios_base& currency_default(std::ios_base& ios)
         {
             ios_info::get(ios).currency_flags(flags::currency_default);
             return ios;
         }
 
-        ///
         /// Set ISO currency formatting style, like "USD", (requires ICU >= 4.2)
-        ///
         inline std::ios_base& currency_iso(std::ios_base& ios)
         {
             ios_info::get(ios).currency_flags(flags::currency_iso);
             return ios;
         }
 
-        ///
         /// Set national currency formatting style, like "$"
-        ///
         inline std::ios_base& currency_national(std::ios_base& ios)
         {
             ios_info::get(ios).currency_flags(flags::currency_national);
             return ios;
         }
 
-        ///
         /// set default (medium) time formatting style
-        ///
         inline std::ios_base& time_default(std::ios_base& ios)
         {
             ios_info::get(ios).time_flags(flags::time_default);
             return ios;
         }
 
-        ///
         /// set short time formatting style
-        ///
         inline std::ios_base& time_short(std::ios_base& ios)
         {
             ios_info::get(ios).time_flags(flags::time_short);
             return ios;
         }
 
-        ///
         /// set medium time formatting style
-        ///
         inline std::ios_base& time_medium(std::ios_base& ios)
         {
             ios_info::get(ios).time_flags(flags::time_medium);
             return ios;
         }
 
-        ///
         /// set long time formatting style
-        ///
         inline std::ios_base& time_long(std::ios_base& ios)
         {
             ios_info::get(ios).time_flags(flags::time_long);
             return ios;
         }
 
-        ///
         /// set full time formatting style
-        ///
         inline std::ios_base& time_full(std::ios_base& ios)
         {
             ios_info::get(ios).time_flags(flags::time_full);
             return ios;
         }
 
-        ///
         /// set default (medium) date formatting style
-        ///
         inline std::ios_base& date_default(std::ios_base& ios)
         {
             ios_info::get(ios).date_flags(flags::date_default);
             return ios;
         }
 
-        ///
         /// set short date formatting style
-        ///
         inline std::ios_base& date_short(std::ios_base& ios)
         {
             ios_info::get(ios).date_flags(flags::date_short);
             return ios;
         }
 
-        ///
         /// set medium date formatting style
-        ///
         inline std::ios_base& date_medium(std::ios_base& ios)
         {
             ios_info::get(ios).date_flags(flags::date_medium);
             return ios;
         }
 
-        ///
         /// set long date formatting style
-        ///
         inline std::ios_base& date_long(std::ios_base& ios)
         {
             ios_info::get(ios).date_flags(flags::date_long);
             return ios;
         }
 
-        ///
         /// set full date formatting style
-        ///
         inline std::ios_base& date_full(std::ios_base& ios)
         {
             ios_info::get(ios).date_flags(flags::date_full);
@@ -508,7 +408,6 @@ namespace boost { namespace locale {
         } // namespace detail
         /// \endcond
 
-        ///
         /// Set strftime like formatting string
         ///
         /// Please note, formatting flags are very similar but not exactly the same as flags for C function strftime.
@@ -556,9 +455,7 @@ namespace boost { namespace locale {
             return fmt;
         }
 
-        ///
         /// See ftime(std::basic_string<CharType> const &format)
-        ///
         template<typename CharType>
 #ifdef BOOST_LOCALE_DOXYGEN
         unspecified_type
@@ -593,27 +490,21 @@ namespace boost { namespace locale {
         } // namespace detail
         /// \endcond
 
-        ///
         /// Set GMT time zone to stream
-        ///
         inline std::ios_base& gmt(std::ios_base& ios)
         {
             ios_info::get(ios).time_zone("GMT");
             return ios;
         }
 
-        ///
         /// Set local time zone to stream
-        ///
         inline std::ios_base& local_time(std::ios_base& ios)
         {
             ios_info::get(ios).time_zone(time_zone::global());
             return ios;
         }
 
-        ///
         /// Set time zone using \a id
-        ///
         inline
 #ifdef BOOST_LOCALE_DOXYGEN
           unspecified_type
@@ -627,9 +518,7 @@ namespace boost { namespace locale {
             return tz;
         }
 
-        ///
         /// Set time zone using \a id
-        ///
         inline
 #ifdef BOOST_LOCALE_DOXYGEN
           unspecified_type
@@ -643,9 +532,7 @@ namespace boost { namespace locale {
             return tz;
         }
 
-        ///
         /// @}
-        ///
 
     } // namespace as
 

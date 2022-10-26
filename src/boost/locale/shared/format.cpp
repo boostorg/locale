@@ -42,7 +42,7 @@ namespace boost { namespace locale { namespace detail {
         d->imbuer(d->cookie, l);
     }
 
-    format_parser::~format_parser() {}
+    format_parser::~format_parser() = default;
 
     void format_parser::restore()
     {
@@ -152,7 +152,7 @@ namespace boost { namespace locale { namespace detail {
 
             std::string encoding = std::use_facet<info>(d->saved_locale).encoding();
             generator gen;
-            gen.categories(formatting_facet);
+            gen.categories(category_t::formatting);
 
             std::locale new_loc;
             if(value.find('.') == std::string::npos)

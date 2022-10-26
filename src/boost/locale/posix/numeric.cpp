@@ -30,10 +30,6 @@
 #include "boost/locale/posix/all_generator.hpp"
 #include "boost/locale/util/numeric.hpp"
 
-#if BOOST_OS_LINUX || defined(__APPLE__)
-#    define BOOST_LOCALE_HAVE_WCSFTIME_L
-#endif
-
 namespace boost { namespace locale { namespace impl_posix {
 
     template<typename CharType>
@@ -90,60 +86,32 @@ namespace boost { namespace locale { namespace impl_posix {
 
     }; /// num_format
 
-    template<typename CharType>
-    struct ftime_traits;
-
-    template<>
-    struct ftime_traits<char> {
-        static std::string ftime(const char* format, const struct tm* t, locale_t lc)
+    namespace {
+        std::string do_ftime(const char* format, const struct tm* t, locale_t lc)
         {
             char buf[16];
             size_t n = strftime_l(buf, sizeof(buf), format, t, lc);
             if(n == 0) {
-                // should be big enough
-                //
-                // Note standard specifies that in case of the error
-                // the function returns 0, however 0 may be actually
-                // valid output value of for example empty format or an
-                // output of %p in some locales
+                // Note standard specifies that in case of error the function returns 0,
+                // however 0 may be actually valid output value of for example empty format
+                // or an output of %p in some locales
                 //
                 // Thus we try to guess that 1024 would be enough.
                 std::vector<char> v(1024);
-                n = strftime_l(&v.front(), 1024, format, t, lc);
-                return std::string(&v.front(), n);
+                n = strftime_l(v.data(), 1024, format, t, lc);
+                return std::string(v.data(), n);
             }
             return std::string(buf, n);
         }
-    };
-
-    template<>
-    struct ftime_traits<wchar_t> {
-        static std::wstring ftime(const wchar_t* format, const struct tm* t, locale_t lc)
+        template<typename CharType>
+        std::basic_string<CharType> do_ftime(const CharType* format, const struct tm* t, locale_t lc)
         {
-#ifdef HAVE_WCSFTIME_L
-            wchar_t buf[16];
-            size_t n = wcsftime_l(buf, sizeof(buf) / sizeof(buf[0]), format, t, lc);
-            if(n == 0) {
-                // should be big enough
-                //
-                // Note standard specifies that in case of the error
-                // the function returns 0, however 0 may be actually
-                // valid output value of for example empty format or an
-                // output of %p in some locales
-                //
-                // Thus we try to guess that 1024 would be enough.
-                std::vector<wchar_t> v(1024);
-                n = wcsftime_l(&v.front(), 1024, format, t, lc);
-            }
-            return std::wstring(&v.front(), n);
-#else
-            std::string enc = nl_langinfo_l(CODESET, lc);
-            std::string nformat = conv::from_utf<wchar_t>(format, enc);
-            std::string nres = ftime_traits<char>::ftime(nformat.c_str(), t, lc);
-            return conv::to_utf<wchar_t>(nres, enc);
-#endif
+            const std::string encoding = nl_langinfo_l(CODESET, lc);
+            const std::string nformat = conv::from_utf(format, encoding);
+            const std::string nres = do_ftime(nformat.c_str(), t, lc);
+            return conv::to_utf<CharType>(nres, encoding);
         }
-    };
+    } // namespace
 
     template<typename CharType>
     class time_put_posix : public std::time_put<CharType> {
@@ -165,7 +133,7 @@ namespace boost { namespace locale { namespace impl_posix {
             char_type fmt[4] = {'%',
                                 static_cast<char_type>(modifier != 0 ? modifier : format),
                                 static_cast<char_type>(modifier == 0 ? '\0' : format)};
-            string_type res = ftime_traits<char_type>::ftime(fmt, tm, *lc_);
+            string_type res = do_ftime(fmt, tm, *lc_);
             for(unsigned i = 0; i < res.size(); i++)
                 *out++ = res[i];
             return out;
@@ -439,22 +407,36 @@ namespace boost { namespace locale { namespace impl_posix {
         return tmp;
     }
 
-    std::locale create_formatting(const std::locale& in, std::shared_ptr<locale_t> lc, character_facet_type type)
+    std::locale create_formatting(const std::locale& in, std::shared_ptr<locale_t> lc, char_facet_t type)
     {
         switch(type) {
-            case char_facet: return create_formatting_impl<char>(in, std::move(lc));
-            case wchar_t_facet: return create_formatting_impl<wchar_t>(in, std::move(lc));
-            default: return in;
+            case char_facet_t::nochar: break;
+            case char_facet_t::char_f: return create_formatting_impl<char>(in, std::move(lc));
+            case char_facet_t::wchar_f: return create_formatting_impl<wchar_t>(in, std::move(lc));
+#ifdef BOOST_LOCALE_ENABLE_CHAR16_T
+            case char_facet_t::char16_f: return create_formatting_impl<char16_t>(in, lc);
+#endif
+#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
+            case char_facet_t::char32_f: return create_formatting_impl<char32_t>(in, lc);
+#endif
         }
+        return in;
     }
 
-    std::locale create_parsing(const std::locale& in, std::shared_ptr<locale_t> lc, character_facet_type type)
+    std::locale create_parsing(const std::locale& in, std::shared_ptr<locale_t> lc, char_facet_t type)
     {
         switch(type) {
-            case char_facet: return create_parsing_impl<char>(in, std::move(lc));
-            case wchar_t_facet: return create_parsing_impl<wchar_t>(in, std::move(lc));
-            default: return in;
+            case char_facet_t::nochar: break;
+            case char_facet_t::char_f: return create_parsing_impl<char>(in, std::move(lc));
+            case char_facet_t::wchar_f: return create_parsing_impl<wchar_t>(in, std::move(lc));
+#ifdef BOOST_LOCALE_ENABLE_CHAR16_T
+            case char_facet_t::char16_f: return create_parsing_impl<char16_t>(in, lc);
+#endif
+#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
+            case char_facet_t::char32_f: return create_parsing_impl<char32_t>(in, lc);
+#endif
         }
+        return in;
     }
 
 }}} // namespace boost::locale::impl_posix

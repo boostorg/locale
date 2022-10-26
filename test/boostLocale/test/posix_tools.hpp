@@ -7,8 +7,13 @@
 #ifndef BOOST_LOCALE_TEST_POSIX_TOOLS_HPP
 #define BOOST_LOCALE_TEST_POSIX_TOOLS_HPP
 
+#include <clocale>
 #include <string>
-#ifdef BOOST_LOCALE_NO_POSIX_BACKEND
+#if defined(__APPLE__) || defined(__FreeBSD__)
+#    include <xlocale.h>
+#endif
+
+#ifndef LC_ALL_MASK
 using locale_t = int;
 locale_t newlocale(int, const char*, locale_t)
 {
@@ -16,11 +21,6 @@ locale_t newlocale(int, const char*, locale_t)
 }
 void freelocale(locale_t) {}
 #    define LC_ALL_MASK 0xFFFFFFFF
-#else
-#    include <clocale>
-#    if defined(__APPLE__) || defined(__FreeBSD__)
-#        include <xlocale.h>
-#    endif
 #endif
 
 inline bool have_locale(const std::string& name)

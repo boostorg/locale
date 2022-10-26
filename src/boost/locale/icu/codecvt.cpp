@@ -108,7 +108,7 @@ namespace boost { namespace locale { namespace impl_icu {
         }
     }
 
-    std::locale create_codecvt(const std::locale& in, const std::string& encoding, character_facet_type type)
+    std::locale create_codecvt(const std::locale& in, const std::string& encoding, char_facet_t type)
     {
         if(conv::impl::normalize_encoding(encoding.c_str()) == "utf8")
             return util::create_utf8_codecvt(in, type);

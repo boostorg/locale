@@ -20,6 +20,9 @@
 #include <boost/locale/gnu_gettext.hpp>
 #include <boost/locale/hold_ptr.hpp>
 #include <boost/locale/message.hpp>
+#include <boost/locale/util/string.hpp>
+#include "boost/locale/shared/mo_hash.hpp"
+#include "boost/locale/shared/mo_lambda.hpp"
 #include <boost/version.hpp>
 #include <algorithm>
 #include <cstdio>
@@ -29,9 +32,6 @@
 #include <memory>
 #include <unordered_map>
 #include <vector>
-
-#include "boost/locale/shared/mo_hash.hpp"
-#include "boost/locale/shared/mo_lambda.hpp"
 
 #ifdef BOOST_MSVC
 #    pragma warning(disable : 4996)
@@ -63,13 +63,11 @@ namespace boost { namespace locale { namespace gnu_gettext {
         {
             close();
 
-            //
             // Under windows we have to use "_wfopen" to get
             // access to path's with Unicode in them
             //
             // As not all standard C++ libraries support nonstandard std::istream::open(wchar_t const *)
             // we would use old and good stdio and _wfopen CRTL functions
-            //
 
             std::wstring wfile_name = conv::to_utf<wchar_t>(file_name, encoding);
             file = _wfopen(wfile_name.c_str(), L"rb");
@@ -387,18 +385,14 @@ namespace boost { namespace locale { namespace gnu_gettext {
             pj_winberger_hash::state_type state = pj_winberger_hash::initial_state;
             const CharType* p = msg.context();
             if(*p != 0) {
-                const CharType* e = p;
-                while(*e)
-                    e++;
+                const CharType* e = util::str_end(p);
                 state = pj_winberger_hash::update_state(state,
                                                         reinterpret_cast<const char*>(p),
                                                         reinterpret_cast<const char*>(e));
                 state = pj_winberger_hash::update_state(state, '\4');
             }
             p = msg.key();
-            const CharType* e = p;
-            while(*e)
-                e++;
+            const CharType* e = util::str_end(p);
             state = pj_winberger_hash::update_state(state,
                                                     reinterpret_cast<const char*>(p),
                                                     reinterpret_cast<const char*>(e));
@@ -455,7 +449,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
         {
             pair_type ptr = get_string(domain_id, context, single_id);
             if(!ptr.first)
-                return 0;
+                return nullptr;
             int form = 0;
             if(plural_forms_.at(domain_id))
                 form = (*plural_forms_[domain_id])(n);
@@ -464,13 +458,13 @@ namespace boost { namespace locale { namespace gnu_gettext {
 
             const CharType* p = ptr.first;
             for(int i = 0; p < ptr.second && i < form; i++) {
-                p = std::find(p, ptr.second, 0);
+                p = std::find(p, ptr.second, CharType(0));
                 if(p == ptr.second)
-                    return 0;
+                    return nullptr;
                 ++p;
             }
             if(p >= ptr.second)
-                return 0;
+                return nullptr;
             return p;
         }
 
@@ -492,9 +486,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
             const std::vector<messages_info::domain>& domains = inf.domains;
             const std::vector<std::string>& search_paths = inf.paths;
 
-            //
             // List of fallbacks: en_US@euro, en@euro, en_US, en.
-            //
             std::vector<std::string> paths;
 
             if(!variant.empty() && !country.empty())

@@ -22,13 +22,11 @@
 
 namespace boost { namespace locale {
 
-    ///
     /// \defgroup format Format
     ///
     /// This module provides printf like functionality integrated into iostreams and suitable for localization
     ///
     /// @{
-    ///
 
     /// \cond INTERNAL
     namespace detail {
@@ -108,7 +106,6 @@ namespace boost { namespace locale {
 
     /// \endcond
 
-    ///
     /// \brief a printf like class that allows type-safe and locale aware message formatting
     ///
     /// This class creates a formatted message similar to printf or boost::format and receives
@@ -179,7 +176,6 @@ namespace boost { namespace locale {
     ///
     /// Invalid formatting strings are slightly ignored. This would prevent from translator
     /// to crash the program in unexpected location.
-    ///
     template<typename CharType>
     class basic_format {
     public:
@@ -192,20 +188,17 @@ namespace boost { namespace locale {
         typedef std::basic_string<CharType> string_type;  ///< string type for this type of character
         typedef std::basic_ostream<CharType> stream_type; ///< output stream type for this type of character
 
-        ///
         /// Create a format class for \a format_string
-        ///
         basic_format(const string_type& format_string) : format_(format_string), translate_(false), parameters_count_(0)
         {}
-        ///
         /// Create a format class using message \a trans. The message if translated first according
         /// to the rules of the target locale and then interpreted as a format string
-        ///
         basic_format(const message_type& trans) : message_(trans), translate_(true), parameters_count_(0) {}
 
         /// Non-copyable
         basic_format(const basic_format& other) = delete;
         void operator=(const basic_format& other) = delete;
+        /// Moveable
         basic_format(basic_format&& other) :
             message_(std::move(other.message_)), format_(std::move(other.format_)), translate_(other.translate_),
             parameters_count_(0)
@@ -225,7 +218,6 @@ namespace boost { namespace locale {
             return *this;
         }
 
-        ///
         /// Add new parameter to the format list. The object should be a type
         /// with defined expression out << object where \c out is \c std::basic_ostream.
         ///
@@ -247,9 +239,7 @@ namespace boost { namespace locale {
             return *this;
         }
 
-        ///
         /// Format a string using a locale \a loc
-        ///
         string_type str(const std::locale& loc = std::locale()) const
         {
             std::basic_ostringstream<CharType> buffer;
@@ -258,9 +248,7 @@ namespace boost { namespace locale {
             return buffer.str();
         }
 
-        ///
         /// write a formatted string to output stream \a out using out's locale
-        ///
         void write(stream_type& out) const
         {
             string_type format;
@@ -426,11 +414,9 @@ namespace boost { namespace locale {
         std::vector<formattible_type> ext_params_;
     };
 
-    ///
     /// Write formatted message to stream.
     ///
     /// This operator actually causes actual text formatting. It uses the locale of \a out stream
-    ///
     template<typename CharType>
     std::basic_ostream<CharType>& operator<<(std::basic_ostream<CharType>& out, const basic_format<CharType>& fmt)
     {
@@ -438,41 +424,28 @@ namespace boost { namespace locale {
         return out;
     }
 
-    ///
     /// Definition of char based format
-    ///
     typedef basic_format<char> format;
-
-    ///
     /// Definition of wchar_t based format
-    ///
     typedef basic_format<wchar_t> wformat;
 
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-    ///
     /// Definition of char16_t based format
-    ///
     typedef basic_format<char16_t> u16format;
 #endif
 
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-    ///
     /// Definition of char32_t based format
-    ///
     typedef basic_format<char32_t> u32format;
 #endif
 
-    ///
     /// @}
-    ///
-
 }} // namespace boost::locale
 
 #ifdef BOOST_MSVC
 #    pragma warning(pop)
 #endif
 
-///
 /// \example hello.cpp
 ///
 /// Basic example of using various functions provided by this library
@@ -480,7 +453,5 @@ namespace boost { namespace locale {
 /// \example whello.cpp
 ///
 /// Basic example of using various functions with wide strings provided by this library
-///
-///
 
 #endif

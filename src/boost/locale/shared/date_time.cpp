@@ -50,7 +50,7 @@ namespace boost { namespace locale {
         impl_->set_timezone(tz_);
     }
 
-    calendar::~calendar() {}
+    calendar::~calendar() = default;
 
     calendar::calendar(const calendar& other) : locale_(other.locale_), tz_(other.tz_), impl_(other.impl_->clone()) {}
 
@@ -137,8 +137,6 @@ namespace boost { namespace locale {
         impl_.reset(other.impl_->clone());
         return *this;
     }
-
-    date_time::~date_time() {}
 
     date_time::date_time(double t) : impl_(std::use_facet<calendar_facet>(std::locale()).create_calendar())
     {

@@ -128,9 +128,9 @@ namespace boost { namespace locale { namespace util {
                 case flags::number:
                 case flags::percent:
                 case flags::spellout:
-                case flags::ordinal:
-                default: return super::do_put(out, ios, fill, val);
+                case flags::ordinal: break;
             }
+            return super::do_put(out, ios, fill, val);
         }
 
         virtual iter_type
@@ -214,10 +214,8 @@ namespace boost { namespace locale { namespace util {
 
                 std::ios_base::fmtflags flags = ios.flags() & std::ios_base::adjustfield;
 
-                //
                 // we do not really know internal point, so we assume that it does not
                 // exist. so according to the standard field should be right aligned
-                //
                 if(flags != std::ios_base::left)
                     on_left = n;
                 on_right = n - on_left;
@@ -358,9 +356,9 @@ namespace boost { namespace locale { namespace util {
                 case flags::number:
                 case flags::percent:
                 case flags::spellout:
-                case flags::ordinal:
-                default: return super::do_get(in, end, ios, err, val);
+                case flags::ordinal: break;
             }
+            return super::do_get(in, end, ios, err, val);
         }
 
         template<bool intl>

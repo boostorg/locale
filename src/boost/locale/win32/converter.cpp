@@ -30,8 +30,9 @@ namespace boost { namespace locale { namespace impl_win {
                 case converter_base::lower_case: return towlower_l(begin, end, lc_);
                 case converter_base::case_folding: return wcsfold(begin, end);
                 case converter_base::normalization: return wcsnormalize(static_cast<norm_type>(flags), begin, end);
-                default: return std::wstring(begin, end - begin);
+                case converter_base::title_case: break;
             }
+            return std::wstring(begin, end - begin);
         }
 
     private:
@@ -55,7 +56,7 @@ namespace boost { namespace locale { namespace impl_win {
                 case lower_case: res = towlower_l(wb, we, lc_); break;
                 case case_folding: res = wcsfold(wb, we); break;
                 case normalization: res = wcsnormalize(static_cast<norm_type>(flags), wb, we); break;
-                default: res = tmp; // make gcc happy
+                case title_case: break;
             }
             return conv::from_utf(res, "UTF-8");
         }
@@ -64,13 +65,20 @@ namespace boost { namespace locale { namespace impl_win {
         winlocale lc_;
     };
 
-    std::locale create_convert(const std::locale& in, const winlocale& lc, character_facet_type type)
+    std::locale create_convert(const std::locale& in, const winlocale& lc, char_facet_t type)
     {
         switch(type) {
-            case char_facet: return std::locale(in, new utf8_converter(lc));
-            case wchar_t_facet: return std::locale(in, new utf16_converter(lc));
-            default: return in;
+            case char_facet_t::nochar: break;
+            case char_facet_t::char_f: return std::locale(in, new utf8_converter(lc));
+            case char_facet_t::wchar_f: return std::locale(in, new utf16_converter(lc));
+#ifdef BOOST_LOCALE_ENABLE_CHAR16_T
+            case char_facet_t::char16_f: break;
+#endif
+#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
+            case char_facet_t::char32_f: break;
+#endif
         }
+        return in;
     }
 
 }}} // namespace boost::locale::impl_win

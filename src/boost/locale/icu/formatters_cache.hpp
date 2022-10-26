@@ -9,7 +9,6 @@
 #define BOOST_LOCALE_PREDEFINED_FORMATTERS_HPP_INCLUDED
 
 #include <boost/locale/config.hpp>
-#include <boost/locale/hold_ptr.hpp>
 #include "boost/locale/icu/icu_util.hpp"
 #include <boost/cstdint.hpp>
 #include <boost/thread.hpp>
@@ -38,11 +37,11 @@ namespace boost { namespace locale { namespace impl_icu {
         Full,
     };
 
-    class icu_formatters_cache : public std::locale::facet {
+    class formatters_cache : public std::locale::facet {
     public:
         static std::locale::id id;
 
-        icu_formatters_cache(const icu::Locale& locale) : locale_(locale)
+        formatters_cache(const icu::Locale& locale) : locale_(locale)
         {
             icu::DateFormat::EStyle styles[4]{};
             styles[int(format_len::Short)] = icu::DateFormat::kShort;
@@ -51,14 +50,14 @@ namespace boost { namespace locale { namespace impl_icu {
             styles[int(format_len::Full)] = icu::DateFormat::kFull;
 
             for(int i = 0; i < 4; i++) {
-                hold_ptr<icu::DateFormat> fmt(icu::DateFormat::createDateInstance(styles[i], locale));
+                std::unique_ptr<icu::DateFormat> fmt(icu::DateFormat::createDateInstance(styles[i], locale));
                 icu::SimpleDateFormat* sfmt = icu_cast<icu::SimpleDateFormat>(fmt.get());
                 if(sfmt)
                     sfmt->toPattern(date_format_[i]);
             }
 
             for(int i = 0; i < 4; i++) {
-                hold_ptr<icu::DateFormat> fmt(icu::DateFormat::createTimeInstance(styles[i], locale));
+                std::unique_ptr<icu::DateFormat> fmt(icu::DateFormat::createTimeInstance(styles[i], locale));
                 icu::SimpleDateFormat* sfmt = icu_cast<icu::SimpleDateFormat>(fmt.get());
                 if(sfmt)
                     sfmt->toPattern(time_format_[i]);
@@ -66,7 +65,7 @@ namespace boost { namespace locale { namespace impl_icu {
 
             for(int i = 0; i < 4; i++) {
                 for(int j = 0; j < 4; j++) {
-                    hold_ptr<icu::DateFormat> fmt(
+                    std::unique_ptr<icu::DateFormat> fmt(
                       icu::DateFormat::createDateTimeInstance(styles[i], styles[j], locale));
                     icu::SimpleDateFormat* sfmt = icu_cast<icu::SimpleDateFormat>(fmt.get());
                     if(sfmt)
@@ -75,16 +74,7 @@ namespace boost { namespace locale { namespace impl_icu {
             }
         }
 
-        typedef enum {
-            fmt_number,
-            fmt_sci,
-            fmt_curr_nat,
-            fmt_curr_iso,
-            fmt_per,
-            fmt_spell,
-            fmt_ord,
-            fmt_count
-        } fmt_type;
+        enum fmt_type { fmt_number, fmt_sci, fmt_curr_nat, fmt_curr_iso, fmt_per, fmt_spell, fmt_ord, fmt_count };
 
         icu::NumberFormat* number_format(fmt_type type) const
         {
@@ -92,7 +82,7 @@ namespace boost { namespace locale { namespace impl_icu {
             if(ptr)
                 return ptr;
             UErrorCode err = U_ZERO_ERROR;
-            hold_ptr<icu::NumberFormat> ap;
+            std::unique_ptr<icu::NumberFormat> ap;
 
             switch(type) {
                 case fmt_number: ap.reset(icu::NumberFormat::createInstance(locale_, err)); break;
@@ -160,7 +150,7 @@ namespace boost { namespace locale { namespace impl_icu {
             if(p)
                 return p;
 
-            hold_ptr<icu::DateFormat> fmt(
+            std::unique_ptr<icu::DateFormat> fmt(
               icu::DateFormat::createDateTimeInstance(icu::DateFormat::kMedium, icu::DateFormat::kMedium, locale_));
 
             p = icu_cast<icu::SimpleDateFormat>(fmt.get());
