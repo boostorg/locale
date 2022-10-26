@@ -59,6 +59,8 @@ namespace boost { namespace locale { namespace impl_icu {
         typedef CharType char_type;
         typedef std::basic_string<CharType> string_type;
 
+        number_format(icu::NumberFormat* fmt, std::string codepage): cvt_(codepage), icu_fmt_(fmt) {}
+
         string_type format(double value, size_t& code_points) const override
         {
             icu::UnicodeString tmp;
@@ -69,7 +71,7 @@ namespace boost { namespace locale { namespace impl_icu {
         string_type format(int64_t value, size_t& code_points) const override
         {
             icu::UnicodeString tmp;
-            icu_fmt_->format(static_cast<::int64_t>(value), tmp);
+            icu_fmt_->format(value, tmp);
             code_points = tmp.countChar32();
             return cvt_.std(tmp);
         }
@@ -77,30 +79,14 @@ namespace boost { namespace locale { namespace impl_icu {
         string_type format(int32_t value, size_t& code_points) const override
         {
             icu::UnicodeString tmp;
-#ifdef __SUNPRO_CC
-            icu_fmt_->format(static_cast<int>(value), tmp);
-#else
-            icu_fmt_->format(::int32_t(value), tmp);
-#endif
+            icu_fmt_->format(value, tmp);
             code_points = tmp.countChar32();
             return cvt_.std(tmp);
         }
 
-        size_t parse(const string_type& str, double& value) const override
-        {
-            return do_parse(str, value);
-        }
-
-        size_t parse(const string_type& str, int64_t& value) const override
-        {
-            return do_parse(str, value);
-        }
-        size_t parse(const string_type& str, int32_t& value) const override
-        {
-            return do_parse(str, value);
-        }
-
-        number_format(icu::NumberFormat* fmt, std::string codepage) : cvt_(codepage), icu_fmt_(fmt) {}
+        size_t parse(const string_type& str, double& value) const override { return do_parse(str, value); }
+        size_t parse(const string_type& str, int64_t& value) const override { return do_parse(str, value); }
+        size_t parse(const string_type& str, int32_t& value) const override { return do_parse(str, value); }
 
     private:
         bool get_value(double& v, icu::Formattable& fmt) const
@@ -255,7 +241,6 @@ namespace boost { namespace locale { namespace impl_icu {
             }
             // not supported by ICU ;(
             //  case 'C': // Century -> 1980 -> 19
-            //  retur
             case 'd': // Day of Month [01,31]
                 return "dd";
             case 'D': // %m/%d/%y

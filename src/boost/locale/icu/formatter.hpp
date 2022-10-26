@@ -67,26 +67,6 @@ namespace boost { namespace locale { namespace impl_icu {
         static formatter* create(std::ios_base& ios, const icu::Locale& l, const std::string& enc);
     }; // class formatter
 
-    /// Specialization for real implementation
-    template<>
-    formatter<char>* formatter<char>::create(std::ios_base& ios, const icu::Locale& l, const std::string& enc);
-
-    /// Specialization for real implementation
-    template<>
-    formatter<wchar_t>* formatter<wchar_t>::create(std::ios_base& ios, const icu::Locale& l, const std::string& e);
-
-#ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-    /// Specialization for real implementation
-    template<>
-    formatter<char16_t>* formatter<char16_t>::create(std::ios_base& ios, const icu::Locale& l, const std::string& e);
-#endif
-
-#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-    /// Specialization for real implementation
-    template<>
-    formatter<char32_t>* formatter<char32_t>::create(std::ios_base& ios, const icu::Locale& l, const std::string& e);
-#endif
-
 }}} // namespace boost::locale::impl_icu
 
 #endif
