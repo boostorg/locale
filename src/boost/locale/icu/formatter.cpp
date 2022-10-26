@@ -29,13 +29,7 @@
 
 namespace boost { namespace locale { namespace impl_icu {
 
-    std::locale::id formatters_cache::id;
-
     namespace {
-        struct init {
-            init() { ignore_unused(std::has_facet<formatters_cache>(std::locale::classic())); }
-        } instance;
-
         // Set the min/max fraction digits for the NumberFormat
         void set_fraction_digits(icu::NumberFormat& nf, const std::ios_base::fmtflags how, std::streamsize precision)
         {
@@ -360,9 +354,9 @@ namespace boost { namespace locale { namespace impl_icu {
                 icu::NumberFormat* nf = 0;
 
                 if(how == std::ios_base::scientific)
-                    nf = cache.number_format(formatters_cache::fmt_sci);
+                    nf = cache.number_format(num_fmt_type::sci);
                 else
-                    nf = cache.number_format(formatters_cache::fmt_number);
+                    nf = cache.number_format(num_fmt_type::number);
 
                 set_fraction_digits(*nf, how, ios.precision());
                 fmt.reset(new number_format<CharType>(nf, encoding));
@@ -373,23 +367,23 @@ namespace boost { namespace locale { namespace impl_icu {
                 uint64_t curr = info.currency_flags();
 
                 if(curr == currency_default || curr == currency_national)
-                    nf = cache.number_format(formatters_cache::fmt_curr_nat);
+                    nf = cache.number_format(num_fmt_type::curr_nat);
                 else
-                    nf = cache.number_format(formatters_cache::fmt_curr_iso);
+                    nf = cache.number_format(num_fmt_type::curr_iso);
 
                 fmt.reset(new number_format<CharType>(nf, encoding));
             } break;
             case percent: {
-                icu::NumberFormat* nf = cache.number_format(formatters_cache::fmt_per);
+                icu::NumberFormat* nf = cache.number_format(num_fmt_type::percent);
                 set_fraction_digits(*nf, ios.flags() & std::ios_base::floatfield, ios.precision());
                 fmt.reset(new number_format<CharType>(nf, encoding));
 
             } break;
             case spellout:
-                fmt.reset(new number_format<CharType>(cache.number_format(formatters_cache::fmt_spell), encoding));
+                fmt.reset(new number_format<CharType>(cache.number_format(num_fmt_type::spell), encoding));
                 break;
             case ordinal:
-                fmt.reset(new number_format<CharType>(cache.number_format(formatters_cache::fmt_ord), encoding));
+                fmt.reset(new number_format<CharType>(cache.number_format(num_fmt_type::ordinal), encoding));
                 break;
             case date:
             case time:

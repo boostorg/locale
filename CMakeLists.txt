@@ -125,6 +125,7 @@ if(BOOST_LOCALE_ENABLE_ICU)
     src/boost/locale/icu/date_time.cpp
     src/boost/locale/icu/formatter.cpp
     src/boost/locale/icu/formatter.hpp
+    src/boost/locale/icu/formatters_cache.cpp
     src/boost/locale/icu/formatters_cache.hpp
     src/boost/locale/icu/icu_backend.cpp
     src/boost/locale/icu/icu_backend.hpp

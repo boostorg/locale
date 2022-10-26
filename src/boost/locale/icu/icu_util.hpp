@@ -13,6 +13,7 @@
 #    include <stdint.h> // Avoid ICU defining e.g. INT8_MIN causing macro redefinition warnings
 #endif
 #include <stdexcept>
+#include <string>
 #include <unicode/utypes.h>
 #include <unicode/uversion.h>
 
@@ -20,15 +21,17 @@
 
 namespace boost { namespace locale { namespace impl_icu {
 
-    inline void throw_icu_error(UErrorCode err)
+    inline void throw_icu_error(UErrorCode err, std::string desc)
     {
-        throw std::runtime_error(u_errorName(err));
+        if(!desc.empty())
+            desc += ": ";
+        throw std::runtime_error(desc + u_errorName(err));
     }
 
-    inline void check_and_throw_icu_error(UErrorCode err)
+    inline void check_and_throw_icu_error(UErrorCode err, const char* desc = "")
     {
         if(U_FAILURE(err))
-            throw_icu_error(err);
+            throw_icu_error(err, desc);
     }
 
     /// Cast a pointer to an ICU object to a pointer to TargetType
