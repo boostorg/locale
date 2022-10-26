@@ -32,101 +32,112 @@ namespace boost { namespace locale { namespace impl_icu {
             init() { ignore_unused(std::has_facet<formatters_cache>(std::locale::classic())); }
         } instance;
 
+        void get_icu_pattern(std::unique_ptr<icu::DateFormat> fmt, icu::UnicodeString& out_str)
+        {
+            icu::SimpleDateFormat* sfmt = icu_cast<icu::SimpleDateFormat>(fmt.get());
+            if(sfmt)
+                sfmt->toPattern(out_str);
+            else
+                out_str.remove();
+        }
+        void get_icu_pattern(icu::DateFormat* fmt, icu::UnicodeString& out_str)
+        {
+            return get_icu_pattern(std::unique_ptr<icu::DateFormat>(fmt), out_str);
+        }
     } // namespace
 
     formatters_cache::formatters_cache(const icu::Locale& locale) : locale_(locale)
     {
-        icu::DateFormat::EStyle styles[4]{};
-        styles[int(format_len::Short)] = icu::DateFormat::kShort;
-        styles[int(format_len::Medium)] = icu::DateFormat::kMedium;
-        styles[int(format_len::Long)] = icu::DateFormat::kLong;
-        styles[int(format_len::Full)] = icu::DateFormat::kFull;
+#define BOOST_LOCALE_ARRAY_SIZE(T) std::extent<typename std::remove_reference<decltype(T)>::type>::value
+        constexpr icu::DateFormat::EStyle styles[]{icu::DateFormat::kShort,
+                                                   icu::DateFormat::kMedium,
+                                                   icu::DateFormat::kLong,
+                                                   icu::DateFormat::kFull};
+        constexpr int num_styles = BOOST_LOCALE_ARRAY_SIZE(styles);
 
-        for(int i = 0; i < 4; i++) {
-            std::unique_ptr<icu::DateFormat> fmt(icu::DateFormat::createDateInstance(styles[i], locale));
-            icu::SimpleDateFormat* sfmt = icu_cast<icu::SimpleDateFormat>(fmt.get());
-            if(sfmt)
-                sfmt->toPattern(date_format_[i]);
-        }
+        static_assert(num_styles == BOOST_LOCALE_ARRAY_SIZE(date_format_), "!");
+        for(int i = 0; i < num_styles; i++)
+            get_icu_pattern(icu::DateFormat::createDateInstance(styles[i], locale), date_format_[i]);
 
-        for(int i = 0; i < 4; i++) {
-            std::unique_ptr<icu::DateFormat> fmt(icu::DateFormat::createTimeInstance(styles[i], locale));
-            icu::SimpleDateFormat* sfmt = icu_cast<icu::SimpleDateFormat>(fmt.get());
-            if(sfmt)
-                sfmt->toPattern(time_format_[i]);
-        }
+        static_assert(num_styles == BOOST_LOCALE_ARRAY_SIZE(time_format_), "!");
+        for(int i = 0; i < num_styles; i++)
+            get_icu_pattern(icu::DateFormat::createTimeInstance(styles[i], locale), time_format_[i]);
 
-        for(int i = 0; i < 4; i++) {
-            for(int j = 0; j < 4; j++) {
-                std::unique_ptr<icu::DateFormat> fmt(
-                  icu::DateFormat::createDateTimeInstance(styles[i], styles[j], locale));
-                icu::SimpleDateFormat* sfmt = icu_cast<icu::SimpleDateFormat>(fmt.get());
-                if(sfmt)
-                    sfmt->toPattern(date_time_format_[i][j]);
+        static_assert(num_styles == BOOST_LOCALE_ARRAY_SIZE(date_time_format_), "!");
+        static_assert(num_styles == BOOST_LOCALE_ARRAY_SIZE(date_time_format_[0]), "!");
+        for(int i = 0; i < num_styles; i++) {
+            for(int j = 0; j < num_styles; j++) {
+                get_icu_pattern(icu::DateFormat::createDateTimeInstance(styles[i], styles[j], locale),
+                                date_time_format_[i][j]);
             }
         }
+#undef BOOST_LOCALE_ARRAY_SIZE
+
+        const auto get_str_or = [](const icu::UnicodeString& str, const char* default_str) {
+            return str.isEmpty() ? default_str : str;
+        };
+        default_date_format_ = get_str_or(date_format(format_len::Medium), "yyyy-MM-dd");
+        default_time_format_ = get_str_or(time_format(format_len::Medium), "HH:mm:ss");
+        default_date_time_format_ =
+          get_str_or(date_time_format(format_len::Full, format_len::Full), "yyyy-MM-dd HH:mm:ss");
     }
 
-    icu::NumberFormat* formatters_cache::number_format(num_fmt_type type) const
+    icu::NumberFormat* formatters_cache::create_number_format(num_fmt_type type, UErrorCode& err) const
     {
-        icu::NumberFormat* ptr = number_format_[int(type)].get();
-        if(ptr)
-            return ptr;
-        UErrorCode err = U_ZERO_ERROR;
-        std::unique_ptr<icu::NumberFormat> ap;
-
         switch(type) {
-            case num_fmt_type::number: ap.reset(icu::NumberFormat::createInstance(locale_, err)); break;
-            case num_fmt_type::sci: ap.reset(icu::NumberFormat::createScientificInstance(locale_, err)); break;
+            case num_fmt_type::number: return icu::NumberFormat::createInstance(locale_, err); break;
+            case num_fmt_type::sci: return icu::NumberFormat::createScientificInstance(locale_, err); break;
 #if BOOST_LOCALE_ICU_VERSION >= 408
-            case num_fmt_type::curr_nat:
-                ap.reset(icu::NumberFormat::createInstance(locale_, UNUM_CURRENCY, err));
-                break;
+            case num_fmt_type::curr_nat: return icu::NumberFormat::createInstance(locale_, UNUM_CURRENCY, err); break;
             case num_fmt_type::curr_iso:
-                ap.reset(icu::NumberFormat::createInstance(locale_, UNUM_CURRENCY_ISO, err));
+                return icu::NumberFormat::createInstance(locale_, UNUM_CURRENCY_ISO, err);
                 break;
 #elif BOOST_LOCALE_ICU_VERSION >= 402
             case num_fmt_type::curr_nat:
-                ap.reset(icu::NumberFormat::createInstance(locale_, icu::NumberFormat::kCurrencyStyle, err));
+                return icu::NumberFormat::createInstance(locale_, icu::NumberFormat::kCurrencyStyle, err);
                 break;
             case num_fmt_type::curr_iso:
-                ap.reset(icu::NumberFormat::createInstance(locale_, icu::NumberFormat::kIsoCurrencyStyle, err));
+                return icu::NumberFormat::createInstance(locale_, icu::NumberFormat::kIsoCurrencyStyle, err);
                 break;
 #else
             case num_fmt_type::curr_nat:
-            case num_fmt_type::curr_iso: ap.reset(icu::NumberFormat::createCurrencyInstance(locale_, err)); break;
+            case num_fmt_type::curr_iso: return icu::NumberFormat::createCurrencyInstance(locale_, err); break;
 #endif
-            case num_fmt_type::percent: ap.reset(icu::NumberFormat::createPercentInstance(locale_, err)); break;
-            case num_fmt_type::spell:
-                ap.reset(new icu::RuleBasedNumberFormat(icu::URBNF_SPELLOUT, locale_, err));
-                break;
-            case num_fmt_type::ordinal:
-                ap.reset(new icu::RuleBasedNumberFormat(icu::URBNF_ORDINAL, locale_, err));
-                break;
-            default: throw std::runtime_error("locale::internal error should not get there");
+            case num_fmt_type::percent: return icu::NumberFormat::createPercentInstance(locale_, err); break;
+            case num_fmt_type::spell: return new icu::RuleBasedNumberFormat(icu::URBNF_SPELLOUT, locale_, err); break;
+            case num_fmt_type::ordinal: return new icu::RuleBasedNumberFormat(icu::URBNF_ORDINAL, locale_, err); break;
         }
+        throw std::logic_error("locale::internal error should not get there");
+    }
 
-        check_and_throw_icu_error(err, "Failed to create a formatter");
-        ptr = ap.get();
-        number_format_[int(type)].reset(ap.release());
-        return ptr;
+    icu::NumberFormat& formatters_cache::number_format(num_fmt_type type) const
+    {
+        icu::NumberFormat* result = number_format_[int(type)].get();
+        if(!result) {
+            UErrorCode err = U_ZERO_ERROR;
+            std::unique_ptr<icu::NumberFormat> new_ptr(create_number_format(type, err));
+            check_and_throw_icu_error(err, "Failed to create a formatter");
+            result = new_ptr.get();
+            BOOST_ASSERT(result);
+            number_format_[int(type)].reset(new_ptr.release());
+        }
+        return *result;
     }
 
     icu::SimpleDateFormat* formatters_cache::date_formatter() const
     {
-        icu::SimpleDateFormat* p = date_formatter_.get();
-        if(p)
-            return p;
+        icu::SimpleDateFormat* result = date_formatter_.get();
+        if(!result) {
+            std::unique_ptr<icu::DateFormat> fmt(
+              icu::DateFormat::createDateTimeInstance(icu::DateFormat::kMedium, icu::DateFormat::kMedium, locale_));
 
-        std::unique_ptr<icu::DateFormat> fmt(
-          icu::DateFormat::createDateTimeInstance(icu::DateFormat::kMedium, icu::DateFormat::kMedium, locale_));
-
-        p = icu_cast<icu::SimpleDateFormat>(fmt.get());
-        if(p) {
-            fmt.release();
-            date_formatter_.reset(p);
+            result = icu_cast<icu::SimpleDateFormat>(fmt.get());
+            if(result) {
+                fmt.release();
+                date_formatter_.reset(result);
+            }
         }
-        return p;
+        return result;
     }
 
 }}} // namespace boost::locale::impl_icu

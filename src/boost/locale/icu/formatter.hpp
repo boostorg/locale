@@ -48,14 +48,14 @@ namespace boost { namespace locale { namespace impl_icu {
 
         /// Get formatter for the current state of ios_base -- flags and locale,
         /// NULL may be returned if an invalid combination of flags is provided or this type
-        /// of formatting is not supported by locale. See: create
+        /// of formatting is not supported by locale.
         ///
         /// Note: formatter is cached. If \a ios is not changed (no flags or locale changed)
         /// the formatter would remain the same. Otherwise it would be rebuild and cached
         /// for future use. It is useful for saving time for generation
         /// of multiple values with same locale.
         ///
-        /// For example, this code:
+        /// For example this code will create a new spelling formatter only once:
         ///
         /// \code
         ///     std::cout << as::spellout;
@@ -63,8 +63,9 @@ namespace boost { namespace locale { namespace impl_icu {
         ///         std::cout << i << std::endl;
         /// \endcode
         ///
-        /// Would create a new spelling formatter only once.
-        static formatter* create(std::ios_base& ios, const icu::Locale& l, const std::string& enc);
+        ///
+        static std::unique_ptr<formatter>
+        create(std::ios_base& ios, const icu::Locale& locale, const std::string& encoding);
     }; // class formatter
 
 }}} // namespace boost::locale::impl_icu

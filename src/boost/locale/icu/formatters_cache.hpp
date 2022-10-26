@@ -41,7 +41,7 @@ namespace boost { namespace locale { namespace impl_icu {
 
         formatters_cache(const icu::Locale& locale);
 
-        icu::NumberFormat* number_format(num_fmt_type type) const;
+        icu::NumberFormat& number_format(num_fmt_type type) const;
 
         const icu::UnicodeString& date_format(format_len f) const { return date_format_[int(f)]; }
 
@@ -52,9 +52,15 @@ namespace boost { namespace locale { namespace impl_icu {
             return date_time_format_[int(d)][int(t)];
         }
 
+        const icu::UnicodeString& default_date_format() const { return default_date_format_; }
+        const icu::UnicodeString& default_time_format() const { return default_time_format_; }
+        const icu::UnicodeString& default_date_time_format() const { return default_date_time_format_; }
+
         icu::SimpleDateFormat* date_formatter() const;
 
     private:
+        icu::NumberFormat* create_number_format(num_fmt_type type, UErrorCode& err) const;
+
         static constexpr auto num_fmt_type_count = static_cast<unsigned>(num_fmt_type::ordinal) + 1;
         static constexpr auto format_len_count = static_cast<unsigned>(format_len::Full) + 1;
 
@@ -62,7 +68,7 @@ namespace boost { namespace locale { namespace impl_icu {
         icu::UnicodeString date_format_[format_len_count];
         icu::UnicodeString time_format_[format_len_count];
         icu::UnicodeString date_time_format_[format_len_count][format_len_count];
-
+        icu::UnicodeString default_date_format_, default_time_format_, default_date_time_format_;
         mutable boost::thread_specific_ptr<icu::SimpleDateFormat> date_formatter_;
         icu::Locale locale_;
     };
