@@ -27,11 +27,21 @@ namespace boost { namespace locale {
         // Non-copyable
         hold_ptr(const hold_ptr&) = delete;
         hold_ptr& operator=(const hold_ptr&) = delete;
+        // Movable
+        hold_ptr(hold_ptr&& other) noexcept : ptr_(other.ptr_) { other.ptr_ = nullptr; }
+        hold_ptr& operator=(hold_ptr&& other) noexcept
+        {
+            swap(other);
+            return *this;
+        }
 
         /// Get a const pointer to the object
         T const* get() const { return ptr_; }
         /// Get a mutable pointer to the object
         T* get() { return ptr_; }
+
+        /// Explicitly convertible to bool. Returns: get() != nullptr
+        explicit operator bool() const { return ptr_ != nullptr; }
 
         /// Get a const reference to the object
         T const& operator*() const { return *ptr_; }

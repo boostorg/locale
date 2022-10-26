@@ -138,8 +138,6 @@ namespace boost { namespace locale {
         return *this;
     }
 
-    date_time::~date_time() {}
-
     date_time::date_time(double t) : impl_(std::use_facet<calendar_facet>(std::locale()).create_calendar())
     {
         impl_->set_timezone(time_zone::global());
