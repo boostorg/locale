@@ -69,14 +69,17 @@ option(BOOST_LOCALE_ENABLE_ICU "Boost.Locale: enable ICU backend" ${ICU_FOUND})
 if(UNIX AND NOT DEFINED Iconv_INCLUDE_DIR AND BOOST_LOCALE_ENABLE_ICU AND EXISTS "${ICU_INCLUDE_DIRS}/iconv.h")
   set(Iconv_INCLUDE_DIR "${ICU_INCLUDE_DIRS}" CACHE PATH "Path to iconv headers")
   find_package(Iconv QUIET)
-  if(NOT ICONV_FOUND)
+  if(NOT Iconv_FOUND)
     # Unset and retry below
     unset(Iconv_INCLUDE_DIR CACHE)
+    unset(Iconv_LIBRARY CACHE)
+    unset(Iconv_IS_BUILT_IN CACHE)
+    unset(Iconv_IS_BUILT_IN)
   endif()
 endif()
 
 find_package(Iconv QUIET)
-option(BOOST_LOCALE_ENABLE_ICONV "Boost.Locale: enable iconv backend" ${ICONV_FOUND})
+option(BOOST_LOCALE_ENABLE_ICONV "Boost.Locale: enable iconv backend" ${Iconv_FOUND})
 
 if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin")
   set(_default_posix ON)
@@ -125,6 +128,7 @@ if(BOOST_LOCALE_ENABLE_ICU)
     src/boost/locale/icu/date_time.cpp
     src/boost/locale/icu/formatter.cpp
     src/boost/locale/icu/formatter.hpp
+    src/boost/locale/icu/formatters_cache.cpp
     src/boost/locale/icu/formatters_cache.hpp
     src/boost/locale/icu/icu_backend.cpp
     src/boost/locale/icu/icu_backend.hpp

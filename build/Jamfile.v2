@@ -240,6 +240,7 @@ rule configure-full ( properties * : flags-only )
                 conversion
                 date_time
                 formatter
+                formatters_cache
                 icu_backend
                 numeric
                 time_zone
@@ -385,6 +386,7 @@ alias build_flags : : : : <conditional>@configure-flags ;
 
 local cxx_requirements = [ requires
       cxx11_auto_declarations
+      cxx11_decltype
       cxx11_defaulted_functions
       cxx11_defaulted_moves
       cxx11_hdr_functional
@@ -394,6 +396,7 @@ local cxx_requirements = [ requires
       cxx11_override
       cxx11_range_based_for
       cxx11_rvalue_references
+      cxx11_scoped_enums
       cxx11_smart_ptr
       cxx11_static_assert
     ] ;

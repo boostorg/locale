@@ -51,9 +51,9 @@ namespace boost { namespace locale {
                     // There is a collapse for MSVC: int32_t defined by both boost::cstdint and icu...
                     // So need to pick one ;(
                     //
-                    std::vector<::int32_t> buffer;
-                    ::int32_t membuf[8] = {0}; // try not to use memory allocation if possible
-                    ::int32_t* buf = membuf;
+                    std::vector<int32_t> buffer;
+                    int32_t membuf[8] = {0}; // try not to use memory allocation if possible
+                    int32_t* buf = membuf;
 
                     UErrorCode err = U_ZERO_ERROR;
                     int n = rbbi->getRuleStatusVec(buf, 8, err);
