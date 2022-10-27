@@ -6,7 +6,6 @@
 
 #define BOOST_LOCALE_SOURCE
 #include <boost/locale/formatting.hpp>
-#include <boost/locale/hold_ptr.hpp>
 #include "boost/locale/icu/all_generator.hpp"
 #include "boost/locale/icu/cdata.hpp"
 #include "boost/locale/icu/formatter.hpp"
@@ -36,7 +35,7 @@ namespace boost { namespace locale { namespace impl_icu {
         };
 
         // ICU does not support uint64_t values so fall back to the parent/std formatting
-        // if the numer is to large to fit into an int64_t
+        // if the number is to large to fit into an int64_t
         template<typename T,
                  bool BigUInt = !std::numeric_limits<T>::is_signed && std::numeric_limits<T>::is_integer
                                 && (sizeof(T) >= sizeof(uint64_t))>
@@ -74,7 +73,6 @@ namespace boost { namespace locale { namespace impl_icu {
         typedef std::basic_string<CharType> string_type;
         typedef CharType char_type;
         typedef formatter<CharType> formatter_type;
-        typedef hold_ptr<formatter_type> formatter_ptr;
 
         num_format(const cdata& d, size_t refs = 0) : std::num_put<CharType>(refs), loc_(d.locale), enc_(d.encoding) {}
 
@@ -112,9 +110,9 @@ namespace boost { namespace locale { namespace impl_icu {
             if(detail::use_parent(ios, val))
                 return std::num_put<char_type>::do_put(out, ios, fill, val);
 
-            formatter_ptr formatter(formatter_type::create(ios, loc_, enc_));
+            const auto formatter = formatter_type::create(ios, loc_, enc_);
 
-            if(formatter.get() == 0)
+            if(!formatter)
                 return std::num_put<char_type>::do_put(out, ios, fill, val);
 
             size_t code_points;
@@ -160,7 +158,6 @@ namespace boost { namespace locale { namespace impl_icu {
         typedef std::basic_string<CharType> string_type;
         typedef CharType char_type;
         typedef formatter<CharType> formatter_type;
-        typedef hold_ptr<formatter_type> formatter_ptr;
         typedef std::basic_istream<CharType> stream_type;
 
         iter_type
@@ -248,8 +245,8 @@ namespace boost { namespace locale { namespace impl_icu {
                 return std::num_get<CharType>::do_get(in, end, ios, err, val);
             }
 
-            formatter_ptr formatter(formatter_type::create(ios, loc_, enc_));
-            if(formatter.get() == 0) {
+            const auto formatter = formatter_type::create(ios, loc_, enc_);
+            if(!formatter) {
                 return std::num_get<CharType>::do_get(in, end, ios, err, val);
             }
 

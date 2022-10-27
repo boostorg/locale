@@ -66,7 +66,6 @@ namespace boost { namespace locale {
             date_flags_mask = 7 << 10,
 
             datetime_flags_mask = date_flags_mask | time_flags_mask
-
         };
 
         /// Special string patterns that can be used for text formatting
