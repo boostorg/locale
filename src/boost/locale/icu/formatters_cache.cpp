@@ -38,7 +38,7 @@ namespace boost { namespace locale { namespace impl_icu {
             if(sfmt)
                 sfmt->toPattern(out_str);
             else
-                out_str.remove();
+                out_str.remove(); // LCOV_EXCL_LINE
         }
         void get_icu_pattern(icu::DateFormat* fmt, icu::UnicodeString& out_str)
         {
@@ -107,7 +107,7 @@ namespace boost { namespace locale { namespace impl_icu {
             case num_fmt_type::spell: return new icu::RuleBasedNumberFormat(icu::URBNF_SPELLOUT, locale_, err); break;
             case num_fmt_type::ordinal: return new icu::RuleBasedNumberFormat(icu::URBNF_ORDINAL, locale_, err); break;
         }
-        throw std::logic_error("locale::internal error should not get there");
+        throw std::logic_error("locale::internal error should not get there"); // LCOV_EXCL_LINE
     }
 
     icu::NumberFormat& formatters_cache::number_format(num_fmt_type type) const

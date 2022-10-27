@@ -53,29 +53,9 @@ namespace boost { namespace locale { namespace impl_icu {
 
         number_format(icu::NumberFormat& fmt, std::string codepage) : cvt_(codepage), icu_fmt_(fmt) {}
 
-        string_type format(double value, size_t& code_points) const override
-        {
-            icu::UnicodeString tmp;
-            icu_fmt_.format(value, tmp);
-            code_points = tmp.countChar32();
-            return cvt_.std(tmp);
-        }
-        string_type format(int64_t value, size_t& code_points) const override
-        {
-            icu::UnicodeString tmp;
-            icu_fmt_.format(value, tmp);
-            code_points = tmp.countChar32();
-            return cvt_.std(tmp);
-        }
-
-        string_type format(int32_t value, size_t& code_points) const override
-        {
-            icu::UnicodeString tmp;
-            icu_fmt_.format(value, tmp);
-            code_points = tmp.countChar32();
-            return cvt_.std(tmp);
-        }
-
+        string_type format(double value, size_t& code_points) const override { return do_format(value, code_points); }
+        string_type format(int64_t value, size_t& code_points) const override { return do_format(value, code_points); }
+        string_type format(int32_t value, size_t& code_points) const override { return do_format(value, code_points); }
         size_t parse(const string_type& str, double& value) const override { return do_parse(str, value); }
         size_t parse(const string_type& str, int64_t& value) const override { return do_parse(str, value); }
         size_t parse(const string_type& str, int32_t& value) const override { return do_parse(str, value); }
@@ -106,6 +86,15 @@ namespace boost { namespace locale { namespace impl_icu {
             if(U_FAILURE(err))
                 return false;
             return true;
+        }
+
+        template<typename ValueType>
+        string_type do_format(ValueType value, size_t& code_points) const
+        {
+            icu::UnicodeString tmp;
+            icu_fmt_.format(value, tmp);
+            code_points = tmp.countChar32();
+            return cvt_.std(tmp);
         }
 
         template<typename ValueType>
@@ -356,7 +345,9 @@ namespace boost { namespace locale { namespace impl_icu {
         const uint64_t disp = info.display_flags();
         switch(disp) {
             using namespace boost::locale::flags;
-            case posix: return nullptr;
+            case posix:
+                BOOST_ASSERT_MSG(false, "Shouldn't try to create a posix formatter"); // LCOV_EXCL_LINE
+                break;                                                                // LCOV_EXCL_LINE
             case number: {
                 const std::ios_base::fmtflags how = (ios.flags() & std::ios_base::floatfield);
                 icu::NumberFormat& nf =
@@ -451,7 +442,7 @@ namespace boost { namespace locale { namespace impl_icu {
             } break;
         }
 
-        return nullptr;
+        return nullptr; // LCOV_EXCL_LINE
     }
 
     template class formatter<char>;

@@ -21,17 +21,17 @@
 
 namespace boost { namespace locale { namespace impl_icu {
 
-    inline void throw_icu_error(UErrorCode err, std::string desc)
+    inline void throw_icu_error(UErrorCode err, std::string desc) // LCOV_EXCL_LINE
     {
-        if(!desc.empty())
-            desc += ": ";
-        throw std::runtime_error(desc + u_errorName(err));
+        if(!desc.empty())                                  // LCOV_EXCL_LINE
+            desc += ": ";                                  // LCOV_EXCL_LINE
+        throw std::runtime_error(desc + u_errorName(err)); // LCOV_EXCL_LINE
     }
 
     inline void check_and_throw_icu_error(UErrorCode err, const char* desc = "")
     {
         if(U_FAILURE(err))
-            throw_icu_error(err, desc);
+            throw_icu_error(err, desc); // LCOV_EXCL_LINE
     }
 
     /// Cast a pointer to an ICU object to a pointer to TargetType
