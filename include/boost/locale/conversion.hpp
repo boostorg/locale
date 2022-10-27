@@ -43,8 +43,8 @@ namespace boost { namespace locale {
     ///
     /// \brief The facet that implements text manipulation
     ///
-    /// It is used to performs text conversion operations defined by \ref conversion_type. It is specialized
-    /// for four types of characters \c char, \c wchar_t, \c char16_t, \c char32_t
+    /// It is used to performs text conversion operations defined by \ref converter_base::conversion_type.
+    /// It is specialized for four types of characters \c char, \c wchar_t, \c char16_t, \c char32_t
     template<typename Char>
     class BOOST_LOCALE_DECL converter : public converter_base, public std::locale::facet {
     public:
