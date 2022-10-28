@@ -36,8 +36,8 @@ namespace boost { namespace locale {
     /// -# \c message_path - path to the location of message catalogs (vector of strings)
     /// -# \c message_application - the name of applications that use message catalogs (vector of strings)
     ///
-    /// Each backend can be installed with a different default priotiry so when you work with two different backends,
-    /// you can specify priotiry so this backend will be chosen according to their priority.
+    /// Each backend can be installed with a different default priority so when you work with two different backends,
+    /// you can specify priority so this backend will be chosen according to their priority.
     class BOOST_LOCALE_DECL localization_backend {
     protected:
         localization_backend(const localization_backend&) = default;

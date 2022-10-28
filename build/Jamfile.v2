@@ -194,8 +194,8 @@ explicit has_icu ;
 
 
 # This function is called whenever the 'boost_locale' metatarget
-# below is generated and figures what external components we have,
-# what user wants, and what sources have to be compiled in the end.
+# below is generated and figures out what external components we have,
+# what the user wants, and what sources have to be compiled in the end.
 rule configure-full ( properties * : flags-only )
 {
 

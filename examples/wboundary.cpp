@@ -47,9 +47,8 @@ int main()
     std::locale::global(loc);
     std::wcout.imbue(loc);
 
-    // This is needed to prevent C library to
-    // convert strings to narrow
-    // instead of C++ on some platforms
+    // This is needed to prevent the C stdio library from
+    // converting strings to narrow on some platforms
     std::ios_base::sync_with_stdio(false);
 
     std::wstring text = L"Hello World! あにま! Linux2.6 and Windows7 is word and number. שָלוֹם עוֹלָם!";

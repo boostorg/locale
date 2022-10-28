@@ -238,7 +238,7 @@ namespace boost { namespace locale {
             // mbstate_t is POD type and should be initialized to 0 (i.a. state = stateT())
             // according to standard. We use it to keep a flag 0/1 for surrogate pair writing
             //
-            // if 0 no code above >0xFFFF observed, of 1 a code above 0xFFFF observerd
+            // if 0 no code above >0xFFFF observed, of 1 a code above 0xFFFF observed
             // and first pair is written, but no input consumed
             boost::uint16_t& state = *reinterpret_cast<boost::uint16_t*>(&std_state);
             typename CodecvtImpl::state_type cvt_state =
@@ -269,7 +269,7 @@ namespace boost { namespace locale {
                 } else {
                     // for  other codepoints we do following
                     //
-                    // 1. We can't consume our input as we may find ourselfs
+                    // 1. We can't consume our input as we may find ourselves
                     //    in state where all input consumed but not all output written,i.e. only
                     //    1st pair is written
                     // 2. We only write first pair and mark this in the state, we also revert back
@@ -320,7 +320,7 @@ namespace boost { namespace locale {
             // according to standard. We assume that sizeof(mbstate_t) >=2 in order
             // to be able to store first observed surrogate pair
             //
-            // State: state!=0 - a first surrogate pair was observerd (state = first pair),
+            // State: state!=0 - a first surrogate pair was observed (state = first pair),
             // we expect the second one to come and then zero the state
             boost::uint16_t& state = *reinterpret_cast<boost::uint16_t*>(&std_state);
             typename CodecvtImpl::state_type cvt_state =
@@ -472,7 +472,7 @@ namespace boost { namespace locale {
             // mbstate_t is POD type and should be initialized to 0 (i.a. state = stateT())
             // according to standard. We use it to keep a flag 0/1 for surrogate pair writing
             //
-            // if 0 no code above >0xFFFF observed, of 1 a code above 0xFFFF observerd
+            // if 0 no code above >0xFFFF observed, of 1 a code above 0xFFFF observed
             // and first pair is written, but no input consumed
             auto cvt_state = implementation().initial_state(generic_codecvt_base::to_unicode_state);
             while(to < to_end && from < from_end) {

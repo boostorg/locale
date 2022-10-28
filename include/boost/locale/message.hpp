@@ -97,7 +97,7 @@ namespace boost { namespace locale {
     namespace detail {
         inline bool is_us_ascii_char(char c)
         {
-            // works for null terminated strings regardless char "signness"
+            // works for null terminated strings regardless char "signedness"
             return 0 < c && c < 0x7F;
         }
         inline bool is_us_ascii_string(const char* msg)

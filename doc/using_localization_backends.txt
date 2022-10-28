@@ -148,7 +148,7 @@ problems with this.
 </table>
 
 
-\section using_localization_backends Using Localization Backends
+\section using_localization_backends_sec Using Localization Backends
 
 Accessing a localization backend is done via the boost::locale::localization_backend_manager class.
 
