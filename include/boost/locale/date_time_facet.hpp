@@ -140,7 +140,7 @@ namespace boost { namespace locale {
         virtual void set_time(const posix_time& p) = 0;
         /// Get current time point
         virtual posix_time get_time() const = 0;
-        // Get current time since epoch in milliseconds
+        /// Get current time since epoch in milliseconds
         virtual double get_time_ms() const = 0;
 
         /// Set option for calendar, for future use

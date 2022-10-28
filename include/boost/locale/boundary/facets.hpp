@@ -24,13 +24,13 @@ namespace boost { namespace locale {
         ///
         /// @{
 
-        /// \brief This structure is used for representing boundary point
-        /// that follows the offset.
+        /// \brief This structure is used for representing boundary points
+        /// that follow the offset.
         struct break_info {
             /// Create empty break point at beginning
             break_info() : offset(0), rule(0) {}
 
-            /// Create empty break point at offset v.
+            /// Create an empty break point at offset v.
             /// it is useful for order comparison with other points.
             break_info(size_t v) : offset(v), rule(0) {}
 

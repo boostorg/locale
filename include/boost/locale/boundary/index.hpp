@@ -31,7 +31,7 @@ namespace boost { namespace locale { namespace boundary {
     ///
     /// \defgroup boundary Boundary Analysis
     ///
-    /// This module contains all operations required for %boundary analysis of text: character, word, like and sentence
+    /// This module contains all operations required for %boundary analysis of text: character, word, line and sentence
     /// boundaries
     ///
     /// @{
@@ -753,7 +753,7 @@ namespace boost { namespace locale { namespace boundary {
         /// Create a boundary_point_index from a \ref segment_index. It copies all indexing information
         /// and uses the default rule (all possible %boundary points)
         ///
-        /// This operation is very cheap, so if you use boundary_point_index and segment_index on same text
+        /// This operation is very cheap, so if you use boundary_point_index and segment_index on the same text
         /// range it is much better to create one from another rather then indexing the same
         /// range twice.
         ///
@@ -762,7 +762,7 @@ namespace boost { namespace locale { namespace boundary {
         /// Copy a boundary_point_index from a \ref segment_index. It copies all indexing information
         /// and keeps the current \ref rule() unchanged
         ///
-        /// This operation is very cheap, so if you use boundary_point_index and segment_index on same text
+        /// This operation is very cheap, so if you use boundary_point_index and segment_index on the same text
         /// range it is much better to create one from another rather then indexing the same
         /// range twice.
         ///
