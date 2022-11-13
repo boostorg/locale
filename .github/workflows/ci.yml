@@ -353,7 +353,11 @@ jobs:
 
       - name: Run tests
         if: '!matrix.coverage'
-        run: ci\build.bat
+        run: |
+          set B2_FLAGS=boost.locale.icu=off boost.locale.iconv=off
+          ci\build.bat
+          set B2_FLAGS=-a
+          ci\build.bat
         env:
           B2_TOOLSET: ${{matrix.toolset}}
           B2_CXXSTD: ${{matrix.cxxstd}}
