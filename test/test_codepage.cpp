@@ -364,6 +364,21 @@ void test_convert(const char* enc, const char* utf, const char* name)
 
 void test_simple_conversions()
 {
+    std::cout << "- Testing Latin1 conversion\n";
+    {
+        using namespace boost::locale::conv;
+        const std::string utf8_string = "A-Za-z0-9grüße";
+        const std::string latin1_string = to<char>(utf8_string);
+        const std::wstring wide_string = to<wchar_t>(utf8_string);
+
+        TEST_EQ(to_utf<char>(latin1_string, "Latin1"), utf8_string);
+        TEST_EQ(to_utf<wchar_t>(latin1_string, "Latin1"), wide_string);
+        TEST_EQ(from_utf(utf8_string, "Latin1"), latin1_string);
+        TEST_EQ(from_utf(wide_string, "Latin1"), latin1_string);
+        TEST_EQ(utf_to_utf<char>(wide_string), utf8_string);
+        TEST_EQ(utf_to_utf<wchar_t>(utf8_string), wide_string);
+    }
+
     namespace blc = boost::locale::conv;
     std::cout << "- Testing correct invalid bytes skipping\n";
     try {

@@ -116,6 +116,15 @@ std::string to_string(const std::basic_string<Char>& s)
     return ss.str();
 }
 
+template<size_t size>
+std::string to_string(const wchar_t (&s)[size])
+{
+    std::stringstream ss;
+    for(size_t i = 0; i < size; ++i)
+        stream_char(ss, s[i]);
+    return ss.str();
+}
+
 // Unicode chars cannot be streamed directly (deleted overloads in C++20)
 template<typename Char>
 std::string to_string_char_impl(const Char c)
