@@ -132,7 +132,7 @@ void test_by_char(const std::locale& l, locale_t lreal)
 
         char buf[64]{};
 #ifndef BOOST_LOCALE_NO_POSIX_BACKEND
-        std::tm tm = *gmtime(&a_datetime);
+        std::tm tm = *gmtime_wrap(&a_datetime);
         TEST(strftime_l(buf, sizeof(buf), "%x\n%X\n%c\n16\n48\n", &tm, lreal) > 0);
 #endif
         TEST_EQ(ss.str(), to_utf<CharType>(buf, lreal));

@@ -10,6 +10,7 @@
 #include <boost/locale/encoding.hpp>
 #include "boostLocale/test/posix_tools.hpp"
 #include <cstdio>
+#include <ctime>
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -222,5 +223,23 @@ public:
     explicit remove_file_on_exit(const std::string& filename) : filename_(filename) {}
     ~remove_file_on_exit() { std::remove(filename_.c_str()); }
 };
+
+#ifdef _MSC_VER
+#    pragma warning(push)
+#    pragma warning(disable : 4996) //"This function or variable may be unsafe"
+#endif
+/// Wrapper for std::gmtime avoiding warning 4996 on MSVC/clang-cl:
+inline std::tm* gmtime_wrap(const std::time_t* time)
+{
+    return std::gmtime(time);
+}
+/// Wrapper for std::localtime avoiding warning 4996 on MSVC/clang-cl
+inline std::tm* localtime_wrap(const std::time_t* time)
+{
+    return std::localtime(time);
+}
+#ifdef _MSC_VER
+#    pragma warning(pop)
+#endif
 
 #endif

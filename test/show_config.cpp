@@ -4,10 +4,6 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#ifdef _MSC_VER
-#    define _CRT_SECURE_NO_WARNINGS
-#endif
-
 #include <boost/locale.hpp>
 #include <clocale>
 #include <cstdlib>
@@ -27,7 +23,14 @@
 
 const char* env(const char* s)
 {
+#ifdef _MSC_VER
+#    pragma warning(push)
+#    pragma warning(disable : 4996)
+#endif
     const char* r = getenv(s);
+#ifdef _MSC_VER
+#    pragma warning(pop)
+#endif
     if(r)
         return r;
     return "";
@@ -121,9 +124,9 @@ void test_main(int /*argc*/, char** /*argv*/)
         setlocale(LC_ALL, "C");
         time_t now = time(0);
         char buf[1024];
-        strftime(buf, sizeof(buf), "%%c=%c; %%Z=%Z; %%z=%z", localtime(&now));
+        strftime(buf, sizeof(buf), "%%c=%c; %%Z=%Z; %%z=%z", localtime_wrap(&now));
         std::cout << "  Local Time    :" << buf << std::endl;
-        strftime(buf, sizeof(buf), "%%c=%c; %%Z=%Z; %%z=%z", gmtime(&now));
+        strftime(buf, sizeof(buf), "%%c=%c; %%Z=%Z; %%z=%z", gmtime_wrap(&now));
         std::cout << "  Universal Time:" << buf << std::endl;
     }
     std::cout << "- Boost.Locale's locale: ";
