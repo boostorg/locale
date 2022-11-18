@@ -8,15 +8,12 @@
 #include <boost/locale/formatting.hpp>
 #include <boost/locale/generator.hpp>
 #include <boost/locale/localization_backend.hpp>
+#include <ctime>
 #include <iomanip>
 #include <iostream>
 
 #include "boostLocale/test/tools.hpp"
 #include "boostLocale/test/unit_test.hpp"
-
-#ifdef BOOST_MSVC
-#    pragma warning(disable : 4996)
-#endif
 
 template<typename CharType, typename RefCharType>
 void test_by_char(const std::locale& l, const std::locale& lreal)
@@ -134,7 +131,7 @@ void test_by_char(const std::locale& l, const std::locale& lreal)
 
         std::basic_string<RefCharType> rfmt(ascii_to<RefCharType>("%x\n%X\n%c\n16\n48\n"));
 
-        std::tm tm = *gmtime(&a_datetime);
+        std::tm tm = *gmtime_wrap(&a_datetime);
 
         std::use_facet<std::time_put<RefCharType>>(lreal)
           .put(ss_ref, ss_ref, RefCharType(' '), &tm, rfmt.c_str(), rfmt.c_str() + rfmt.size());
