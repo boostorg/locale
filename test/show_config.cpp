@@ -23,6 +23,7 @@
 #endif
 
 #include "boostLocale/test/tools.hpp"
+#include "boostLocale/test/unit_test.hpp"
 
 const char* env(const char* s)
 {
@@ -52,7 +53,7 @@ void check_locale(const std::vector<const char*>& names)
     }
 }
 
-int main()
+void test_main(int /*argc*/, char** /*argv*/)
 {
     std::cout << "- Backends: ";
 #ifdef BOOST_LOCALE_WITH_ICU
@@ -126,15 +127,10 @@ int main()
         std::cout << "  Universal Time:" << buf << std::endl;
     }
     std::cout << "- Boost.Locale's locale: ";
-    try {
-        boost::locale::generator gen;
-        std::locale l = gen("");
-        std::cout << std::use_facet<boost::locale::info>(l).name() << std::endl;
-    } catch(const std::exception&) {
-        std::cout << " undetected\n"; // LCOV_EXCL_LINE
-        return EXIT_FAILURE;          // LCOV_EXCL_LINE
-    }
-    return EXIT_SUCCESS;
+    boost::locale::generator gen;
+    std::locale l = gen("");
+    TEST_REQUIRE(std::has_facet<boost::locale::info>(l));
+    std::cout << std::use_facet<boost::locale::info>(l).name() << std::endl;
 }
 
 // boostinspect:noascii
