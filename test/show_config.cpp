@@ -127,8 +127,8 @@ void test_main(int /*argc*/, char** /*argv*/)
     std::cout << "- Boost.Locale's locale: ";
     boost::locale::generator gen;
     std::locale l = gen("");
-    TEST_REQUIRE(std::has_facet<boost::locale::info>(l));
-    std::cout << std::use_facet<boost::locale::info>(l).name() << std::endl;
+    std::cout << (std::has_facet<boost::locale::info>(l) ? std::use_facet<boost::locale::info>(l).name() : "Unknown")
+              << std::endl;
 }
 
 // boostinspect:noascii
