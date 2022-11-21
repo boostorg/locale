@@ -33,22 +33,20 @@ const char* env(const char* s)
     return "";
 }
 
-void check_locale(const std::vector<const char*>& names)
+bool has_locale(const char* name)
 {
-    std::cout << "  " << std::setw(32) << "locale" << std::setw(4) << "C" << std::setw(4) << "C++\n";
+    const bool result = std::setlocale(LC_ALL, name) != nullptr;
+    std::setlocale(LC_ALL, "C");
+    return result;
+}
+
+void check_locales(const std::vector<const char*>& names)
+{
+    std::cout << "  " << std::setw(32) << "locale" << std::setw(4) << "C" << std::setw(4) << "C++" << std::endl;
     for(const char* name : names) {
-        std::cout << "  " << std::setw(32) << name << std::setw(4);
-        if(setlocale(LC_ALL, name) != 0)
-            std::cout << "Yes";
-        else
-            std::cout << "No";
-        std::cout << std::setw(4);
-        try {
-            std::locale l(name);
-            std::cout << "Yes";
-        } catch(const std::exception&) {
-            std::cout << "No";
-        }
+        std::cout << "  " << std::setw(32) << name;
+        std::cout << std::setw(4) << (has_locale(name) ? "Yes" : "No");
+        std::cout << std::setw(4) << (has_std_locale(name) ? "Yes" : "No");
         std::cout << std::endl;
     }
 }
@@ -112,9 +110,9 @@ void test_main(int /*argc*/, char** /*argv*/)
       "Japanese_Japan.932",
     };
     std::cout << "- Testing locales availability on the operation system:" << std::endl;
-    check_locale(locales_to_check);
-    std::cout << "--- Testing Japanese_Japan.932 is working: " << test_std_supports_SJIS_codecvt("Japanese_Japan.932")
-              << std::endl;
+    check_locales(locales_to_check);
+    std::cout << "--- Testing Japanese_Japan.932 is working: ";
+    std::cout << (test_std_supports_SJIS_codecvt("Japanese_Japan.932") ? "Yes" : "No") << std::endl;
 
     std::cout << "- Testing timezone and time " << std::endl;
     {

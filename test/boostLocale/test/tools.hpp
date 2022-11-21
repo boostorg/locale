@@ -103,10 +103,10 @@ inline std::string to_correct_string(const std::string& utf8_str, std::locale l)
     return boost::locale::conv::from_utf(utf8_str, l);
 }
 
-bool has_std_locale(const std::string& name)
+bool has_std_locale(const char* name)
 {
     try {
-        std::locale tmp(name.c_str());
+        std::locale tmp(name);
         return true;
     } catch(...) {
         return false;
@@ -141,7 +141,7 @@ inline bool test_std_supports_SJIS_codecvt(const std::string& locale_name)
 
 std::string get_std_name(const std::string& name, std::string* real_name = 0)
 {
-    if(has_std_locale(name)) {
+    if(has_std_locale(name.c_str())) {
         if(real_name)
             *real_name = name;
         return name;
