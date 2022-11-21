@@ -31,11 +31,9 @@ void test_by_char(const std::locale& l, const std::locale& lreal)
         ss_type ss;
         ss.imbue(l);
 
-        ss << 1045.45;
-        TEST(ss);
+        TEST(ss << 1045.45);
         double n;
-        ss >> n;
-        TEST(ss);
+        TEST(ss >> n);
         TEST_EQ(n, 1045.45);
         TEST_EQ(ss.str(), ascii_to<CharType>("1045.45"));
     }
@@ -45,18 +43,16 @@ void test_by_char(const std::locale& l, const std::locale& lreal)
         ss_type ss;
         ss.imbue(l);
 
-        ss << as::number;
-        ss << 1045.45;
-        TEST(ss);
+        TEST(ss << as::number);
+        TEST(ss << 1045.45);
         double n;
-        ss >> n;
-        TEST(ss);
+        TEST(ss >> n);
         TEST_EQ(n, 1045.45);
 
         ss_ref_type ss_ref;
         ss_ref.imbue(lreal);
 
-        ss_ref << 1045.45;
+        TEST(ss_ref << 1045.45);
 
         TEST_EQ(to_utf8(ss.str()), to_utf8(ss_ref.str()));
     }
@@ -83,10 +79,9 @@ void test_by_char(const std::locale& l, const std::locale& lreal)
         ss_type ss;
         ss.imbue(l);
 
-        ss << as::currency;
-        ss << 1043.34;
+        TEST(ss << as::currency);
+        TEST(ss << 1043.34);
         if(!bad_parsing) {
-            TEST(ss);
             double v1;
             TEST(ss >> v1);
             TEST_EQ(v1, 1043.34);
@@ -101,11 +96,9 @@ void test_by_char(const std::locale& l, const std::locale& lreal)
         ss.imbue(l);
 
         ss << as::currency << as::currency_iso;
-        ss << 1043.34;
-        TEST(ss);
+        TEST(ss << 1043.34);
         double v1;
-        ss >> v1;
-        TEST(ss);
+        TEST(ss >> v1);
         TEST_EQ(v1, 1043.34);
 
         ss_ref_type ss_ref;
@@ -170,7 +163,10 @@ void test_main(int /*argc*/, char** /*argv*/)
         if(name.empty()) {
             std::cout << lName << " not supported" << std::endl;
         } else {
-            std::locale l1 = gen(name), l2(real_name.c_str());
+            std::cout << "\tstd name: " << name << std::endl;
+            std::locale l1 = gen(name);
+            std::cout << "\treal name: " << real_name << std::endl;
+            std::locale l2(real_name.c_str());
             if(lName.find(".UTF-8") != std::string::npos) {
                 std::cout << "\tUTF-8" << std::endl;
                 if(name == real_name)

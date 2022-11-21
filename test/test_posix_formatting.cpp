@@ -50,11 +50,9 @@ void test_by_char(const std::locale& l, locale_t lreal)
         ss_type ss;
         ss.imbue(l);
 
-        ss << 1045.45;
-        TEST(ss);
+        TEST(ss << 1045.45);
         double n;
-        ss >> n;
-        TEST(ss);
+        TEST(ss >> n);
         TEST_EQ(n, 1045.45);
         TEST_EQ(ss.str(), ascii_to<CharType>("1045.45"));
     }
@@ -65,11 +63,9 @@ void test_by_char(const std::locale& l, locale_t lreal)
         ss.imbue(l);
 
         ss << as::number;
-        ss << 1045.45;
-        TEST(ss);
+        TEST(ss << 1045.45);
         double n;
-        ss >> n;
-        TEST(ss);
+        TEST(ss >> n);
         TEST(n == 1045.45);
 
         if(std::use_facet<boost::locale::info>(l).country() == "US")
@@ -88,8 +84,7 @@ void test_by_char(const std::locale& l, locale_t lreal)
         ss.imbue(l);
 
         ss << as::currency;
-        ss << 1043.34;
-        TEST(ss);
+        TEST(ss << 1043.34);
 
         TEST_EQ(ss.str(), to_utf<CharType>(buf, lreal));
     }
@@ -104,8 +99,7 @@ void test_by_char(const std::locale& l, locale_t lreal)
         ss.imbue(l);
 
         ss << as::currency << as::currency_iso;
-        ss << 1043.34;
-        TEST(ss);
+        TEST(ss << 1043.34);
 
         TEST_EQ(ss.str(), to_utf<CharType>(buf, lreal));
     }
