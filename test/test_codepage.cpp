@@ -64,7 +64,7 @@ void test_ok(const std::string& content, const std::locale& l, std::basic_string
         }
         stream_type testi("testi.txt", stream_type::in);
         testi.imbue(l);
-        TEST(read_file<Char>(testi) == cmp);
+        TEST_EQ(read_file<Char>(testi), cmp);
     }
 
     {
@@ -75,7 +75,7 @@ void test_ok(const std::string& content, const std::locale& l, std::basic_string
             testo << cmp;
         }
         std::ifstream testo("testo.txt");
-        TEST(read_file<char>(testo) == content);
+        TEST_EQ(read_file<char>(testo), content);
     }
 }
 
@@ -184,21 +184,21 @@ void test_pos(std::string source, std::basic_string<Char> target, std::string en
     using namespace boost::locale::conv;
     boost::locale::generator g;
     std::locale l = encoding == "ISO8859-8" ? g("he_IL." + encoding) : g("en_US." + encoding);
-    TEST(to_utf<Char>(source, encoding) == target);
-    TEST(to_utf<Char>(source.c_str(), encoding) == target);
-    TEST(to_utf<Char>(source.c_str(), source.c_str() + source.size(), encoding) == target);
+    TEST_EQ(to_utf<Char>(source, encoding), target);
+    TEST_EQ(to_utf<Char>(source.c_str(), encoding), target);
+    TEST_EQ(to_utf<Char>(source.c_str(), source.c_str() + source.size(), encoding), target);
 
-    TEST(to_utf<Char>(source, l) == target);
-    TEST(to_utf<Char>(source.c_str(), l) == target);
-    TEST(to_utf<Char>(source.c_str(), source.c_str() + source.size(), l) == target);
+    TEST_EQ(to_utf<Char>(source, l), target);
+    TEST_EQ(to_utf<Char>(source.c_str(), l), target);
+    TEST_EQ(to_utf<Char>(source.c_str(), source.c_str() + source.size(), l), target);
 
-    TEST(from_utf<Char>(target, encoding) == source);
-    TEST(from_utf<Char>(target.c_str(), encoding) == source);
-    TEST(from_utf<Char>(target.c_str(), target.c_str() + target.size(), encoding) == source);
+    TEST_EQ(from_utf<Char>(target, encoding), source);
+    TEST_EQ(from_utf<Char>(target.c_str(), encoding), source);
+    TEST_EQ(from_utf<Char>(target.c_str(), target.c_str() + target.size(), encoding), source);
 
-    TEST(from_utf<Char>(target, l) == source);
-    TEST(from_utf<Char>(target.c_str(), l) == source);
-    TEST(from_utf<Char>(target.c_str(), target.c_str() + target.size(), l) == source);
+    TEST_EQ(from_utf<Char>(target, l), source);
+    TEST_EQ(from_utf<Char>(target.c_str(), l), source);
+    TEST_EQ(from_utf<Char>(target.c_str(), target.c_str() + target.size(), l), source);
 }
 
 #define TESTF(X) TEST_THROWS(X, boost::locale::conv::conversion_error)
@@ -210,12 +210,12 @@ void test_to_neg(std::string source, std::basic_string<Char> target, std::string
     boost::locale::generator g;
     std::locale l = g("en_US." + encoding);
 
-    TEST(to_utf<Char>(source, encoding) == target);
-    TEST(to_utf<Char>(source.c_str(), encoding) == target);
-    TEST(to_utf<Char>(source.c_str(), source.c_str() + source.size(), encoding) == target);
-    TEST(to_utf<Char>(source, l) == target);
-    TEST(to_utf<Char>(source.c_str(), l) == target);
-    TEST(to_utf<Char>(source.c_str(), source.c_str() + source.size(), l) == target);
+    TEST_EQ(to_utf<Char>(source, encoding), target);
+    TEST_EQ(to_utf<Char>(source.c_str(), encoding), target);
+    TEST_EQ(to_utf<Char>(source.c_str(), source.c_str() + source.size(), encoding), target);
+    TEST_EQ(to_utf<Char>(source, l), target);
+    TEST_EQ(to_utf<Char>(source.c_str(), l), target);
+    TEST_EQ(to_utf<Char>(source.c_str(), source.c_str() + source.size(), l), target);
 
     TESTF(to_utf<Char>(source, encoding, stop));
     TESTF(to_utf<Char>(source.c_str(), encoding, stop));
@@ -232,12 +232,12 @@ void test_from_neg(std::basic_string<Char> source, std::string target, std::stri
     boost::locale::generator g;
     std::locale l = g("en_US." + encoding);
 
-    TEST(from_utf<Char>(source, encoding) == target);
-    TEST(from_utf<Char>(source.c_str(), encoding) == target);
-    TEST(from_utf<Char>(source.c_str(), source.c_str() + source.size(), encoding) == target);
-    TEST(from_utf<Char>(source, l) == target);
-    TEST(from_utf<Char>(source.c_str(), l) == target);
-    TEST(from_utf<Char>(source.c_str(), source.c_str() + source.size(), l) == target);
+    TEST_EQ(from_utf<Char>(source, encoding), target);
+    TEST_EQ(from_utf<Char>(source.c_str(), encoding), target);
+    TEST_EQ(from_utf<Char>(source.c_str(), source.c_str() + source.size(), encoding), target);
+    TEST_EQ(from_utf<Char>(source, l), target);
+    TEST_EQ(from_utf<Char>(source.c_str(), l), target);
+    TEST_EQ(from_utf<Char>(source.c_str(), source.c_str() + source.size(), l), target);
 
     TESTF(from_utf<Char>(source, encoding, stop));
     TESTF(from_utf<Char>(source.c_str(), encoding, stop));
