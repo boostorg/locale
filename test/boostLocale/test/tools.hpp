@@ -10,6 +10,7 @@
 #include <boost/locale/encoding.hpp>
 #include "boostLocale/test/posix_tools.hpp"
 #include <cstdio>
+#include <ctime>
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -103,10 +104,10 @@ inline std::string to_correct_string(const std::string& utf8_str, std::locale l)
     return boost::locale::conv::from_utf(utf8_str, l);
 }
 
-bool has_std_locale(const std::string& name)
+bool has_std_locale(const char* name)
 {
     try {
-        std::locale tmp(name.c_str());
+        std::locale tmp(name);
         return true;
     } catch(...) {
         return false;
@@ -141,7 +142,7 @@ inline bool test_std_supports_SJIS_codecvt(const std::string& locale_name)
 
 std::string get_std_name(const std::string& name, std::string* real_name = 0)
 {
-    if(has_std_locale(name)) {
+    if(has_std_locale(name.c_str())) {
         if(real_name)
             *real_name = name;
         return name;
@@ -222,5 +223,23 @@ public:
     explicit remove_file_on_exit(const std::string& filename) : filename_(filename) {}
     ~remove_file_on_exit() { std::remove(filename_.c_str()); }
 };
+
+#ifdef _MSC_VER
+#    pragma warning(push)
+#    pragma warning(disable : 4996) //"This function or variable may be unsafe"
+#endif
+/// Wrapper for std::gmtime avoiding warning 4996 on MSVC/clang-cl:
+inline std::tm* gmtime_wrap(const std::time_t* time)
+{
+    return std::gmtime(time);
+}
+/// Wrapper for std::localtime avoiding warning 4996 on MSVC/clang-cl
+inline std::tm* localtime_wrap(const std::time_t* time)
+{
+    return std::localtime(time);
+}
+#ifdef _MSC_VER
+#    pragma warning(pop)
+#endif
 
 #endif
