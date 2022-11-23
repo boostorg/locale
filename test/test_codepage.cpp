@@ -57,69 +57,72 @@ void test_ok(const std::string& content, const std::locale& l, std::basic_string
         cmp = to<Char>(content);
 
     {
-        remove_file_on_exit _("testi.txt");
+        const std::string file_path = boost::locale::test::exe_name + "-test_read.txt";
+        remove_file_on_exit _(file_path);
         {
-            std::ofstream testi("testi.txt");
-            testi << content;
+            std::ofstream out_file(file_path);
+            out_file << content;
         }
-        stream_type testi("testi.txt", stream_type::in);
-        testi.imbue(l);
-        TEST_EQ(read_file<Char>(testi), cmp);
+        stream_type in_file(file_path, stream_type::in);
+        in_file.imbue(l);
+        TEST_EQ(read_file<Char>(in_file), cmp);
     }
 
     {
-        remove_file_on_exit _("testo.txt");
+        const std::string file_path = boost::locale::test::exe_name + "-test_write.txt";
+        remove_file_on_exit _(file_path);
         {
-            stream_type testo("testo.txt", stream_type::out);
-            testo.imbue(l);
-            testo << cmp;
+            stream_type out_file(file_path, stream_type::out);
+            out_file.imbue(l);
+            out_file << cmp;
         }
-        std::ifstream testo("testo.txt");
-        TEST_EQ(read_file<char>(testo), content);
+        std::ifstream in_file(file_path);
+        TEST_EQ(read_file<char>(in_file), content);
     }
 }
 
 template<typename Char>
-void test_rfail(const std::string& content, const std::locale& l, int pos)
+void test_read_fail(const std::string& content, const std::locale& l, int pos)
 {
-    remove_file_on_exit _("testi.txt");
+    const std::string file_path = boost::locale::test::exe_name + "-test.txt";
+    remove_file_on_exit _(file_path);
     {
-        std::ofstream f("testi.txt");
+        std::ofstream f(file_path);
         f << content;
     }
 
     typedef std::basic_fstream<Char> stream_type;
 
-    stream_type f("testi.txt", stream_type::in);
+    stream_type f(file_path, stream_type::in);
     f.imbue(l);
-    Char c;
+    // Read up until the position
     for(int i = 0; i < pos; i++) {
+        Char c;
         f.get(c);
-        if(f.fail()) { // failed before as detected errors at forward;
-            return;
-        }
+        if(f.fail()) // failed before the position,
+            return;  // e.g. when errors are detected reading more than the current char
         TEST(f);
     }
-    // if the pos above succeed, at this point
-    // it MUST fail
+    // if the loop above succeeded, then it must fail now
+    Char c;
     TEST(f.get(c).fail());
 }
 
 template<typename Char>
-void test_wfail(const std::string& content, const std::locale& l, int pos)
+void test_write_fail(const std::string& content, const std::locale& l, int pos)
 {
+    const std::string file_path = boost::locale::test::exe_name + "-test.txt";
+    remove_file_on_exit _(file_path);
+
     typedef std::basic_fstream<Char> stream_type;
-    remove_file_on_exit _("testo.txt");
-    stream_type f("testo.txt", stream_type::out);
+    stream_type f(file_path, stream_type::out);
     f.imbue(l);
     std::basic_string<Char> out = to<Char>(content);
-    int i;
-    for(i = 0; i < pos; i++) {
-        f << out.at(i);
-        f << std::flush;
-        TEST(f.good());
+    for(int i = 0; i < pos; i++) {
+        f << out.at(i) << std::flush;
+        TEST(f);
     }
-    f << out.at(i);
+    f << out.at(pos);
     TEST(f.fail() || (f << std::flush).fail());
 }
 
@@ -130,7 +133,7 @@ void test_for_char()
     if(test_utf) {
         std::cout << "    UTF-8" << std::endl;
         test_ok<Char>("grüße\nn i", g("en_US.UTF-8"));
-        test_rfail<Char>("abc\xFF\xFF", g("en_US.UTF-8"), 3);
+        test_read_fail<Char>("abc\xFF\xFF", g("en_US.UTF-8"), 3);
         std::cout << "    Testing codepoints above 0xFFFF" << std::endl;
         std::cout << "      Single U+2008A" << std::endl;
         test_ok<Char>("\xf0\xa0\x82\x8a", g("en_US.UTF-8")); // U+2008A
@@ -153,7 +156,7 @@ void test_for_char()
         }
         std::cout << "    ISO8859-1" << std::endl;
         test_ok<Char>(to<char>("grüße\nn i"), g(en_us_8bit), to<Char>("grüße\nn i"));
-        test_wfail<Char>("grüßen שלום", g(en_us_8bit), 7);
+        test_write_fail<Char>("grüßen שלום", g(en_us_8bit), 7);
     }
 
     if(test_sjis) {
