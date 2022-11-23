@@ -427,15 +427,18 @@ void test_simple_conversions()
     }
 }
 
+void test_utf_name();
 void test_win_codepages();
 
 void test_main(int /*argc*/, char** /*argv*/)
 {
     // Sanity check to<char>
-    TEST(to<char>("grüßen")
-         == "gr\xFC\xDF"
+    TEST_EQ(to<char>("grüßen"),
+            "gr\xFC\xDF"
             "en");
     TEST_THROWS(to<char>("€"), std::runtime_error);
+    // Sanity check internal details
+    test_utf_name();
     test_win_codepages();
 
     std::vector<std::string> backends;
@@ -554,8 +557,31 @@ void test_main(int /*argc*/, char** /*argv*/)
 
 // Internal tests, keep those out of the above scope
 
+bool isLittleEndian()
+{
+#if defined(__BYTE_ORDER__) && defined(__ORDER_LITTLE_ENDIAN__)
+    return __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__;
+#elif defined(__LITTLE_ENDIAN__)
+    return true;
+#elif defined(__BIG_ENDIAN__)
+    return false;
+#endif
+    const int endianMark = 1;
+    return reinterpret_cast<const char*>(&endianMark)[0] == 1;
+}
+
 #include "../src/boost/locale/encoding/conv.hpp"
 #include "../src/boost/locale/encoding/win_codepages.hpp"
+
+void test_utf_name()
+{
+    TEST_EQ(boost::locale::conv::impl::utf_name<char>(), std::string("UTF-8"));
+#ifdef __cpp_char8_t
+    TEST_EQ(boost::locale::conv::impl::utf_name<char8_t>(), std::string("UTF-8"));
+#endif
+    TEST_EQ(boost::locale::conv::impl::utf_name<char16_t>(), std::string(isLittleEndian() ? "UTF-16LE" : "UTF-16BE"));
+    TEST_EQ(boost::locale::conv::impl::utf_name<char32_t>(), std::string(isLittleEndian() ? "UTF-32LE" : "UTF-32BE"));
+}
 
 void test_win_codepages()
 {
