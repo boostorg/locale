@@ -179,7 +179,7 @@ void test_wide_io()
 }
 
 template<typename Char>
-void test_pos(std::string source, std::basic_string<Char> target, std::string encoding)
+void test_to_from_utf(std::string source, std::basic_string<Char> target, std::string encoding)
 {
     using namespace boost::locale::conv;
     boost::locale::generator g;
@@ -204,7 +204,7 @@ void test_pos(std::string source, std::basic_string<Char> target, std::string en
 #define TESTF(X) TEST_THROWS(X, boost::locale::conv::conversion_error)
 
 template<typename Char>
-void test_to_neg(std::string source, std::basic_string<Char> target, std::string encoding)
+void test_to_utf(std::string source, std::basic_string<Char> target, std::string encoding)
 {
     using namespace boost::locale::conv;
     boost::locale::generator g;
@@ -226,7 +226,7 @@ void test_to_neg(std::string source, std::basic_string<Char> target, std::string
 }
 
 template<typename Char>
-void test_from_neg(std::basic_string<Char> source, std::string target, std::string encoding)
+void test_from_utf(std::basic_string<Char> source, std::string target, std::string encoding)
 {
     using namespace boost::locale::conv;
     boost::locale::generator g;
@@ -262,9 +262,13 @@ std::basic_string<char> utf(const char* s)
 template<typename Char>
 void test_with_0()
 {
-    std::string a("abc\0\0 yz\0", 3 + 2 + 3 + 1);
-    TEST(boost::locale::conv::from_utf<Char>(boost::locale::conv::to_utf<Char>(a, "UTF-8"), "UTF-8") == a);
-    TEST(boost::locale::conv::from_utf<Char>(boost::locale::conv::to_utf<Char>(a, "ISO8859-1"), "ISO8859-1") == a);
+    const char with_null[] = "foo\0\0 of\0";
+    const std::string s_with_null(with_null, sizeof(with_null) - 1);
+    const std::basic_string<Char> s_with_null2 = ascii_to<Char>(with_null);
+    TEST_EQ(boost::locale::conv::to_utf<Char>(s_with_null, "UTF-8"), s_with_null2);
+    TEST_EQ(boost::locale::conv::to_utf<Char>(s_with_null, "ISO8859-1"), s_with_null2);
+    TEST_EQ(boost::locale::conv::from_utf<Char>(s_with_null2, "UTF-8"), s_with_null);
+    TEST_EQ(boost::locale::conv::from_utf<Char>(s_with_null2, "ISO8859-1"), s_with_null);
 }
 
 template<typename Char, int n = sizeof(Char)>
@@ -336,16 +340,28 @@ void test_all_combinations()
 }
 
 template<typename Char>
-void test_to()
+void test_utf_for()
 {
-    test_pos<Char>(to<char>("grüßen"), utf<Char>("grüßen"), "ISO8859-1");
+    test_to_from_utf<Char>(to<char>("grüßen"), utf<Char>("grüßen"), "ISO8859-1");
     if(test_iso_8859_8)
-        test_pos<Char>("\xf9\xec\xe5\xed", utf<Char>("שלום"), "ISO8859-8");
-    test_pos<Char>("grüßen", utf<Char>("grüßen"), "UTF-8");
-    test_pos<Char>("abc\"\xf0\xa0\x82\x8a\"", utf<Char>("abc\"\xf0\xa0\x82\x8a\""), "UTF-8");
+        test_to_from_utf<Char>("\xf9\xec\xe5\xed", utf<Char>("שלום"), "ISO8859-8");
+    test_to_from_utf<Char>("grüßen", utf<Char>("grüßen"), "UTF-8");
+    test_to_from_utf<Char>("abc\"\xf0\xa0\x82\x8a\"", utf<Char>("abc\"\xf0\xa0\x82\x8a\""), "UTF-8");
 
-    test_to_neg<Char>("g\xFFrüßen", utf<Char>("grüßen"), "UTF-8");
-    test_from_neg<Char>(utf<Char>("hello שלום"), "hello ", "ISO8859-1");
+    // Invalid bytes are skipped
+    {
+        // At start
+        test_to_utf<Char>("\xFFgrüßen", utf<Char>("grüßen"), "UTF-8");
+        test_to_utf<Char>("\xFF\xFFgrüßen", utf<Char>("grüßen"), "UTF-8");
+        // Middle
+        test_to_utf<Char>("g\xFFrüßen", utf<Char>("grüßen"), "UTF-8");
+        test_to_utf<Char>("g\xFF\xFF\xFFrüßen", utf<Char>("grüßen"), "UTF-8");
+        // End
+        test_to_utf<Char>("grüßen\xFF", utf<Char>("grüßen"), "UTF-8");
+        test_to_utf<Char>("grüßen\xFF\xFF", utf<Char>("grüßen"), "UTF-8");
+        // Invalid encoding
+        test_from_utf<Char>(utf<Char>("hello שלום"), "hello ", "ISO8859-1");
+    }
 
     test_with_0<Char>();
 }
@@ -513,19 +529,19 @@ void test_main(int /*argc*/, char** /*argv*/)
         test_wide_io();
         std::cout << "Testing charset to/from UTF conversion functions\n";
         std::cout << "  char" << std::endl;
-        test_to<char>();
+        test_utf_for<char>();
         std::cout << "  wchar_t" << std::endl;
-        test_to<wchar_t>();
+        test_utf_for<wchar_t>();
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
         if(backendName == "icu" || backendName == "std") {
             std::cout << "  char16_t" << std::endl;
-            test_to<char16_t>();
+            test_utf_for<char16_t>();
         }
 #endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
         if(backendName == "icu" || backendName == "std") {
             std::cout << "  char32_t" << std::endl;
-            test_to<char32_t>();
+            test_utf_for<char32_t>();
         }
 #endif
 
