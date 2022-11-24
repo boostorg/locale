@@ -46,51 +46,43 @@ namespace boost { namespace locale { namespace conv { namespace impl {
                 size_t in_left = end - begin;
                 size_t out_left = sizeof(result);
 
-                char* out_ptr = out_start;
-                size_t res = 0;
                 if(in_left == 0)
                     state = unshifting;
 
+                errno = 0;
+                size_t res;
+                char* out_ptr = out_start;
                 if(state == normal)
                     res = conv(&begin, &in_left, &out_ptr, &out_left);
                 else
                     res = conv(0, 0, &out_ptr, &out_left);
-
-                int err = errno;
-
+                
+                const int err = errno;
                 size_t output_count = (out_ptr - out_start) / sizeof(OutChar);
 
                 if(res != 0 && res != (size_t)(-1)) {
-                    if(how_ == stop) {
+                    if(how_ == stop)
                         throw conversion_error();
-                    }
                 }
 
                 sresult.append(&result[0], output_count);
 
                 if(res == (size_t)(-1)) {
-                    if(err == EILSEQ || err == EINVAL) {
-                        if(how_ == stop) {
-                            throw conversion_error();
-                        }
-
-                        if(begin != end) {
-                            begin += sizeof(InChar);
-                            if(begin >= end)
-                                break;
-                        } else {
-                            break;
-                        }
-                    } else if(err == E2BIG) {
+                    // If not enough space, simply continue
+                    if(err == E2BIG)
                         continue;
-                    } else {
-                        // We should never get there
-                        // but if we do
-                        if(how_ == stop)
-                            throw conversion_error();
-                        else
-                            break;
-                    }
+                    // errno was not set (faulty libiconv) but there was output
+                    // --> assume not enough space and retry
+                    if(err == 0 && output_count)
+                        continue;
+                    // Else there was (most likely) an invalid sequence
+                    if(how_ == stop)
+                        throw conversion_error();
+                    // Skip the current char
+                    if(begin != end)
+                        begin += sizeof(InChar);
+                    if(begin >= end)
+                        break;
                 }
                 if(state == unshifting)
                     state = done;
