@@ -35,7 +35,7 @@ environment:
     B2_ADDRESS_MODEL: 32,64
     B2_LINK: shared,static
     # B2_THREADING: threading=multi,single
-    B2_VARIANT: release
+    B2_VARIANT: debug,release
 
   matrix:
     - FLAVOR: Visual Studio 2008, 2010, 2012
@@ -43,9 +43,13 @@ environment:
       B2_TOOLSET: msvc-9.0,msvc-10.0,msvc-11.0
       B2_ADDRESS_MODEL: 32 # No 64bit support
 
-    - FLAVOR: Visual Studio 2013, 2015
+    - FLAVOR: Visual Studio 2013
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-      B2_TOOLSET: msvc-12.0,msvc-14.0
+      B2_TOOLSET: msvc-12.0
+
+    - FLAVOR: Visual Studio 2015
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      B2_TOOLSET: msvc-14.0
 
     - FLAVOR: Visual Studio 2017 C++14/17
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
