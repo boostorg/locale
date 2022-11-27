@@ -483,7 +483,7 @@ jobs:
         run: |
             cd "$BOOST_ROOT"
             mkdir __build_cmake_test__ && cd __build_cmake_test__
-            cmake -G "${{matrix.generator}}" -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DBOOST_INCLUDE_LIBRARIES=$SELF -DBUILD_SHARED_LIBS=${{matrix.build_shared}} -DBUILD_TESTING=ON -DBoost_VERBOSE=ON ..
+            cmake -G "${{matrix.generator}}" -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DBOOST_INCLUDE_LIBRARIES=$SELF -DBUILD_SHARED_LIBS=${{matrix.build_shared}} -DBUILD_TESTING=ON -DBoost_VERBOSE=ON -DCMAKE_IGNORE_PREFIX_PATH="/c/Strawberry/c" ..
             cmake --build . --target tests --config ${{matrix.build_type}} -j$B2_JOBS
             ctest --output-on-failure --build-config ${{matrix.build_type}}
 
@@ -498,7 +498,7 @@ jobs:
             if [[ "$RUNNER_OS" == "Windows" ]] && [[ "${{matrix.build_shared}}" == "ON" ]]; then
                 extra_args="-DCMAKE_RUNTIME_OUTPUT_DIRECTORY='$(pwd)/bin'"
             fi
-            cmake -G "${{matrix.generator}}" -DBOOST_CI_INSTALL_TEST=OFF -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DBUILD_SHARED_LIBS=${{matrix.build_shared}} $extra_args ..
+            cmake -G "${{matrix.generator}}" -DBOOST_CI_INSTALL_TEST=OFF -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DBUILD_SHARED_LIBS=${{matrix.build_shared}} $extra_args -DCMAKE_IGNORE_PREFIX_PATH="/c/Strawberry/c" ..
             cmake --build . --config ${{matrix.build_type}} -j$B2_JOBS
             ctest --output-on-failure --build-config ${{matrix.build_type}}
 
@@ -508,7 +508,7 @@ jobs:
             echo "BCM_INSTALL_PATH=$BCM_INSTALL_PATH" >> $GITHUB_ENV
             cd "$BOOST_ROOT"
             mkdir __build_cmake_install_test__ && cd __build_cmake_install_test__
-            cmake -G "${{matrix.generator}}" -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DBOOST_INCLUDE_LIBRARIES=$SELF -DBUILD_SHARED_LIBS=${{matrix.build_shared}} -DCMAKE_INSTALL_PREFIX="$BCM_INSTALL_PATH" -DBoost_VERBOSE=ON -DBoost_DEBUG=ON ..
+            cmake -G "${{matrix.generator}}" -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DBOOST_INCLUDE_LIBRARIES=$SELF -DBUILD_SHARED_LIBS=${{matrix.build_shared}} -DCMAKE_INSTALL_PREFIX="$BCM_INSTALL_PATH" -DBoost_VERBOSE=ON -DBoost_DEBUG=ON -DCMAKE_IGNORE_PREFIX_PATH="/c/Strawberry/c" ..
             cmake --build . --target install --config ${{matrix.build_type}} -j$B2_JOBS
       - name: Run CMake install tests
         run: |

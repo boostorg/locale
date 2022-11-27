@@ -22,6 +22,9 @@
 #endif
 
 namespace boost { namespace locale { namespace test {
+    /// Name/path of current executable
+    std::string exe_name;
+
     struct test_result {
         test_result() : error_counter(0), test_counter(0)
         {
@@ -93,7 +96,13 @@ void test_main(int argc, char** argv);
 
 int main(int argc, char** argv)
 {
-    boost::locale::test::results(); // Instantiate
+    {
+        using namespace boost::locale::test;
+        exe_name = argv[0];
+        if(exe_name.substr(exe_name.length() - 4) == ".exe")
+            exe_name.resize(exe_name.length() - 4);
+        results(); // Instantiate
+    }
     try {
         test_main(argc, argv);
     } catch(const std::exception& e) {

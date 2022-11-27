@@ -9,6 +9,7 @@
 
 #include <boost/locale/encoding.hpp>
 #include "boostLocale/test/posix_tools.hpp"
+#include "boostLocale/test/unit_test.hpp"
 #include <cstdio>
 #include <ctime>
 #include <fstream>
@@ -18,6 +19,14 @@
 #if defined(BOOST_MSVC) && BOOST_MSVC < 1700
 #    pragma warning(disable : 4428) // universal-character-name encountered in source
 #endif
+
+class remove_file_on_exit {
+    std::string filename_;
+
+public:
+    explicit remove_file_on_exit(const std::string& filename) : filename_(filename) {}
+    ~remove_file_on_exit() { std::remove(filename_.c_str()); }
+};
 
 inline unsigned utf8_next(const std::string& s, unsigned& pos)
 {
@@ -116,27 +125,26 @@ bool has_std_locale(const char* name)
 
 inline bool test_std_supports_SJIS_codecvt(const std::string& locale_name)
 {
-    bool res = true;
+    const std::string file_path = boost::locale::test::exe_name + "-test-siftjis.txt";
+    remove_file_on_exit _(file_path);
     {
         // Japan in Shift JIS/cp932
         const char* japan_932 = "\x93\xfa\x96\x7b";
-        std::ofstream f("test-siftjis.txt");
+        std::ofstream f(file_path);
         f << japan_932;
-        f.close();
     }
+    bool res = true;
     try {
         std::wfstream test;
-        test.imbue(std::locale(locale_name.c_str()));
-        test.open("test-siftjis.txt");
+        test.imbue(std::locale(locale_name));
+        test.open(file_path);
         // Japan in Unicode
-        std::wstring cmp = L"\u65e5\u672c";
+        const std::wstring cmp = L"\u65e5\u672c";
         std::wstring ref;
-        test >> ref;
-        res = ref == cmp;
+        res = (test >> ref) && (ref == cmp);
     } catch(const std::exception&) {
         res = false;
     }
-    remove("test-siftjis.txt");
     return res;
 }
 
@@ -215,14 +223,6 @@ char* make4(unsigned v)
     buf[3] = static_cast<unsigned char>(0x80 | ((v >> 0) & 0x3F));
     return reinterpret_cast<char*>(buf);
 }
-
-class remove_file_on_exit {
-    std::string filename_;
-
-public:
-    explicit remove_file_on_exit(const std::string& filename) : filename_(filename) {}
-    ~remove_file_on_exit() { std::remove(filename_.c_str()); }
-};
 
 #ifdef _MSC_VER
 #    pragma warning(push)
