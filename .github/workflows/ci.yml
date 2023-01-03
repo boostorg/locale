@@ -324,6 +324,7 @@ jobs:
           - { toolset: gcc,       cxxstd: '03,11,14,17,2a', addrmd: '64',    os: windows-2019 }
 
     runs-on: ${{matrix.os}}
+    env: {ICU_VERSION: '71.1'}
 
     steps:
       - uses: actions/checkout@v3
@@ -343,13 +344,21 @@ jobs:
       - name: Setup Boost
         run: ci\github\install.bat
 
-      - name: Get ICU
+      - name: Get cached ICU
+        uses: actions/cache@v3
+        id: cache-icu
+        with:
+          path: ICU
+          key: ICU-${{env.ICU_VERSION}}
+
+      - name: Download ICU
+        if: steps.cache-icu.outputs.cache-hit != 'true'
         shell: pwsh
-        run: |
-            $ICU_ROOT = "$($pwd.Path)\ICU"
-            cmake -DICU_ROOT="$ICU_ROOT" -DICU_VERSION="71.1" -P tools/download_icu.cmake
-            Add-Content $Env:BOOST_ROOT/project-config.jam "path-constant ICU_PATH : `"$ICU_ROOT`" ;"
-            Get-Content $Env:BOOST_ROOT/project-config.jam
+        run: cmake -DICU_ROOT="$($pwd.Path)\ICU" -DICU_VERSION="$Env:ICU_VERSION" -P tools/download_icu.cmake
+
+      - name: Setup ICU
+        shell: pwsh
+        run: 'Add-Content $Env:BOOST_ROOT/project-config.jam "path-constant ICU_PATH : `"$($pwd.Path)\ICU`" ;"'
 
       - name: Run tests
         if: '!matrix.coverage'
