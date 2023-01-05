@@ -38,10 +38,10 @@ namespace boost { namespace locale {
 
             formattible() : pointer_(0), writer_(&formattible::void_write) {}
 
-            formattible(const formattible& other) = default;
-            formattible(formattible&& other) = default;
-            formattible& operator=(const formattible& other) = default;
-            formattible& operator=(formattible&& other) = default;
+            formattible(const formattible&) = default;
+            formattible(formattible&&) = default;
+            formattible& operator=(const formattible&) = default;
+            formattible& operator=(formattible&&) = default;
 
             template<typename Type>
             explicit formattible(const Type& value)

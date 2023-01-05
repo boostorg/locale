@@ -49,8 +49,8 @@ namespace boost { namespace locale {
 
     ios_info::~ios_info() = default;
 
-    ios_info::ios_info(const ios_info& other) = default;
-    ios_info& ios_info::operator=(const ios_info& other) = default;
+    ios_info::ios_info(const ios_info&) = default;
+    ios_info& ios_info::operator=(const ios_info&) = default;
 
     void ios_info::display_flags(uint64_t f)
     {
