@@ -16,6 +16,16 @@
 #    define BOOST_LOCALE_USE_WIN32_API
 #endif
 
+#ifdef BOOST_LOCALE_USE_WIN32_API
+// Get information about the user default locale and put it into the buffer.
+// Return true on success
+template<size_t N>
+static bool get_user_default_locale_info(LCTYPE lcType, char (&buf)[N])
+{
+    return GetLocaleInfoA(LOCALE_USER_DEFAULT, lcType, buf, N) != 0;
+}
+#endif
+
 namespace boost { namespace locale { namespace util {
     std::string get_system_locale(bool use_utf8_on_windows)
     {
@@ -35,26 +45,21 @@ namespace boost { namespace locale { namespace util {
         if(lang && *lang)
             return lang;
 
-        char buf[10];
-        if(GetLocaleInfoA(LOCALE_USER_DEFAULT, LOCALE_SISO639LANGNAME, buf, sizeof(buf)) == 0)
+        char buf[10]{};
+        if(!get_user_default_locale_info(LOCALE_SISO639LANGNAME, buf))
             return "C";
         std::string lc_name = buf;
-        if(GetLocaleInfoA(LOCALE_USER_DEFAULT, LOCALE_SISO3166CTRYNAME, buf, sizeof(buf)) != 0) {
+        if(get_user_default_locale_info(LOCALE_SISO3166CTRYNAME, buf)) {
             lc_name += "_";
             lc_name += buf;
         }
-        if(use_utf8_on_windows)
+        if(use_utf8_on_windows || !get_user_default_locale_info(LOCALE_IDEFAULTANSICODEPAGE, buf))
             lc_name += ".UTF-8";
         else {
-            if(GetLocaleInfoA(LOCALE_USER_DEFAULT, LOCALE_IDEFAULTANSICODEPAGE, buf, sizeof(buf)) != 0) {
-                if(atoi(buf) == 0)
-                    lc_name += ".UTF-8";
-                else {
-                    lc_name += ".windows-";
-                    lc_name += buf;
-                }
-            } else
+            if(atoi(buf) == 0)
                 lc_name += ".UTF-8";
+            else
+                lc_name.append(".windows-").append(buf);
         }
         return lc_name;
 

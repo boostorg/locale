@@ -28,8 +28,9 @@ void test_get_system_locale()
     {
         const std::string loc = get_system_locale(false);
         const std::string enc = loc.substr(loc.find_last_of('.'));
+        // encoding should be a windows codepage, but in the error case can be UTF-8
         if(enc.find(".windows-") != 0u)
-            TEST_EQ(enc, ".UTF-8");
+            TEST_EQ(enc, ".UTF-8"); // LCOV_EXCL_LINE
     }
 #endif
     // LC_ALL, LC_CTYPE and LANG variables used in this order
