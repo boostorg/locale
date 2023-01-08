@@ -5,7 +5,6 @@
 // https://www.boost.org/LICENSE_1_0.txt
 
 #define BOOST_LOCALE_SOURCE
-#include <boost/locale/config.hpp>
 #include <boost/locale/encoding.hpp>
 #include <boost/locale/hold_ptr.hpp>
 #include <cstring>

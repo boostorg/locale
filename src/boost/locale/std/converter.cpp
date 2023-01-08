@@ -6,7 +6,6 @@
 
 #define BOOST_LOCALE_SOURCE
 
-#include <boost/locale/config.hpp>
 #include <boost/locale/conversion.hpp>
 #include <boost/locale/encoding.hpp>
 #include <boost/locale/generator.hpp>

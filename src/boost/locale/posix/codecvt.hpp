@@ -6,7 +6,7 @@
 
 #ifndef BOOST_LOCALE_IMPL_POSIX_CODECVT_HPP
 #define BOOST_LOCALE_IMPL_POSIX_CODECVT_HPP
-#include <boost/locale/config.hpp>
+
 #include <boost/locale/util.hpp>
 
 #include <memory>

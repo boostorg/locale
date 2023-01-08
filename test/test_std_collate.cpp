@@ -4,7 +4,6 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#include <boost/locale/config.hpp>
 #include <boost/locale/conversion.hpp>
 #include <boost/locale/generator.hpp>
 #include <boost/locale/info.hpp>

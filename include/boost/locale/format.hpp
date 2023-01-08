@@ -7,7 +7,6 @@
 #ifndef BOOST_LOCALE_FORMAT_HPP_INCLUDED
 #define BOOST_LOCALE_FORMAT_HPP_INCLUDED
 
-#include <boost/locale/config.hpp>
 #include <boost/locale/formatting.hpp>
 #include <boost/locale/hold_ptr.hpp>
 #include <boost/locale/message.hpp>
