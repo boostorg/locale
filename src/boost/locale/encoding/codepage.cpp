@@ -12,7 +12,7 @@
 #include <string>
 
 #include "boost/locale/encoding/conv.hpp"
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#if BOOST_LOCALE_USE_WIN32_API
 #    define BOOST_LOCALE_WITH_WCONV
 #endif
 #ifdef BOOST_LOCALE_WITH_ICONV

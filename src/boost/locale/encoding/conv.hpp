@@ -38,7 +38,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
         return normalize_encoding(l).compare(normalize_encoding(r));
     }
 
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#if BOOST_LOCALE_USE_WIN32_API
     int encoding_to_windows_codepage(const char* ccharset);
 #endif
 

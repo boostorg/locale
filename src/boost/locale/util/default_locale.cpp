@@ -8,15 +8,14 @@
 #include <boost/locale/util.hpp>
 #include <cstdlib>
 
-#if defined(BOOST_WINDOWS) || defined(__CYGWIN__)
+#if BOOST_LOCALE_USE_WIN32_API
 #    ifndef NOMINMAX
 #        define NOMINMAX
 #    endif
 #    include <windows.h>
-#    define BOOST_LOCALE_USE_WIN32_API
 #endif
 
-#ifdef BOOST_LOCALE_USE_WIN32_API
+#if BOOST_LOCALE_USE_WIN32_API
 // Get information about the user default locale and put it into the buffer.
 // Return true on success
 template<size_t N>
@@ -36,7 +35,7 @@ namespace boost { namespace locale { namespace util {
             lang = getenv("LC_CTYPE");
         if(!lang || !*lang)
             lang = getenv("LANG");
-#ifndef BOOST_LOCALE_USE_WIN32_API
+#if !BOOST_LOCALE_USE_WIN32_API
         (void)use_utf8_on_windows; // not relevant for non-windows
         if(!lang || !*lang)
             lang = "C";

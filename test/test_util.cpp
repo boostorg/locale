@@ -20,7 +20,7 @@ void test_get_system_locale()
     }
 
     using boost::locale::util::get_system_locale;
-#if !defined(BOOST_WINDOWS) && !defined(__CYGWIN__)
+#if !BOOST_LOCALE_USE_WIN32_API
     TEST_EQ(get_system_locale(false), "C");
 #else
     // On Windows the user default name is used, so we can only test the encoding

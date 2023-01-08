@@ -19,8 +19,7 @@
 #    include <locale.h>
 #endif
 
-#if !defined(BOOST_LOCALE_WITH_ICU) && !defined(BOOST_LOCALE_WITH_ICONV) \
-  && (defined(BOOST_WINDOWS) || defined(__CYGWIN__))
+#if !defined(BOOST_LOCALE_WITH_ICU) && !defined(BOOST_LOCALE_WITH_ICONV) && BOOST_LOCALE_USE_WIN32_API
 #    ifndef NOMINMAX
 #        define NOMINMAX
 #    endif
@@ -455,8 +454,7 @@ void test_main(int /*argc*/, char** /*argv*/)
     backends.push_back("posix");
 #endif
 
-#if !defined(BOOST_LOCALE_WITH_ICU) && !defined(BOOST_LOCALE_WITH_ICONV) \
-  && (defined(BOOST_WINDOWS) || defined(__CYGWIN__))
+#if !defined(BOOST_LOCALE_WITH_ICU) && !defined(BOOST_LOCALE_WITH_ICONV) && BOOST_LOCALE_USE_WIN32_API
     test_iso_8859_8 = IsValidCodePage(28598) != 0;
 #endif
 
