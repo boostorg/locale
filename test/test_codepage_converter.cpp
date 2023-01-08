@@ -88,7 +88,7 @@ void test_main(int /*argc*/, char** /*argv*/)
 
     TEST(cvt.get());
     TEST(cvt->is_thread_safe());
-    TEST(cvt->max_len() == 4);
+    TEST_EQ(cvt->max_len(), 4);
 
     std::cout << "-- Correct" << std::endl;
 
@@ -219,7 +219,7 @@ void test_main(int /*argc*/, char** /*argv*/)
 
     TEST(cvt.get());
     TEST(cvt->is_thread_safe());
-    TEST(cvt->max_len() == 1);
+    TEST_EQ(cvt->max_len(), 1);
 
     std::cout << "- From 1255" << std::endl;
 

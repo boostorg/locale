@@ -145,7 +145,7 @@ void test_main(int /*argc*/, char** /*argv*/)
             TEST_EQ(time_zone::global(tz), "GMT+01:00");
             calendar cal(loc, tz);
             TEST(cal.get_locale() == loc);
-            TEST(cal.get_time_zone() == tz);
+            TEST_EQ(cal.get_time_zone(), tz);
 
             TEST(calendar() == cal);
             TEST(calendar(loc) == cal);
