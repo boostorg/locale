@@ -33,7 +33,8 @@ project : requirements
   ;
 
 # Configuration Information
-run show_config.cpp : : : <test-info>always_show_run_output ;
+run show_config.cpp
+    : : : <test-info>always_show_run_output ;
 # Shared
 run test_utf.cpp ;
 run test_util.cpp test_helpers.cpp ;
