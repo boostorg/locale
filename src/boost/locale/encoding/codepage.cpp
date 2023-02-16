@@ -6,7 +6,6 @@
 
 #include <boost/locale/encoding.hpp>
 #include <boost/locale/hold_ptr.hpp>
-#include <cstring>
 #include <memory>
 #include <string>
 
@@ -94,22 +93,6 @@ namespace boost { namespace locale { namespace conv {
                 return cvt->convert(begin, end);
 #endif
             throw invalid_charset_error(charset);
-        }
-
-        std::string normalize_encoding(const char* ccharset)
-        {
-            std::string charset;
-            charset.reserve(std::strlen(ccharset));
-            while(*ccharset != 0) {
-                char c = *ccharset++;
-                if('0' <= c && c <= '9')
-                    charset += c;
-                else if('a' <= c && c <= 'z')
-                    charset += c;
-                else if('A' <= c && c <= 'Z')
-                    charset += char(c - 'A' + 'a');
-            }
-            return charset;
         }
 
     } // namespace impl

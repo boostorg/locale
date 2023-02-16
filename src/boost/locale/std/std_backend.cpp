@@ -18,6 +18,7 @@
 #        define NOMINMAX
 #    endif
 #    include "boost/locale/encoding/conv.hpp"
+#    include "boost/locale/util/encoding.hpp"
 #    include "boost/locale/win32/lcid.hpp"
 #    include <windows.h>
 #endif
@@ -80,8 +81,7 @@ namespace boost { namespace locale { namespace impl_std {
                 if(loadable(lid))
                     name_ = lid;
 #if defined(BOOST_WINDOWS)
-                else if(loadable(win_name)
-                        && win_codepage == conv::impl::encoding_to_windows_codepage(data_.encoding().c_str()))
+                else if(loadable(win_name) && win_codepage == util::encoding_to_windows_codepage(data_.encoding()))
                     name_ = win_name;
 #endif
                 utf_mode_ = utf8_support::none;

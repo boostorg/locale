@@ -7,6 +7,7 @@
 
 #include <boost/locale/util/locale_data.hpp>
 #include "boost/locale/encoding/conv.hpp"
+#include "boost/locale/util/encoding.hpp"
 #include "boost/locale/util/string.hpp"
 #include <string>
 
@@ -97,7 +98,7 @@ namespace boost { namespace locale { namespace util {
         }
         encoding_ = tmp;
 
-        utf8_ = conv::impl::normalize_encoding(encoding_.c_str()) == "utf8";
+        utf8_ = util::normalize_encoding(encoding_) == "utf8";
 
         if(end >= input.size())
             return;
