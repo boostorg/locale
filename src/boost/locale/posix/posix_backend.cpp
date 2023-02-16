@@ -101,16 +101,16 @@ namespace boost { namespace locale { namespace impl_posix {
                 case category_t::calendar: {
                     util::locale_data inf;
                     inf.parse(real_id_);
-                    return util::install_gregorian_calendar(base, inf.country);
+                    return util::install_gregorian_calendar(base, inf.country());
                 }
                 case category_t::message: {
                     gnu_gettext::messages_info minf;
                     util::locale_data inf;
                     inf.parse(real_id_);
-                    minf.language = inf.language;
-                    minf.country = inf.country;
-                    minf.variant = inf.variant;
-                    minf.encoding = inf.encoding;
+                    minf.language = inf.language();
+                    minf.country = inf.country();
+                    minf.variant = inf.variant();
+                    minf.encoding = inf.encoding();
                     std::copy(domains_.begin(),
                               domains_.end(),
                               std::back_inserter<gnu_gettext::messages_info::domains_type>(minf.domains));

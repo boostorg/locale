@@ -11,11 +11,11 @@
 namespace boost { namespace locale { namespace util {
     void locale_data::parse(const std::string& locale_name)
     {
-        language = "C";
-        country.clear();
-        variant.clear();
-        encoding = "us-ascii";
-        utf8 = false;
+        language_ = "C";
+        country_.clear();
+        variant_.clear();
+        encoding_ = "us-ascii";
+        utf8_ = false;
         parse_from_lang(locale_name);
     }
 
@@ -31,7 +31,7 @@ namespace boost { namespace locale { namespace util {
             else if(tmp[i] < 'a' || 'z' < tmp[i])
                 return;
         }
-        language = tmp;
+        language_ = tmp;
         if(end >= locale_name.size())
             return;
 
@@ -57,7 +57,7 @@ namespace boost { namespace locale { namespace util {
                 return;
         }
 
-        country = tmp;
+        country_ = tmp;
 
         if(end >= locale_name.size())
             return;
@@ -78,9 +78,9 @@ namespace boost { namespace locale { namespace util {
             if('A' <= tmp[i] && tmp[i] <= 'Z')
                 tmp[i] = tmp[i] - 'A' + 'a';
         }
-        encoding = tmp;
+        encoding_ = tmp;
 
-        utf8 = conv::impl::normalize_encoding(encoding.c_str()) == "utf8";
+        utf8_ = conv::impl::normalize_encoding(encoding_.c_str()) == "utf8";
 
         if(end >= locale_name.size())
             return;
@@ -92,10 +92,10 @@ namespace boost { namespace locale { namespace util {
 
     void locale_data::parse_from_variant(const std::string& locale_name)
     {
-        variant = locale_name;
-        for(unsigned i = 0; i < variant.size(); i++) {
-            if('A' <= variant[i] && variant[i] <= 'Z')
-                variant[i] = variant[i] - 'A' + 'a';
+        variant_ = locale_name;
+        for(unsigned i = 0; i < variant_.size(); i++) {
+            if('A' <= variant_[i] && variant_[i] <= 'Z')
+                variant_[i] = variant_[i] - 'A' + 'a';
         }
     }
 

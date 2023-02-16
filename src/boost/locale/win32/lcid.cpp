@@ -94,13 +94,13 @@ namespace boost { namespace locale { namespace impl_win {
         }
         boost::locale::util::locale_data d;
         d.parse(locale_name);
-        std::string id = d.language;
+        std::string id = d.language();
 
-        if(!d.country.empty()) {
-            id += "_" + d.country;
+        if(!d.country().empty()) {
+            id += "_" + d.country();
         }
-        if(!d.variant.empty()) {
-            id += "@" + d.variant;
+        if(!d.variant().empty()) {
+            id += "@" + d.variant();
         }
 
         const table_type& tbl = get_ready_lcid_table();

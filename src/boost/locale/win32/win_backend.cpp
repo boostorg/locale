@@ -60,7 +60,7 @@ namespace boost { namespace locale { namespace impl_win {
             }
             util::locale_data d;
             d.parse(real_id_);
-            if(!d.utf8) {
+            if(!d.is_utf8()) {
                 lc_ = winlocale();
                 // Make it C as non-UTF8 locales are not supported
             }
@@ -78,7 +78,7 @@ namespace boost { namespace locale { namespace impl_win {
                 case category_t::calendar: {
                     util::locale_data inf;
                     inf.parse(real_id_);
-                    return util::install_gregorian_calendar(base, inf.country);
+                    return util::install_gregorian_calendar(base, inf.country());
                 }
                 case category_t::message: {
                     gnu_gettext::messages_info minf;
