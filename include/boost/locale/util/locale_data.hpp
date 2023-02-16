@@ -29,6 +29,9 @@ namespace boost { namespace locale { namespace util {
     public:
         // Default to C locale with US-ASCII encoding
         locale_data();
+        // Construct from the parsed locale \see \ref parse
+        // Throws `std::invalid_argument` if parsing fails
+        explicit locale_data(const std::string& locale_name);
 
         /// Return language (usually 2 lowercase letters, i.e. ISO-639 or 'C')
         const std::string& language() const { return language_; }
@@ -44,8 +47,14 @@ namespace boost { namespace locale { namespace util {
         /// <summary>
         /// Parse a locale identifier of the form [language[_territory][.codeset][@modifier]]
         /// Allows a dash as the delimiter: [language-territory]
+        ///
+        /// Return true if the identifier is valid:
+        ///   - `language` is given and consists of ASCII letters
+        ///   - `territory`, if given, consists of ASCII letters
+        ///   - Any field started by a delimiter (`_`, `-`, `.`, `@`) is not empty
+        /// Otherwise parsing is aborted. Valid values already parsed stay set, other are defaulted.
         /// </summary>
-        void parse(const std::string& locale_name);
+        bool parse(const std::string& locale_name);
 
         /// Get a representation in the form [language[_territory][.codeset][@modifier]]
         /// codeset is omitted if it is US-ASCII
@@ -53,10 +62,10 @@ namespace boost { namespace locale { namespace util {
 
     private:
         void reset();
-        void parse_from_lang(const std::string& input);
-        void parse_from_country(const std::string& input);
-        void parse_from_encoding(const std::string& input);
-        void parse_from_variant(const std::string& input);
+        bool parse_from_lang(const std::string& input);
+        bool parse_from_country(const std::string& input);
+        bool parse_from_encoding(const std::string& input);
+        bool parse_from_variant(const std::string& input);
     };
 
 }}} // namespace boost::locale::util

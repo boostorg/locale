@@ -9,12 +9,20 @@
 #include "boost/locale/encoding/conv.hpp"
 #include "boost/locale/util/encoding.hpp"
 #include "boost/locale/util/string.hpp"
+#include <boost/assert.hpp>
+#include <stdexcept>
 #include <string>
 
 namespace boost { namespace locale { namespace util {
     locale_data::locale_data()
     {
         reset();
+    }
+
+    locale_data::locale_data(const std::string& locale_name)
+    {
+        if(!parse(locale_name))
+            throw std::invalid_argument("Failed to parse locale name: " + locale_name);
     }
 
     void locale_data::reset()
@@ -38,71 +46,74 @@ namespace boost { namespace locale { namespace util {
         return result;
     }
 
-    void locale_data::parse(const std::string& locale_name)
+    bool locale_data::parse(const std::string& locale_name)
     {
         reset();
-        parse_from_lang(locale_name);
+        return parse_from_lang(locale_name);
     }
 
-    void locale_data::parse_from_lang(const std::string& input)
+    bool locale_data::parse_from_lang(const std::string& input)
     {
         const auto end = input.find_first_of("-_@.");
         std::string tmp = input.substr(0, end);
         if(tmp.empty())
-            return;
+            return false;
         // lowercase ASCII
         for(char& c : tmp) {
             if(is_upper_ascii(c))
                 c += 'a' - 'A';
             else if(!is_lower_ascii(c))
-                return;
+                return false;
         }
-        if(tmp == "c" || tmp == "posix")
-            return;
-        language_ = tmp;
-        if(end >= input.size())
-            return;
+        if(tmp != "c" && tmp != "posix") // Keep default
+            language_ = tmp;
 
-        if(input[end] == '-' || input[end] == '_') {
-            parse_from_country(input.substr(end + 1));
-        } else if(input[end] == '.') {
-            parse_from_encoding(input.substr(end + 1));
-        } else if(input[end] == '@') {
-            parse_from_variant(input.substr(end + 1));
+        if(end >= input.size())
+            return true;
+        else if(input[end] == '-' || input[end] == '_')
+            return parse_from_country(input.substr(end + 1));
+        else if(input[end] == '.')
+            return parse_from_encoding(input.substr(end + 1));
+        else {
+            BOOST_ASSERT_MSG(input[end] == '@', "Unexpected delimiter");
+            return parse_from_variant(input.substr(end + 1));
         }
     }
 
-    void locale_data::parse_from_country(const std::string& input)
+    bool locale_data::parse_from_country(const std::string& input)
     {
+        if(language_ == "C")
+            return false;
+
         const auto end = input.find_first_of("@.");
         std::string tmp = input.substr(0, end);
         if(tmp.empty())
-            return;
+            return false;
         // uppercase ASCII
         for(char& c : tmp) {
             if(util::is_lower_ascii(c))
                 c += 'A' - 'a';
             else if(!util::is_upper_ascii(c))
-                return;
+                return false;
         }
 
         country_ = tmp;
         if(end >= input.size())
-            return;
-
-        if(input[end] == '.') {
-            parse_from_encoding(input.substr(end + 1));
-        } else if(input[end] == '@') {
-            parse_from_variant(input.substr(end + 1));
+            return true;
+        else if(input[end] == '.')
+            return parse_from_encoding(input.substr(end + 1));
+        else {
+            BOOST_ASSERT_MSG(input[end] == '@', "Unexpected delimiter");
+            return parse_from_variant(input.substr(end + 1));
         }
     }
 
-    void locale_data::parse_from_encoding(const std::string& input)
+    bool locale_data::parse_from_encoding(const std::string& input)
     {
         const auto end = input.find_first_of('@');
         std::string tmp = input.substr(0, end);
         if(tmp.empty())
-            return;
+            return false;
         // No assumptions, but uppercase
         for(char& c : tmp) {
             if(util::is_lower_ascii(c))
@@ -113,21 +124,26 @@ namespace boost { namespace locale { namespace util {
         utf8_ = util::normalize_encoding(encoding_) == "utf8";
 
         if(end >= input.size())
-            return;
-
-        if(input[end] == '@') {
-            parse_from_variant(input.substr(end + 1));
+            return true;
+        else {
+            BOOST_ASSERT_MSG(input[end] == '@', "Unexpected delimiter");
+            return parse_from_variant(input.substr(end + 1));
         }
     }
 
-    void locale_data::parse_from_variant(const std::string& input)
+    bool locale_data::parse_from_variant(const std::string& input)
     {
+        if(language_ == "C")
+            return false;
+        if(input.empty())
+            return false;
         variant_ = input;
         // No assumptions, just make it lowercase
         for(char& c : variant_) {
             if(util::is_upper_ascii(c))
                 c += 'a' - 'A';
         }
+        return true;
     }
 
 }}} // namespace boost::locale::util

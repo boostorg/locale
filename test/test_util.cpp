@@ -9,6 +9,7 @@
 #include "boostLocale/test/test_helpers.hpp"
 #include "boostLocale/test/unit_test.hpp"
 #include <cstdlib>
+#include <stdexcept>
 
 void test_get_system_locale()
 {
@@ -54,70 +55,70 @@ void test_locale_data()
     TEST(!data.is_utf8());
     TEST_EQ(data.variant(), "");
 
-    data.parse("en_US.UTF-8");
+    TEST(data.parse("en_US.UTF-8"));
     TEST_EQ(data.language(), "en");
     TEST_EQ(data.country(), "US");
     TEST_EQ(data.encoding(), "UTF-8");
     TEST(data.is_utf8());
     TEST_EQ(data.variant(), "");
 
-    data.parse("C");
+    TEST(data.parse("C"));
     TEST_EQ(data.language(), "C");
     TEST_EQ(data.country(), "");
     TEST_EQ(data.encoding(), "US-ASCII");
     TEST(!data.is_utf8());
     TEST_EQ(data.variant(), "");
 
-    data.parse("ku_TR.UTF-8@sorani");
+    TEST(data.parse("ku_TR.UTF-8@sorani"));
     TEST_EQ(data.language(), "ku");
     TEST_EQ(data.country(), "TR");
     TEST_EQ(data.encoding(), "UTF-8");
     TEST(data.is_utf8());
     TEST_EQ(data.variant(), "sorani");
 
-    data.parse("POSIX");
+    TEST(data.parse("POSIX"));
     TEST_EQ(data.language(), "C");
     TEST_EQ(data.country(), "");
     TEST_EQ(data.encoding(), "US-ASCII");
     TEST(!data.is_utf8());
     TEST_EQ(data.variant(), "");
 
-    data.parse("da_DK.ISO8859-15@euro");
+    TEST(data.parse("da_DK.ISO8859-15@euro"));
     TEST_EQ(data.language(), "da");
     TEST_EQ(data.country(), "DK");
     TEST_EQ(data.encoding(), "ISO8859-15");
     TEST(!data.is_utf8());
     TEST_EQ(data.variant(), "euro");
 
-    data.parse("de_DE.ISO8859-1");
+    TEST(data.parse("de_DE.ISO8859-1"));
     TEST_EQ(data.language(), "de");
     TEST_EQ(data.country(), "DE");
     TEST_EQ(data.encoding(), "ISO8859-1");
     TEST(!data.is_utf8());
     TEST_EQ(data.variant(), "");
 
-    data.parse("ja_JP.eucJP");
+    TEST(data.parse("ja_JP.eucJP"));
     TEST_EQ(data.language(), "ja");
     TEST_EQ(data.country(), "JP");
     TEST_EQ(data.encoding(), "EUCJP");
     TEST(!data.is_utf8());
     TEST_EQ(data.variant(), "");
 
-    data.parse("ko_KR.EUC@dict");
+    TEST(data.parse("ko_KR.EUC@dict"));
     TEST_EQ(data.language(), "ko");
     TEST_EQ(data.country(), "KR");
     TEST_EQ(data.encoding(), "EUC");
     TEST(!data.is_utf8());
     TEST_EQ(data.variant(), "dict");
 
-    data.parse("th_TH.TIS620");
+    TEST(data.parse("th_TH.TIS620"));
     TEST_EQ(data.language(), "th");
     TEST_EQ(data.country(), "TH");
     TEST_EQ(data.encoding(), "TIS620");
     TEST(!data.is_utf8());
     TEST_EQ(data.variant(), "");
 
-    data.parse("zh_TW.UTF-8@radical");
+    TEST(data.parse("zh_TW.UTF-8@radical"));
     TEST_EQ(data.language(), "zh");
     TEST_EQ(data.country(), "TW");
     TEST_EQ(data.encoding(), "UTF-8");
@@ -135,13 +136,13 @@ void test_locale_data()
                                   "th_TH.TIS620",
                                   "zh_TW.UTF-8@radical"})
     {
-        data.parse(name);
+        TEST(data.parse(name));
         TEST_EQ(data.to_string(), name);
     }
     // US-ASCII encoding is ignored
-    data.parse("da_TR.US-ASCII");
+    TEST(data.parse("da_TR.US-ASCII"));
     TEST_EQ(data.to_string(), "da_TR");
-    data.parse("da_TR.US-ASCII@dic");
+    TEST(data.parse("da_TR.US-ASCII@dic"));
     TEST_EQ(data.to_string(), "da_TR@dic");
 
     // Unify casing:
@@ -149,34 +150,40 @@ void test_locale_data()
     // - region: uppercase
     // - encoding: uppercase
     // - variant: lowercase
-    data.parse("EN_us.utf-8@EUro");
+    TEST(data.parse("EN_us.utf-8@EUro"));
     TEST_EQ(data.language(), "en");
     TEST_EQ(data.country(), "US");
     TEST_EQ(data.encoding(), "UTF-8");
     TEST(data.is_utf8());
     TEST_EQ(data.variant(), "euro");
     TEST_EQ(data.to_string(), "en_US.UTF-8@euro");
-    data.parse("lAnGUagE_cOunTRy.eNCo-d123inG@Va-r1_Ant");
+    TEST(data.parse("lAnGUagE_cOunTRy.eNCo-d123inG@Va-r1_Ant"));
     TEST_EQ(data.to_string(), "language_COUNTRY.ENCO-D123ING@va-r1_ant");
 
     // Dash is allowed in addition to underscore
-    data.parse("de-DE.UTF-8");
+    TEST(data.parse("de-DE.UTF-8"));
     TEST_EQ(data.to_string(), "de_DE.UTF-8");
 
+    // C/POSIX is allowed to have an encoding
+    TEST(data.parse("C.UTF-8"));
+    TEST_EQ(data.to_string(), "C.UTF-8");
+    TEST(data.parse("POSIX.UTF-8"));
+    TEST_EQ(data.to_string(), "C.UTF-8");
+
     // Missing values are defaulted
-    data.parse("en");
+    TEST(data.parse("en"));
     TEST_EQ(data.to_string(), "en");
     TEST_EQ(data.encoding(), "US-ASCII");
     TEST(!data.is_utf8());
-    data.parse("en.UTF-8");
+    TEST(data.parse("en.UTF-8"));
     TEST_EQ(data.to_string(), "en.UTF-8");
     TEST_EQ(data.encoding(), "UTF-8");
     TEST(data.is_utf8());
-    data.parse("en@dict");
+    TEST(data.parse("en@dict"));
     TEST_EQ(data.to_string(), "en@dict");
     TEST_EQ(data.encoding(), "US-ASCII");
     TEST_EQ(data.variant(), "dict");
-    data.parse("en_US@dict");
+    TEST(data.parse("en_US@dict"));
     TEST_EQ(data.to_string(), "en_US@dict");
     TEST_EQ(data.encoding(), "US-ASCII");
     TEST_EQ(data.variant(), "dict");
@@ -187,26 +194,36 @@ void test_locale_data()
     for(const std::string invalidName :
         {"_en_US.UTF-8", "-en_US.UTF-8", ".en_US.UTF-8", "@en_US.UTF-8", "e1_US.UTF-8", "eö_US.UTF-8"})
     {
-        data.parse(invalidName);
+        TEST(!data.parse(invalidName));
         TEST_EQ(data.to_string(), "C");
     }
     // Invalid country
-    data.parse("en_UÖ.UTF-8");
+    TEST(!data.parse("en_UÖ.UTF-8"));
     TEST_EQ(data.to_string(), "en");
 
     // Empty parts:
     // Language
-    data.parse("_US.UTF-8@variant");
+    TEST(!data.parse("_US.UTF-8@variant"));
     TEST_EQ(data.to_string(), "C");
     // Country
-    data.parse("en_.UTF-8@variant");
+    TEST(!data.parse("en_.UTF-8@variant"));
     TEST_EQ(data.to_string(), "en");
     // Encoding
-    data.parse("en_US.@variant");
+    TEST(!data.parse("en_US.@variant"));
     TEST_EQ(data.to_string(), "en_US");
     // Variant
-    data.parse("en_US.UTF-8@");
+    TEST(!data.parse("en_US.UTF-8@"));
     TEST_EQ(data.to_string(), "en_US.UTF-8");
+
+    // C/POSIX with any other field except the encoding
+    for(const std::string invalidName : {"C_US", "C@variant", "POSIX_US", "POSIX@variant"}) {
+        TEST(!data.parse(invalidName));
+        TEST_EQ(data.to_string(), "C");
+    }
+
+    // Construct from string
+    TEST_EQ(boost::locale::util::locale_data("en_US.UTF-8").to_string(), "en_US.UTF-8");
+    TEST_THROWS(boost::locale::util::locale_data invalid("en_UÖ.UTF-8"), std::invalid_argument);
 }
 
 void test_main(int /*argc*/, char** /*argv*/)
