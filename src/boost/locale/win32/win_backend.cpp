@@ -4,7 +4,6 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#define BOOST_LOCALE_SOURCE
 #include "boost/locale/win32/win_backend.hpp"
 #include <boost/locale/gnu_gettext.hpp>
 #include <boost/locale/info.hpp>
