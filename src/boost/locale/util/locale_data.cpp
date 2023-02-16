@@ -8,94 +8,116 @@
 #include "boost/locale/encoding/conv.hpp"
 #include <string>
 
+static bool is_upper_ascii(const char c)
+{
+    return 'A' <= c && c <= 'Z';
+}
+
+static bool is_lower_ascii(const char c)
+{
+    return 'a' <= c && c <= 'z';
+}
+
 namespace boost { namespace locale { namespace util {
-    void locale_data::parse(const std::string& locale_name)
+    locale_data::locale_data()
+    {
+        reset();
+    }
+
+    void locale_data::reset()
     {
         language_ = "C";
         country_.clear();
+        encoding_ = "US-ASCII";
         variant_.clear();
-        encoding_ = "us-ascii";
         utf8_ = false;
+    }
+
+    void locale_data::parse(const std::string& locale_name)
+    {
+        reset();
         parse_from_lang(locale_name);
     }
 
-    void locale_data::parse_from_lang(const std::string& locale_name)
+    void locale_data::parse_from_lang(const std::string& input)
     {
-        size_t end = locale_name.find_first_of("-_@.");
-        std::string tmp = locale_name.substr(0, end);
+        const auto end = input.find_first_of("-_@.");
+        std::string tmp = input.substr(0, end);
         if(tmp.empty())
             return;
-        for(unsigned i = 0; i < tmp.size(); i++) {
-            if('A' <= tmp[i] && tmp[i] <= 'Z')
-                tmp[i] = tmp[i] - 'A' + 'a';
-            else if(tmp[i] < 'a' || 'z' < tmp[i])
+        // lowercase ASCII
+        for(char& c : tmp) {
+            if(is_upper_ascii(c))
+                c += 'a' - 'A';
+            else if(!is_lower_ascii(c))
                 return;
         }
+        if(tmp == "c" || tmp == "posix")
+            return;
         language_ = tmp;
-        if(end >= locale_name.size())
+        if(end >= input.size())
             return;
 
-        if(locale_name[end] == '-' || locale_name[end] == '_') {
-            parse_from_country(locale_name.substr(end + 1));
-        } else if(locale_name[end] == '.') {
-            parse_from_encoding(locale_name.substr(end + 1));
-        } else if(locale_name[end] == '@') {
-            parse_from_variant(locale_name.substr(end + 1));
+        if(input[end] == '-' || input[end] == '_') {
+            parse_from_country(input.substr(end + 1));
+        } else if(input[end] == '.') {
+            parse_from_encoding(input.substr(end + 1));
+        } else if(input[end] == '@') {
+            parse_from_variant(input.substr(end + 1));
         }
     }
 
-    void locale_data::parse_from_country(const std::string& locale_name)
+    void locale_data::parse_from_country(const std::string& input)
     {
-        size_t end = locale_name.find_first_of("@.");
-        std::string tmp = locale_name.substr(0, end);
+        const auto end = input.find_first_of("@.");
+        std::string tmp = input.substr(0, end);
         if(tmp.empty())
             return;
-        for(unsigned i = 0; i < tmp.size(); i++) {
-            if('a' <= tmp[i] && tmp[i] <= 'z')
-                tmp[i] = tmp[i] - 'a' + 'A';
-            else if(tmp[i] < 'A' || 'Z' < tmp[i])
+        // uppercase ASCII
+        for(char& c : tmp) {
+            if(is_lower_ascii(c))
+                c += 'A' - 'a';
+            else if(!is_upper_ascii(c))
                 return;
         }
 
         country_ = tmp;
-
-        if(end >= locale_name.size())
+        if(end >= input.size())
             return;
-        else if(locale_name[end] == '.') {
-            parse_from_encoding(locale_name.substr(end + 1));
-        } else if(locale_name[end] == '@') {
-            parse_from_variant(locale_name.substr(end + 1));
+
+        if(input[end] == '.') {
+            parse_from_encoding(input.substr(end + 1));
+        } else if(input[end] == '@') {
+            parse_from_variant(input.substr(end + 1));
         }
     }
 
-    void locale_data::parse_from_encoding(const std::string& locale_name)
+    void locale_data::parse_from_encoding(const std::string& input)
     {
-        size_t end = locale_name.find_first_of('@');
-        std::string tmp = locale_name.substr(0, end);
+        const auto end = input.find_first_of('@');
+        std::string tmp = input.substr(0, end);
         if(tmp.empty())
             return;
-        for(unsigned i = 0; i < tmp.size(); i++) {
-            if('A' <= tmp[i] && tmp[i] <= 'Z')
-                tmp[i] = tmp[i] - 'A' + 'a';
-        }
+        // No assumptions
         encoding_ = tmp;
 
         utf8_ = conv::impl::normalize_encoding(encoding_.c_str()) == "utf8";
 
-        if(end >= locale_name.size())
+        if(end >= input.size())
             return;
 
-        if(locale_name[end] == '@') {
-            parse_from_variant(locale_name.substr(end + 1));
+        if(input[end] == '@') {
+            parse_from_variant(input.substr(end + 1));
         }
     }
 
-    void locale_data::parse_from_variant(const std::string& locale_name)
+    void locale_data::parse_from_variant(const std::string& input)
     {
-        variant_ = locale_name;
-        for(unsigned i = 0; i < variant_.size(); i++) {
-            if('A' <= variant_[i] && variant_[i] <= 'Z')
-                variant_[i] = variant_[i] - 'A' + 'a';
+        variant_ = input;
+        // No assumptions, just make it lowercase
+        for(char& c : variant_) {
+            if(is_upper_ascii(c))
+                c += 'a' - 'A';
         }
     }
 

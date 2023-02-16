@@ -27,7 +27,8 @@ namespace boost { namespace locale { namespace util {
         bool utf8_;
 
     public:
-        locale_data() : language_("C"), encoding_("us-ascii"), utf8_(false) {}
+        // Default to C locale with US-ASCII encoding
+        locale_data();
 
         /// Return language (usually 2 lowercase letters, i.e. ISO-639 or 'C')
         const std::string& language() const { return language_; }
@@ -46,10 +47,11 @@ namespace boost { namespace locale { namespace util {
         void parse(const std::string& locale_name);
 
     private:
-        void parse_from_lang(const std::string& locale_name);
-        void parse_from_country(const std::string& locale_name);
-        void parse_from_encoding(const std::string& locale_name);
-        void parse_from_variant(const std::string& locale_name);
+        void reset();
+        void parse_from_lang(const std::string& input);
+        void parse_from_country(const std::string& input);
+        void parse_from_encoding(const std::string& input);
+        void parse_from_variant(const std::string& input);
     };
 
 }}} // namespace boost::locale::util

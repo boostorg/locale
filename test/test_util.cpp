@@ -5,6 +5,7 @@
 // https://www.boost.org/LICENSE_1_0.txt
 
 #include <boost/locale/util.hpp>
+#include <boost/locale/util/locale_data.hpp>
 #include "boostLocale/test/test_helpers.hpp"
 #include "boostLocale/test/unit_test.hpp"
 #include <cstdlib>
@@ -43,7 +44,89 @@ void test_get_system_locale()
     TEST_EQ(get_system_locale(true), "barlang.bar");
 }
 
+void test_locale_data()
+{
+    boost::locale::util::locale_data data;
+    // Default is C.US-ASCII
+    TEST_EQ(data.language(), "C");
+    TEST_EQ(data.country(), "");
+    TEST_EQ(data.encoding(), "US-ASCII");
+    TEST(!data.is_utf8());
+    TEST_EQ(data.variant(), "");
+
+    data.parse("en_US.UTF-8");
+    TEST_EQ(data.language(), "en");
+    TEST_EQ(data.country(), "US");
+    TEST_EQ(data.encoding(), "UTF-8");
+    TEST(data.is_utf8());
+    TEST_EQ(data.variant(), "");
+
+    data.parse("C");
+    TEST_EQ(data.language(), "C");
+    TEST_EQ(data.country(), "");
+    TEST_EQ(data.encoding(), "US-ASCII");
+    TEST(!data.is_utf8());
+    TEST_EQ(data.variant(), "");
+
+    data.parse("ku_TR.UTF-8@sorani");
+    TEST_EQ(data.language(), "ku");
+    TEST_EQ(data.country(), "TR");
+    TEST_EQ(data.encoding(), "UTF-8");
+    TEST(data.is_utf8());
+    TEST_EQ(data.variant(), "sorani");
+
+    data.parse("POSIX");
+    TEST_EQ(data.language(), "C");
+    TEST_EQ(data.country(), "");
+    TEST_EQ(data.encoding(), "US-ASCII");
+    TEST(!data.is_utf8());
+    TEST_EQ(data.variant(), "");
+
+    data.parse("da_DK.ISO8859-15@euro");
+    TEST_EQ(data.language(), "da");
+    TEST_EQ(data.country(), "DK");
+    TEST_EQ(data.encoding(), "ISO8859-15");
+    TEST(!data.is_utf8());
+    TEST_EQ(data.variant(), "euro");
+
+    data.parse("de_DE.ISO8859-1");
+    TEST_EQ(data.language(), "de");
+    TEST_EQ(data.country(), "DE");
+    TEST_EQ(data.encoding(), "ISO8859-1");
+    TEST(!data.is_utf8());
+    TEST_EQ(data.variant(), "");
+
+    data.parse("ja_JP.eucJP");
+    TEST_EQ(data.language(), "ja");
+    TEST_EQ(data.country(), "JP");
+    TEST_EQ(data.encoding(), "eucJP");
+    TEST(!data.is_utf8());
+    TEST_EQ(data.variant(), "");
+
+    data.parse("ko_KR.EUC@dict");
+    TEST_EQ(data.language(), "ko");
+    TEST_EQ(data.country(), "KR");
+    TEST_EQ(data.encoding(), "EUC");
+    TEST(!data.is_utf8());
+    TEST_EQ(data.variant(), "dict");
+
+    data.parse("th_TH.TIS620");
+    TEST_EQ(data.language(), "th");
+    TEST_EQ(data.country(), "TH");
+    TEST_EQ(data.encoding(), "TIS620");
+    TEST(!data.is_utf8());
+    TEST_EQ(data.variant(), "");
+
+    data.parse("zh_TW.UTF-8@radical");
+    TEST_EQ(data.language(), "zh");
+    TEST_EQ(data.country(), "TW");
+    TEST_EQ(data.encoding(), "UTF-8");
+    TEST(data.is_utf8());
+    TEST_EQ(data.variant(), "radical");
+}
+
 void test_main(int /*argc*/, char** /*argv*/)
 {
     test_get_system_locale();
+    test_locale_data();
 }
