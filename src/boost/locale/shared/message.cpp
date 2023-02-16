@@ -4,7 +4,6 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#define BOOST_LOCALE_SOURCE
 #define BOOST_DETAIL_NO_CONTAINER_FWD
 
 // Need _wfopen which is an extension on MinGW but not on MinGW-w64
