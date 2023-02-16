@@ -43,6 +43,7 @@ namespace boost { namespace locale { namespace util {
 
         /// <summary>
         /// Parse a locale identifier of the form [language[_territory][.codeset][@modifier]]
+        /// Allows a dash as the delimiter: [language-territory]
         /// </summary>
         void parse(const std::string& locale_name);
 

@@ -138,6 +138,11 @@ void test_locale_data()
         data.parse(name);
         TEST_EQ(data.to_string(), name);
     }
+    // US-ASCII encoding is ignored
+    data.parse("da_TR.US-ASCII");
+    TEST_EQ(data.to_string(), "da_TR");
+    data.parse("da_TR.US-ASCII@dic");
+    TEST_EQ(data.to_string(), "da_TR@dic");
 
     // Unify casing:
     // - language: lowercase
@@ -153,6 +158,55 @@ void test_locale_data()
     TEST_EQ(data.to_string(), "en_US.UTF-8@euro");
     data.parse("lAnGUagE_cOunTRy.eNCo-d123inG@Va-r1_Ant");
     TEST_EQ(data.to_string(), "language_COUNTRY.ENCO-D123ING@va-r1_ant");
+
+    // Dash is allowed in addition to underscore
+    data.parse("de-DE.UTF-8");
+    TEST_EQ(data.to_string(), "de_DE.UTF-8");
+
+    // Missing values are defaulted
+    data.parse("en");
+    TEST_EQ(data.to_string(), "en");
+    TEST_EQ(data.encoding(), "US-ASCII");
+    TEST(!data.is_utf8());
+    data.parse("en.UTF-8");
+    TEST_EQ(data.to_string(), "en.UTF-8");
+    TEST_EQ(data.encoding(), "UTF-8");
+    TEST(data.is_utf8());
+    data.parse("en@dict");
+    TEST_EQ(data.to_string(), "en@dict");
+    TEST_EQ(data.encoding(), "US-ASCII");
+    TEST_EQ(data.variant(), "dict");
+    data.parse("en_US@dict");
+    TEST_EQ(data.to_string(), "en_US@dict");
+    TEST_EQ(data.encoding(), "US-ASCII");
+    TEST_EQ(data.variant(), "dict");
+
+    // Error cases, default values used starting from error
+
+    // Invalid language (separator at start or not an ASCII letter)
+    for(const std::string invalidName :
+        {"_en_US.UTF-8", "-en_US.UTF-8", ".en_US.UTF-8", "@en_US.UTF-8", "e1_US.UTF-8", "eö_US.UTF-8"})
+    {
+        data.parse(invalidName);
+        TEST_EQ(data.to_string(), "C");
+    }
+    // Invalid country
+    data.parse("en_UÖ.UTF-8");
+    TEST_EQ(data.to_string(), "en");
+
+    // Empty parts:
+    // Language
+    data.parse("_US.UTF-8@variant");
+    TEST_EQ(data.to_string(), "C");
+    // Country
+    data.parse("en_.UTF-8@variant");
+    TEST_EQ(data.to_string(), "en");
+    // Encoding
+    data.parse("en_US.@variant");
+    TEST_EQ(data.to_string(), "en_US");
+    // Variant
+    data.parse("en_US.UTF-8@");
+    TEST_EQ(data.to_string(), "en_US.UTF-8");
 }
 
 void test_main(int /*argc*/, char** /*argv*/)
