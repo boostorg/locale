@@ -99,7 +99,7 @@ void test_locale_data()
     data.parse("ja_JP.eucJP");
     TEST_EQ(data.language(), "ja");
     TEST_EQ(data.country(), "JP");
-    TEST_EQ(data.encoding(), "eucJP");
+    TEST_EQ(data.encoding(), "EUCJP");
     TEST(!data.is_utf8());
     TEST_EQ(data.variant(), "");
 
@@ -123,6 +123,24 @@ void test_locale_data()
     TEST_EQ(data.encoding(), "UTF-8");
     TEST(data.is_utf8());
     TEST_EQ(data.variant(), "radical");
+
+    // Unify casing:
+    // - language: lowercase
+    // - region: uppercase
+    // - encoding: uppercase
+    // - variant: lowercase
+    data.parse("EN_us.utf-8@EUro");
+    TEST_EQ(data.language(), "en");
+    TEST_EQ(data.country(), "US");
+    TEST_EQ(data.encoding(), "UTF-8");
+    TEST(data.is_utf8());
+    TEST_EQ(data.variant(), "euro");
+    data.parse("lAnGUagE_cOunTRy.eNCo-d123inG@Va-r1_Ant");
+    TEST_EQ(data.language(), "language");
+    TEST_EQ(data.country(), "COUNTRY");
+    TEST_EQ(data.encoding(), "ENCO-D123ING");
+    TEST(!data.is_utf8());
+    TEST_EQ(data.variant(), "va-r1_ant");
 }
 
 void test_main(int /*argc*/, char** /*argv*/)

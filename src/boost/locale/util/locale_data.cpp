@@ -98,7 +98,11 @@ namespace boost { namespace locale { namespace util {
         std::string tmp = input.substr(0, end);
         if(tmp.empty())
             return;
-        // No assumptions
+        // No assumptions, but uppercase
+        for(char& c : tmp) {
+            if(is_lower_ascii(c))
+                c += 'A' - 'a';
+        }
         encoding_ = tmp;
 
         utf8_ = conv::impl::normalize_encoding(encoding_.c_str()) == "utf8";
