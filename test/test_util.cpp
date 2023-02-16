@@ -124,6 +124,21 @@ void test_locale_data()
     TEST(data.is_utf8());
     TEST_EQ(data.variant(), "radical");
 
+    // to_string yields the input (if format is correct already)
+    for(const std::string name : {"C",
+                                  "en_US.UTF-8",
+                                  "ku_TR.UTF-8@sorani",
+                                  "da_DK.ISO8859-15@euro",
+                                  "de_DE.ISO8859-1",
+                                  "en_US",
+                                  "ko_KR.EUC@dict",
+                                  "th_TH.TIS620",
+                                  "zh_TW.UTF-8@radical"})
+    {
+        data.parse(name);
+        TEST_EQ(data.to_string(), name);
+    }
+
     // Unify casing:
     // - language: lowercase
     // - region: uppercase
@@ -135,12 +150,9 @@ void test_locale_data()
     TEST_EQ(data.encoding(), "UTF-8");
     TEST(data.is_utf8());
     TEST_EQ(data.variant(), "euro");
+    TEST_EQ(data.to_string(), "en_US.UTF-8@euro");
     data.parse("lAnGUagE_cOunTRy.eNCo-d123inG@Va-r1_Ant");
-    TEST_EQ(data.language(), "language");
-    TEST_EQ(data.country(), "COUNTRY");
-    TEST_EQ(data.encoding(), "ENCO-D123ING");
-    TEST(!data.is_utf8());
-    TEST_EQ(data.variant(), "va-r1_ant");
+    TEST_EQ(data.to_string(), "language_COUNTRY.ENCO-D123ING@va-r1_ant");
 }
 
 void test_main(int /*argc*/, char** /*argv*/)

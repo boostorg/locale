@@ -26,6 +26,18 @@ namespace boost { namespace locale { namespace util {
         utf8_ = false;
     }
 
+    std::string locale_data::to_string() const
+    {
+        std::string result = language_;
+        if(!country_.empty())
+            (result += '_') += country_;
+        if(!encoding_.empty() && !util::are_encodings_equal(encoding_, "US-ASCII"))
+            (result += '.') += encoding_;
+        if(!variant_.empty())
+            (result += '@') += variant_;
+        return result;
+    }
+
     void locale_data::parse(const std::string& locale_name)
     {
         reset();

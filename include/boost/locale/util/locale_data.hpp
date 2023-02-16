@@ -46,6 +46,10 @@ namespace boost { namespace locale { namespace util {
         /// </summary>
         void parse(const std::string& locale_name);
 
+        /// Get a representation in the form [language[_territory][.codeset][@modifier]]
+        /// codeset is omitted if it is US-ASCII
+        std::string to_string() const;
+
     private:
         void reset();
         void parse_from_lang(const std::string& input);
