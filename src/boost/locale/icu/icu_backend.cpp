@@ -10,7 +10,7 @@
 #include <boost/locale/util.hpp>
 #include "boost/locale/icu/all_generator.hpp"
 #include "boost/locale/icu/cdata.hpp"
-#include "boost/locale/util/locale_data.hpp"
+#include <boost/locale/util/locale_data.hpp>
 #include <algorithm>
 #include <iterator>
 

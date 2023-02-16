@@ -9,8 +9,8 @@
 #include <boost/locale/info.hpp>
 #include <boost/locale/localization_backend.hpp>
 #include <boost/locale/util.hpp>
+#include <boost/locale/util/locale_data.hpp>
 #include "boost/locale/util/gregorian.hpp"
-#include "boost/locale/util/locale_data.hpp"
 #include "boost/locale/win32/all_generator.hpp"
 #include "boost/locale/win32/api.hpp"
 #include <algorithm>

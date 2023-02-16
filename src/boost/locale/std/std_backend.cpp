@@ -8,6 +8,7 @@
 #include <boost/locale/gnu_gettext.hpp>
 #include <boost/locale/localization_backend.hpp>
 #include <boost/locale/util.hpp>
+#include <boost/locale/util/locale_data.hpp>
 #include <algorithm>
 #include <iterator>
 #include <vector>
@@ -22,7 +23,6 @@
 #endif
 #include "boost/locale/std/all_generator.hpp"
 #include "boost/locale/util/gregorian.hpp"
-#include "boost/locale/util/locale_data.hpp"
 
 namespace boost { namespace locale { namespace impl_std {
 

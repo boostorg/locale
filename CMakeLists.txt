@@ -27,7 +27,6 @@ add_library(boost_locale
   src/boost/locale/util/default_locale.cpp
   src/boost/locale/util/info.cpp
   src/boost/locale/util/locale_data.cpp
-  src/boost/locale/util/locale_data.hpp
   src/boost/locale/util/numeric.hpp
   src/boost/locale/util/timezone.hpp
   ${headers}

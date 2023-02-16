@@ -9,6 +9,7 @@
 #include <boost/locale/info.hpp>
 #include <boost/locale/localization_backend.hpp>
 #include <boost/locale/util.hpp>
+#include <boost/locale/util/locale_data.hpp>
 #include <algorithm>
 #include <iterator>
 #include <langinfo.h>
@@ -19,7 +20,6 @@
 
 #include "boost/locale/posix/all_generator.hpp"
 #include "boost/locale/util/gregorian.hpp"
-#include "boost/locale/util/locale_data.hpp"
 
 namespace boost { namespace locale { namespace impl_posix {
 
