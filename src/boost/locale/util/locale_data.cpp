@@ -1,22 +1,14 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2022-2023 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#include "boost/locale/util/locale_data.hpp"
+#include <boost/locale/util/locale_data.hpp>
 #include "boost/locale/encoding/conv.hpp"
+#include "boost/locale/util/string.hpp"
 #include <string>
-
-static bool is_upper_ascii(const char c)
-{
-    return 'A' <= c && c <= 'Z';
-}
-
-static bool is_lower_ascii(const char c)
-{
-    return 'a' <= c && c <= 'z';
-}
 
 namespace boost { namespace locale { namespace util {
     locale_data::locale_data()
@@ -75,9 +67,9 @@ namespace boost { namespace locale { namespace util {
             return;
         // uppercase ASCII
         for(char& c : tmp) {
-            if(is_lower_ascii(c))
+            if(util::is_lower_ascii(c))
                 c += 'A' - 'a';
-            else if(!is_upper_ascii(c))
+            else if(!util::is_upper_ascii(c))
                 return;
         }
 
@@ -100,7 +92,7 @@ namespace boost { namespace locale { namespace util {
             return;
         // No assumptions, but uppercase
         for(char& c : tmp) {
-            if(is_lower_ascii(c))
+            if(util::is_lower_ascii(c))
                 c += 'A' - 'a';
         }
         encoding_ = tmp;
@@ -120,7 +112,7 @@ namespace boost { namespace locale { namespace util {
         variant_ = input;
         // No assumptions, just make it lowercase
         for(char& c : variant_) {
-            if(is_upper_ascii(c))
+            if(util::is_upper_ascii(c))
                 c += 'a' - 'A';
         }
     }
