@@ -15,6 +15,7 @@
 
 #include "boost/locale/encoding/conv.hpp"
 #include "boost/locale/posix/all_generator.hpp"
+#include "boost/locale/util/encoding.hpp"
 #ifdef BOOST_LOCALE_WITH_ICONV
 #    include "boost/locale/util/iconv.hpp"
 #endif
@@ -199,7 +200,7 @@ namespace boost { namespace locale { namespace impl_posix {
 
     std::locale create_codecvt(const std::locale& in, const std::string& encoding, char_facet_t type)
     {
-        if(conv::impl::normalize_encoding(encoding.c_str()) == "utf8")
+        if(util::normalize_encoding(encoding) == "utf8")
             return util::create_utf8_codecvt(in, type);
 
         try {
