@@ -10,6 +10,7 @@
 #include "boost/locale/util/encoding.hpp"
 #include "boost/locale/util/string.hpp"
 #include <boost/assert.hpp>
+#include <algorithm>
 #include <stdexcept>
 #include <string>
 
@@ -89,14 +90,18 @@ namespace boost { namespace locale { namespace util {
         std::string tmp = input.substr(0, end);
         if(tmp.empty())
             return false;
+
         // uppercase ASCII
         for(char& c : tmp) {
             if(util::is_lower_ascii(c))
                 c += 'A' - 'a';
-            else if(util::is_numeric_ascii(c))
-                continue;
-            else if(!util::is_upper_ascii(c))
-                return false;
+            else if(!util::is_upper_ascii(c)) {
+                // Could be M49 country code: 3 digits
+                if(tmp.size() == 3u && std::find_if_not(tmp.begin(), tmp.end(), util::is_numeric_ascii) == tmp.end())
+                    break;
+                else
+                    return false;
+            }
         }
 
         country_ = tmp;
