@@ -180,6 +180,12 @@ void test_locale_data()
     TEST(data.parse("POSIX.UTF-8"));
     TEST_EQ(data.to_string(), "C.UTF-8");
 
+    // Special case: en_US_POSIX is an alias for "C"
+    TEST(data.parse("en_US_POSIX"));
+    TEST_EQ(data.to_string(), "C");
+    TEST(data.parse("En_Us_POsix.UTF-8"));
+    TEST_EQ(data.to_string(), "C.UTF-8");
+
     // Missing values are defaulted
     TEST(data.parse("en"));
     TEST_EQ(data.to_string(), "en");
