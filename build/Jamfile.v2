@@ -414,10 +414,12 @@ boost-lib locale
       shared/mo_lambda.cpp
       util/codecvt_converter.cpp
       util/default_locale.cpp
+      util/encoding.cpp
       util/info.cpp
       util/locale_data.cpp
     :
       $(cxx_requirements)
+      <define>BOOST_LOCALE_SOURCE
       # Don't link explicitly, not required
       <define>BOOST_THREAD_NO_LIB=1
       <include>$(TOP)/src

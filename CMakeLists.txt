@@ -25,9 +25,10 @@ add_library(boost_locale
   src/boost/locale/shared/mo_lambda.cpp
   src/boost/locale/util/codecvt_converter.cpp
   src/boost/locale/util/default_locale.cpp
+  src/boost/locale/util/encoding.cpp
+  src/boost/locale/util/encoding.hpp
   src/boost/locale/util/info.cpp
   src/boost/locale/util/locale_data.cpp
-  src/boost/locale/util/locale_data.hpp
   src/boost/locale/util/numeric.hpp
   src/boost/locale/util/timezone.hpp
   ${headers}
@@ -50,9 +51,12 @@ target_link_libraries(boost_locale
 )
 
 target_compile_definitions(boost_locale
-  PUBLIC BOOST_LOCALE_NO_LIB
-  PRIVATE _CRT_SECURE_NO_WARNINGS
-  PRIVATE _SCL_SECURE_NO_WARNINGS
+  PUBLIC
+    BOOST_LOCALE_NO_LIB
+  PRIVATE
+    BOOST_LOCALE_SOURCE
+    _CRT_SECURE_NO_WARNINGS
+    _SCL_SECURE_NO_WARNINGS
 )
 
 if(BUILD_SHARED_LIBS)
