@@ -594,7 +594,7 @@ void test_win_codepages()
         const auto* it2 = std::find_if(it + 1, end, is_same_win_codepage);
         TEST(it2 == end);
         if(it2 != end)
-            std::cerr << "Duplicate entry: " << it->name << ':' << it->codepage << '\n';
+            std::cerr << "Duplicate entry: " << it->name << ':' << it->codepage << '\n'; // LCOV_EXCL_LINE
     }
     const auto cmp = [](const windows_encoding& rhs, const windows_encoding& lhs) -> bool { return rhs < lhs.name; };
     const auto* it = std::is_sorted_until(all_windows_encodings, all_windows_encodings + n, cmp);

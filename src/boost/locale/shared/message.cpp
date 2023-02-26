@@ -203,7 +203,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
         {
             uint32_t magic = 0;
             // if the size is wrong magic would be wrong
-            // ok to ingnore fread result
+            // ok to ignore fread result
             size_t four_bytes = fread(&magic, 4, 1, file);
             (void)four_bytes; // shut GCC
 
