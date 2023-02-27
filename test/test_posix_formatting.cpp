@@ -146,7 +146,7 @@ void test_main(int /*argc*/, char** /*argv*/)
     boost::locale::generator gen;
     for(const std::string locale_name : {"en_US.UTF-8", "en_US.ISO8859-1", "he_IL.UTF-8", "he_IL.ISO8859-8"}) {
         std::cout << locale_name << " locale" << std::endl;
-        if(!have_locale(locale_name)) {
+        if(!has_posix_locale(locale_name)) {
             std::cout << locale_name << " not supported" << std::endl;
         } else {
             std::locale generated_locale = gen(locale_name);
@@ -163,7 +163,7 @@ void test_main(int /*argc*/, char** /*argv*/)
     {
         std::cout << "Testing UTF-8 punct issues" << std::endl;
         const std::string locale_name = "ru_RU.UTF-8";
-        if(!have_locale(locale_name)) {
+        if(!has_posix_locale(locale_name)) {
             std::cout << "- No Russian locale" << std::endl;
         } else {
             std::ostringstream ss;

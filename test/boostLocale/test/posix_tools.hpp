@@ -23,7 +23,7 @@ void freelocale(locale_t) {}
 #    define LC_ALL_MASK 0xFFFFFFFF
 #endif
 
-inline bool have_locale(const std::string& name)
+inline bool has_posix_locale(const std::string& name)
 {
     locale_t l = newlocale(LC_ALL_MASK, name.c_str(), 0);
     if(l) {

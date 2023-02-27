@@ -50,7 +50,7 @@ bool hasLocaleForBackend(const std::string& locale_name, const std::string& back
     } else if(backendName == "std")
         return has_std_locale(locale_name.c_str());
     else if(backendName == "posix")
-        return have_locale(locale_name);
+        return has_posix_locale(locale_name);
     else                                         // ICU
         return BOOST_LOCALE_ICU_VERSION >= 5901; // First version to use (correct) CLDR data
 }

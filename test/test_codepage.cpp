@@ -498,27 +498,15 @@ void test_main(int /*argc*/, char** /*argv*/)
         test_utf = true;
 #ifndef BOOST_LOCALE_NO_POSIX_BACKEND
         if(backendName == "posix") {
-            {
-                locale_holder l(newlocale(LC_ALL_MASK, he_il_8bit.c_str(), 0));
-                if(!l)
-                    test_iso = false;
-            }
-            {
-                locale_holder l(newlocale(LC_ALL_MASK, en_us_8bit.c_str(), 0));
-                if(!l)
-                    test_iso = false;
-            }
-            {
-                locale_holder l(newlocale(LC_ALL_MASK, "en_US.UTF-8", 0));
-                if(!l)
-                    test_utf = false;
-            }
+            if(!has_posix_locale(he_il_8bit))
+                test_iso = false;
+            if(!has_posix_locale(en_us_8bit))
+                test_iso = false;
+            if(!has_posix_locale("en_US.UTF-8"))
+                test_utf = false;
 #    ifdef BOOST_LOCALE_WITH_ICONV
-            {
-                locale_holder l(newlocale(LC_ALL_MASK, ja_jp_shiftjis.c_str(), 0));
-                if(!l)
-                    test_sjis = false;
-            }
+            if(!has_posix_locale(ja_jp_shiftjis))
+                test_sjis = false;
 #    else
             test_sjis = false;
 #    endif
