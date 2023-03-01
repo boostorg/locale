@@ -61,13 +61,13 @@ void test_char()
 
 #if !defined(__APPLE__) && !defined(__FreeBSD__)
     for(const std::string locale_name : {"en_US.UTF-8", "en_US.ISO8859-1"}) {
-        if(have_locale(locale_name)) {
+        if(!has_posix_locale(locale_name))
+            std::cout << "- " << locale_name << " not supported, skipping" << std::endl;
+        else {
             std::cout << "- Testing " << locale_name << std::endl;
             l = gen(locale_name);
             test_one<CharType>(l, "a", "ç", -1);
             test_one<CharType>(l, "ç", "d", -1);
-        } else {
-            std::cout << "- " << locale_name << " not supported, skipping" << std::endl;
         }
     }
 #else

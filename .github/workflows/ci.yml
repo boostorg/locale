@@ -284,20 +284,20 @@ jobs:
         if: matrix.coverage
         run: ci/github/codecov.sh "setup"
 
-      - name: Run tests with iconv
-        if: '!matrix.coverity'
-        run: ci/build.sh
-        env: {B2_FLAGS: -a boost.locale.icu=off boost.locale.iconv=on}
-      - name: Run tests with ICU
-        if: '!matrix.coverity'
-        run: ci/build.sh
-        env: {B2_FLAGS: -a boost.locale.icu=on  boost.locale.iconv=off}
-      - name: Run tests with ICU/iconv
+      - name: Run tests
         if: '!matrix.coverity'
         run: |
           B2_TARGETS="libs/$SELF/test//show_config --verbose-test" ci/build.sh
           ci/build.sh
-        env: {B2_FLAGS: -a boost.locale.icu=on  boost.locale.iconv=on}
+
+      - name: Run tests with iconv only
+        if: '!matrix.coverity'
+        run: ci/build.sh
+        env: {B2_FLAGS: -a boost.locale.icu=off boost.locale.iconv=on}
+      - name: Run tests with ICU only
+        if: '!matrix.coverity'
+        run: ci/build.sh
+        env: {B2_FLAGS: -a boost.locale.icu=on  boost.locale.iconv=off}
 
       - name: Upload coverage
         if: matrix.coverage
