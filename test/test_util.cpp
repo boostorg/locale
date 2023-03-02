@@ -125,6 +125,14 @@ void test_locale_data()
     TEST(data.is_utf8());
     TEST_EQ(data.variant(), "radical");
 
+    // Country can be a 3-digit value
+    TEST(data.parse("en_001.UTF-8"));
+    TEST_EQ(data.language(), "en");
+    TEST_EQ(data.country(), "001");
+    TEST_EQ(data.encoding(), "UTF-8");
+    TEST(data.is_utf8());
+    TEST_EQ(data.variant(), "");
+
     // to_string yields the input (if format is correct already)
     for(const std::string name : {"C",
                                   "en_US.UTF-8",
@@ -134,7 +142,9 @@ void test_locale_data()
                                   "en_US",
                                   "ko_KR.EUC@dict",
                                   "th_TH.TIS620",
-                                  "zh_TW.UTF-8@radical"})
+                                  "zh_TW.UTF-8@radical",
+                                  "en_001",
+                                  "en_150.UTF-8"})
     {
         TEST(data.parse(name));
         TEST_EQ(data.to_string(), name);
@@ -170,6 +180,12 @@ void test_locale_data()
     TEST(data.parse("POSIX.UTF-8"));
     TEST_EQ(data.to_string(), "C.UTF-8");
 
+    // Special case: en_US_POSIX is an alias for "C"
+    TEST(data.parse("en_US_POSIX"));
+    TEST_EQ(data.to_string(), "C");
+    TEST(data.parse("En_Us_POsix.UTF-8"));
+    TEST_EQ(data.to_string(), "C.UTF-8");
+
     // Missing values are defaulted
     TEST(data.parse("en"));
     TEST_EQ(data.to_string(), "en");
@@ -199,6 +215,12 @@ void test_locale_data()
     }
     // Invalid country
     TEST(!data.parse("en_UÖ.UTF-8"));
+    TEST_EQ(data.to_string(), "en");
+    TEST(!data.parse("en_1234.UTF-8")); // To many digits
+    TEST_EQ(data.to_string(), "en");
+    TEST(!data.parse("en_US1.UTF-8")); // digits in text
+    TEST_EQ(data.to_string(), "en");
+    TEST(!data.parse("en_1US.UTF-8")); // digits in text
     TEST_EQ(data.to_string(), "en");
 
     // Empty parts:
