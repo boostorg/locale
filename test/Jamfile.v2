@@ -11,9 +11,13 @@ project : requirements
     <library>/boost/locale//boost_locale
     <warnings>extra
     <toolset>msvc:<warnings-as-errors>on
+    <toolset>gcc-8:<cxxflags>"-Wsuggest-override"
     <toolset>gcc-8:<warnings-as-errors>on
+    <toolset>gcc-9:<cxxflags>"-Wsuggest-override"
     <toolset>gcc-9:<warnings-as-errors>on
+    <toolset>gcc-10:<cxxflags>"-Wsuggest-override"
     <toolset>gcc-10:<warnings-as-errors>on
+    <toolset>gcc-11:<cxxflags>"-Wsuggest-override"
     <toolset>gcc-11:<warnings-as-errors>on
     <toolset>clang-5:<warnings-as-errors>on
     <toolset>clang-9:<warnings-as-errors>on
