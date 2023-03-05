@@ -161,26 +161,14 @@ namespace boost { namespace locale {
         std::codecvt_base::result do_unshift(std::mbstate_t& s, char* from, char* /*to*/, char*& next) const override
         {
             boost::uint16_t& state = *reinterpret_cast<boost::uint16_t*>(&s);
-#ifdef DEBUG_CODECVT
-            std::cout << "Entering unshift " << std::hex << state << std::dec << std::endl;
-#endif
             if(state != 0)
                 return std::codecvt_base::error;
             next = from;
             return std::codecvt_base::ok;
         }
-        int do_encoding() const noexcept override
-        {
-            return 0;
-        }
-        int do_max_length() const noexcept override
-        {
-            return implementation().max_encoding_length();
-        }
-        bool do_always_noconv() const noexcept override
-        {
-            return false;
-        }
+        int do_encoding() const noexcept override { return 0; }
+        int do_max_length() const noexcept override { return implementation().max_encoding_length(); }
+        bool do_always_noconv() const noexcept override { return false; }
 
         int do_length(
 #ifdef BOOST_LOCALE_DO_LENGTH_MBSTATE_CONST
@@ -244,11 +232,6 @@ namespace boost { namespace locale {
             typename CodecvtImpl::state_type cvt_state =
               implementation().initial_state(generic_codecvt_base::to_unicode_state);
             while(to < to_end && from < from_end) {
-#ifdef DEBUG_CODECVT
-                std::cout << "Entering IN--------------\n";
-                std::cout << "State " << std::hex << state << std::endl;
-                std::cout << "Left in " << std::dec << from_end - from << " out " << to_end - to << std::endl;
-#endif
                 const char* from_saved = from;
 
                 uint32_t ch = implementation().to_unicode(cvt_state, from, from_end);
@@ -293,17 +276,6 @@ namespace boost { namespace locale {
             to_next = to;
             if(r == std::codecvt_base::ok && (from != from_end || state != 0))
                 r = std::codecvt_base::partial;
-#ifdef DEBUG_CODECVT
-            std::cout << "Returning ";
-            switch(r) {
-                case std::codecvt_base::ok: std::cout << "ok\n"; break;
-                case std::codecvt_base::partial: std::cout << "partial\n"; break;
-                case std::codecvt_base::error: std::cout << "error\n"; break;
-                default: std::cout << "other\n"; break;
-            }
-            std::cout << "State " << std::hex << state << std::endl;
-            std::cout << "Left in " << std::dec << from_end - from << " out " << to_end - to << std::endl;
-#endif
             return r;
         }
 
@@ -326,11 +298,6 @@ namespace boost { namespace locale {
             typename CodecvtImpl::state_type cvt_state =
               implementation().initial_state(generic_codecvt_base::from_unicode_state);
             while(to < to_end && from < from_end) {
-#ifdef DEBUG_CODECVT
-                std::cout << "Entering OUT --------------\n";
-                std::cout << "State " << std::hex << state << std::endl;
-                std::cout << "Left in " << std::dec << from_end - from << " out " << to_end - to << std::endl;
-#endif
                 boost::uint32_t ch = 0;
                 if(state != 0) {
                     // if the state indicates that 1st surrogate pair was written
@@ -387,17 +354,6 @@ namespace boost { namespace locale {
             to_next = to;
             if(r == std::codecvt_base::ok && (from != from_end || state != 0))
                 r = std::codecvt_base::partial;
-#ifdef DEBUG_CODECVT
-            std::cout << "Returning ";
-            switch(r) {
-                case std::codecvt_base::ok: std::cout << "ok\n"; break;
-                case std::codecvt_base::partial: std::cout << "partial\n"; break;
-                case std::codecvt_base::error: std::cout << "error\n"; break;
-                default: std::cout << "other\n"; break;
-            }
-            std::cout << "State " << std::hex << state << std::endl;
-            std::cout << "Left in " << std::dec << from_end - from << " out " << to_end - to << std::endl;
-#endif
             return r;
         }
     };
@@ -477,11 +433,6 @@ namespace boost { namespace locale {
             // and first pair is written, but no input consumed
             auto cvt_state = implementation().initial_state(generic_codecvt_base::to_unicode_state);
             while(to < to_end && from < from_end) {
-#ifdef DEBUG_CODECVT
-                std::cout << "Entering IN--------------\n";
-                std::cout << "State " << std::hex << state << std::endl;
-                std::cout << "Left in " << std::dec << from_end - from << " out " << to_end - to << std::endl;
-#endif
                 const char* from_saved = from;
 
                 uint32_t ch = implementation().to_unicode(cvt_state, from, from_end);
@@ -502,17 +453,6 @@ namespace boost { namespace locale {
             to_next = to;
             if(r == std::codecvt_base::ok && from != from_end)
                 r = std::codecvt_base::partial;
-#ifdef DEBUG_CODECVT
-            std::cout << "Returning ";
-            switch(r) {
-                case std::codecvt_base::ok: std::cout << "ok\n"; break;
-                case std::codecvt_base::partial: std::cout << "partial\n"; break;
-                case std::codecvt_base::error: std::cout << "error\n"; break;
-                default: std::cout << "other\n"; break;
-            }
-            std::cout << "State " << std::hex << state << std::endl;
-            std::cout << "Left in " << std::dec << from_end - from << " out " << to_end - to << std::endl;
-#endif
             return r;
         }
 
@@ -527,11 +467,6 @@ namespace boost { namespace locale {
             std::codecvt_base::result r = std::codecvt_base::ok;
             auto cvt_state = implementation().initial_state(generic_codecvt_base::from_unicode_state);
             while(to < to_end && from < from_end) {
-#ifdef DEBUG_CODECVT
-                std::cout << "Entering OUT --------------\n";
-                std::cout << "State " << std::hex << state << std::endl;
-                std::cout << "Left in " << std::dec << from_end - from << " out " << to_end - to << std::endl;
-#endif
                 boost::uint32_t ch = 0;
                 ch = *from;
                 if(!boost::locale::utf::is_valid_codepoint(ch)) {
@@ -553,17 +488,6 @@ namespace boost { namespace locale {
             to_next = to;
             if(r == std::codecvt_base::ok && from != from_end)
                 r = std::codecvt_base::partial;
-#ifdef DEBUG_CODECVT
-            std::cout << "Returning ";
-            switch(r) {
-                case std::codecvt_base::ok: std::cout << "ok\n"; break;
-                case std::codecvt_base::partial: std::cout << "partial\n"; break;
-                case std::codecvt_base::error: std::cout << "error\n"; break;
-                default: std::cout << "other\n"; break;
-            }
-            std::cout << "State " << std::hex << state << std::endl;
-            std::cout << "Left in " << std::dec << from_end - from << " out " << to_end - to << std::endl;
-#endif
             return r;
         }
     };
