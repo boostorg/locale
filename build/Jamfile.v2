@@ -408,6 +408,7 @@ boost-lib locale
       shared/format.cpp
       shared/formatting.cpp
       shared/generator.cpp
+      shared/iconv_codecvt.cpp
       shared/ids.cpp
       shared/localization_backend.cpp
       shared/message.cpp
