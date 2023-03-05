@@ -19,6 +19,8 @@ add_library(boost_locale
   src/boost/locale/shared/format.cpp
   src/boost/locale/shared/formatting.cpp
   src/boost/locale/shared/generator.cpp
+  src/boost/locale/shared/iconv_codecvt.cpp
+  src/boost/locale/shared/iconv_codecvt.hpp
   src/boost/locale/shared/ids.cpp
   src/boost/locale/shared/localization_backend.cpp
   src/boost/locale/shared/message.cpp
@@ -196,7 +198,6 @@ if(BOOST_LOCALE_ENABLE_POSIX)
   target_sources(boost_locale PRIVATE
     src/boost/locale/posix/all_generator.hpp
     src/boost/locale/posix/codecvt.cpp
-    src/boost/locale/posix/codecvt.hpp
     src/boost/locale/posix/collate.cpp
     src/boost/locale/posix/converter.cpp
     src/boost/locale/posix/numeric.cpp
