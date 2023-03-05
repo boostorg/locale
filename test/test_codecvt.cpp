@@ -117,10 +117,14 @@ void test_codecvt_out_n_m(const cvt_type& cvt, int n, int m)
 
         std::codecvt_base::result r = cvt.out(mb, from, from_end, from_next, to, to_end, to_next);
         if(r == cvt_type::partial) {
-            TEST_LT(to_end - to_next, cvt.max_length());
-            to_end += n;
-            if(to_end > real_to_end)
-                to_end = real_to_end;
+            // If those are equal, then "partial" probably means: Need more input
+            // Otherwise "Need more output"
+            if(from_next != from_end) {
+                TEST_LT(to_end - to_next, cvt.max_length());
+                to_end += n;
+                if(to_end > real_to_end)
+                    to_end = real_to_end;
+            }
         } else {
             TEST_EQ(r, cvt_type::ok);
         }
@@ -196,6 +200,32 @@ void test_codecvt_err()
             TEST(to_next == to);
         }
     }
+    std::cout << "- Trailing UTF-16 surrogate" << std::endl;
+    {
+        char buf[4] = {};
+        char* const to = buf;
+        char* const to_end = buf + 4;
+        char* to_next = to;
+        const wchar_t* err_utf = L"\xD800"; // Trailing UTF-16 surrogate
+        std::mbstate_t mb = std::mbstate_t();
+        const wchar_t* from = err_utf;
+        const wchar_t* from_end = from + 1;
+        const wchar_t* from_next = from;
+        cvt_type::result res = cvt.out(mb, from, from_end, from_next, to, to_end, to_next);
+        BOOST_LOCALE_START_CONST_CONDITION
+        if(sizeof(wchar_t) == 2) {
+            BOOST_LOCALE_END_CONST_CONDITION
+            TEST(res == cvt_type::partial);
+            TEST(from_next == from_end);
+            TEST(to_next == to);
+            TEST(buf[0] == 0);
+        } else {
+            // surrogate is invalid
+            TEST(res == cvt_type::error);
+            TEST(from_next == from);
+            TEST(to_next == to);
+        }
+    }
 
     std::cout << "- UTF-16/32" << std::endl;
     {
@@ -203,7 +233,7 @@ void test_codecvt_err()
         char* to = buf;
         char* to_end = buf + 32;
         char* to_next = to;
-        wchar_t err_buf[3] = {'1', 0xDC9E}; // second surrogate not works both for UTF-16 and 32
+        wchar_t err_buf[3] = {'1', 0xDC9E, 0}; // second value is invalid for UTF-16 and 32
         const wchar_t* err_utf = err_buf;
         {
             std::mbstate_t mb = std::mbstate_t();
@@ -223,8 +253,8 @@ void test_codecvt_err()
             const wchar_t* from_next = from;
             to_next = to;
             TEST_EQ(cvt.out(mb, from, from_end, from_next, to, to_end, to_next), cvt_type::error);
-            TEST_EQ(from_next, from);
-            TEST_EQ(to_next, to);
+            TEST(from_next == from);
+            TEST(to_next == to);
         }
     }
 }

@@ -195,7 +195,7 @@ namespace boost { namespace locale {
             const char* save_from = from;
             boost::uint16_t& state = *reinterpret_cast<boost::uint16_t*>(&std_state);
 #else
-            size_t save_max = max;
+            const size_t start_max = max;
             boost::uint16_t state = *reinterpret_cast<const boost::uint16_t*>(&std_state);
 #endif
 
@@ -221,7 +221,7 @@ namespace boost { namespace locale {
 #ifndef BOOST_LOCALE_DO_LENGTH_MBSTATE_CONST
             return static_cast<int>(from - save_from);
 #else
-            return static_cast<int>(save_max - max);
+            return static_cast<int>(start_max - max);
 #endif
         }
 
@@ -263,11 +263,11 @@ namespace boost { namespace locale {
                     r = std::codecvt_base::partial;
                     break;
                 }
-                // Normal codepoints go direcly to stream
+                // Normal codepoints go directly to stream
                 if(ch <= 0xFFFF) {
                     *to++ = static_cast<uchar>(ch);
                 } else {
-                    // for  other codepoints we do following
+                    // For other codepoints we do the following
                     //
                     // 1. We can't consume our input as we may find ourselves
                     //    in state where all input consumed but not all output written,i.e. only
@@ -385,7 +385,7 @@ namespace boost { namespace locale {
             }
             from_next = from;
             to_next = to;
-            if(r == std::codecvt_base::ok && from != from_end)
+            if(r == std::codecvt_base::ok && (from != from_end || state != 0))
                 r = std::codecvt_base::partial;
 #ifdef DEBUG_CODECVT
             std::cout << "Returning ";
@@ -439,7 +439,7 @@ namespace boost { namespace locale {
 #ifndef BOOST_LOCALE_DO_LENGTH_MBSTATE_CONST
             const char* start_from = from;
 #else
-            size_t save_max = max;
+            const size_t start_max = max;
 #endif
             typename CodecvtImpl::state_type cvt_state =
               implementation().initial_state(generic_codecvt_base::to_unicode_state);
@@ -452,10 +452,11 @@ namespace boost { namespace locale {
                 }
                 max--;
             }
+
 #ifndef BOOST_LOCALE_DO_LENGTH_MBSTATE_CONST
-            return from - start_from;
+            return static_cast<int>(from - start_from);
 #else
-            return save_max - max;
+            return static_cast<int>(start_max - max);
 #endif
         }
 
