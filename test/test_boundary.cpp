@@ -8,6 +8,7 @@
 
 #include <boost/locale/boundary.hpp>
 #include <boost/locale/generator.hpp>
+#include <boost/locale/localization_backend.hpp>
 #include "boostLocale/test/tools.hpp"
 #include "boostLocale/test/unit_test.hpp"
 #include <iostream>
@@ -488,6 +489,22 @@ void segment_operator()
 BOOST_LOCALE_DISABLE_UNREACHABLE_CODE_WARNING
 void test_main(int /*argc*/, char** /*argv*/)
 {
+#ifndef BOOST_LOCALE_NO_STD_BACKEND
+    {
+        namespace bl = boost::locale;
+        const bl::localization_backend_manager orig_backend = bl::localization_backend_manager::global();
+        bl::localization_backend_manager tmp_backend = bl::localization_backend_manager::global();
+        tmp_backend.select("std");
+        bl::localization_backend_manager::global(tmp_backend);
+
+        bl::generator g;
+        const std::string text = "To be or not to be, that is the question.";
+        // Std backend doesn't support segmentation, expect reasonable error
+        TEST_THROWS(bl::boundary::ssegment_index map(bl::boundary::word, text.begin(), text.end(), g("en_US.UTF-8")),
+                    std::runtime_error);
+        bl::localization_backend_manager::global(orig_backend);
+    }
+#endif
 #ifndef BOOST_LOCALE_WITH_ICU
     std::cout << "ICU is not build... Skipping\n";
     return;
