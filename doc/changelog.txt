@@ -11,6 +11,7 @@
 - 1.82.0
     - Breaking changes
         - `get_system_locale` and dependents will now correctly favor `$LC_ALL` over `LC_CTYPE` as defined by POSIX
+        - `utf8_codecvt::out` returns `partial` for trailing (UTF) surrogates
     - Other improvements and fixes
         - Add `boost::locale::util::locale_data` to parse a locale
         - `boost::locale::info::encoding()` result is in uppercase as documented, e.g. "UTF-8" instead of "utf-8"
