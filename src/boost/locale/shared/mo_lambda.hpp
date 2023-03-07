@@ -12,13 +12,14 @@
 
 namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
 
+    struct plural;
+    using plural_ptr = std::unique_ptr<plural>;
+
     struct plural {
         virtual int operator()(int n) const = 0;
-        virtual plural* clone() const = 0;
+        virtual plural_ptr clone() const = 0;
         virtual ~plural() = default;
     };
-
-    typedef std::shared_ptr<plural> plural_ptr;
 
     plural_ptr compile(const char* c_expression);
 

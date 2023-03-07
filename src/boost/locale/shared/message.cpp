@@ -35,88 +35,94 @@
 namespace boost { namespace locale { namespace gnu_gettext {
 
     class c_file {
-        c_file(const c_file&);
-        void operator=(const c_file&);
-
     public:
-        FILE* file;
+        FILE* handle;
 
-        c_file() : file(0) {}
-        ~c_file() { close(); }
+        c_file(const c_file&) = delete;
+        void operator=(const c_file&) = delete;
 
-        void close()
+        ~c_file()
         {
-            if(file) {
-                fclose(file);
-                file = 0;
-            }
+            if(handle)
+                fclose(handle);
         }
 
 #if defined(BOOST_WINDOWS)
 
-        bool open(const std::string& file_name, const std::string& encoding)
+        c_file(const std::string& file_name, const std::string& encoding)
         {
-            close();
-
-            // Under windows we have to use "_wfopen" to get
-            // access to path's with Unicode in them
+            // Under windows we have to use "_wfopen" to get access to path's with Unicode in them
             //
             // As not all standard C++ libraries support nonstandard std::istream::open(wchar_t const *)
             // we would use old and good stdio and _wfopen CRTL functions
 
             std::wstring wfile_name = conv::to_utf<wchar_t>(file_name, encoding);
-            file = _wfopen(wfile_name.c_str(), L"rb");
-
-            return file != 0;
+            handle = _wfopen(wfile_name.c_str(), L"rb");
         }
 
 #else // POSIX systems do not have all this Wide API crap, as native codepages are UTF-8
 
         // We do not use encoding as we use native file name encoding
 
-        bool open(const std::string& file_name, const std::string& /* encoding */)
-        {
-            close();
-
-            file = fopen(file_name.c_str(), "rb");
-
-            return file != 0;
-        }
-
+        c_file(const std::string& file_name, const std::string& /* encoding */) : handle(fopen(file_name.c_str(), "rb"))
+        {}
 #endif
     };
+
+    std::vector<char> read_file(FILE* file)
+    {
+        fseek(file, 0, SEEK_END);
+        const long len = ftell(file);
+        if(len < 0)
+            throw std::runtime_error("Wrong file object");
+        else if(len > 0) {
+            fseek(file, 0, SEEK_SET);
+            std::vector<char> data(len);
+            if(fread(&data.front(), 1, data.size(), file) != data.size())
+                throw std::runtime_error("Failed to read file");
+            return data;
+        } else
+            return {};
+    }
 
     class mo_file {
     public:
         typedef std::pair<const char*, const char*> pair_type;
 
-        mo_file(std::vector<char>& file) : native_byteorder_(true), size_(0)
+        mo_file(std::vector<char> data) : data_(std::move(data))
         {
-            load_file(file);
-            init();
-        }
+            if(data_.size() < 4)
+                throw std::runtime_error("invalid 'mo' file format - the file is too short");
+            uint32_t magic = 0;
+            memcpy(&magic, data_.data(), 4);
+            if(magic == 0x950412de)
+                native_byteorder_ = true;
+            else if(magic == 0xde120495)
+                native_byteorder_ = false;
+            else
+                throw std::runtime_error("Invalid file format - invalid magic number");
 
-        mo_file(FILE* file) : native_byteorder_(true), size_(0)
-        {
-            load_file(file);
-            init();
+            // Read all format sizes
+            size_ = get(8);
+            keys_offset_ = get(12);
+            translations_offset_ = get(16);
+            hash_size_ = get(20);
+            hash_offset_ = get(24);
         }
 
         pair_type find(const char* context_in, const char* key_in) const
         {
-            pair_type null_pair((const char*)0, (const char*)0);
-            if(hash_size_ == 0)
+            pair_type null_pair(nullptr, nullptr);
+            if(!has_hash())
                 return null_pair;
-            uint32_t hkey = 0;
-            if(context_in == 0)
-                hkey = pj_winberger_hash_function(key_in);
-            else {
-                pj_winberger_hash::state_type st = pj_winberger_hash::initial_state;
+
+            pj_winberger_hash::state_type st = pj_winberger_hash::initial_state;
+            if(context_in) {
                 st = pj_winberger_hash::update_state(st, context_in);
                 st = pj_winberger_hash::update_state(st, '\4'); // EOT
-                st = pj_winberger_hash::update_state(st, key_in);
-                hkey = st;
             }
+            st = pj_winberger_hash::update_state(st, key_in);
+            uint32_t hkey = st;
             uint32_t incr = 1 + hkey % (hash_size_ - 2);
             hkey %= hash_size_;
             uint32_t orig = hkey;
@@ -150,17 +156,17 @@ namespace boost { namespace locale { namespace gnu_gettext {
             }
         }
 
-        const char* key(int id) const
+        const char* key(unsigned id) const
         {
-            uint32_t off = get(keys_offset_ + id * 8 + 4);
-            return data_ + off;
+            const uint32_t off = get(keys_offset_ + id * 8 + 4);
+            return data_.data() + off;
         }
 
-        pair_type value(int id) const
+        pair_type value(unsigned id) const
         {
-            uint32_t len = get(translations_offset_ + id * 8);
-            uint32_t off = get(translations_offset_ + id * 8 + 4);
-            if(off >= file_size_ || off + len >= file_size_)
+            const uint32_t len = get(translations_offset_ + id * 8);
+            const uint32_t off = get(translations_offset_ + id * 8 + 4);
+            if(len > data_.size() || off > data_.size() - len)
                 throw std::runtime_error("Bad mo-file format");
             return pair_type(&data_[off], &data_[off] + len);
         }
@@ -172,77 +178,16 @@ namespace boost { namespace locale { namespace gnu_gettext {
         bool empty() { return size_ == 0; }
 
     private:
-        void init()
-        {
-            // Read all format sizes
-            size_ = get(8);
-            keys_offset_ = get(12);
-            translations_offset_ = get(16);
-            hash_size_ = get(20);
-            hash_offset_ = get(24);
-        }
-
-        void load_file(std::vector<char>& data)
-        {
-            vdata_.swap(data);
-            file_size_ = vdata_.size();
-            data_ = &vdata_[0];
-            if(file_size_ < 4)
-                throw std::runtime_error("invalid 'mo' file format - the file is too short");
-            uint32_t magic = 0;
-            memcpy(&magic, data_, 4);
-            if(magic == 0x950412de)
-                native_byteorder_ = true;
-            else if(magic == 0xde120495)
-                native_byteorder_ = false;
-            else
-                throw std::runtime_error("Invalid file format - invalid magic number");
-        }
-
-        void load_file(FILE* file)
-        {
-            uint32_t magic = 0;
-            // if the size is wrong magic would be wrong
-            // ok to ignore fread result
-            size_t four_bytes = fread(&magic, 4, 1, file);
-            (void)four_bytes; // shut GCC
-
-            if(magic == 0x950412de)
-                native_byteorder_ = true;
-            else if(magic == 0xde120495)
-                native_byteorder_ = false;
-            else
-                throw std::runtime_error("Invalid file format");
-
-            fseek(file, 0, SEEK_END);
-            long len = ftell(file);
-            if(len < 0) {
-                throw std::runtime_error("Wrong file object");
-            }
-            fseek(file, 0, SEEK_SET);
-            vdata_.resize(len + 1, 0); // +1 to make sure the vector is not empty
-            if(fread(&vdata_.front(), 1, len, file) != unsigned(len))
-                throw std::runtime_error("Failed to read file");
-            data_ = &vdata_[0];
-            file_size_ = len;
-        }
-
         uint32_t get(unsigned offset) const
         {
-            uint32_t tmp;
-            if(offset > file_size_ - 4) {
+            uint32_t v;
+            if(offset > data_.size() - 4)
                 throw std::runtime_error("Bad mo-file format");
-            }
-            memcpy(&tmp, data_ + offset, 4);
-            convert(tmp);
-            return tmp;
-        }
+            memcpy(&v, &data_[offset], 4);
+            if(!native_byteorder_)
+                v = ((v & 0xFF) << 24) | ((v & 0xFF00) << 8) | ((v & 0xFF0000) >> 8) | ((v & 0xFF000000) >> 24);
 
-        void convert(uint32_t& v) const
-        {
-            if(native_byteorder_)
-                return;
-            v = ((v & 0xFF) << 24) | ((v & 0xFF00) << 8) | ((v & 0xFF0000) >> 8) | ((v & 0xFF000000) >> 24);
+            return v;
         }
 
         uint32_t keys_offset_;
@@ -250,9 +195,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
         uint32_t hash_size_;
         uint32_t hash_offset_;
 
-        const char* data_;
-        size_t file_size_;
-        std::vector<char> vdata_;
+        const std::vector<char> data_;
         bool native_byteorder_;
         size_t size_;
     };
@@ -536,24 +479,25 @@ namespace boost { namespace locale { namespace gnu_gettext {
             key_conversion_required_ =
               sizeof(CharType) == 1 && !util::are_encodings_equal(locale_encoding, key_encoding);
 
-            std::shared_ptr<mo_file> mo;
+            std::unique_ptr<mo_file> mo;
 
-            if(callback) {
-                std::vector<char> vfile = callback(file_name, locale_encoding);
-                if(vfile.empty())
+            {
+                std::vector<char> data;
+                if(callback)
+                    data = callback(file_name, locale_encoding);
+                else {
+                    c_file the_file(file_name, locale_encoding);
+                    if(!the_file.handle)
+                        return false;
+                    data = read_file(the_file.handle);
+                }
+                if(data.empty())
                     return false;
-                mo.reset(new mo_file(vfile));
-            } else {
-                c_file the_file;
-                the_file.open(file_name, locale_encoding);
-                if(!the_file.file)
-                    return false;
-                mo.reset(new mo_file(the_file.file));
+                mo.reset(new mo_file(std::move(data)));
             }
 
-            std::string plural = extract(mo->value(0).first, "plural=", "\r\n;");
-
-            std::string mo_encoding = extract(mo->value(0).first, "charset=", " \r\n;");
+            const std::string plural = extract(mo->value(0).first, "plural=", "\r\n;");
+            const std::string mo_encoding = extract(mo->value(0).first, "charset=", " \r\n;");
 
             if(mo_encoding.empty())
                 throw std::runtime_error("Invalid mo-format, encoding is not specified");
@@ -562,7 +506,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
                 plural_forms_[idx] = lambda::compile(plural.c_str());
 
             if(mo_useable_directly(mo_encoding, *mo))
-                mo_catalogs_[idx] = mo;
+                mo_catalogs_[idx] = std::move(mo);
             else {
                 converter<CharType> cvt_value(locale_encoding, mo_encoding);
                 converter<CharType> cvt_key(key_encoding, mo_encoding);
@@ -572,8 +516,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
                     key_type key(skey);
 
                     mo_file::pair_type tmp = mo->value(i);
-                    string_type value = cvt_value(tmp.first, tmp.second);
-                    catalogs_[idx][key].swap(value);
+                    catalogs_[idx][key] = cvt_value(tmp.first, tmp.second);
                 }
             }
             return true;
@@ -636,8 +579,8 @@ namespace boost { namespace locale { namespace gnu_gettext {
         }
 
         catalogs_set_type catalogs_;
-        std::vector<std::shared_ptr<mo_file>> mo_catalogs_;
-        std::vector<std::shared_ptr<lambda::plural>> plural_forms_;
+        std::vector<std::unique_ptr<mo_file>> mo_catalogs_;
+        std::vector<lambda::plural_ptr> plural_forms_;
         domains_map_type domains_;
 
         std::string locale_encoding_;
