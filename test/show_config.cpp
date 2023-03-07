@@ -31,7 +31,14 @@ const char* env(const char* s)
 #    pragma warning(push)
 #    pragma warning(disable : 4996)
 #endif
+#if defined(__clang__)
+#    pragma clang diagnostic push
+#    pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
     const char* r = getenv(s);
+#if defined(__clang__)
+#    pragma clang diagnostic pop
+#endif
 #ifdef _MSC_VER
 #    pragma warning(pop)
 #endif
