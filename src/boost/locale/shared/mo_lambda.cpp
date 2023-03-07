@@ -17,18 +17,18 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
     namespace { // anon
         struct identity : public plural {
             int operator()(int n) const override { return n; };
-            identity* clone() const override { return new identity(); }
+            plural_ptr clone() const override { return plural_ptr(new identity()); }
         };
 
         struct unary : public plural {
-            unary(plural_ptr ptr) : op1(ptr) {}
+            unary(plural_ptr p) : op1(std::move(p)) {}
 
         protected:
             plural_ptr op1;
         };
 
         struct binary : public plural {
-            binary(plural_ptr p1, plural_ptr p2) : op1(p1), op2(p2) {}
+            binary(plural_ptr p1, plural_ptr p2) : op1(std::move(p1)), op2(std::move(p2)) {}
 
         protected:
             plural_ptr op1, op2;
@@ -37,51 +37,37 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
         struct number : public plural {
             number(int v) : val(v) {}
             int operator()(int /*n*/) const override { return val; }
-            number* clone() const override { return new number(val); }
+            plural_ptr clone() const override { return plural_ptr(new number(val)); }
 
         private:
             int val;
         };
 
-#define UNOP(name, oper)                                               \
-    struct name : public unary {                                       \
-        name(plural_ptr op) : unary(op) {}                             \
-        int operator()(int n) const override { return oper(*op1)(n); } \
-        name* clone() const override                                   \
-        {                                                              \
-            plural_ptr op1_copy(op1->clone());                         \
-            return new name(op1_copy);                                 \
-        }                                                              \
+#define UNOP(name, oper)                                                                 \
+    struct name : public unary {                                                         \
+        name(plural_ptr op) : unary(std::move(op)) {}                                    \
+        int operator()(int n) const override { return oper(*op1)(n); }                   \
+        plural_ptr clone() const override { return plural_ptr(new name(op1->clone())); } \
     };
 
-#define BINOP(name, oper)                                                       \
-    struct name : public binary {                                               \
-        name(plural_ptr p1, plural_ptr p2) : binary(p1, p2) {}                  \
-                                                                                \
-        int operator()(int n) const override { return (*op1)(n)oper(*op2)(n); } \
-        name* clone() const override                                            \
-        {                                                                       \
-            plural_ptr op1_copy(op1->clone());                                  \
-            plural_ptr op2_copy(op2->clone());                                  \
-            return new name(op1_copy, op2_copy);                                \
-        }                                                                       \
+#define BINOP(name, oper)                                                                              \
+    struct name : public binary {                                                                      \
+        name(plural_ptr p1, plural_ptr p2) : binary(std::move(p1), std::move(p2)) {}                   \
+                                                                                                       \
+        int operator()(int n) const override { return (*op1)(n)oper(*op2)(n); }                        \
+        plural_ptr clone() const override { return plural_ptr(new name(op1->clone(), op2->clone())); } \
     };
 
-#define BINOPD(name, oper)                                     \
-    struct name : public binary {                              \
-        name(plural_ptr p1, plural_ptr p2) : binary(p1, p2) {} \
-        int operator()(int n) const override                   \
-        {                                                      \
-            int v1 = (*op1)(n);                                \
-            int v2 = (*op2)(n);                                \
-            return v2 == 0 ? 0 : v1 oper v2;                   \
-        }                                                      \
-        name* clone() const override                           \
-        {                                                      \
-            plural_ptr op1_copy(op1->clone());                 \
-            plural_ptr op2_copy(op2->clone());                 \
-            return new name(op1_copy, op2_copy);               \
-        }                                                      \
+#define BINOPD(name, oper)                                                                             \
+    struct name : public binary {                                                                      \
+        name(plural_ptr p1, plural_ptr p2) : binary(std::move(p1), std::move(p2)) {}                   \
+        int operator()(int n) const override                                                           \
+        {                                                                                              \
+            int v1 = (*op1)(n);                                                                        \
+            int v2 = (*op2)(n);                                                                        \
+            return v2 == 0 ? 0 : v1 oper v2;                                                           \
+        }                                                                                              \
+        plural_ptr clone() const override { return plural_ptr(new name(op1->clone(), op2->clone())); } \
     };
 
         enum { END = 0, SHL = 256, SHR, GTE, LTE, EQ, NEQ, AND, OR, NUM, VARIABLE };
@@ -89,11 +75,13 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
         UNOP(l_not, !)
         UNOP(minus, -)
         UNOP(bin_not, ~)
+#undef UNOP
 
         BINOP(mul, *)
         BINOPD(div, /)
         BINOPD(mod, %)
         static int level10[] = {3, '*', '/', '%'};
+#undef BINOPD
 
         BINOP(add, +)
         BINOP(sub, -)
@@ -128,15 +116,16 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
         BINOP(l_or, ||)
         static int level1[] = {1, OR};
 
+#undef BINOP
+
         struct conditional : public plural {
-            conditional(plural_ptr p1, plural_ptr p2, plural_ptr p3) : op1(p1), op2(p2), op3(p3) {}
+            conditional(plural_ptr p1, plural_ptr p2, plural_ptr p3) :
+                op1(std::move(p1)), op2(std::move(p2)), op3(std::move(p3))
+            {}
             int operator()(int n) const override { return (*op1)(n) ? (*op2)(n) : (*op3)(n); }
-            conditional* clone() const override
+            plural_ptr clone() const override
             {
-                plural_ptr op1_copy(op1->clone());
-                plural_ptr op2_copy(op2->clone());
-                plural_ptr op3_copy(op3->clone());
-                return new conditional(op1_copy, op2_copy, op3_copy);
+                return plural_ptr(new conditional(op1->clone(), op2->clone(), op3->clone()));
             }
 
         private:
@@ -145,27 +134,30 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
 
         plural_ptr bin_factory(int value, plural_ptr left, plural_ptr right)
         {
+#define BINOP_CASE(match, cls) \
+    case match: return plural_ptr(new cls(std::move(left), std::move(right)))
             switch(value) {
-                case '/': return plural_ptr(new div(left, right));
-                case '*': return plural_ptr(new mul(left, right));
-                case '%': return plural_ptr(new mod(left, right));
-                case '+': return plural_ptr(new add(left, right));
-                case '-': return plural_ptr(new sub(left, right));
-                case SHL: return plural_ptr(new shl(left, right));
-                case SHR: return plural_ptr(new shr(left, right));
-                case '>': return plural_ptr(new gt(left, right));
-                case '<': return plural_ptr(new lt(left, right));
-                case GTE: return plural_ptr(new gte(left, right));
-                case LTE: return plural_ptr(new lte(left, right));
-                case EQ: return plural_ptr(new eq(left, right));
-                case NEQ: return plural_ptr(new neq(left, right));
-                case '&': return plural_ptr(new bin_and(left, right));
-                case '^': return plural_ptr(new bin_xor(left, right));
-                case '|': return plural_ptr(new bin_or(left, right));
-                case AND: return plural_ptr(new l_and(left, right));
-                case OR: return plural_ptr(new l_or(left, right));
+                BINOP_CASE('/', div);
+                BINOP_CASE('*', mul);
+                BINOP_CASE('%', mod);
+                BINOP_CASE('+', add);
+                BINOP_CASE('-', sub);
+                BINOP_CASE(SHL, shl);
+                BINOP_CASE(SHR, shr);
+                BINOP_CASE('>', gt);
+                BINOP_CASE('<', lt);
+                BINOP_CASE(GTE, gte);
+                BINOP_CASE(LTE, lte);
+                BINOP_CASE(EQ, eq);
+                BINOP_CASE(NEQ, neq);
+                BINOP_CASE('&', bin_and);
+                BINOP_CASE('^', bin_xor);
+                BINOP_CASE('|', bin_or);
+                BINOP_CASE(AND, l_and);
+                BINOP_CASE(OR, l_or);
                 default: return plural_ptr();
             }
+#undef BINOP_CASE
         }
 
         static inline bool is_in(int v, int* p)
@@ -259,19 +251,19 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
             }
         };
 
-#define BINARY_EXPR(expr, hexpr, list)      \
-    plural_ptr expr()                       \
-    {                                       \
-        plural_ptr op1, op2;                \
-        if((op1 = hexpr()).get() == 0)      \
-            return plural_ptr();            \
-        while(is_in(t.next(), list)) {      \
-            int o = t.get();                \
-            if((op2 = hexpr()).get() == 0)  \
-                return plural_ptr();        \
-            op1 = bin_factory(o, op1, op2); \
-        }                                   \
-        return op1;                         \
+#define BINARY_EXPR(expr, hexpr, list)                            \
+    plural_ptr expr()                                             \
+    {                                                             \
+        plural_ptr op1, op2;                                      \
+        if(!(op1 = hexpr()))                                      \
+            return plural_ptr();                                  \
+        while(is_in(t.next(), list)) {                            \
+            int o = t.get();                                      \
+            if(!(op2 = hexpr()))                                  \
+                return plural_ptr();                              \
+            op1 = bin_factory(o, std::move(op1), std::move(op2)); \
+        }                                                         \
+        return op1;                                               \
     }
 
         class parser {
@@ -281,7 +273,7 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
             plural_ptr compile()
             {
                 plural_ptr res = cond_expr();
-                if(res.get() && t.next() != END) {
+                if(res && t.next() != END) {
                     return plural_ptr();
                 };
                 return res;
@@ -293,7 +285,7 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
                 plural_ptr op;
                 if(t.next() == '(') {
                     t.get();
-                    if((op = cond_expr()).get() == 0)
+                    if(!(op = cond_expr()))
                         return plural_ptr();
                     if(t.get() != ')')
                         return plural_ptr();
@@ -311,16 +303,16 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
 
             plural_ptr un_expr()
             {
-                plural_ptr op1;
                 static int level_unary[] = {3, '-', '!', '~'};
                 if(is_in(t.next(), level_unary)) {
                     int op = t.get();
-                    if((op1 = un_expr()).get() == 0)
+                    plural_ptr op1 = un_expr();
+                    if(!op1)
                         return plural_ptr();
                     switch(op) {
-                        case '-': return plural_ptr(new minus(op1));
-                        case '!': return plural_ptr(new l_not(op1));
-                        case '~': return plural_ptr(new bin_not(op1));
+                        case '-': return plural_ptr(new minus(std::move(op1)));
+                        case '!': return plural_ptr(new l_not(std::move(op1)));
+                        case '~': return plural_ptr(new bin_not(std::move(op1)));
                         default: return plural_ptr();
                     }
                 } else {
@@ -342,20 +334,20 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
             plural_ptr cond_expr()
             {
                 plural_ptr cond, case1, case2;
-                if((cond = l1()).get() == 0)
+                if(!(cond = l1()))
                     return plural_ptr();
                 if(t.next() == '?') {
                     t.get();
-                    if((case1 = cond_expr()).get() == 0)
+                    if(!(case1 = cond_expr()))
                         return plural_ptr();
                     if(t.get() != ':')
                         return plural_ptr();
-                    if((case2 = cond_expr()).get() == 0)
+                    if(!(case2 = cond_expr()))
                         return plural_ptr();
                 } else {
                     return cond;
                 }
-                return plural_ptr(new conditional(cond, case1, case2));
+                return plural_ptr(new conditional(std::move(cond), std::move(case1), std::move(case2)));
             }
 
             tokenizer& t;
