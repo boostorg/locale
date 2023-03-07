@@ -136,6 +136,7 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
         {
 #define BINOP_CASE(match, cls) \
     case match: return plural_ptr(new cls(std::move(left), std::move(right)))
+
             switch(value) {
                 BINOP_CASE('/', div);
                 BINOP_CASE('*', mul);
@@ -173,80 +174,75 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
 
         class tokenizer {
         public:
-            tokenizer(const char* s)
+            tokenizer(const char* s) : text_(s), next_tocken_(0), int_value_(0) { step(); };
+            int get(int* val = nullptr)
             {
-                text = s;
-                pos = 0;
+                const int res = next_tocken_;
+                if(val && res == NUM)
+                    *val = int_value_;
                 step();
-            };
-            int get(int* val = NULL)
-            {
-                int iv = int_value;
-                int res = next_tocken;
-                step();
-                if(val && res == NUM) {
-                    *val = iv;
-                }
                 return res;
             };
-            int next(int* val = NULL)
+            int next(int* val = nullptr)
             {
-                if(val && next_tocken == NUM) {
-                    *val = int_value;
-                    return NUM;
-                }
-                return next_tocken;
+                if(val && next_tocken_ == NUM)
+                    *val = int_value_;
+                return next_tocken_;
             }
 
         private:
-            const char* text;
-            size_t pos;
-            int next_tocken;
-            int int_value;
-            bool is_blank(char c) { return c == ' ' || c == '\r' || c == '\n' || c == '\t'; }
-            bool isdigit(char c) { return '0' <= c && c <= '9'; }
+            const char* text_;
+            int next_tocken_;
+            int int_value_;
+            static constexpr bool is_blank(char c) { return c == ' ' || c == '\r' || c == '\n' || c == '\t'; }
+            static constexpr bool is_digit(char c) { return '0' <= c && c <= '9'; }
+            template<size_t size>
+            static bool is(const char* s, const char (&search)[size])
+            {
+                return strncmp(s, search, size - 1) == 0;
+            }
             void step()
             {
-                while(text[pos] && is_blank(text[pos]))
-                    pos++;
-                const char* ptr = text + pos;
-                char* tmp_ptr;
-                if(strncmp(ptr, "<<", 2) == 0) {
-                    pos += 2;
-                    next_tocken = SHL;
-                } else if(strncmp(ptr, ">>", 2) == 0) {
-                    pos += 2;
-                    next_tocken = SHR;
-                } else if(strncmp(ptr, "&&", 2) == 0) {
-                    pos += 2;
-                    next_tocken = AND;
-                } else if(strncmp(ptr, "||", 2) == 0) {
-                    pos += 2;
-                    next_tocken = OR;
-                } else if(strncmp(ptr, "<=", 2) == 0) {
-                    pos += 2;
-                    next_tocken = LTE;
-                } else if(strncmp(ptr, ">=", 2) == 0) {
-                    pos += 2;
-                    next_tocken = GTE;
-                } else if(strncmp(ptr, "==", 2) == 0) {
-                    pos += 2;
-                    next_tocken = EQ;
-                } else if(strncmp(ptr, "!=", 2) == 0) {
-                    pos += 2;
-                    next_tocken = NEQ;
-                } else if(*ptr == 'n') {
-                    pos++;
-                    next_tocken = VARIABLE;
-                } else if(isdigit(*ptr)) {
-                    int_value = strtol(text + pos, &tmp_ptr, 0);
-                    pos = tmp_ptr - text;
-                    next_tocken = NUM;
-                } else if(*ptr == '\0') {
-                    next_tocken = 0;
+                while(is_blank(*text_))
+                    text_++;
+                const char* text = text_;
+                if(is(text, "<<")) {
+                    text_ += 2;
+                    next_tocken_ = SHL;
+                } else if(is(text, ">>")) {
+                    text_ += 2;
+                    next_tocken_ = SHR;
+                } else if(is(text, "&&")) {
+                    text_ += 2;
+                    next_tocken_ = AND;
+                } else if(is(text, "||")) {
+                    text_ += 2;
+                    next_tocken_ = OR;
+                } else if(is(text, "<=")) {
+                    text_ += 2;
+                    next_tocken_ = LTE;
+                } else if(is(text, ">=")) {
+                    text_ += 2;
+                    next_tocken_ = GTE;
+                } else if(is(text, "==")) {
+                    text_ += 2;
+                    next_tocken_ = EQ;
+                } else if(is(text, "!=")) {
+                    text_ += 2;
+                    next_tocken_ = NEQ;
+                } else if(*text == 'n') {
+                    text_++;
+                    next_tocken_ = VARIABLE;
+                } else if(is_digit(*text)) {
+                    char* tmp_ptr;
+                    int_value_ = strtol(text, &tmp_ptr, 0);
+                    text_ = tmp_ptr;
+                    next_tocken_ = NUM;
+                } else if(*text == '\0') {
+                    next_tocken_ = 0;
                 } else {
-                    next_tocken = *ptr;
-                    pos++;
+                    next_tocken_ = *text;
+                    text_++;
                 }
             }
         };
@@ -258,7 +254,7 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
         if(!(op1 = hexpr()))                                      \
             return plural_ptr();                                  \
         while(is_in(t.next(), list)) {                            \
-            int o = t.get();                                      \
+            const int o = t.get();                                \
             if(!(op2 = hexpr()))                                  \
                 return plural_ptr();                              \
             op1 = bin_factory(o, std::move(op1), std::move(op2)); \
@@ -301,12 +297,12 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
                 return plural_ptr();
             };
 
-            plural_ptr un_expr()
+            plural_ptr unary_expr()
             {
                 static int level_unary[] = {3, '-', '!', '~'};
                 if(is_in(t.next(), level_unary)) {
-                    int op = t.get();
-                    plural_ptr op1 = un_expr();
+                    const int op = t.get();
+                    plural_ptr op1 = unary_expr();
                     if(!op1)
                         return plural_ptr();
                     switch(op) {
@@ -320,7 +316,7 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
                 }
             };
 
-            BINARY_EXPR(l10, un_expr, level10);
+            BINARY_EXPR(l10, unary_expr, level10);
             BINARY_EXPR(l9, l10, level9);
             BINARY_EXPR(l8, l9, level8);
             BINARY_EXPR(l7, l8, level7);
