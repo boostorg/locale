@@ -17,7 +17,6 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
     namespace { // anon
         struct identity : public plural {
             int operator()(int n) const override { return n; };
-            plural_ptr clone() const override { return plural_ptr(new identity()); }
         };
 
         struct unary : public plural {
@@ -37,37 +36,33 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
         struct number : public plural {
             number(int v) : val(v) {}
             int operator()(int /*n*/) const override { return val; }
-            plural_ptr clone() const override { return plural_ptr(new number(val)); }
 
         private:
             int val;
         };
 
-#define UNOP(name, oper)                                                                 \
-    struct name : public unary {                                                         \
-        name(plural_ptr op) : unary(std::move(op)) {}                                    \
-        int operator()(int n) const override { return oper(*op1)(n); }                   \
-        plural_ptr clone() const override { return plural_ptr(new name(op1->clone())); } \
+#define UNOP(name, oper)                                               \
+    struct name : public unary {                                       \
+        name(plural_ptr op) : unary(std::move(op)) {}                  \
+        int operator()(int n) const override { return oper(*op1)(n); } \
     };
 
-#define BINOP(name, oper)                                                                              \
-    struct name : public binary {                                                                      \
-        name(plural_ptr p1, plural_ptr p2) : binary(std::move(p1), std::move(p2)) {}                   \
-                                                                                                       \
-        int operator()(int n) const override { return (*op1)(n)oper(*op2)(n); }                        \
-        plural_ptr clone() const override { return plural_ptr(new name(op1->clone(), op2->clone())); } \
+#define BINOP(name, oper)                                                            \
+    struct name : public binary {                                                    \
+        name(plural_ptr p1, plural_ptr p2) : binary(std::move(p1), std::move(p2)) {} \
+                                                                                     \
+        int operator()(int n) const override { return (*op1)(n)oper(*op2)(n); }      \
     };
 
-#define BINOPD(name, oper)                                                                             \
-    struct name : public binary {                                                                      \
-        name(plural_ptr p1, plural_ptr p2) : binary(std::move(p1), std::move(p2)) {}                   \
-        int operator()(int n) const override                                                           \
-        {                                                                                              \
-            int v1 = (*op1)(n);                                                                        \
-            int v2 = (*op2)(n);                                                                        \
-            return v2 == 0 ? 0 : v1 oper v2;                                                           \
-        }                                                                                              \
-        plural_ptr clone() const override { return plural_ptr(new name(op1->clone(), op2->clone())); } \
+#define BINOPD(name, oper)                                                           \
+    struct name : public binary {                                                    \
+        name(plural_ptr p1, plural_ptr p2) : binary(std::move(p1), std::move(p2)) {} \
+        int operator()(int n) const override                                         \
+        {                                                                            \
+            int v1 = (*op1)(n);                                                      \
+            int v2 = (*op2)(n);                                                      \
+            return v2 == 0 ? 0 : v1 oper v2;                                         \
+        }                                                                            \
     };
 
         enum { END = 0, SHL = 256, SHR, GTE, LTE, EQ, NEQ, AND, OR, NUM, VARIABLE };
@@ -123,10 +118,6 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
                 op1(std::move(p1)), op2(std::move(p2)), op3(std::move(p3))
             {}
             int operator()(int n) const override { return (*op1)(n) ? (*op2)(n) : (*op3)(n); }
-            plural_ptr clone() const override
-            {
-                return plural_ptr(new conditional(op1->clone(), op2->clone(), op3->clone()));
-            }
 
         private:
             plural_ptr op1, op2, op3;
