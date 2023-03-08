@@ -17,7 +17,6 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
 
     struct plural {
         virtual int operator()(int n) const = 0;
-        virtual plural_ptr clone() const = 0;
         virtual ~plural() = default;
     };
 
