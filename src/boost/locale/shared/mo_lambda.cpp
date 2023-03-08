@@ -41,11 +41,18 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
             int val;
         };
 
+        enum { END = 0, SHL = 256, SHR, GTE, LTE, EQ, NEQ, AND, OR, NUM, VARIABLE };
+
 #define UNOP(name, oper)                                               \
     struct name : public unary {                                       \
         name(plural_ptr op) : unary(std::move(op)) {}                  \
         int operator()(int n) const override { return oper(*op1)(n); } \
     };
+
+        UNOP(l_not, !)
+        UNOP(minus, -)
+        UNOP(bin_not, ~)
+#undef UNOP
 
 #define BINOP(name, oper)                                                            \
     struct name : public binary {                                                    \
@@ -65,51 +72,44 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
         }                                                                            \
     };
 
-        enum { END = 0, SHL = 256, SHR, GTE, LTE, EQ, NEQ, AND, OR, NUM, VARIABLE };
-
-        UNOP(l_not, !)
-        UNOP(minus, -)
-        UNOP(bin_not, ~)
-#undef UNOP
-
         BINOP(mul, *)
         BINOPD(div, /)
         BINOPD(mod, %)
-        static int level10[] = {3, '*', '/', '%'};
+        constexpr int level10[] = {'*', '/', '%'};
 #undef BINOPD
 
         BINOP(add, +)
         BINOP(sub, -)
-        static int level9[] = {2, '+', '-'};
+        constexpr int level9[] = {'+', '-'};
 
         BINOP(shl, <<)
         BINOP(shr, >>)
-        static int level8[] = {2, SHL, SHR};
+        constexpr int level8[] = {SHL, SHR};
 
         BINOP(gt, >)
         BINOP(lt, <)
         BINOP(gte, >=)
         BINOP(lte, <=)
-        static int level7[] = {4, '<', '>', GTE, LTE};
+        constexpr int level7[] = {'<', '>', GTE, LTE};
 
         BINOP(eq, ==)
         BINOP(neq, !=)
-        static int level6[] = {2, EQ, NEQ};
+        constexpr int level6[] = {EQ, NEQ};
 
         BINOP(bin_and, &)
-        static int level5[] = {1, '&'};
+        constexpr int level5[] = {'&'};
 
         BINOP(bin_xor, ^)
-        static int level4[] = {1, '^'};
+        constexpr int level4[] = {'^'};
 
         BINOP(bin_or, |)
-        static int level3[] = {1, '|'};
+        constexpr int level3[] = {'|'};
 
         BINOP(l_and, &&)
-        static int level2[] = {1, AND};
+        constexpr int level2[] = {AND};
 
         BINOP(l_or, ||)
-        static int level1[] = {1, OR};
+        constexpr int level1[] = {OR};
 
 #undef BINOP
 
@@ -152,15 +152,14 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
 #undef BINOP_CASE
         }
 
-        static inline bool is_in(int v, int* p)
+        template<size_t size>
+        bool is_in(int value, const int (&list)[size])
         {
-            int len = *p;
-            p++;
-            while(len && *p != v) {
-                p++;
-                len--;
+            for(const int el : list) {
+                if(value == el)
+                    return true;
             }
-            return len != 0;
+            return false;
         }
 
         class tokenizer {
@@ -238,21 +237,6 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
             }
         };
 
-#define BINARY_EXPR(expr, hexpr, list)                            \
-    plural_ptr expr()                                             \
-    {                                                             \
-        plural_ptr op1, op2;                                      \
-        if(!(op1 = hexpr()))                                      \
-            return plural_ptr();                                  \
-        while(is_in(t.next(), list)) {                            \
-            const int o = t.get();                                \
-            if(!(op2 = hexpr()))                                  \
-                return plural_ptr();                              \
-            op1 = bin_factory(o, std::move(op1), std::move(op2)); \
-        }                                                         \
-        return op1;                                               \
-    }
-
         class parser {
         public:
             parser(tokenizer& tin) : t(tin){};
@@ -290,7 +274,7 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
 
             plural_ptr unary_expr()
             {
-                static int level_unary[] = {3, '-', '!', '~'};
+                constexpr int level_unary[] = {'-', '!', '~'};
                 if(is_in(t.next(), level_unary)) {
                     const int op = t.get();
                     plural_ptr op1 = unary_expr();
@@ -307,6 +291,22 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
                 }
             };
 
+#define BINARY_EXPR(expr, hexpr, list)                            \
+    plural_ptr expr()                                             \
+    {                                                             \
+        plural_ptr op1 = hexpr();                                 \
+        if(!op1)                                                  \
+            return plural_ptr();                                  \
+        while(is_in(t.next(), list)) {                            \
+            const int o = t.get();                                \
+            plural_ptr op2 = hexpr();                             \
+            if(!op2)                                              \
+                return plural_ptr();                              \
+            op1 = bin_factory(o, std::move(op1), std::move(op2)); \
+        }                                                         \
+        return op1;                                               \
+    }
+
             BINARY_EXPR(l10, unary_expr, level10);
             BINARY_EXPR(l9, l10, level9);
             BINARY_EXPR(l8, l9, level8);
@@ -317,6 +317,7 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
             BINARY_EXPR(l3, l4, level3);
             BINARY_EXPR(l2, l3, level2);
             BINARY_EXPR(l1, l2, level1);
+#undef BINARY_EXPR
 
             plural_ptr cond_expr()
             {
