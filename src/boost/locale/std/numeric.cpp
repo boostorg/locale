@@ -7,6 +7,7 @@
 #include <boost/locale/encoding.hpp>
 #include <boost/locale/formatting.hpp>
 #include <boost/locale/generator.hpp>
+#include <algorithm>
 #include <cstdlib>
 #include <ios>
 #include <locale>
@@ -54,12 +55,8 @@ namespace boost { namespace locale { namespace impl_std {
             wtmps.imbue(base_);
             std::use_facet<std::time_put<wchar_t>>(base_)
               .put(wtmps, wtmps, wchar_t(fill), tm, wchar_t(format), wchar_t(modifier));
-            std::wstring wtmp = wtmps.str();
-            std::string const tmp = conv::from_utf<wchar_t>(wtmp, "UTF-8");
-            for(unsigned i = 0; i < tmp.size(); i++) {
-                *out++ = tmp[i];
-            }
-            return out;
+            const std::string tmp = conv::from_utf(wtmps.str(), "UTF-8");
+            return std::copy(tmp.begin(), tmp.end(), out);
         }
 
     private:

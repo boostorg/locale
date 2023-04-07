@@ -4,10 +4,10 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#include <boost/locale/hold_ptr.hpp>
 #include <boost/locale/localization_backend.hpp>
 #include <boost/thread/locks.hpp>
 #include <boost/thread/mutex.hpp>
+#include <functional>
 #include <memory>
 #include <vector>
 
@@ -28,19 +28,19 @@
 #endif
 
 namespace boost { namespace locale {
+    static std::unique_ptr<localization_backend> clone(const localization_backend& backend)
+    {
+        return std::unique_ptr<localization_backend>(backend.clone());
+    }
+
     localization_backend::~localization_backend() = default;
 
     class localization_backend_manager::impl {
     public:
         impl(const impl& other) : default_backends_(other.default_backends_)
         {
-            for(all_backends_type::const_iterator p = other.all_backends_.begin(); p != other.all_backends_.end(); ++p)
-            {
-                all_backends_type::value_type v;
-                v.first = p->first;
-                v.second.reset(p->second->clone());
-                all_backends_.push_back(v);
-            }
+            for(const auto& i : other.all_backends_)
+                all_backends_.push_back({i.first, clone(*i.second)});
         }
         impl() : default_backends_(32, -1) {}
 
@@ -48,82 +48,85 @@ namespace boost { namespace locale {
 
         localization_backend* create() const
         {
-            std::vector<std::shared_ptr<localization_backend>> backends;
-            for(unsigned i = 0; i < all_backends_.size(); i++)
-                backends.push_back(all_backends_[i].second);
+            std::vector<std::reference_wrapper<const localization_backend>> backends;
+            for(const auto& i : all_backends_)
+                backends.push_back(std::cref(*i.second));
             return new actual_backend(backends, default_backends_);
         }
+
+        int find_backend(const std::string& name) const
+        {
+            int id = 0;
+            for(const auto& i : all_backends_) {
+                if(i.first == name)
+                    return id;
+                ++id;
+            }
+            return -1;
+        }
+
         void adopt_backend(const std::string& name, localization_backend* backend_ptr)
         {
-            std::shared_ptr<localization_backend> sptr(backend_ptr);
-            if(all_backends_.empty()) {
-                all_backends_.push_back(std::make_pair(name, sptr));
-                for(unsigned i = 0; i < default_backends_.size(); i++)
-                    default_backends_[i] = 0;
-            } else {
-                for(unsigned i = 0; i < all_backends_.size(); i++)
-                    if(all_backends_[i].first == name)
-                        return;
-                all_backends_.push_back(std::make_pair(name, sptr));
-            }
+            std::unique_ptr<localization_backend> ptr(backend_ptr);
+            if(all_backends_.empty())
+                std::fill(default_backends_.begin(), default_backends_.end(), 0);
+            else if(find_backend(name) >= 0)
+                return;
+            all_backends_.push_back(std::make_pair(name, std::move(ptr)));
         }
 
         void select(const std::string& backend_name, category_t category = all_categories)
         {
-            unsigned id;
-            for(id = 0; id < all_backends_.size(); ++id) {
-                if(all_backends_[id].first == backend_name)
-                    break;
-            }
-            if(id == all_backends_.size())
+            const int id = find_backend(backend_name);
+            if(id < 0)
                 return;
             category_t flag = category_first;
-            for(unsigned i = 0; i < default_backends_.size(); ++flag, ++i) {
-                if(category & flag) {
-                    default_backends_[i] = id;
-                }
+            for(int& defBackend : default_backends_) {
+                if(category & flag)
+                    defBackend = id;
+                ++flag;
             }
         }
 
         void remove_all_backends()
         {
             all_backends_.clear();
-            for(unsigned i = 0; i < default_backends_.size(); i++) {
-                default_backends_[i] = -1;
-            }
+            std::fill(default_backends_.begin(), default_backends_.end(), -1);
         }
         std::vector<std::string> get_all_backends() const
         {
             std::vector<std::string> res;
-            all_backends_type::const_iterator p;
-            for(p = all_backends_.begin(); p != all_backends_.end(); ++p) {
-                res.push_back(p->first);
-            }
+            for(const auto& i : all_backends_)
+                res.push_back(i.first);
             return res;
         }
 
     private:
         class actual_backend : public localization_backend {
         public:
-            actual_backend(const std::vector<std::shared_ptr<localization_backend>>& backends,
+            actual_backend(const std::vector<std::reference_wrapper<const localization_backend>>& backends,
                            const std::vector<int>& index) :
                 index_(index)
             {
-                backends_.resize(backends.size());
-                for(unsigned i = 0; i < backends.size(); i++) {
-                    backends_[i].reset(backends[i]->clone());
-                }
+                for(const localization_backend& b : backends)
+                    backends_.push_back(boost::locale::clone(b));
             }
-            actual_backend* clone() const override { return new actual_backend(backends_, index_); }
+            actual_backend* clone() const override
+            {
+                std::vector<std::reference_wrapper<const localization_backend>> backends;
+                for(const auto& b : backends_)
+                    backends.push_back(std::cref(*b));
+                return new actual_backend(backends, index_);
+            }
             void set_option(const std::string& name, const std::string& value) override
             {
-                for(unsigned i = 0; i < backends_.size(); i++)
-                    backends_[i]->set_option(name, value);
+                for(const auto& b : backends_)
+                    b->set_option(name, value);
             }
             void clear_options() override
             {
-                for(unsigned i = 0; i < backends_.size(); i++)
-                    backends_[i]->clear_options();
+                for(const auto& b : backends_)
+                    b->clear_options();
             }
             std::locale install(const std::locale& l, category_t category, char_facet_t type) override
             {
@@ -138,12 +141,11 @@ namespace boost { namespace locale {
             }
 
         private:
-            std::vector<std::shared_ptr<localization_backend>> backends_;
+            std::vector<std::unique_ptr<localization_backend>> backends_;
             std::vector<int> index_;
         };
 
-        typedef std::vector<std::pair<std::string, std::shared_ptr<localization_backend>>> all_backends_type;
-        all_backends_type all_backends_;
+        std::vector<std::pair<std::string, std::unique_ptr<localization_backend>>> all_backends_;
         std::vector<int> default_backends_;
     };
 

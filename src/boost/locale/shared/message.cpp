@@ -372,8 +372,6 @@ namespace boost { namespace locale { namespace gnu_gettext {
         typedef std::basic_string<CharType> string_type;
         typedef message_key<CharType> key_type;
         typedef std::unordered_map<key_type, string_type, hash_function<CharType>> catalog_type;
-        typedef std::vector<catalog_type> catalogs_set_type;
-        typedef std::map<std::string, int> domains_map_type;
 
     public:
         typedef std::pair<const CharType*, const CharType*> pair_type;
@@ -408,7 +406,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
 
         int domain(const std::string& domain) const override
         {
-            domains_map_type::const_iterator p = domains_.find(domain);
+            const auto p = domains_.find(domain);
             if(p == domains_.end())
                 return -1;
             return p->second;
@@ -578,10 +576,10 @@ namespace boost { namespace locale { namespace gnu_gettext {
             }
         }
 
-        catalogs_set_type catalogs_;
+        std::vector<catalog_type> catalogs_;
         std::vector<std::unique_ptr<mo_file>> mo_catalogs_;
         std::vector<lambda::plural_ptr> plural_forms_;
-        domains_map_type domains_;
+        std::map<std::string, int> domains_;
 
         std::string locale_encoding_;
         std::string key_encoding_;

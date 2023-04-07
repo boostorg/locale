@@ -10,6 +10,7 @@
 #include <boost/locale/generator.hpp>
 #include "boost/locale/win32/all_generator.hpp"
 #include "boost/locale/win32/api.hpp"
+#include <algorithm>
 #include <cctype>
 #include <cstdlib>
 #include <cstring>
@@ -22,20 +23,15 @@
 
 namespace boost { namespace locale { namespace impl_win {
     namespace {
-
         std::ostreambuf_iterator<wchar_t> write_it(std::ostreambuf_iterator<wchar_t> out, const std::wstring& s)
         {
-            for(size_t i = 0; i < s.size(); i++)
-                *out++ = s[i];
-            return out;
+            return std::copy(s.begin(), s.end(), out);
         }
 
         std::ostreambuf_iterator<char> write_it(std::ostreambuf_iterator<char> out, const std::wstring& s)
         {
-            std::string tmp = conv::from_utf(s, "UTF-8");
-            for(size_t i = 0; i < tmp.size(); i++)
-                *out++ = tmp[i];
-            return out;
+            const std::string tmp = conv::from_utf(s, "UTF-8");
+            return std::copy(tmp.begin(), tmp.end(), out);
         }
     } // namespace
 

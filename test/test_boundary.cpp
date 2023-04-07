@@ -212,8 +212,7 @@ void test_word_container(Iterator begin,
                     bi_type bi(ti);
                     bi.rule(mask);
                     unsigned i = 0;
-                    typename bi_type::iterator p;
-                    for(p = bi.begin(); p != bi.end(); ++p, i++) {
+                    for(auto p = bi.begin(); p != bi.end(); ++p, i++) {
                         TEST(p->iterator() == iters[i]);
                         TEST_EQ(p->rule(), bmasks[i]);
                     }
@@ -223,8 +222,7 @@ void test_word_container(Iterator begin,
                     bi.rule(mask);
                     bi = ti;
                     unsigned i = 0;
-                    typename bi_type::iterator p;
-                    for(p = bi.begin(); p != bi.end(); ++p, i++) {
+                    for(auto p = bi.begin(); p != bi.end(); ++p, i++) {
                         TEST(p->iterator() == iters[i]);
                         TEST_EQ(p->rule(), bmasks[i]);
                     }
@@ -235,8 +233,7 @@ void test_word_container(Iterator begin,
                 {
                     bi_type bi(bi_2);
                     unsigned i = 0;
-                    typename bi_type::iterator p;
-                    for(p = bi.begin(); p != bi.end(); ++p, i++) {
+                    for(auto p = bi.begin(); p != bi.end(); ++p, i++) {
                         TEST(p->iterator() == iters[i]);
                         TEST_EQ(p->rule(), bmasks[i]);
                     }
@@ -245,8 +242,7 @@ void test_word_container(Iterator begin,
                     bi_type bi;
                     bi = bi_2;
                     unsigned i = 0;
-                    typename bi_type::iterator p;
-                    for(p = bi.begin(); p != bi.end(); ++p, i++) {
+                    for(auto p = bi.begin(); p != bi.end(); ++p, i++) {
                         TEST(p->iterator() == iters[i]);
                         TEST_EQ(p->rule(), bmasks[i]);
                     }
@@ -258,8 +254,7 @@ void test_word_container(Iterator begin,
                     ti_type ti(bi);
                     ti.rule(mask);
                     unsigned i = 0;
-                    typename ti_type::iterator p;
-                    for(p = ti.begin(); p != ti.end(); ++p, i++) {
+                    for(auto p = ti.begin(); p != ti.end(); ++p, i++) {
                         TEST(p->str() == chunks[i]);
                         TEST_EQ(p->rule(), masks[i]);
                     }
@@ -269,8 +264,7 @@ void test_word_container(Iterator begin,
                     ti.rule(mask);
                     ti = (bi);
                     unsigned i = 0;
-                    typename ti_type::iterator p;
-                    for(p = ti.begin(); p != ti.end(); ++p, i++) {
+                    for(auto p = ti.begin(); p != ti.end(); ++p, i++) {
                         TEST_EQ(p->str(), chunks[i]);
                         TEST_EQ(p->rule(), masks[i]);
                     }
@@ -280,8 +274,7 @@ void test_word_container(Iterator begin,
                 {
                     ti_type ti(ti_2);
                     unsigned i = 0;
-                    typename ti_type::iterator p;
-                    for(p = ti.begin(); p != ti.end(); ++p, i++) {
+                    for(auto p = ti.begin(); p != ti.end(); ++p, i++) {
                         TEST_EQ(p->str(), chunks[i]);
                         TEST_EQ(p->rule(), masks[i]);
                     }
@@ -290,8 +283,7 @@ void test_word_container(Iterator begin,
                     ti_type ti;
                     ti = (ti_2);
                     unsigned i = 0;
-                    typename ti_type::iterator p;
-                    for(p = ti.begin(); p != ti.end(); ++p, i++) {
+                    for(auto p = ti.begin(); p != ti.end(); ++p, i++) {
                         TEST_EQ(p->str(), chunks[i]);
                         TEST_EQ(p->rule(), masks[i]);
                     }

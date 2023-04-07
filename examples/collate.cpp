@@ -20,8 +20,7 @@ int main()
 
     /// Create a set that includes all strings sorted in alphabetical order
     /// std::locale can be used as object for comparison
-    typedef std::set<std::string, std::locale> set_type;
-    set_type all_strings;
+    std::set<std::string, std::locale> all_strings;
 
     /// Read all strings into the set
     while(!std::cin.eof()) {
@@ -30,7 +29,7 @@ int main()
         all_strings.insert(tmp);
     }
     /// Print them out
-    for(set_type::iterator p = all_strings.begin(); p != all_strings.end(); ++p) {
-        std::cout << *p << std::endl;
+    for(const std::string& str : all_strings) {
+        std::cout << str << std::endl;
     }
 }

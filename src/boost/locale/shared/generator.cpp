@@ -162,10 +162,10 @@ namespace boost { namespace locale {
         backend.set_option("locale", id);
         if(d->use_ansi_encoding)
             backend.set_option("use_ansi_encoding", "true");
-        for(size_t i = 0; i < d->domains.size(); i++)
-            backend.set_option("message_application", d->domains[i]);
-        for(size_t i = 0; i < d->paths.size(); i++)
-            backend.set_option("message_path", d->paths[i]);
+        for(const std::string& domain : d->domains)
+            backend.set_option("message_application", domain);
+        for(const std::string& path : d->paths)
+            backend.set_option("message_path", path);
     }
 
     // Sanity check

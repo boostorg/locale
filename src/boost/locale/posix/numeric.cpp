@@ -11,6 +11,7 @@
 #include <boost/locale/formatting.hpp>
 #include <boost/locale/generator.hpp>
 #include <boost/predef/os.h>
+#include <algorithm>
 #include <cctype>
 #include <cerrno>
 #include <cstdlib>
@@ -66,18 +67,14 @@ namespace boost { namespace locale { namespace impl_posix {
 
         std::ostreambuf_iterator<char> write_it(std::ostreambuf_iterator<char> out, const char* ptr, size_t n) const
         {
-            for(size_t i = 0; i < n; i++)
-                *out++ = *ptr++;
-            return out;
+            return std::copy_n(ptr, n, out);
         }
 
         std::ostreambuf_iterator<wchar_t>
         write_it(std::ostreambuf_iterator<wchar_t> out, const char* ptr, size_t n) const
         {
-            std::wstring tmp = conv::to_utf<wchar_t>(ptr, ptr + n, nl_langinfo_l(CODESET, *lc_));
-            for(size_t i = 0; i < tmp.size(); i++)
-                *out++ = tmp[i];
-            return out;
+            const std::wstring tmp = conv::to_utf<wchar_t>(ptr, ptr + n, nl_langinfo_l(CODESET, *lc_));
+            return std::copy(tmp.begin(), tmp.end(), out);
         }
 
     private:
@@ -133,9 +130,7 @@ namespace boost { namespace locale { namespace impl_posix {
                                 static_cast<char_type>(modifier != 0 ? modifier : format),
                                 static_cast<char_type>(modifier == 0 ? '\0' : format)};
             string_type res = do_ftime(fmt, tm, *lc_);
-            for(unsigned i = 0; i < res.size(); i++)
-                *out++ = res[i];
-            return out;
+            return std::copy(res.begin(), res.end(), out);
         }
 
     private:
