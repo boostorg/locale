@@ -12,6 +12,7 @@
 #include <boost/locale/message.hpp>
 #include <sstream>
 #include <stdexcept>
+#include <string>
 #include <vector>
 
 #ifdef BOOST_MSVC

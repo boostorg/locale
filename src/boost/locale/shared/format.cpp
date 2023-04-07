@@ -7,7 +7,7 @@
 #include <boost/locale/format.hpp>
 #include <boost/locale/generator.hpp>
 #include <boost/locale/info.hpp>
-#include <cstdlib>
+#include <algorithm>
 #include <iostream>
 #include <limits>
 
@@ -61,14 +61,15 @@ namespace boost { namespace locale { namespace detail {
     {
         if(key.empty())
             return;
-        unsigned i;
-        for(i = 0; i < key.size(); i++) {
-            if(key[i] < '0' || '9' < key[i])
-                break;
-        }
-        if(i == key.size()) {
-            d->position = atoi(key.c_str()) - 1;
-            return;
+        try {
+            size_t endIdx;
+            const auto position = std::stoul(key, &endIdx);
+            if(endIdx == key.size() && position > 0
+               && (position - 1u) <= std::numeric_limits<decltype(d->position)>::max()) {
+                d->position = position - 1u;
+                return;
+            }
+        } catch(const std::logic_error&) { /* No/invalid number */
         }
 
         if(key == "num" || key == "number") {
