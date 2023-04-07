@@ -10,20 +10,15 @@
 #include <boost/locale/localization_backend.hpp>
 #include "boostLocale/test/tools.hpp"
 #include "boostLocale/test/unit_test.hpp"
+#include "case_convert_test.hpp"
 #include <iomanip>
 #include <iostream>
 
 template<typename CharType>
-void test_one(const std::locale& l, std::string src, std::string tgtl, std::string tgtu)
-{
-    TEST_EQ(boost::locale::to_upper(to_correct_string<CharType>(src, l), l), to_correct_string<CharType>(tgtu, l));
-    TEST_EQ(boost::locale::to_lower(to_correct_string<CharType>(src, l), l), to_correct_string<CharType>(tgtl, l));
-    TEST_EQ(boost::locale::fold_case(to_correct_string<CharType>(src, l), l), to_correct_string<CharType>(tgtl, l));
-}
-
-template<typename CharType>
 void test_char()
 {
+    using boost::locale::case_convert_test::test_one;
+
     boost::locale::generator gen;
 
     std::cout << "- Testing at least C" << std::endl;

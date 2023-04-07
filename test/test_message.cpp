@@ -385,14 +385,13 @@ void test_main(int argc, char** argv)
       "winapi",
 #endif
     };
-    for(int type = 0; type < int(sizeof(def) / sizeof(def[0])); type++) {
+    for(const std::string& backend_name : def) {
+        std::cout << "Testing for backend --------- " << backend_name << std::endl;
         boost::locale::localization_backend_manager tmp_backend = boost::locale::localization_backend_manager::global();
-        tmp_backend.select(def[type]);
+        tmp_backend.select(backend_name);
         boost::locale::localization_backend_manager::global(tmp_backend);
 
-        backend = def[type];
-
-        std::cout << "Testing for backend --------- " << def[type] << std::endl;
+        backend = backend_name;
 
         boost::locale::generator g;
         g.add_messages_domain("simple");

@@ -148,8 +148,7 @@ namespace boost { namespace locale {
                         throw std::runtime_error("Failed to create UText");
                     bi->setText(ut, err);
                     check_and_throw_icu_error(err);
-                    index_type res = map_direct(t, bi.get(), end - begin);
-                    indx.swap(res);
+                    indx = map_direct(t, bi.get(), end - begin);
                 } catch(...) {
                     if(ut)
                         utext_close(ut);
@@ -161,15 +160,15 @@ namespace boost { namespace locale {
 #endif
             {
                 icu_std_converter<CharType> cvt(encoding);
-                icu::UnicodeString str = cvt.icu(begin, end);
+                const icu::UnicodeString str = cvt.icu(begin, end);
                 bi->setText(str);
-                index_type indirect = map_direct(t, bi.get(), str.length());
+                const index_type indirect = map_direct(t, bi.get(), str.length());
                 indx = indirect;
                 for(size_t i = 1; i < indirect.size(); i++) {
-                    size_t offset_inderect = indirect[i - 1].offset;
-                    size_t diff = indirect[i].offset - offset_inderect;
-                    size_t offset_direct = indx[i - 1].offset;
-                    indx[i].offset = offset_direct + cvt.cut(str, begin, end, diff, offset_inderect, offset_direct);
+                    const size_t offset_indirect = indirect[i - 1].offset;
+                    const size_t diff = indirect[i].offset - offset_indirect;
+                    const size_t offset_direct = indx[i - 1].offset;
+                    indx[i].offset = offset_direct + cvt.cut(str, begin, end, diff, offset_indirect, offset_direct);
                 }
             }
             return indx;

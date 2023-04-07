@@ -7,6 +7,7 @@
 #include <boost/locale/conversion.hpp>
 #include <boost/locale/encoding.hpp>
 #include <boost/locale/generator.hpp>
+#include "boost/locale/util/encoding.hpp"
 #include <cctype>
 #include <cstring>
 #include <langinfo.h>
@@ -86,21 +87,21 @@ namespace boost { namespace locale { namespace impl_posix {
         {
             switch(how) {
                 case upper_case: {
-                    std::wstring tmp = conv::to_utf<wchar_t>(begin, end, "UTF-8");
+                    const std::wstring tmp = conv::to_utf<wchar_t>(begin, end, "UTF-8");
                     std::wstring wres;
                     wres.reserve(tmp.size());
-                    for(unsigned i = 0; i < tmp.size(); i++)
-                        wres += towupper_l(tmp[i], *lc_);
+                    for(const wchar_t c : tmp)
+                        wres += towupper_l(c, *lc_);
                     return conv::from_utf<wchar_t>(wres, "UTF-8");
                 }
 
                 case lower_case:
                 case case_folding: {
-                    std::wstring tmp = conv::to_utf<wchar_t>(begin, end, "UTF-8");
+                    const std::wstring tmp = conv::to_utf<wchar_t>(begin, end, "UTF-8");
                     std::wstring wres;
                     wres.reserve(tmp.size());
-                    for(unsigned i = 0; i < tmp.size(); i++)
-                        wres += towlower_l(tmp[i], *lc_);
+                    for(const wchar_t c : tmp)
+                        wres += towlower_l(c, *lc_);
                     return conv::from_utf<wchar_t>(wres, "UTF-8");
                 }
                 case normalization:
@@ -118,13 +119,8 @@ namespace boost { namespace locale { namespace impl_posix {
         switch(type) {
             case char_facet_t::nochar: break;
             case char_facet_t::char_f: {
-                std::string encoding = nl_langinfo_l(CODESET, *lc);
-                for(unsigned i = 0; i < encoding.size(); i++)
-                    if('A' <= encoding[i] && encoding[i] <= 'Z')
-                        encoding[i] = encoding[i] - 'A' + 'a';
-                if(encoding == "utf-8" || encoding == "utf8" || encoding == "utf_8") {
+                if(util::normalize_encoding(nl_langinfo_l(CODESET, *lc)) == "utf8")
                     return std::locale(in, new utf8_converter(std::move(lc)));
-                }
                 return std::locale(in, new std_converter<char>(std::move(lc)));
             }
             case char_facet_t::wchar_f: return std::locale(in, new std_converter<wchar_t>(std::move(lc)));

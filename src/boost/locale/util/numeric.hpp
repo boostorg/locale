@@ -9,6 +9,7 @@
 #include <boost/locale/formatting.hpp>
 #include <boost/locale/info.hpp>
 #include <boost/predef/os.h>
+#include <algorithm>
 #include <cerrno>
 #include <cstdlib>
 #include <ctime>
@@ -52,16 +53,10 @@ namespace boost { namespace locale { namespace util {
             if(!std::use_facet<info>(l).utf8())
                 return s.size();
             // count code points, poor man's text size
-            size_t res = 0;
-            for(size_t i = 0; i < s.size(); i++) {
-                unsigned char c = s[i];
-                if(c <= 127)
-                    res++;
-                else if((c & 0xC0) == 0xC0) { // first UTF-8 byte
-                    res++;
-                }
-            }
-            return res;
+            return std::count_if(s.begin(), s.end(), [](const unsigned char c) {
+                return (c <= 127)               // ASCII
+                       || ((c & 0xC0) == 0xC0); // first UTF-8 byte
+            });
         }
     };
 

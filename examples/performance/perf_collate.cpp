@@ -40,8 +40,8 @@ int main(int argc, char** argv)
         std::vector<std::string> tmp = all;
         std::sort(tmp.begin(), tmp.end(), std::locale());
         if(i == 0) {
-            for(unsigned j = 0; j < tmp.size(); j++)
-                std::cout << tmp[j] << std::endl;
+            for(const auto& s : tmp)
+                std::cout << s << std::endl;
         }
     }
 }

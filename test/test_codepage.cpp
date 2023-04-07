@@ -573,8 +573,7 @@ void test_win_codepages()
 {
     using namespace boost::locale::util;
 
-    constexpr size_t n = sizeof(all_windows_encodings) / sizeof(all_windows_encodings[0]);
-    for(const windows_encoding *it = all_windows_encodings, *end = all_windows_encodings + n; it != end; ++it) {
+    for(const windows_encoding *it = all_windows_encodings, *end = std::end(all_windows_encodings); it != end; ++it) {
         TEST_EQ(normalize_encoding(it->name), it->name); // Must be normalized
         auto is_same_win_codepage = [&it](const windows_encoding& rhs) -> bool {
             return it->codepage == rhs.codepage && std::strcmp(it->name, rhs.name) == 0;
@@ -585,9 +584,9 @@ void test_win_codepages()
             std::cerr << "Duplicate entry: " << it->name << ':' << it->codepage << '\n'; // LCOV_EXCL_LINE
     }
     const auto cmp = [](const windows_encoding& rhs, const windows_encoding& lhs) -> bool { return rhs < lhs.name; };
-    const auto* it = std::is_sorted_until(all_windows_encodings, all_windows_encodings + n, cmp);
-    TEST(it == all_windows_encodings + n);
-    if(it != all_windows_encodings + n)
+    const auto* it = std::is_sorted_until(all_windows_encodings, std::end(all_windows_encodings), cmp);
+    TEST(it == std::end(all_windows_encodings));
+    if(it != std::end(all_windows_encodings))
         std::cerr << "First wrongly sorted element: " << it->name << '\n';
 }
 

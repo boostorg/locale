@@ -126,12 +126,11 @@ void test_main(int /*argc*/, char** /*argv*/)
         TEST_EQ(mock_calendar::num_instances, 0); // No leaks
         std::locale::global(old_loc);
     }
-    for(int type = 0; type < int(sizeof(def) / sizeof(def[0])); type++) {
-        boost::locale::localization_backend_manager tmp_backend = boost::locale::localization_backend_manager::global();
-        tmp_backend.select(def[type]);
-        boost::locale::localization_backend_manager::global(tmp_backend);
-        const std::string backend_name = def[type];
+    for(const std::string& backend_name : def) {
         std::cout << "Testing for backend: " << backend_name << std::endl;
+        boost::locale::localization_backend_manager tmp_backend = boost::locale::localization_backend_manager::global();
+        tmp_backend.select(backend_name);
+        boost::locale::localization_backend_manager::global(tmp_backend);
         {
             boost::locale::generator g;
 

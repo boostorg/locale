@@ -13,6 +13,7 @@
 #include <ctime>
 #include <iomanip>
 #include <iostream>
+#include <utility>
 #ifndef BOOST_LOCALE_NO_WINAPI_BACKEND
 #    ifndef NOMINMAX
 #        define NOMINMAX
@@ -129,15 +130,17 @@ void test_date_time(std::locale l)
     time_t a_timesec = 13;
     time_t a_datetime = a_date + a_time + a_timesec;
 
-    std::string pat[] = {"a",        "Thu", "A",  "Thursday", "b",   "Feb", "B",    "February",    "d",  "05",    "D",
-                         "02/05/70", "e",   "5",  "h",        "Feb", "H",   "15",   "I",           "03", "m",     "02",
-                         "M",        "33",  "n",  "\n",       "p",   "PM",  "r",    "03:33:13 PM", "R",  "15:33", "S",
-                         "13",       "t",   "\t", "y",        "70",  "Y",   "1970", "%",           "%"};
+    const std::pair<std::string, std::string> testCases[] = {
+      {"a", "Thu"},      {"A", "Thursday"}, {"b", "Feb"}, {"B", "February"}, {"d", "05"},
+      {"D", "02/05/70"}, {"e", "5"},        {"h", "Feb"}, {"H", "15"},       {"I", "03"},
+      {"m", "02"},       {"M", "33"},       {"n", "\n"},  {"p", "PM"},       {"r", "03:33:13 PM"},
+      {"R", "15:33"},    {"S", "13"},       {"t", "\t"},  {"y", "70"},       {"Y", "1970"},
+      {"%", "%"}};
 
-    for(unsigned i = 0; i < sizeof(pat) / sizeof(pat[0]); i += 2) {
+    for(const auto& patternAndResult : testCases) {
         ss.str("");
-        ss << boost::locale::as::ftime("%" + pat[i]) << a_datetime;
-        TEST_EQ(ss.str(), pat[i + 1]);
+        ss << boost::locale::as::ftime("%" + patternAndResult.first) << a_datetime;
+        TEST_EQ(ss.str(), patternAndResult.second);
     }
 }
 

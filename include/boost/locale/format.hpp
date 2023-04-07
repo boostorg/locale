@@ -174,8 +174,8 @@ namespace boost { namespace locale {
     ///    \endcode
     ///
     ///
-    /// Invalid formatting strings are slightly ignored. This would prevent from translator
-    /// to crash the program in unexpected location.
+    /// Invalid formatting strings are silently ignored.
+    /// This protects against a translator crashing the program in an unexpected location.
     template<typename CharType>
     class basic_format {
     public:
