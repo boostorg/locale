@@ -12,6 +12,20 @@
 #include <limits>
 
 namespace boost { namespace locale { namespace detail {
+    static bool try_to_streamsize(const std::string& s, std::streamsize& res)
+    {
+        try {
+            size_t endIdx;
+            const auto v = std::stoull(s, &endIdx);
+            if(endIdx == s.size()) {
+                res = v;
+                return true;
+            }
+        } catch(const std::logic_error&) { /* No/invalid number */
+        }
+        return false;
+    }
+
     struct format_parser::data {
         unsigned position;
         std::streamsize precision;
@@ -140,11 +154,15 @@ namespace boost { namespace locale { namespace detail {
             as::local_time(ios_);
         else if(key == "timezone" || key == "tz")
             ios_info::get(ios_).time_zone(value);
-        else if(key == "w" || key == "width")
-            ios_.width(atoi(value.c_str()));
-        else if(key == "p" || key == "precision")
-            ios_.precision(atoi(value.c_str()));
-        else if(key == "locale") {
+        else if(key == "w" || key == "width") {
+            std::streamsize v;
+            if(try_to_streamsize(value, v))
+                ios_.width(v);
+        } else if(key == "p" || key == "precision") {
+            std::streamsize v;
+            if(try_to_streamsize(value, v))
+                ios_.precision(v);
+        } else if(key == "locale") {
             if(!d->restore_locale) {
                 d->saved_locale = ios_.getloc();
                 d->restore_locale = true;
