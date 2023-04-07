@@ -17,6 +17,38 @@
 
 namespace bl = boost::locale;
 
+void test_messages_info()
+{
+    using string_vec = std::vector<std::string>;
+    {
+        bl::gnu_gettext::messages_info info;
+        info.locale_category = "LC";
+        TEST_EQ(info.get_catalog_paths(), string_vec{});
+        info.paths.push_back(".");
+        TEST_EQ(info.get_catalog_paths(), string_vec{"./C/LC"});
+        info.language = "en";
+        TEST_EQ(info.get_catalog_paths(), string_vec{"./en/LC"});
+        info.country = "US";
+        TEST_EQ(info.get_catalog_paths(), (string_vec{"./en_US/LC", "./en/LC"}));
+        info.country.clear();
+        info.variant = "euro";
+        TEST_EQ(info.get_catalog_paths(), (string_vec{"./en@euro/LC", "./en/LC"}));
+        info.country = "US";
+        TEST_EQ(info.get_catalog_paths(), (string_vec{"./en_US@euro/LC", "./en@euro/LC", "./en_US/LC", "./en/LC"}));
+
+        info.paths = string_vec{"/1", "/2"};
+        TEST_EQ(info.get_catalog_paths(),
+                (string_vec{"/1/en_US@euro/LC",
+                            "/2/en_US@euro/LC",
+                            "/1/en@euro/LC",
+                            "/2/en@euro/LC",
+                            "/1/en_US/LC",
+                            "/2/en_US/LC",
+                            "/1/en/LC",
+                            "/2/en/LC"}));
+    }
+}
+
 std::string backend;
 std::string message_path = "./";
 
@@ -330,6 +362,8 @@ bool iso_8859_8_not_supported = false;
 
 void test_main(int argc, char** argv)
 {
+    test_messages_info();
+
     if(argc == 2)
         message_path = argv[1];
 

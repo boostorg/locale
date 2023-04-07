@@ -34,6 +34,37 @@
 
 namespace boost { namespace locale { namespace gnu_gettext {
 
+    std::vector<std::string> messages_info::get_lang_folders() const
+    {
+        // List of fallbacks: en_US@euro, en@euro, en_US, en.
+        std::vector<std::string> result;
+        if(!language.empty()) {
+            if(!variant.empty() && !country.empty())
+                result.push_back(language + "_" + country + "@" + variant);
+
+            if(!variant.empty())
+                result.push_back(language + "@" + variant);
+
+            if(!country.empty())
+                result.push_back(language + "_" + country);
+
+            result.push_back(language);
+        }
+        return result;
+    }
+
+    std::vector<std::string> messages_info::get_catalog_paths() const
+    {
+        const auto lang_folders = get_lang_folders();
+        std::vector<std::string> result;
+        result.reserve(lang_folders.size() * paths.size());
+        for(const std::string& lang_folder : lang_folders) {
+            for(const std::string& search_path : paths)
+                result.push_back(search_path + "/" + lang_folder + "/" + locale_category);
+        }
+        return result;
+    }
+
     class c_file {
         c_file(const c_file&);
         void operator=(const c_file&);
@@ -473,43 +504,20 @@ namespace boost { namespace locale { namespace gnu_gettext {
 
         mo_message(const messages_info& inf) : key_conversion_required_(false)
         {
-            std::string language = inf.language;
-            std::string variant = inf.variant;
-            std::string country = inf.country;
-            std::string encoding = inf.encoding;
-            std::string lc_cat = inf.locale_category;
             const std::vector<messages_info::domain>& domains = inf.domains;
-            const std::vector<std::string>& search_paths = inf.paths;
-
-            // List of fallbacks: en_US@euro, en@euro, en_US, en.
-            std::vector<std::string> paths;
-
-            if(!variant.empty() && !country.empty())
-                paths.push_back(language + "_" + country + "@" + variant);
-
-            if(!variant.empty())
-                paths.push_back(language + "@" + variant);
-
-            if(!country.empty())
-                paths.push_back(language + "_" + country);
-
-            paths.push_back(language);
-
             catalogs_.resize(domains.size());
             mo_catalogs_.resize(domains.size());
             plural_forms_.resize(domains.size());
 
+            const auto catalog_paths = inf.get_catalog_paths();
             for(unsigned i = 0; i < domains.size(); i++) {
-                std::string domain = domains[i].name;
-                std::string key_encoding = domains[i].encoding;
-                domains_[domain] = i;
-
-                bool found = false;
-                for(unsigned j = 0; !found && j < paths.size(); j++) {
-                    for(unsigned k = 0; !found && k < search_paths.size(); k++) {
-                        std::string full_path = search_paths[k] + "/" + paths[j] + "/" + lc_cat + "/" + domain + ".mo";
-                        found = load_file(full_path, encoding, key_encoding, i, inf.callback);
-                    }
+                const auto& domain = domains[i];
+                domains_[domain.name] = i;
+                const std::string filename = domain.name + ".mo";
+                for(std::string path : catalog_paths) {
+                    path += "/" + filename;
+                    if(load_file(path, inf.encoding, domain.encoding, i, inf.callback))
+                        break;
                 }
             }
         }
