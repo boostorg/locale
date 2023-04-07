@@ -16,6 +16,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 #if defined(_MSC_VER) && defined(_CPPLIB_VER) && defined(_DEBUG)
 #    include <crtdbg.h>
@@ -136,6 +137,20 @@ const std::string& to_string(const std::string& s)
     return s;
 }
 
+template<typename T>
+std::string to_string(const std::vector<T>& v)
+{
+    std::stringstream ss;
+    bool first = true;
+    for(const T& e : v) {
+        if(!first)
+            ss << ", ";
+        first = false;
+        ss << to_string(e);
+    }
+    return ss.str();
+}
+
 /// Put the char into the stream making sure it is readable
 /// Fallback to the unicode representation of it (e.g. U+00A0)
 template<typename Char>
@@ -151,8 +166,8 @@ template<typename Char>
 std::string to_string(const std::basic_string<Char>& s)
 {
     std::stringstream ss;
-    for(size_t i = 0; i < s.size(); ++i)
-        stream_char(ss, s[i]);
+    for(const Char c : s)
+        stream_char(ss, c);
     return ss.str();
 }
 
