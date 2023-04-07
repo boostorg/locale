@@ -25,7 +25,7 @@ namespace boost { namespace locale {
         /// also allows providing functions for charset conversion. Note, you need to provide them,
         /// so this structure is not useful for wide characters without subclassing and it will also
         /// ignore gettext catalogs that use a charset different from \a encoding.
-        struct messages_info {
+        struct BOOST_LOCALE_DECL messages_info {
             messages_info() : language("C"), locale_category("LC_MESSAGES") {}
 
             std::string language; ///< The language we load the catalog for, like "ru", "en", "de"
@@ -90,6 +90,13 @@ namespace boost { namespace locale {
             /// The callback for handling custom file systems, if it is empty, the real OS file-system
             /// is being used.
             callback_type callback;
+
+            /// Get paths to folders which may contain catalog files
+            std::vector<std::string> get_catalog_paths() const;
+
+        private:
+            /// Get a list of folder names for the language, country and variant
+            std::vector<std::string> get_lang_folders() const;
         };
 
         /// Create a message_format facet using GNU Gettext catalogs. It uses \a info structure to get
