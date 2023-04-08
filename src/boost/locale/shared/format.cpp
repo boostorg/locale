@@ -7,24 +7,12 @@
 #include <boost/locale/format.hpp>
 #include <boost/locale/generator.hpp>
 #include <boost/locale/info.hpp>
+#include "boost/locale/util/numeric.hpp"
 #include <algorithm>
 #include <iostream>
 #include <limits>
 
 namespace boost { namespace locale { namespace detail {
-    static bool try_to_streamsize(const std::string& s, std::streamsize& res)
-    {
-        try {
-            size_t endIdx;
-            const auto v = std::stoull(s, &endIdx);
-            if(endIdx == s.size()) {
-                res = v;
-                return true;
-            }
-        } catch(const std::logic_error&) { /* No/invalid number */
-        }
-        return false;
-    }
 
     struct format_parser::data {
         unsigned position;
@@ -76,11 +64,10 @@ namespace boost { namespace locale { namespace detail {
         if(key.empty())
             return;
         try {
-            size_t endIdx;
-            const auto position = std::stoul(key, &endIdx);
-            if(endIdx == key.size() && position > 0
-               && (position - 1u) <= std::numeric_limits<decltype(d->position)>::max()) {
-                d->position = position - 1u;
+            int position;
+            if(util::try_to_int(key, position) && position > 0) {
+                static_assert(sizeof(unsigned) <= sizeof(decltype(d->position)), "Possible lossy conversion");
+                d->position = static_cast<unsigned>(position - 1);
                 return;
             }
         } catch(const std::logic_error&) { /* No/invalid number */
@@ -155,12 +142,12 @@ namespace boost { namespace locale { namespace detail {
         else if(key == "timezone" || key == "tz")
             ios_info::get(ios_).time_zone(value);
         else if(key == "w" || key == "width") {
-            std::streamsize v;
-            if(try_to_streamsize(value, v))
+            int v;
+            if(util::try_to_int(value, v))
                 ios_.width(v);
         } else if(key == "p" || key == "precision") {
-            std::streamsize v;
-            if(try_to_streamsize(value, v))
+            int v;
+            if(util::try_to_int(value, v))
                 ios_.precision(v);
         } else if(key == "locale") {
             if(!d->restore_locale) {

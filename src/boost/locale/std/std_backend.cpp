@@ -24,23 +24,10 @@
 #endif
 #include "boost/locale/std/all_generator.hpp"
 #include "boost/locale/util/gregorian.hpp"
+#include "boost/locale/util/numeric.hpp"
 
 namespace {
 #if defined(BOOST_WINDOWS)
-bool try_to_int(const std::string& s, int& res)
-{
-    try {
-        size_t endIdx;
-        const auto v = std::stoi(s, &endIdx);
-        if(endIdx == s.size()) {
-            res = v;
-            return true;
-        }
-    } catch(const std::logic_error&) { /* No/invalid number */
-    }
-    return false;
-}
-
 std::pair<std::string, std::string> to_windows_name(const std::string& l)
 {
     std::pair<std::string, std::string> res("C", "0");
@@ -134,7 +121,7 @@ namespace boost { namespace locale { namespace impl_std {
                         name_ = win_name;
                     else {
                         int codepage_int;
-                        if(try_to_int(win_codepage, codepage_int)
+                        if(util::try_to_int(win_codepage, codepage_int)
                            && codepage_int == util::encoding_to_windows_codepage(data_.encoding())) {
                             name_ = win_name;
                         }
