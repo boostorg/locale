@@ -12,6 +12,11 @@
 #include <stdexcept>
 #include <vector>
 
+#ifdef BOOST_MSVC
+#    pragma warning(push)
+#    pragma warning(disable : 4251) // "identifier" : class "type" needs to have dll-interface...
+#endif
+
 namespace boost { namespace locale {
     /// \addtogroup message
     /// @{
@@ -129,5 +134,9 @@ namespace boost { namespace locale {
     /// @}
 
 }} // namespace boost::locale
+
+#ifdef BOOST_MSVC
+#    pragma warning(pop)
+#endif
 
 #endif
