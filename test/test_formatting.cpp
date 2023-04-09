@@ -480,6 +480,21 @@ void test_manip(std::string e_charset = "UTF-8")
     }
 }
 
+template<typename CharType, typename... Ts>
+std::basic_string<CharType> do_format(const std::locale& loc, const std::basic_string<CharType> fmt_str, Ts&&... ts)
+{
+    boost::locale::basic_format<CharType> fmt(fmt_str);
+    using expander = int[];
+    (void)expander{0, (fmt % std::forward<Ts>(ts), 0)...};
+    return fmt.str(loc);
+}
+
+template<typename CharType, size_t size, typename... Ts>
+std::basic_string<CharType> do_format(const std::locale& loc, const char (&fmt_str)[size], Ts&&... ts)
+{
+    return do_format(loc, ascii_to<CharType>(fmt_str), std::forward<Ts>(ts)...);
+}
+
 template<typename CharType, typename T>
 void test_format_class_impl(const std::string& fmt_string,
                             const T& value,
@@ -567,22 +582,25 @@ void test_format_class(std::string charset = "UTF-8")
     }
 
     // Not passed placeholders are removed
-    TEST_EQ((format_type(ascii_to<CharType>("{1}{3}{2}")) % "hello" % "world").str(loc),
-            ascii_to<CharType>("helloworld"));
-    TEST_EQ(format_type(ascii_to<CharType>("{1}")).str(loc), ascii_to<CharType>(""));
+    TEST_EQ(do_format<CharType>(loc, "{1}{3}{2}", "hello", "world"), ascii_to<CharType>("helloworld"));
+    TEST_EQ(do_format<CharType>(loc, "{1}"), ascii_to<CharType>(""));
+    // Invalid indices are ignored
+    TEST_EQ(do_format<CharType>(loc, "b{0}e", 1), ascii_to<CharType>("be"));
+    TEST_EQ(do_format<CharType>(loc, "b{-1}e", 1), ascii_to<CharType>("be"));
+    TEST_EQ(do_format<CharType>(loc, "b{1.x}e"), ascii_to<CharType>("be"));
     // Unexpected closing brace and other chars are ignored
-    TEST_EQ(format_type(ascii_to<CharType>(" = , } 3")).str(loc), ascii_to<CharType>(" = , } 3"));
+    TEST_EQ(do_format<CharType>(loc, " = , } 3"), ascii_to<CharType>(" = , } 3"));
     // Trailing opening brace is ignored
-    TEST_EQ(format_type(ascii_to<CharType>("End {")).str(loc), ascii_to<CharType>("End "));
+    TEST_EQ(do_format<CharType>(loc, "End {"), ascii_to<CharType>("End "));
     // Trailing closing brace is added like any other char
-    TEST_EQ(format_type(ascii_to<CharType>("End}")).str(loc), ascii_to<CharType>("End}"));
+    TEST_EQ(do_format<CharType>(loc, "End}"), ascii_to<CharType>("End}"));
     // Escaped trailing closing brace added once
-    TEST_EQ(format_type(ascii_to<CharType>("End}}")).str(loc), ascii_to<CharType>("End}"));
+    TEST_EQ(do_format<CharType>(loc, "End}}"), ascii_to<CharType>("End}"));
     // ...and twice when another trailing brace is added
-    TEST_EQ(format_type(ascii_to<CharType>("End}}}")).str(loc), ascii_to<CharType>("End}}"));
+    TEST_EQ(do_format<CharType>(loc, "End}}}"), ascii_to<CharType>("End}}"));
 
     // format with multiple types
-    TEST_EQ((format_type(ascii_to<CharType>("{1} {2}")) % "hello" % 2).str(loc), ascii_to<CharType>("hello 2"));
+    TEST_EQ(do_format<CharType>(loc, "{1} {2}", "hello", 2), ascii_to<CharType>("hello 2"));
 
 #define TEST_FORMAT_CLS(fmt_string, value, expected_str) \
     test_format_class_impl<CharType>(fmt_string, value, expected_str, loc, __LINE__)
