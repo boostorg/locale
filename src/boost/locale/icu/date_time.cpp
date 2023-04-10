@@ -95,16 +95,16 @@ namespace boost { namespace locale { namespace impl_icu {
                 guard l(lock_);
                 v = calendar_->getFirstDayOfWeek(err);
             } else {
-                UCalendarDateFields uper = to_icu(p);
+                UCalendarDateFields field = to_icu(p);
                 guard l(lock_);
                 switch(type) {
-                    case absolute_minimum: v = calendar_->getMinimum(uper); break;
-                    case actual_minimum: v = calendar_->getActualMinimum(uper, err); break;
-                    case greatest_minimum: v = calendar_->getGreatestMinimum(uper); break;
-                    case current: v = calendar_->get(uper, err); break;
-                    case least_maximum: v = calendar_->getLeastMaximum(uper); break;
-                    case actual_maximum: v = calendar_->getActualMaximum(uper, err); break;
-                    case absolute_maximum: v = calendar_->getMaximum(uper); break;
+                    case absolute_minimum: v = calendar_->getMinimum(field); break;
+                    case actual_minimum: v = calendar_->getActualMinimum(field, err); break;
+                    case greatest_minimum: v = calendar_->getGreatestMinimum(field); break;
+                    case current: v = calendar_->get(field, err); break;
+                    case least_maximum: v = calendar_->getLeastMaximum(field); break;
+                    case actual_maximum: v = calendar_->getActualMaximum(field, err); break;
+                    case absolute_maximum: v = calendar_->getMaximum(field); break;
                 }
             }
             check_and_throw_dt(err);
