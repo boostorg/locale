@@ -20,7 +20,7 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
 
     typedef std::shared_ptr<plural> plural_ptr;
 
-    plural_ptr compile(const char* c_expression);
+    BOOST_LOCALE_DECL plural_ptr compile(const char* c_expression);
 
 }}}} // namespace boost::locale::gnu_gettext::lambda
 
