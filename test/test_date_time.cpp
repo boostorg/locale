@@ -10,6 +10,7 @@
 #include <boost/locale/localization_backend.hpp>
 #include "boostLocale/test/tools.hpp"
 #include "boostLocale/test/unit_test.hpp"
+#include <cmath>
 #include <ctime>
 #include <iomanip>
 #include <limits>
@@ -297,7 +298,7 @@ void test_main(int /*argc*/, char** /*argv*/)
             TEST_EQ_FMT(tp_5_april_1990_153313 - month(12 * 3 + 1), "1987-03-05 15:33:13");
             TEST_EQ_FMT(tp_5_april_1990_153313 >> month(12 * 3 + 1), "1990-03-05 15:33:13");
             // Check that possible int overflows get handled
-            const int max_full_years_in_months = (std::numeric_limits<int>::max() / 12) * 12;
+            constexpr int max_full_years_in_months = (std::numeric_limits<int>::max() / 12) * 12;
             TEST_EQ_FMT(tp_5_april_1990_153313 >> month(max_full_years_in_months), "1990-04-05 15:33:13");
             TEST_EQ_FMT(tp_5_april_1990_153313 << month(max_full_years_in_months), "1990-04-05 15:33:13");
             TEST_EQ_FMT(tp_5_april_1990_153313 + day(30 + 2), "1990-05-07 15:33:13");
@@ -500,11 +501,12 @@ void test_main(int /*argc*/, char** /*argv*/)
                 // Defaults to current time, i.e. different than a date in 1970
                 date_time time_point_1970 = year(1970) + february() + day(5);
                 TEST(time_point_default != time_point_1970);
-                // We can not check an exact time as we can't know
-                // at which exact time the time point was recorded
+                // We can not check an exact time as we can't know at which exact time the time point was recorded. So
+                // only check that it refers to the same hour
                 const double time_point_time = time_point_default.time();
                 TEST_GE(time_point_time, current_time);
-                TEST_EQ(static_cast<time_t>(time_point_time / 3600), current_time / 3600); // Roughly match
+                constexpr double secsPerHour = 60 * 60;
+                TEST_LE(time_point_time - current_time, secsPerHour);
                 // However at least the date should match
                 const tm current_time_gmt = *gmtime_wrap(&current_time);
                 TEST_EQ(time_point_default.get(year()), current_time_gmt.tm_year + 1900);
