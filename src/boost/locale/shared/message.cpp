@@ -154,13 +154,13 @@ namespace boost { namespace locale { namespace gnu_gettext {
 
             do {
                 uint32_t idx = get(hash_offset_ + 4 * hkey);
-                /// Not found
+                // Not found
                 if(idx == 0)
                     return null_pair;
-                /// If equal values return translation
+                // If equal values return translation
                 if(key_equals(key(idx - 1), context_in, key_in))
                     return value(idx - 1);
-                /// Rehash
+                // Rehash
                 hkey = (hkey + incr) % hash_size_;
             } while(hkey != orig);
             return null_pair;
@@ -618,7 +618,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
             size_t pos = meta.find(key);
             if(pos == std::string::npos)
                 return "";
-            pos += key.size(); /// size of charset=
+            pos += key.size();
             size_t end_pos = meta.find_first_of(separator, pos);
             return meta.substr(pos, end_pos - pos);
         }

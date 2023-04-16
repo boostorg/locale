@@ -83,7 +83,7 @@ namespace boost { namespace locale { namespace impl_posix {
     private:
         std::shared_ptr<locale_t> lc_;
 
-    }; /// num_format
+    }; // num_format
 
     namespace {
         std::string do_ftime(const char* format, const struct tm* t, locale_t lc)

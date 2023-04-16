@@ -175,7 +175,7 @@ void test_main(int /*argc*/, char** /*argv*/)
             const time_t a_time = 15 * one_h + 60 * 33 + 13; // 15:33:13
             const time_t a_datetime = a_date + a_time;
 
-            const date_time tp_5_feb_1970_153313 = date_time(a_datetime); /// 5th Feb 1970 15:33:13
+            const date_time tp_5_feb_1970_153313 = date_time(a_datetime); // 5th Feb 1970 15:33:13
             ss << as::ftime("%Y-%m-%d");
             TEST_EQ_FMT(tp_5_feb_1970_153313, "1970-02-05");
             ss << as::ftime("%Y-%m-%d %H:%M:%S");

@@ -76,7 +76,7 @@ namespace boost { namespace locale { namespace impl_win {
     private:
         winlocale lc_;
 
-    }; /// num_format
+    }; // num_format
 
     template<typename CharType>
     class time_put_win : public std::time_put<CharType> {

@@ -123,7 +123,7 @@ void test_utf8()
     test_valid_utf("\xf0\x90\x80\x80", 0x10000);
     test_valid_utf("\xf4\x8f\xbf\xbf", 0x10ffff);
 
-    /// test that this actually works
+    // test that this actually works
     test_from_utf(make2(0x80), 0x80);
     test_from_utf(make2(0x7ff), 0x7ff);
 

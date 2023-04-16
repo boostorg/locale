@@ -171,7 +171,7 @@ namespace boost { namespace locale { namespace impl_icu {
 
         string_type do_format(double value, size_t& codepoints) const
         {
-            UDate date = value * 1000.0; /// UDate is time_t in milliseconds
+            UDate date = value * 1000.0; // UDate is time_t in milliseconds
             icu::UnicodeString tmp;
             icu_fmt_.format(date, tmp);
             codepoints = tmp.countChar32();

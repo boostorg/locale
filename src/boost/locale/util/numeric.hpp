@@ -191,7 +191,7 @@ namespace boost { namespace locale { namespace util {
 #endif
             if(tz.empty()) {
 #ifdef BOOST_WINDOWS
-                /// Windows uses TLS
+                // Windows uses TLS
                 tm = *localtime(&time);
 #else
                 localtime_r(&time, &tm);
@@ -200,7 +200,7 @@ namespace boost { namespace locale { namespace util {
                 int gmtoff = parse_tz(tz);
                 time += gmtoff;
 #ifdef BOOST_WINDOWS
-                /// Windows uses TLS
+                // Windows uses TLS
                 tm = *gmtime(&time);
 #else
                 gmtime_r(&time, &tm);
@@ -245,7 +245,7 @@ namespace boost { namespace locale { namespace util {
             return out;
         }
 
-    }; /// num_format
+    }; // num_format
 
     template<typename CharType>
     class base_num_parse : public std::num_get<CharType> {

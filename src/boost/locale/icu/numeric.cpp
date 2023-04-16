@@ -145,7 +145,7 @@ namespace boost { namespace locale { namespace impl_icu {
         icu::Locale loc_;
         std::string enc_;
 
-    }; /// num_format
+    }; // num_format
 
     template<typename CharType>
     class num_parse : public std::num_get<CharType> {

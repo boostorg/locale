@@ -120,7 +120,7 @@ void test_main(int /*argc*/, char** /*argv*/)
 
     std::cout << "-- Invalid length" << std::endl;
 
-    /// Test that this actually works
+    // Test that this actually works
     TEST_TO(make2(0x80), 0x80);
     TEST_TO(make2(0x7ff), 0x7ff);
 
