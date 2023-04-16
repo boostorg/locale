@@ -18,13 +18,12 @@ namespace boost { namespace locale { namespace impl_std {
     template<typename CharType>
     class std_converter : public converter<CharType> {
     public:
-        typedef CharType char_type;
-        typedef std::basic_string<char_type> string_type;
-        typedef std::ctype<char_type> ctype_type;
+        typedef std::basic_string<CharType> string_type;
+        typedef std::ctype<CharType> ctype_type;
         std_converter(const std::locale& base, size_t refs = 0) : converter<CharType>(refs), base_(base) {}
         string_type convert(converter_base::conversion_type how,
-                            const char_type* begin,
-                            const char_type* end,
+                            const CharType* begin,
+                            const CharType* end,
                             int /*flags*/ = 0) const override
         {
             switch(how) {
@@ -33,8 +32,8 @@ namespace boost { namespace locale { namespace impl_std {
                 case converter_base::case_folding: {
                     const ctype_type& ct = std::use_facet<ctype_type>(base_);
                     size_t len = end - begin;
-                    std::vector<char_type> res(len + 1, 0);
-                    char_type* lbegin = &res[0];
+                    std::vector<CharType> res(len + 1, 0);
+                    CharType* lbegin = &res[0];
                     std::copy(begin, end, lbegin);
                     if(how == converter_base::upper_case)
                         ct.toupper(lbegin, lbegin + len);

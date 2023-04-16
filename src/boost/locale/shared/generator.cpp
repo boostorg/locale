@@ -20,8 +20,7 @@ namespace boost { namespace locale {
             backend_manager(mgr)
         {}
 
-        typedef std::map<std::string, std::locale> cached_type;
-        mutable cached_type cached;
+        mutable std::map<std::string, std::locale> cached;
         mutable boost::mutex cached_lock;
 
         category_t cats;
@@ -69,10 +68,9 @@ namespace boost { namespace locale {
 
     void generator::set_default_messages_domain(const std::string& domain)
     {
-        std::vector<std::string>::iterator p;
-        if((p = std::find(d->domains.begin(), d->domains.end(), domain)) != d->domains.end()) {
+        const auto p = std::find(d->domains.begin(), d->domains.end(), domain);
+        if(p != d->domains.end())
             d->domains.erase(p);
-        }
         d->domains.insert(d->domains.begin(), domain);
     }
 
@@ -104,7 +102,7 @@ namespace boost { namespace locale {
     {
         if(d->caching_enabled) {
             boost::unique_lock<boost::mutex> guard(d->cached_lock);
-            data::cached_type::const_iterator p = d->cached.find(id);
+            const auto p = d->cached.find(id);
             if(p != d->cached.end()) {
                 return p->second;
             }
@@ -130,7 +128,7 @@ namespace boost { namespace locale {
         }
         if(d->caching_enabled) {
             boost::unique_lock<boost::mutex> guard(d->cached_lock);
-            data::cached_type::const_iterator p = d->cached.find(id);
+            const auto p = d->cached.find(id);
             if(p == d->cached.end()) {
                 d->cached[id] = result;
             }

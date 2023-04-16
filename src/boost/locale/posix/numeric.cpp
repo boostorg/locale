@@ -37,7 +37,6 @@ namespace boost { namespace locale { namespace impl_posix {
     public:
         typedef typename std::num_put<CharType>::iter_type iter_type;
         typedef std::basic_string<CharType> string_type;
-        typedef CharType char_type;
 
         num_format(std::shared_ptr<locale_t> lc, size_t refs = 0) :
             util::base_num_format<CharType>(refs), lc_(std::move(lc))
@@ -47,7 +46,7 @@ namespace boost { namespace locale { namespace impl_posix {
         iter_type do_format_currency(bool intl,
                                      iter_type out,
                                      std::ios_base& /*ios*/,
-                                     char_type /*fill*/,
+                                     CharType /*fill*/,
                                      long double val) const override
         {
             char buf[4] = {};
@@ -116,8 +115,7 @@ namespace boost { namespace locale { namespace impl_posix {
             std::time_put<CharType>(refs), lc_(std::move(lc))
         {}
         typedef typename std::time_put<CharType>::iter_type iter_type;
-        typedef CharType char_type;
-        typedef std::basic_string<char_type> string_type;
+        typedef std::basic_string<CharType> string_type;
 
         iter_type do_put(iter_type out,
                          std::ios_base& /*ios*/,
@@ -126,9 +124,9 @@ namespace boost { namespace locale { namespace impl_posix {
                          char format,
                          char modifier) const override
         {
-            char_type fmt[4] = {'%',
-                                static_cast<char_type>(modifier != 0 ? modifier : format),
-                                static_cast<char_type>(modifier == 0 ? '\0' : format)};
+            CharType fmt[4] = {'%',
+                               static_cast<CharType>(modifier != 0 ? modifier : format),
+                               static_cast<CharType>(modifier == 0 ? '\0' : format)};
             string_type res = do_ftime(fmt, tm, *lc_);
             return std::copy(res.begin(), res.end(), out);
         }

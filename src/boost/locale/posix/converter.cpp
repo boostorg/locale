@@ -40,13 +40,12 @@ namespace boost { namespace locale { namespace impl_posix {
     template<typename CharType>
     class std_converter : public converter<CharType> {
     public:
-        typedef CharType char_type;
-        typedef std::basic_string<char_type> string_type;
-        typedef std::ctype<char_type> ctype_type;
+        typedef std::basic_string<CharType> string_type;
+        typedef std::ctype<CharType> ctype_type;
         std_converter(std::shared_ptr<locale_t> lc, size_t refs = 0) : converter<CharType>(refs), lc_(std::move(lc)) {}
         string_type convert(converter_base::conversion_type how,
-                            const char_type* begin,
-                            const char_type* end,
+                            const CharType* begin,
+                            const CharType* end,
                             int /*flags*/ = 0) const override
         {
             switch(how) {
@@ -54,7 +53,7 @@ namespace boost { namespace locale { namespace impl_posix {
                     string_type res;
                     res.reserve(end - begin);
                     while(begin != end) {
-                        res += case_traits<char_type>::upper(*begin++, *lc_);
+                        res += case_traits<CharType>::upper(*begin++, *lc_);
                     }
                     return res;
                 }
@@ -63,7 +62,7 @@ namespace boost { namespace locale { namespace impl_posix {
                     string_type res;
                     res.reserve(end - begin);
                     while(begin != end) {
-                        res += case_traits<char_type>::lower(*begin++, *lc_);
+                        res += case_traits<CharType>::lower(*begin++, *lc_);
                     }
                     return res;
                 }

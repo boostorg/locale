@@ -40,7 +40,6 @@ namespace boost { namespace locale { namespace impl_win {
     public:
         typedef typename std::num_put<CharType>::iter_type iter_type;
         typedef std::basic_string<CharType> string_type;
-        typedef CharType char_type;
 
         num_format(const winlocale& lc, size_t refs = 0) : util::base_num_format<CharType>(refs), lc_(lc) {}
 
@@ -48,19 +47,19 @@ namespace boost { namespace locale { namespace impl_win {
         iter_type do_format_currency(bool /*intl*/,
                                      iter_type out,
                                      std::ios_base& ios,
-                                     char_type fill,
+                                     CharType fill,
                                      long double val) const override
         {
             if(lc_.is_c()) {
                 std::locale loc = ios.getloc();
-                int digits = std::use_facet<std::moneypunct<char_type>>(loc).frac_digits();
+                int digits = std::use_facet<std::moneypunct<CharType>>(loc).frac_digits();
                 while(digits > 0) {
                     val *= 10;
                     digits--;
                 }
                 std::ios_base::fmtflags f = ios.flags();
                 ios.flags(f | std::ios_base::showbase);
-                out = std::use_facet<std::money_put<char_type>>(loc).put(out, false, ios, fill, val);
+                out = std::use_facet<std::money_put<CharType>>(loc).put(out, false, ios, fill, val);
                 ios.flags(f);
                 return out;
             } else {
@@ -80,8 +79,7 @@ namespace boost { namespace locale { namespace impl_win {
         time_put_win(const winlocale& lc, size_t refs = 0) : std::time_put<CharType>(refs), lc_(lc) {}
 
         typedef typename std::time_put<CharType>::iter_type iter_type;
-        typedef CharType char_type;
-        typedef std::basic_string<char_type> string_type;
+        typedef std::basic_string<CharType> string_type;
 
         iter_type do_put(iter_type out,
                          std::ios_base& /*ios*/,

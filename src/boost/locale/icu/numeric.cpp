@@ -70,49 +70,48 @@ namespace boost { namespace locale { namespace impl_icu {
     public:
         typedef typename std::num_put<CharType>::iter_type iter_type;
         typedef std::basic_string<CharType> string_type;
-        typedef CharType char_type;
         typedef formatter<CharType> formatter_type;
 
         num_format(const cdata& d, size_t refs = 0) : std::num_put<CharType>(refs), loc_(d.locale), enc_(d.encoding) {}
 
     protected:
-        iter_type do_put(iter_type out, std::ios_base& ios, char_type fill, long val) const override
+        iter_type do_put(iter_type out, std::ios_base& ios, CharType fill, long val) const override
         {
             return do_real_put(out, ios, fill, val);
         }
-        iter_type do_put(iter_type out, std::ios_base& ios, char_type fill, unsigned long val) const override
+        iter_type do_put(iter_type out, std::ios_base& ios, CharType fill, unsigned long val) const override
         {
             return do_real_put(out, ios, fill, val);
         }
-        iter_type do_put(iter_type out, std::ios_base& ios, char_type fill, double val) const override
+        iter_type do_put(iter_type out, std::ios_base& ios, CharType fill, double val) const override
         {
             return do_real_put(out, ios, fill, val);
         }
-        iter_type do_put(iter_type out, std::ios_base& ios, char_type fill, long double val) const override
+        iter_type do_put(iter_type out, std::ios_base& ios, CharType fill, long double val) const override
         {
             return do_real_put(out, ios, fill, val);
         }
 
-        iter_type do_put(iter_type out, std::ios_base& ios, char_type fill, long long val) const override
+        iter_type do_put(iter_type out, std::ios_base& ios, CharType fill, long long val) const override
         {
             return do_real_put(out, ios, fill, val);
         }
-        iter_type do_put(iter_type out, std::ios_base& ios, char_type fill, unsigned long long val) const override
+        iter_type do_put(iter_type out, std::ios_base& ios, CharType fill, unsigned long long val) const override
         {
             return do_real_put(out, ios, fill, val);
         }
 
     private:
         template<typename ValueType>
-        iter_type do_real_put(iter_type out, std::ios_base& ios, char_type fill, ValueType val) const
+        iter_type do_real_put(iter_type out, std::ios_base& ios, CharType fill, ValueType val) const
         {
             if(detail::use_parent(ios, val))
-                return std::num_put<char_type>::do_put(out, ios, fill, val);
+                return std::num_put<CharType>::do_put(out, ios, fill, val);
 
             const auto formatter = formatter_type::create(ios, loc_, enc_);
 
             if(!formatter)
-                return std::num_put<char_type>::do_put(out, ios, fill, val);
+                return std::num_put<CharType>::do_put(out, ios, fill, val);
 
             size_t code_points;
             typedef typename detail::icu_format_type<ValueType>::type icu_type;
@@ -155,7 +154,6 @@ namespace boost { namespace locale { namespace impl_icu {
     protected:
         typedef typename std::num_get<CharType>::iter_type iter_type;
         typedef std::basic_string<CharType> string_type;
-        typedef CharType char_type;
         typedef formatter<CharType> formatter_type;
         typedef std::basic_istream<CharType> stream_type;
 

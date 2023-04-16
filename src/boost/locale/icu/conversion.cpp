@@ -44,17 +44,16 @@ namespace boost { namespace locale { namespace impl_icu {
     template<typename CharType>
     class converter_impl : public converter<CharType> {
     public:
-        typedef CharType char_type;
-        typedef std::basic_string<char_type> string_type;
+        typedef std::basic_string<CharType> string_type;
 
         converter_impl(const cdata& d) : locale_(d.locale), encoding_(d.encoding) {}
 
         string_type convert(converter_base::conversion_type how,
-                            const char_type* begin,
-                            const char_type* end,
+                            const CharType* begin,
+                            const CharType* end,
                             int flags = 0) const override
         {
-            icu_std_converter<char_type> cvt(encoding_);
+            icu_std_converter<CharType> cvt(encoding_);
             icu::UnicodeString str = cvt.icu(begin, end);
             switch(how) {
                 case converter_base::normalization: normalize_string(str, flags); break;

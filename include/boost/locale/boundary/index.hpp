@@ -221,11 +221,10 @@ namespace boost { namespace locale { namespace boundary {
 
             void set(base_iterator p)
             {
-                size_t dist = std::distance(map_->begin(), p);
-                index_type::const_iterator b = map_->index().begin(), e = map_->index().end();
-                index_type::const_iterator boundary_point = std::upper_bound(b, e, break_info(dist));
+                const auto b = map_->index().begin(), e = map_->index().end();
+                auto boundary_point = std::upper_bound(b, e, break_info(std::distance(map_->begin(), p)));
                 while(boundary_point != e && (boundary_point->rule & mask_) == 0)
-                    boundary_point++;
+                    ++boundary_point;
 
                 current_.first = current_.second = boundary_point - b;
 
@@ -358,14 +357,13 @@ namespace boost { namespace locale { namespace boundary {
             {
                 size_t dist = std::distance(map_->begin(), p);
 
-                index_type::const_iterator b = index().begin();
-                index_type::const_iterator e = index().end();
-                index_type::const_iterator ptr = std::lower_bound(b, e, break_info(dist));
+                const auto b = index().begin(), e = index().end();
+                const auto ptr = std::lower_bound(b, e, break_info(dist));
 
-                if(ptr == index().end())
+                if(ptr == e)
                     current_ = size() - 1;
                 else
-                    current_ = ptr - index().begin();
+                    current_ = ptr - b;
 
                 while(!valid_offset(current_))
                     current_++;

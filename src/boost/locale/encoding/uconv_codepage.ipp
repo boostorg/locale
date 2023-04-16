@@ -18,9 +18,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
     template<typename CharType>
     class uconv_to_utf : public converter_to_utf<CharType> {
     public:
-        typedef CharType char_type;
-
-        typedef std::basic_string<char_type> string_type;
+        typedef std::basic_string<CharType> string_type;
 
         bool open(const char* charset, method_type how) override
         {
@@ -61,7 +59,6 @@ namespace boost { namespace locale { namespace conv { namespace impl {
     template<typename CharType>
     class uconv_from_utf : public converter_from_utf<CharType> {
     public:
-        typedef CharType char_type;
         bool open(const char* charset, method_type how) override
         {
             close();

@@ -119,16 +119,14 @@ namespace boost { namespace locale { namespace conv { namespace impl {
     template<typename CharType>
     class iconv_from_utf : public converter_from_utf<CharType> {
     public:
-        typedef CharType char_type;
-
         bool open(const char* charset, method_type how) override
         {
             return self_.do_open(charset, utf_name<CharType>(), how);
         }
 
-        std::string convert(const char_type* ubegin, const char_type* uend) override
+        std::string convert(const CharType* ubegin, const CharType* uend) override
         {
-            return self_.template real_convert<char, char_type>(ubegin, uend);
+            return self_.template real_convert<char>(ubegin, uend);
         }
 
     private:
@@ -153,8 +151,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
     template<typename CharType>
     class iconv_to_utf : public converter_to_utf<CharType> {
     public:
-        typedef CharType char_type;
-        typedef std::basic_string<char_type> string_type;
+        typedef std::basic_string<CharType> string_type;
 
         bool open(const char* charset, method_type how) override
         {
@@ -163,7 +160,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
 
         string_type convert(const char* begin, const char* end) override
         {
-            return self_.template real_convert<char_type, char>(begin, end);
+            return self_.template real_convert<CharType>(begin, end);
         }
 
     private:

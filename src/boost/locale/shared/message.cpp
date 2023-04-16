@@ -291,19 +291,18 @@ namespace boost { namespace locale { namespace gnu_gettext {
     template<typename CharType>
     struct mo_file_use_traits {
         static constexpr bool in_use = false;
-        typedef CharType char_type;
-        typedef std::pair<const char_type*, const char_type*> pair_type;
-        static pair_type use(const mo_file& /*mo*/, const char_type* /*context*/, const char_type* /*key*/)
+        typedef std::pair<const CharType*, const CharType*> pair_type;
+        static pair_type use(const mo_file& /*mo*/, const CharType* /*context*/, const CharType* /*key*/)
         {
-            return pair_type((const char_type*)(0), (const char_type*)(0));
+            return pair_type((const CharType*)(0), (const CharType*)(0));
         }
     };
 
     template<>
     struct mo_file_use_traits<char> {
         static constexpr bool in_use = true;
-        typedef char char_type;
-        typedef std::pair<const char_type*, const char_type*> pair_type;
+        typedef char CharType;
+        typedef std::pair<const CharType*, const CharType*> pair_type;
         static pair_type use(const mo_file& mo, const char* context, const char* key) { return mo.find(context, key); }
     };
 
@@ -337,12 +336,11 @@ namespace boost { namespace locale { namespace gnu_gettext {
 
     template<typename CharType>
     struct message_key {
-        typedef CharType char_type;
-        typedef std::basic_string<char_type> string_type;
+        typedef std::basic_string<CharType> string_type;
 
         message_key(const string_type& c = string_type()) : c_context_(0), c_key_(0)
         {
-            size_t pos = c.find(char_type(4));
+            size_t pos = c.find(CharType(4));
             if(pos == string_type::npos) {
                 key_ = c;
             } else {
@@ -350,9 +348,9 @@ namespace boost { namespace locale { namespace gnu_gettext {
                 key_ = c.substr(pos + 1);
             }
         }
-        message_key(const char_type* c, const char_type* k) : c_key_(k)
+        message_key(const CharType* c, const CharType* k) : c_key_(k)
         {
-            static const char_type empty = 0;
+            static const CharType empty = 0;
             if(c != 0)
                 c_context_ = c;
             else
@@ -370,13 +368,13 @@ namespace boost { namespace locale { namespace gnu_gettext {
             return compare(context(), other.context()) == 0 && compare(key(), other.key()) == 0;
         }
         bool operator!=(const message_key& other) const { return !(*this == other); }
-        const char_type* context() const
+        const CharType* context() const
         {
             if(c_context_)
                 return c_context_;
             return context_.c_str();
         }
-        const char_type* key() const
+        const CharType* key() const
         {
             if(c_key_)
                 return c_key_;
@@ -384,12 +382,12 @@ namespace boost { namespace locale { namespace gnu_gettext {
         }
 
     private:
-        static int compare(const char_type* l, const char_type* r)
+        static int compare(const CharType* l, const CharType* r)
         {
-            typedef std::char_traits<char_type> traits_type;
+            typedef std::char_traits<CharType> traits_type;
             for(;;) {
-                char_type cl = *l++;
-                char_type cr = *r++;
+                CharType cl = *l++;
+                CharType cr = *r++;
                 if(cl == 0 && cr == 0)
                     return 0;
                 if(traits_type::lt(cl, cr))
@@ -400,8 +398,8 @@ namespace boost { namespace locale { namespace gnu_gettext {
         }
         string_type context_;
         string_type key_;
-        const char_type* c_context_;
-        const char_type* c_key_;
+        const CharType* c_context_;
+        const CharType* c_key_;
     };
 
     template<typename CharType>
@@ -456,7 +454,6 @@ namespace boost { namespace locale { namespace gnu_gettext {
 
     template<typename CharType>
     class mo_message : public message_format<CharType> {
-        typedef CharType char_type;
         typedef std::basic_string<CharType> string_type;
         typedef message_key<CharType> key_type;
         typedef std::unordered_map<key_type, string_type, hash_function<CharType>> catalog_type;
@@ -466,12 +463,12 @@ namespace boost { namespace locale { namespace gnu_gettext {
     public:
         typedef std::pair<const CharType*, const CharType*> pair_type;
 
-        const char_type* get(int domain_id, const char_type* context, const char_type* in_id) const override
+        const CharType* get(int domain_id, const CharType* context, const CharType* in_id) const override
         {
             return get_string(domain_id, context, in_id).first;
         }
 
-        const char_type* get(int domain_id, const char_type* context, const char_type* single_id, int n) const override
+        const CharType* get(int domain_id, const CharType* context, const CharType* single_id, int n) const override
         {
             pair_type ptr = get_string(domain_id, context, single_id);
             if(!ptr.first)
@@ -496,7 +493,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
 
         int domain(const std::string& domain) const override
         {
-            domains_map_type::const_iterator p = domains_.find(domain);
+            const auto p = domains_.find(domain);
             if(p == domains_.end())
                 return -1;
             return p->second;
@@ -522,13 +519,9 @@ namespace boost { namespace locale { namespace gnu_gettext {
             }
         }
 
-        const char_type* convert(const char_type* msg, string_type& buffer) const override
+        const CharType* convert(const CharType* msg, string_type& buffer) const override
         {
-            return runtime_conversion<char_type>(msg,
-                                                 buffer,
-                                                 key_conversion_required_,
-                                                 locale_encoding_,
-                                                 key_encoding_);
+            return runtime_conversion<CharType>(msg, buffer, key_conversion_required_, locale_encoding_, key_encoding_);
         }
 
     private:
@@ -623,19 +616,19 @@ namespace boost { namespace locale { namespace gnu_gettext {
             return meta.substr(pos, end_pos - pos);
         }
 
-        pair_type get_string(int domain_id, const char_type* context, const char_type* in_id) const
+        pair_type get_string(int domain_id, const CharType* context, const CharType* in_id) const
         {
             pair_type null_pair((const CharType*)0, (const CharType*)0);
             if(domain_id < 0 || size_t(domain_id) >= catalogs_.size())
                 return null_pair;
             BOOST_LOCALE_START_CONST_CONDITION
-            if(mo_file_use_traits<char_type>::in_use && mo_catalogs_[domain_id]) {
+            if(mo_file_use_traits<CharType>::in_use && mo_catalogs_[domain_id]) {
                 BOOST_LOCALE_END_CONST_CONDITION
-                return mo_file_use_traits<char_type>::use(*mo_catalogs_[domain_id], context, in_id);
+                return mo_file_use_traits<CharType>::use(*mo_catalogs_[domain_id], context, in_id);
             } else {
                 key_type key(context, in_id);
                 const catalog_type& cat = catalogs_[domain_id];
-                typename catalog_type::const_iterator p = cat.find(key);
+                const auto p = cat.find(key);
                 if(p == cat.end()) {
                     return null_pair;
                 }

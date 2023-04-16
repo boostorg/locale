@@ -26,7 +26,6 @@ namespace boost { namespace locale { namespace impl_icu {
     template<typename CharType>
     class formatter : public base_formatter {
     public:
-        typedef CharType char_type;
         typedef std::basic_string<CharType> string_type;
 
         /// Format the value and return the number of Unicode code points
