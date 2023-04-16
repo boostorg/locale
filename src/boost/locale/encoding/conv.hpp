@@ -33,9 +33,6 @@ namespace boost { namespace locale { namespace conv { namespace impl {
 
     class converter_between {
     public:
-        typedef char char_type;
-        typedef std::string string_type;
-
         virtual bool open(const char* to_charset, const char* from_charset, method_type how) = 0;
 
         virtual std::string convert(const char* begin, const char* end) = 0;
@@ -46,9 +43,6 @@ namespace boost { namespace locale { namespace conv { namespace impl {
     template<typename CharType>
     class converter_from_utf {
     public:
-        typedef CharType char_type;
-        typedef std::basic_string<char_type> string_type;
-
         virtual bool open(const char* charset, method_type how) = 0;
 
         virtual std::string convert(const CharType* begin, const CharType* end) = 0;
@@ -59,12 +53,9 @@ namespace boost { namespace locale { namespace conv { namespace impl {
     template<typename CharType>
     class converter_to_utf {
     public:
-        typedef CharType char_type;
-        typedef std::basic_string<char_type> string_type;
-
         virtual bool open(const char* charset, method_type how) = 0;
 
-        virtual string_type convert(const char* begin, const char* end) = 0;
+        virtual std::basic_string<CharType> convert(const char* begin, const char* end) = 0;
 
         virtual ~converter_to_utf() = default;
     };

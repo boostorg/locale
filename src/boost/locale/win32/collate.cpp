@@ -39,13 +39,13 @@ namespace boost { namespace locale { namespace impl_win {
                 key.reserve(wkey.size() * 2);
             else
                 key.reserve(wkey.size() * 3);
-            for(unsigned i = 0; i < wkey.size(); i++) {
+            for(const wchar_t c : wkey) {
                 if(sizeof(wchar_t) == 2) {
-                    uint16_t tv = static_cast<uint16_t>(wkey[i]);
+                    const uint16_t tv = static_cast<uint16_t>(c);
                     key += char(tv >> 8);
                     key += char(tv & 0xFF);
                 } else { // 4
-                    uint32_t tv = static_cast<uint32_t>(wkey[i]);
+                    const uint32_t tv = static_cast<uint32_t>(c);
                     // 21 bit
                     key += char((tv >> 16) & 0xFF);
                     key += char((tv >> 8) & 0xFF);

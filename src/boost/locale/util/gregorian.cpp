@@ -113,12 +113,9 @@ namespace boost { namespace locale { namespace util {
                                               "PH", "PK", "SG", "TH", "TT", "TW", "UM", "US", "UZ", "VI", "ZW"};
             if(strcmp(terr, "MV") == 0)
                 return 5; // fri
-            if(std::binary_search<const char* const*>(sat, sat + sizeof(sat) / (sizeof(sat[0])), terr, comparator))
+            if(std::binary_search<const char* const*>(sat, std::end(sat), terr, comparator))
                 return 6; // sat
-            if(std::binary_search<const char* const*>(sunday,
-                                                      sunday + sizeof(sunday) / (sizeof(sunday[0])),
-                                                      terr,
-                                                      comparator))
+            if(std::binary_search<const char* const*>(sunday, std::end(sunday), terr, comparator))
                 return 0; // sun
             // default
             return 1; // mon

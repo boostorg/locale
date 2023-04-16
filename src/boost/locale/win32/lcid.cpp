@@ -59,7 +59,7 @@ namespace boost { namespace locale { namespace impl_win {
                 lc_name += "_";
                 lc_name += iso_3166_country;
             }
-            table_type::iterator p = tbl.find(lc_name);
+            const auto p = tbl.find(lc_name);
             if(p != tbl.end()) {
                 if(p->second > lcid)
                     p->second = lcid;
@@ -104,12 +104,8 @@ namespace boost { namespace locale { namespace impl_win {
         }
 
         const table_type& tbl = get_ready_lcid_table();
-        table_type::const_iterator p = tbl.find(id);
-
-        unsigned lcid = 0;
-        if(p != tbl.end())
-            lcid = p->second;
-        return lcid;
+        const auto p = tbl.find(id);
+        return (p != tbl.end()) ? p->second : 0;
     }
 
 }}} // namespace boost::locale::impl_win

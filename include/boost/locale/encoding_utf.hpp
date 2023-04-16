@@ -28,16 +28,14 @@ namespace boost { namespace locale { namespace conv {
     {
         std::basic_string<CharOut> result;
         result.reserve(end - begin);
-        typedef std::back_insert_iterator<std::basic_string<CharOut>> inserter_type;
-        inserter_type inserter(result);
-        utf::code_point c;
+        std::back_insert_iterator<std::basic_string<CharOut>> inserter(result);
         while(begin != end) {
-            c = utf::utf_traits<CharIn>::template decode<const CharIn*>(begin, end);
+            const utf::code_point c = utf::utf_traits<CharIn>::decode(begin, end);
             if(c == utf::illegal || c == utf::incomplete) {
                 if(how == stop)
                     throw conversion_error();
             } else {
-                utf::utf_traits<CharOut>::template encode<inserter_type>(c, inserter);
+                utf::utf_traits<CharOut>::encode(c, inserter);
             }
         }
         return result;

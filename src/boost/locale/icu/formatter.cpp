@@ -47,7 +47,6 @@ namespace boost { namespace locale { namespace impl_icu {
     template<typename CharType>
     class number_format : public formatter<CharType> {
     public:
-        typedef CharType char_type;
         typedef std::basic_string<CharType> string_type;
 
         number_format(icu::NumberFormat& fmt, std::string codepage) : cvt_(codepage), icu_fmt_(fmt) {}
@@ -123,7 +122,6 @@ namespace boost { namespace locale { namespace impl_icu {
     template<typename CharType>
     class date_format : public formatter<CharType> {
     public:
-        typedef CharType char_type;
         typedef std::basic_string<CharType> string_type;
 
         string_type format(double value, size_t& code_points) const override { return do_format(value, code_points); }

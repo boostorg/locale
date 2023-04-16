@@ -267,9 +267,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
     template<typename CharType>
     class wconv_to_utf<CharType, 2> : public converter_to_utf<CharType> {
     public:
-        typedef CharType char_type;
-
-        typedef std::basic_string<char_type> string_type;
+        typedef std::basic_string<CharType> string_type;
 
         wconv_to_utf() : how_(skip), code_page_(-1) {}
 
@@ -283,13 +281,13 @@ namespace boost { namespace locale { namespace conv { namespace impl {
         string_type convert(const char* begin, const char* end) override
         {
             if(code_page_ == 65001) {
-                return utf_to_utf<char_type>(begin, end, how_);
+                return utf_to_utf<CharType>(begin, end, how_);
             }
             std::vector<wchar_t> tmp;
             multibyte_to_wide(code_page_, begin, end, how_ == skip, tmp);
             string_type res;
             if(!tmp.empty())
-                res.assign(reinterpret_cast<char_type*>(&tmp.front()), tmp.size());
+                res.assign(reinterpret_cast<CharType*>(&tmp.front()), tmp.size());
             return res;
         }
 
@@ -301,9 +299,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
     template<typename CharType>
     class wconv_from_utf<CharType, 2> : public converter_from_utf<CharType> {
     public:
-        typedef CharType char_type;
-
-        typedef std::basic_string<char_type> string_type;
+        typedef std::basic_string<CharType> string_type;
 
         wconv_from_utf() : how_(skip), code_page_(-1) {}
 
@@ -357,9 +353,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
     template<typename CharType>
     class wconv_to_utf<CharType, 4> : public converter_to_utf<CharType> {
     public:
-        typedef CharType char_type;
-
-        typedef std::basic_string<char_type> string_type;
+        typedef std::basic_string<CharType> string_type;
 
         wconv_to_utf() : how_(skip), code_page_(-1) {}
 
@@ -373,7 +367,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
         string_type convert(const char* begin, const char* end) override
         {
             if(code_page_ == 65001) {
-                return utf_to_utf<char_type>(begin, end, how_);
+                return utf_to_utf<CharType>(begin, end, how_);
             }
             std::vector<wchar_t> buf;
             multibyte_to_wide(code_page_, begin, end, how_ == skip, buf);
@@ -392,9 +386,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
     template<typename CharType>
     class wconv_from_utf<CharType, 4> : public converter_from_utf<CharType> {
     public:
-        typedef CharType char_type;
-
-        typedef std::basic_string<char_type> string_type;
+        typedef std::basic_string<CharType> string_type;
 
         wconv_from_utf() : how_(skip), code_page_(-1) {}
 
