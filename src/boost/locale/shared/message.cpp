@@ -418,7 +418,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
                 return nullptr;
             int form = 0;
             if(plural_forms_.at(domain_id))
-                form = (*plural_forms_[domain_id])(n);
+                form = plural_forms_[domain_id](n);
             else
                 form = n == 1 ? 0 : 1; // Fallback to English plural form
 
@@ -581,7 +581,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
 
         catalogs_set_type catalogs_;
         std::vector<std::unique_ptr<mo_file>> mo_catalogs_;
-        std::vector<lambda::plural_ptr> plural_forms_;
+        std::vector<lambda::plural_expr> plural_forms_;
         domains_map_type domains_;
 
         std::string locale_encoding_;

@@ -72,6 +72,18 @@
 #else
 #    define BOOST_LOCALE_USE_WIN32_API 0
 #endif
+
+// Allow to use virtual functions on non-exported classes
+// which leads to false positives under UBSAN -> Disable this check
+#ifdef __has_attribute
+#    if __has_attribute(no_sanitize)
+#        define BOOST_LOCALE_WRONG_VPTR_OK __attribute__((no_sanitize("vptr")))
+#    else
+#        define BOOST_LOCALE_WRONG_VPTR_OK
+#    endif
+#else
+#    define BOOST_LOCALE_WRONG_VPTR_OK
+#endif
 /// \endcond
 
 #endif // boost/locale/config.hpp

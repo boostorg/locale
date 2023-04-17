@@ -15,25 +15,31 @@
 namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
 
     namespace { // anon
-        struct identity : public plural {
+        template<class TExp, typename... Ts>
+        expr_ptr make_expr(Ts... ts)
+        {
+            return expr_ptr(new TExp(std::forward<Ts>(ts)...));
+        }
+
+        struct identity : public expr {
             int operator()(int n) const override { return n; };
         };
 
-        struct unary : public plural {
-            unary(plural_ptr p) : op1(std::move(p)) {}
+        struct unary : public expr {
+            unary(expr_ptr p) : op1(std::move(p)) {}
 
         protected:
-            plural_ptr op1;
+            expr_ptr op1;
         };
 
-        struct binary : public plural {
-            binary(plural_ptr p1, plural_ptr p2) : op1(std::move(p1)), op2(std::move(p2)) {}
+        struct binary : public expr {
+            binary(expr_ptr p1, expr_ptr p2) : op1(std::move(p1)), op2(std::move(p2)) {}
 
         protected:
-            plural_ptr op1, op2;
+            expr_ptr op1, op2;
         };
 
-        struct number : public plural {
+        struct number : public expr {
             number(int v) : val(v) {}
             int operator()(int /*n*/) const override { return val; }
 
@@ -45,7 +51,7 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
 
 #define UNOP(name, oper)                                               \
     struct name : public unary {                                       \
-        name(plural_ptr op) : unary(std::move(op)) {}                  \
+        name(expr_ptr op) : unary(std::move(op)) {}                    \
         int operator()(int n) const override { return oper(*op1)(n); } \
     };
 
@@ -54,22 +60,22 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
         UNOP(bin_not, ~)
 #undef UNOP
 
-#define BINOP(name, oper)                                                            \
-    struct name : public binary {                                                    \
-        name(plural_ptr p1, plural_ptr p2) : binary(std::move(p1), std::move(p2)) {} \
-                                                                                     \
-        int operator()(int n) const override { return (*op1)(n)oper(*op2)(n); }      \
+#define BINOP(name, oper)                                                        \
+    struct name : public binary {                                                \
+        name(expr_ptr p1, expr_ptr p2) : binary(std::move(p1), std::move(p2)) {} \
+                                                                                 \
+        int operator()(int n) const override { return (*op1)(n)oper(*op2)(n); }  \
     };
 
-#define BINOPD(name, oper)                                                           \
-    struct name : public binary {                                                    \
-        name(plural_ptr p1, plural_ptr p2) : binary(std::move(p1), std::move(p2)) {} \
-        int operator()(int n) const override                                         \
-        {                                                                            \
-            int v1 = (*op1)(n);                                                      \
-            int v2 = (*op2)(n);                                                      \
-            return v2 == 0 ? 0 : v1 oper v2;                                         \
-        }                                                                            \
+#define BINOPD(name, oper)                                                       \
+    struct name : public binary {                                                \
+        name(expr_ptr p1, expr_ptr p2) : binary(std::move(p1), std::move(p2)) {} \
+        int operator()(int n) const override                                     \
+        {                                                                        \
+            int v1 = (*op1)(n);                                                  \
+            int v2 = (*op2)(n);                                                  \
+            return v2 == 0 ? 0 : v1 oper v2;                                     \
+        }                                                                        \
     };
 
         BINOP(mul, *)
@@ -113,20 +119,20 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
 
 #undef BINOP
 
-        struct conditional : public plural {
-            conditional(plural_ptr p1, plural_ptr p2, plural_ptr p3) :
+        struct conditional : public expr {
+            conditional(expr_ptr p1, expr_ptr p2, expr_ptr p3) :
                 op1(std::move(p1)), op2(std::move(p2)), op3(std::move(p3))
             {}
             int operator()(int n) const override { return (*op1)(n) ? (*op2)(n) : (*op3)(n); }
 
         private:
-            plural_ptr op1, op2, op3;
+            expr_ptr op1, op2, op3;
         };
 
-        plural_ptr bin_factory(int value, plural_ptr left, plural_ptr right)
+        expr_ptr bin_factory(const int value, expr_ptr left, expr_ptr right)
         {
 #define BINOP_CASE(match, cls) \
-    case match: return plural_ptr(new cls(std::move(left), std::move(right)))
+    case match: return make_expr<cls>(std::move(left), std::move(right))
 
             switch(value) {
                 BINOP_CASE('/', div);
@@ -147,13 +153,13 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
                 BINOP_CASE('|', bin_or);
                 BINOP_CASE(AND, l_and);
                 BINOP_CASE(OR, l_or);
-                default: return plural_ptr();
+                default: return expr_ptr();
             }
 #undef BINOP_CASE
         }
 
         template<size_t size>
-        bool is_in(int value, const int (&list)[size])
+        bool is_in(const int value, const int (&list)[size])
         {
             for(const int el : list) {
                 if(value == el)
@@ -239,69 +245,69 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
 
         class parser {
         public:
-            parser(tokenizer& tin) : t(tin){};
+            parser(const char* str) : t(str){};
 
-            plural_ptr compile()
+            expr_ptr compile()
             {
-                plural_ptr res = cond_expr();
+                expr_ptr res = cond_expr();
                 if(res && t.next() != END) {
-                    return plural_ptr();
+                    return expr_ptr();
                 };
                 return res;
             }
 
         private:
-            plural_ptr value_expr()
+            expr_ptr value_expr()
             {
-                plural_ptr op;
+                expr_ptr op;
                 if(t.next() == '(') {
                     t.get();
                     if(!(op = cond_expr()))
-                        return plural_ptr();
+                        return expr_ptr();
                     if(t.get() != ')')
-                        return plural_ptr();
+                        return expr_ptr();
                     return op;
                 } else if(t.next() == NUM) {
                     int value;
                     t.get(&value);
-                    return plural_ptr(new number(value));
+                    return make_expr<number>(value);
                 } else if(t.next() == VARIABLE) {
                     t.get();
-                    return plural_ptr(new identity());
+                    return make_expr<identity>();
                 }
-                return plural_ptr();
+                return expr_ptr();
             };
 
-            plural_ptr unary_expr()
+            expr_ptr unary_expr()
             {
                 constexpr int level_unary[] = {'-', '!', '~'};
                 if(is_in(t.next(), level_unary)) {
                     const int op = t.get();
-                    plural_ptr op1 = unary_expr();
+                    expr_ptr op1 = unary_expr();
                     if(!op1)
-                        return plural_ptr();
+                        return expr_ptr();
                     switch(op) {
-                        case '-': return plural_ptr(new minus(std::move(op1)));
-                        case '!': return plural_ptr(new l_not(std::move(op1)));
-                        case '~': return plural_ptr(new bin_not(std::move(op1)));
-                        default: return plural_ptr();
+                        case '-': return make_expr<minus>(std::move(op1));
+                        case '!': return make_expr<l_not>(std::move(op1));
+                        case '~': return make_expr<bin_not>(std::move(op1));
+                        default: return expr_ptr();
                     }
                 } else {
                     return value_expr();
                 }
             };
 
-#define BINARY_EXPR(expr, hexpr, list)                            \
-    plural_ptr expr()                                             \
+#define BINARY_EXPR(lvl, nextLvl, list)                           \
+    expr_ptr lvl()                                                \
     {                                                             \
-        plural_ptr op1 = hexpr();                                 \
+        expr_ptr op1 = nextLvl();                                 \
         if(!op1)                                                  \
-            return plural_ptr();                                  \
+            return expr_ptr();                                    \
         while(is_in(t.next(), list)) {                            \
             const int o = t.get();                                \
-            plural_ptr op2 = hexpr();                             \
+            expr_ptr op2 = nextLvl();                             \
             if(!op2)                                              \
-                return plural_ptr();                              \
+                return expr_ptr();                                \
             op1 = bin_factory(o, std::move(op1), std::move(op2)); \
         }                                                         \
         return op1;                                               \
@@ -319,35 +325,33 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
             BINARY_EXPR(l1, l2, level1);
 #undef BINARY_EXPR
 
-            plural_ptr cond_expr()
+            expr_ptr cond_expr()
             {
-                plural_ptr cond, case1, case2;
+                expr_ptr cond;
                 if(!(cond = l1()))
-                    return plural_ptr();
-                if(t.next() == '?') {
-                    t.get();
-                    if(!(case1 = cond_expr()))
-                        return plural_ptr();
-                    if(t.get() != ':')
-                        return plural_ptr();
-                    if(!(case2 = cond_expr()))
-                        return plural_ptr();
-                } else {
+                    return expr_ptr();
+                if(t.next() != '?')
                     return cond;
-                }
-                return plural_ptr(new conditional(std::move(cond), std::move(case1), std::move(case2)));
+                t.get();
+                expr_ptr case1, case2;
+                if(!(case1 = cond_expr()))
+                    return expr_ptr();
+                if(t.get() != ':')
+                    return expr_ptr();
+                if(!(case2 = cond_expr()))
+                    return expr_ptr();
+                return make_expr<conditional>(std::move(cond), std::move(case1), std::move(case2));
             }
 
-            tokenizer& t;
+            tokenizer t;
         };
 
     } // namespace
 
-    plural_ptr compile(const char* str)
+    plural_expr compile(const char* str)
     {
-        tokenizer t(str);
-        parser p(t);
-        return p.compile();
+        parser p(str);
+        return plural_expr(p.compile());
     }
 
 }}}} // namespace boost::locale::gnu_gettext::lambda
