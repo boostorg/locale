@@ -5,8 +5,10 @@
 // https://www.boost.org/LICENSE_1_0.txt
 
 #include "boost/locale/shared/mo_lambda.hpp"
+#include <algorithm>
 #include <cstdlib>
 #include <cstring>
+#include <limits>
 
 #ifdef BOOST_MSVC
 #    pragma warning(disable : 4512) // assignment operator could not be generated
@@ -22,7 +24,7 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
         }
 
         struct identity : public expr {
-            int operator()(int n) const override { return n; };
+            value_type operator()(value_type n) const override { return n; }
         };
 
         struct unary : public expr {
@@ -40,19 +42,19 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
         };
 
         struct number : public expr {
-            number(int v) : val(v) {}
-            int operator()(int /*n*/) const override { return val; }
+            number(value_type v) : val(v) {}
+            value_type operator()(value_type /*n*/) const override { return val; }
 
         private:
-            int val;
+            value_type val;
         };
 
         enum { END = 0, SHL = 256, SHR, GTE, LTE, EQ, NEQ, AND, OR, NUM, VARIABLE };
 
-#define UNOP(name, oper)                                               \
-    struct name : public unary {                                       \
-        name(expr_ptr op) : unary(std::move(op)) {}                    \
-        int operator()(int n) const override { return oper(*op1)(n); } \
+#define UNOP(name, oper)                                                             \
+    struct name : public unary {                                                     \
+        name(expr_ptr op) : unary(std::move(op)) {}                                  \
+        value_type operator()(value_type n) const override { return oper(*op1)(n); } \
     };
 
         UNOP(l_not, !)
@@ -60,20 +62,20 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
         UNOP(bin_not, ~)
 #undef UNOP
 
-#define BINOP(name, oper)                                                        \
-    struct name : public binary {                                                \
-        name(expr_ptr p1, expr_ptr p2) : binary(std::move(p1), std::move(p2)) {} \
-                                                                                 \
-        int operator()(int n) const override { return (*op1)(n)oper(*op2)(n); }  \
+#define BINOP(name, oper)                                                                     \
+    struct name : public binary {                                                             \
+        name(expr_ptr p1, expr_ptr p2) : binary(std::move(p1), std::move(p2)) {}              \
+                                                                                              \
+        value_type operator()(value_type n) const override { return (*op1)(n)oper(*op2)(n); } \
     };
 
 #define BINOPD(name, oper)                                                       \
     struct name : public binary {                                                \
         name(expr_ptr p1, expr_ptr p2) : binary(std::move(p1), std::move(p2)) {} \
-        int operator()(int n) const override                                     \
+        value_type operator()(value_type n) const override                       \
         {                                                                        \
-            int v1 = (*op1)(n);                                                  \
-            int v2 = (*op2)(n);                                                  \
+            const auto v1 = (*op1)(n);                                           \
+            const auto v2 = (*op2)(n);                                           \
             return v2 == 0 ? 0 : v1 oper v2;                                     \
         }                                                                        \
     };
@@ -123,7 +125,7 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
             conditional(expr_ptr p1, expr_ptr p2, expr_ptr p3) :
                 op1(std::move(p1)), op2(std::move(p2)), op3(std::move(p3))
             {}
-            int operator()(int n) const override { return (*op1)(n) ? (*op2)(n) : (*op3)(n); }
+            value_type operator()(value_type n) const override { return (*op1)(n) ? (*op2)(n) : (*op3)(n); }
 
         private:
             expr_ptr op1, op2, op3;
@@ -170,26 +172,26 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
 
         class tokenizer {
         public:
-            tokenizer(const char* s) : text_(s), next_tocken_(0), int_value_(0) { step(); };
-            int get(int* val = nullptr)
+            tokenizer(const char* s) : text_(s), next_tocken_(0), numeric_value_(0) { step(); }
+            int get(long long* val = nullptr)
             {
                 const int res = next_tocken_;
                 if(val && res == NUM)
-                    *val = int_value_;
+                    *val = numeric_value_;
                 step();
                 return res;
-            };
-            int next(int* val = nullptr)
+            }
+            int next(long long* val = nullptr)
             {
                 if(val && next_tocken_ == NUM)
-                    *val = int_value_;
+                    *val = numeric_value_;
                 return next_tocken_;
             }
 
         private:
             const char* text_;
             int next_tocken_;
-            int int_value_;
+            long long numeric_value_;
             static constexpr bool is_blank(char c) { return c == ' ' || c == '\r' || c == '\n' || c == '\t'; }
             static constexpr bool is_digit(char c) { return '0' <= c && c <= '9'; }
             template<size_t size>
@@ -231,11 +233,14 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
                     next_tocken_ = VARIABLE;
                 } else if(is_digit(*text)) {
                     char* tmp_ptr;
-                    int_value_ = strtol(text, &tmp_ptr, 0);
+                    // strtoll not always available -> parse as unsigned long
+                    const auto value = std::strtoul(text, &tmp_ptr, 10);
+                    // Saturate in case long=long long
+                    numeric_value_ = std::min<unsigned long long>(std::numeric_limits<long long>::max(), value);
                     text_ = tmp_ptr;
                     next_tocken_ = NUM;
                 } else if(*text == '\0') {
-                    next_tocken_ = 0;
+                    next_tocken_ = END;
                 } else {
                     next_tocken_ = *text;
                     text_++;
@@ -245,14 +250,14 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
 
         class parser {
         public:
-            parser(const char* str) : t(str){};
+            parser(const char* str) : t(str) {}
 
             expr_ptr compile()
             {
                 expr_ptr res = cond_expr();
                 if(res && t.next() != END) {
                     return expr_ptr();
-                };
+                }
                 return res;
             }
 
@@ -268,7 +273,7 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
                         return expr_ptr();
                     return op;
                 } else if(t.next() == NUM) {
-                    int value;
+                    expr::value_type value;
                     t.get(&value);
                     return make_expr<number>(value);
                 } else if(t.next() == VARIABLE) {
@@ -276,7 +281,7 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
                     return make_expr<identity>();
                 }
                 return expr_ptr();
-            };
+            }
 
             expr_ptr unary_expr()
             {
@@ -295,7 +300,7 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
                 } else {
                     return value_expr();
                 }
-            };
+            }
 
 #define BINARY_EXPR(lvl, nextLvl, list)                           \
     expr_ptr lvl()                                                \

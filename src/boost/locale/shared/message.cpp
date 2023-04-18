@@ -411,19 +411,20 @@ namespace boost { namespace locale { namespace gnu_gettext {
             return get_string(domain_id, context, in_id).first;
         }
 
-        const CharType* get(int domain_id, const CharType* context, const CharType* single_id, int n) const override
+        const CharType*
+        get(int domain_id, const CharType* context, const CharType* single_id, count_type n) const override
         {
             pair_type ptr = get_string(domain_id, context, single_id);
             if(!ptr.first)
                 return nullptr;
-            int form = 0;
+            lambda::expr::value_type form;
             if(plural_forms_.at(domain_id))
                 form = plural_forms_[domain_id](n);
             else
                 form = n == 1 ? 0 : 1; // Fallback to English plural form
 
             const CharType* p = ptr.first;
-            for(int i = 0; p < ptr.second && i < form; i++) {
+            for(decltype(form) i = 0; p < ptr.second && i < form; i++) {
                 p = std::find(p, ptr.second, CharType(0));
                 if(p == ptr.second)
                     return nullptr;

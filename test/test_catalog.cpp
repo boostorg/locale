@@ -21,8 +21,8 @@ T getRandValue(const T min, const T max)
 template<typename T>
 void test_plural_expr_rand(const T& ref, const char* expr)
 {
-    constexpr auto minVal = std::numeric_limits<int>::min() / 1024;
-    constexpr auto maxVal = std::numeric_limits<int>::max() / 1024;
+    constexpr auto minVal = std::numeric_limits<long long>::min() / 1024;
+    constexpr auto maxVal = std::numeric_limits<long long>::max() / 1024;
     const auto ptr = boost::locale::gnu_gettext::lambda::compile(expr);
     TEST(ptr);
     constexpr int number_of_tries = 256;
@@ -47,6 +47,21 @@ void test_plural_expr()
         return ptr;               \
     }()
 #define TEST_EQ_EXPR(expr, rhs) test_eq_impl(COMPILE_PLURAL_EXPR(expr)(0), rhs, expr, __LINE__)
+    // Number only
+    TEST_EQ_EXPR("0", 0);
+    TEST_EQ_EXPR("42", 42);
+    BOOST_LOCALE_START_CONST_CONDITION
+    if(sizeof(long) >= 4) {
+        BOOST_LOCALE_END_CONST_CONDITION
+        TEST_EQ_EXPR("2147483647", 2147483647); // largest signed 4 byte value
+    }
+    BOOST_LOCALE_START_CONST_CONDITION
+    if(sizeof(long) > 4) {
+        BOOST_LOCALE_END_CONST_CONDITION
+        TEST_EQ_EXPR("4294967295", 4294967295); // largest 4 byte value
+        TEST_EQ_EXPR("100000000000", 100000000000);
+    }
+
     // Unary
     TEST_EQ_EXPR("!0", 1);
     TEST_EQ_EXPR("!1", 0);
@@ -180,7 +195,7 @@ void test_plural_expr()
     // Random test using the variable comparing against C++ evaluated result
 #define TEST_PLURAL_EXPR(expr) \
     test_plural_expr_rand(     \
-      [](int n) {              \
+      [](long long n) {        \
           (void)n;             \
           return expr;         \
       },                       \
@@ -208,8 +223,8 @@ void test_plural_expr()
                                                                                       2));
 #undef TEST_PLURAL_EXPR
 
-    constexpr auto minVal = std::numeric_limits<int>::min();
-    constexpr auto maxVal = std::numeric_limits<int>::max();
+    constexpr auto minVal = std::numeric_limits<long long>::min();
+    constexpr auto maxVal = std::numeric_limits<long long>::max();
 
     // E.g. Japanese
     {

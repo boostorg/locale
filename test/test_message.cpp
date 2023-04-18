@@ -13,6 +13,7 @@
 #include "boostLocale/test/unit_test.hpp"
 #include <fstream>
 #include <iostream>
+#include <limits>
 #include <vector>
 
 namespace bl = boost::locale;
@@ -101,7 +102,7 @@ template<typename Char>
 void test_cntranslate(const std::string& sContext,
                       const std::string& sSingular,
                       const std::string& sPlural,
-                      int n,
+                      long long n,
                       const std::string& sExpected,
                       const std::locale& l,
                       const std::string& domain)
@@ -151,7 +152,7 @@ void test_cntranslate(const std::string& sContext,
 template<typename Char>
 void test_ntranslate(const std::string& sSingular,
                      const std::string& sPlural,
-                     int n,
+                     long long n,
                      const std::string& sExpected,
                      const std::locale& l,
                      const std::string& domain)
@@ -289,7 +290,7 @@ void test_translate(const std::string& sOriginal,
 void test_cntranslate(const std::string& c,
                       const std::string& s,
                       const std::string& p,
-                      int n,
+                      long long n,
                       const std::string& expected,
                       const std::locale& l,
                       const std::string& domain)
@@ -308,7 +309,7 @@ void test_cntranslate(const std::string& c,
 
 void test_ntranslate(const std::string& s,
                      const std::string& p,
-                     int n,
+                     long long n,
                      const std::string& expected,
                      const std::locale& l,
                      const std::string& domain)
@@ -432,11 +433,19 @@ void test_main(int argc, char** argv)
                 test_ntranslate("x day", "x days", 2, "יומיים", l, "default");
                 test_ntranslate("x day", "x days", 3, "x ימים", l, "default");
                 test_ntranslate("x day", "x days", 20, "x יום", l, "default");
-
                 test_ntranslate("x day", "x days", 0, "x days", l, "undefined");
                 test_ntranslate("x day", "x days", 1, "x day", l, "undefined");
                 test_ntranslate("x day", "x days", 2, "x days", l, "undefined");
                 test_ntranslate("x day", "x days", 20, "x days", l, "undefined");
+                // Ensure no truncation occurs
+                test_ntranslate("x day", "x days", std::numeric_limits<long long>::min(), "x days", l, "undefined");
+                test_ntranslate("x day", "x days", std::numeric_limits<long long>::max(), "x days", l, "undefined");
+                for(unsigned bit = 1; bit < std::numeric_limits<long long>::digits; ++bit) {
+                    // Set each individual bit possible and add 1.
+                    // If the value is truncated the 1 will remain leading to singular form
+                    const auto num = static_cast<long long>(static_cast<unsigned long long>(1) << bit);
+                    test_ntranslate("x day", "x days", num + 1, "x days", l, "undefined");
+                }
             }
             std::cout << "    plural forms with context" << std::endl;
             {
