@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <cstring>
+#include <functional>
 #include <limits>
 
 #ifdef BOOST_MSVC
@@ -23,25 +24,40 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
             return expr_ptr(new TExp(std::forward<Ts>(ts)...));
         }
 
-        struct identity : public expr {
+        struct identity final : expr {
             value_type operator()(value_type n) const override { return n; }
         };
 
-        struct unary : public expr {
+        using sub_expr_type = plural_expr;
+
+        template<class Functor>
+        struct unary final : expr, Functor {
             unary(expr_ptr p) : op1(std::move(p)) {}
+            value_type operator()(value_type n) const override { return Functor::operator()(op1(n)); }
 
         protected:
-            expr_ptr op1;
+            sub_expr_type op1;
         };
 
-        struct binary : public expr {
+        template<class Functor, bool returnZeroOnZero2ndArg = false>
+        struct binary final : expr, Functor {
             binary(expr_ptr p1, expr_ptr p2) : op1(std::move(p1)), op2(std::move(p2)) {}
+            value_type operator()(value_type n) const override
+            {
+                const auto v1 = op1(n);
+                const auto v2 = op2(n);
+                BOOST_LOCALE_START_CONST_CONDITION
+                if(returnZeroOnZero2ndArg && v2 == 0)
+                    return 0;
+                BOOST_LOCALE_END_CONST_CONDITION
+                return Functor::operator()(v1, v2);
+            }
 
         protected:
-            expr_ptr op1, op2;
+            sub_expr_type op1, op2;
         };
 
-        struct number : public expr {
+        struct number final : expr {
             number(value_type v) : val(v) {}
             value_type operator()(value_type /*n*/) const override { return val; }
 
@@ -49,112 +65,63 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
             value_type val;
         };
 
-        enum { END = 0, SHL = 256, SHR, GTE, LTE, EQ, NEQ, AND, OR, NUM, VARIABLE };
-
-#define UNOP(name, oper)                                                             \
-    struct name : public unary {                                                     \
-        name(expr_ptr op) : unary(std::move(op)) {}                                  \
-        value_type operator()(value_type n) const override { return oper(*op1)(n); } \
-    };
-
-        UNOP(l_not, !)
-        UNOP(minus, -)
-        UNOP(bin_not, ~)
-#undef UNOP
-
-#define BINOP(name, oper)                                                                     \
-    struct name : public binary {                                                             \
-        name(expr_ptr p1, expr_ptr p2) : binary(std::move(p1), std::move(p2)) {}              \
-                                                                                              \
-        value_type operator()(value_type n) const override { return (*op1)(n)oper(*op2)(n); } \
-    };
-
-#define BINOPD(name, oper)                                                       \
-    struct name : public binary {                                                \
-        name(expr_ptr p1, expr_ptr p2) : binary(std::move(p1), std::move(p2)) {} \
-        value_type operator()(value_type n) const override                       \
-        {                                                                        \
-            const auto v1 = (*op1)(n);                                           \
-            const auto v2 = (*op2)(n);                                           \
-            return v2 == 0 ? 0 : v1 oper v2;                                     \
-        }                                                                        \
-    };
-
-        BINOP(mul, *)
-        BINOPD(div, /)
-        BINOPD(mod, %)
-        constexpr int level10[] = {'*', '/', '%'};
-#undef BINOPD
-
-        BINOP(add, +)
-        BINOP(sub, -)
-        constexpr int level9[] = {'+', '-'};
-
-        BINOP(shl, <<)
-        BINOP(shr, >>)
-        constexpr int level8[] = {SHL, SHR};
-
-        BINOP(gt, >)
-        BINOP(lt, <)
-        BINOP(gte, >=)
-        BINOP(lte, <=)
-        constexpr int level7[] = {'<', '>', GTE, LTE};
-
-        BINOP(eq, ==)
-        BINOP(neq, !=)
-        constexpr int level6[] = {EQ, NEQ};
-
-        BINOP(bin_and, &)
-        constexpr int level5[] = {'&'};
-
-        BINOP(bin_xor, ^)
-        constexpr int level4[] = {'^'};
-
-        BINOP(bin_or, |)
-        constexpr int level3[] = {'|'};
-
-        BINOP(l_and, &&)
-        constexpr int level2[] = {AND};
-
-        BINOP(l_or, ||)
-        constexpr int level1[] = {OR};
-
-#undef BINOP
-
-        struct conditional : public expr {
+        struct conditional final : public expr {
             conditional(expr_ptr p1, expr_ptr p2, expr_ptr p3) :
                 op1(std::move(p1)), op2(std::move(p2)), op3(std::move(p3))
             {}
-            value_type operator()(value_type n) const override { return (*op1)(n) ? (*op2)(n) : (*op3)(n); }
+            value_type operator()(value_type n) const override { return op1(n) ? op2(n) : op3(n); }
 
         private:
-            expr_ptr op1, op2, op3;
+            sub_expr_type op1, op2, op3;
         };
+
+        template<typename T>
+        struct shifts_left {
+            constexpr T operator()(const T& v1, const T& v2) const { return v1 << v2; }
+        };
+        template<typename T>
+        struct shifts_right {
+            constexpr T operator()(const T& v1, const T& v2) const { return v1 >> v2; }
+        };
+
+        enum { END = 0, SHL = 256, SHR, GTE, LTE, EQ, NEQ, AND, OR, NUM, VARIABLE };
+        constexpr int level10[] = {'*', '/', '%'};
+        constexpr int level9[] = {'+', '-'};
+        constexpr int level8[] = {SHL, SHR};
+        constexpr int level7[] = {'<', '>', GTE, LTE};
+        constexpr int level6[] = {EQ, NEQ};
+        constexpr int level5[] = {'&'};
+        constexpr int level4[] = {'^'};
+        constexpr int level3[] = {'|'};
+        constexpr int level2[] = {AND};
+        constexpr int level1[] = {OR};
 
         expr_ptr bin_factory(const int value, expr_ptr left, expr_ptr right)
         {
 #define BINOP_CASE(match, cls) \
     case match: return make_expr<cls>(std::move(left), std::move(right))
-
+            // Special cases: Avoid division by zero
+            using divides = binary<std::divides<expr::value_type>, true>;
+            using modulus = binary<std::modulus<expr::value_type>, true>;
             switch(value) {
-                BINOP_CASE('/', div);
-                BINOP_CASE('*', mul);
-                BINOP_CASE('%', mod);
-                BINOP_CASE('+', add);
-                BINOP_CASE('-', sub);
-                BINOP_CASE(SHL, shl);
-                BINOP_CASE(SHR, shr);
-                BINOP_CASE('>', gt);
-                BINOP_CASE('<', lt);
-                BINOP_CASE(GTE, gte);
-                BINOP_CASE(LTE, lte);
-                BINOP_CASE(EQ, eq);
-                BINOP_CASE(NEQ, neq);
-                BINOP_CASE('&', bin_and);
-                BINOP_CASE('^', bin_xor);
-                BINOP_CASE('|', bin_or);
-                BINOP_CASE(AND, l_and);
-                BINOP_CASE(OR, l_or);
+                BINOP_CASE('/', divides);
+                BINOP_CASE('*', binary<std::multiplies<expr::value_type>>);
+                BINOP_CASE('%', modulus);
+                BINOP_CASE('+', binary<std::plus<expr::value_type>>);
+                BINOP_CASE('-', binary<std::minus<expr::value_type>>);
+                BINOP_CASE(SHL, binary<shifts_left<expr::value_type>>);
+                BINOP_CASE(SHR, binary<shifts_right<expr::value_type>>);
+                BINOP_CASE('>', binary<std::greater<expr::value_type>>);
+                BINOP_CASE('<', binary<std::less<expr::value_type>>);
+                BINOP_CASE(GTE, binary<std::greater_equal<expr::value_type>>);
+                BINOP_CASE(LTE, binary<std::less_equal<expr::value_type>>);
+                BINOP_CASE(EQ, binary<std::equal_to<expr::value_type>>);
+                BINOP_CASE(NEQ, binary<std::not_equal_to<expr::value_type>>);
+                BINOP_CASE('&', binary<std::bit_and<expr::value_type>>);
+                BINOP_CASE('^', binary<std::bit_xor<expr::value_type>>);
+                BINOP_CASE('|', binary<std::bit_or<expr::value_type>>);
+                BINOP_CASE(AND, binary<std::logical_and<expr::value_type>>);
+                BINOP_CASE(OR, binary<std::logical_or<expr::value_type>>);
                 default: return expr_ptr();
             }
 #undef BINOP_CASE
@@ -292,9 +259,9 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
                     if(!op1)
                         return expr_ptr();
                     switch(op) {
-                        case '-': return make_expr<minus>(std::move(op1));
-                        case '!': return make_expr<l_not>(std::move(op1));
-                        case '~': return make_expr<bin_not>(std::move(op1));
+                        case '-': return make_expr<unary<std::negate<expr::value_type>>>(std::move(op1));
+                        case '!': return make_expr<unary<std::logical_not<expr::value_type>>>(std::move(op1));
+                        case '~': return make_expr<unary<std::bit_not<expr::value_type>>>(std::move(op1));
                         default: return expr_ptr();
                     }
                 } else {
