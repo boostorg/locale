@@ -309,6 +309,13 @@ void test_plural_expr()
     TEST(!compile("n==1)") && compile("(n==1)"));
     TEST(!compile("n + 1)") && compile("(n + 1)"));
     TEST(!compile("n==1 ? 1 : 2)") && compile("(n==1 ? 1 : 2)"));
+    // No bitwise ops
+    TEST(!compile("n << 1"));
+    TEST(!compile("n >> 1"));
+    TEST(!compile("n & 1"));
+    TEST(!compile("n | 1"));
+    TEST(!compile("n ^ 1"));
+    TEST(!compile("~n"));
 }
 
 void test_main(int /*argc*/, char** /*argv*/)

@@ -75,26 +75,7 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
             sub_expr_type op1, op2, op3;
         };
 
-        template<typename T>
-        struct shifts_left {
-            constexpr T operator()(const T& v1, const T& v2) const { return v1 << v2; }
-        };
-        template<typename T>
-        struct shifts_right {
-            constexpr T operator()(const T& v1, const T& v2) const { return v1 >> v2; }
-        };
-
-        enum { END = 0, SHL = 256, SHR, GTE, LTE, EQ, NEQ, AND, OR, NUM, VARIABLE };
-        constexpr int level10[] = {'*', '/', '%'};
-        constexpr int level9[] = {'+', '-'};
-        constexpr int level8[] = {SHL, SHR};
-        constexpr int level7[] = {'<', '>', GTE, LTE};
-        constexpr int level6[] = {EQ, NEQ};
-        constexpr int level5[] = {'&'};
-        constexpr int level4[] = {'^'};
-        constexpr int level3[] = {'|'};
-        constexpr int level2[] = {AND};
-        constexpr int level1[] = {OR};
+        enum { END = 0, GTE = 256, LTE, EQ, NEQ, AND, OR, NUM, VARIABLE };
 
         expr_ptr bin_factory(const int value, expr_ptr left, expr_ptr right)
         {
@@ -109,17 +90,12 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
                 BINOP_CASE('%', modulus);
                 BINOP_CASE('+', binary<std::plus<expr::value_type>>);
                 BINOP_CASE('-', binary<std::minus<expr::value_type>>);
-                BINOP_CASE(SHL, binary<shifts_left<expr::value_type>>);
-                BINOP_CASE(SHR, binary<shifts_right<expr::value_type>>);
                 BINOP_CASE('>', binary<std::greater<expr::value_type>>);
                 BINOP_CASE('<', binary<std::less<expr::value_type>>);
                 BINOP_CASE(GTE, binary<std::greater_equal<expr::value_type>>);
                 BINOP_CASE(LTE, binary<std::less_equal<expr::value_type>>);
                 BINOP_CASE(EQ, binary<std::equal_to<expr::value_type>>);
                 BINOP_CASE(NEQ, binary<std::not_equal_to<expr::value_type>>);
-                BINOP_CASE('&', binary<std::bit_and<expr::value_type>>);
-                BINOP_CASE('^', binary<std::bit_xor<expr::value_type>>);
-                BINOP_CASE('|', binary<std::bit_or<expr::value_type>>);
                 BINOP_CASE(AND, binary<std::logical_and<expr::value_type>>);
                 BINOP_CASE(OR, binary<std::logical_or<expr::value_type>>);
                 default: return expr_ptr();
@@ -171,13 +147,7 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
                 while(is_blank(*text_))
                     text_++;
                 const char* text = text_;
-                if(is(text, "<<")) {
-                    text_ += 2;
-                    next_tocken_ = SHL;
-                } else if(is(text, ">>")) {
-                    text_ += 2;
-                    next_tocken_ = SHR;
-                } else if(is(text, "&&")) {
+                if(is(text, "&&")) {
                     text_ += 2;
                     next_tocken_ = AND;
                 } else if(is(text, "||")) {
@@ -214,6 +184,13 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
                 }
             }
         };
+
+        constexpr int level6[] = {'*', '/', '%'};
+        constexpr int level5[] = {'+', '-'};
+        constexpr int level4[] = {'<', '>', GTE, LTE};
+        constexpr int level3[] = {EQ, NEQ};
+        constexpr int level2[] = {AND};
+        constexpr int level1[] = {OR};
 
         class parser {
         public:
@@ -252,7 +229,7 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
 
             expr_ptr unary_expr()
             {
-                constexpr int level_unary[] = {'-', '!', '~'};
+                constexpr int level_unary[] = {'-', '!'};
                 if(is_in(t.next(), level_unary)) {
                     const int op = t.get();
                     expr_ptr op1 = unary_expr();
@@ -261,7 +238,6 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
                     switch(op) {
                         case '-': return make_expr<unary<std::negate<expr::value_type>>>(std::move(op1));
                         case '!': return make_expr<unary<std::logical_not<expr::value_type>>>(std::move(op1));
-                        case '~': return make_expr<unary<std::bit_not<expr::value_type>>>(std::move(op1));
                         default: return expr_ptr();
                     }
                 } else {
@@ -285,11 +261,7 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
         return op1;                                               \
     }
 
-            BINARY_EXPR(l10, unary_expr, level10);
-            BINARY_EXPR(l9, l10, level9);
-            BINARY_EXPR(l8, l9, level8);
-            BINARY_EXPR(l7, l8, level7);
-            BINARY_EXPR(l6, l7, level6);
+            BINARY_EXPR(l6, unary_expr, level6);
             BINARY_EXPR(l5, l6, level5);
             BINARY_EXPR(l4, l5, level4);
             BINARY_EXPR(l3, l4, level3);
