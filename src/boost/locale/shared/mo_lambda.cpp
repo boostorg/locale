@@ -75,9 +75,10 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
             sub_expr_type op1, op2, op3;
         };
 
-        enum { END = 0, GTE = 256, LTE, EQ, NEQ, AND, OR, NUM, VARIABLE };
+        using token_t = int;
+        enum : token_t { END = 0, GTE = 256, LTE, EQ, NEQ, AND, OR, NUM, VARIABLE };
 
-        expr_ptr bin_factory(const int value, expr_ptr left, expr_ptr right)
+        expr_ptr bin_factory(const token_t value, expr_ptr left, expr_ptr right)
         {
 #define BINOP_CASE(match, cls) \
     case match: return make_expr<cls>(std::move(left), std::move(right))
@@ -104,10 +105,10 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
         }
 
         template<size_t size>
-        bool is_in(const int value, const int (&list)[size])
+        bool is_in(const token_t token, const token_t (&tokens)[size])
         {
-            for(const int el : list) {
-                if(value == el)
+            for(const auto el : tokens) {
+                if(token == el)
                     return true;
             }
             return false;
@@ -116,15 +117,13 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
         class tokenizer {
         public:
             tokenizer(const char* s) : text_(s), next_tocken_(0), numeric_value_(0) { step(); }
-            int get(long long* val = nullptr)
+            token_t get(long long* val = nullptr)
             {
-                const int res = next_tocken_;
-                if(val && res == NUM)
-                    *val = numeric_value_;
+                const token_t res = next(val);
                 step();
                 return res;
             }
-            int next(long long* val = nullptr)
+            token_t next(long long* val = nullptr) const
             {
                 if(val && next_tocken_ == NUM)
                     *val = numeric_value_;
@@ -133,8 +132,9 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
 
         private:
             const char* text_;
-            int next_tocken_;
+            token_t next_tocken_;
             long long numeric_value_;
+
             static constexpr bool is_blank(char c) { return c == ' ' || c == '\r' || c == '\n' || c == '\t'; }
             static constexpr bool is_digit(char c) { return '0' <= c && c <= '9'; }
             template<size_t size>
@@ -185,12 +185,12 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
             }
         };
 
-        constexpr int level6[] = {'*', '/', '%'};
-        constexpr int level5[] = {'+', '-'};
-        constexpr int level4[] = {'<', '>', GTE, LTE};
-        constexpr int level3[] = {EQ, NEQ};
-        constexpr int level2[] = {AND};
-        constexpr int level1[] = {OR};
+        constexpr token_t level6[] = {'*', '/', '%'};
+        constexpr token_t level5[] = {'+', '-'};
+        constexpr token_t level4[] = {'<', '>', GTE, LTE};
+        constexpr token_t level3[] = {EQ, NEQ};
+        constexpr token_t level2[] = {AND};
+        constexpr token_t level1[] = {OR};
 
         class parser {
         public:
@@ -229,9 +229,9 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
 
             expr_ptr unary_expr()
             {
-                constexpr int level_unary[] = {'-', '!'};
+                constexpr token_t level_unary[] = {'-', '!'};
                 if(is_in(t.next(), level_unary)) {
-                    const int op = t.get();
+                    const token_t op = t.get();
                     expr_ptr op1 = unary_expr();
                     if(!op1)
                         return expr_ptr();
@@ -252,7 +252,7 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
         if(!op1)                                                  \
             return expr_ptr();                                    \
         while(is_in(t.next(), list)) {                            \
-            const int o = t.get();                                \
+            const token_t o = t.get();                            \
             expr_ptr op2 = nextLvl();                             \
             if(!op2)                                              \
                 return expr_ptr();                                \
