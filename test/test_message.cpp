@@ -50,8 +50,6 @@ void test_messages_info()
 }
 
 std::string backend;
-std::string message_path = "./";
-
 bool file_loader_is_actually_called = false;
 
 struct file_loader {
@@ -62,12 +60,12 @@ struct file_loader {
         if(!f)
             return buffer;
         f.seekg(0, std::ifstream::end);
-        size_t len = static_cast<size_t>(f.tellg());
-        if(len == 0)
-            return buffer;
+        const auto len = f.tellg();
         f.seekg(0);
-        buffer.resize(len, '\0');
-        f.read(&buffer[0], len);
+        if(len > 0) {
+            buffer.resize(static_cast<size_t>(len));
+            f.read(buffer.data(), buffer.size());
+        }
         file_loader_is_actually_called = true;
         return buffer;
     }
@@ -368,8 +366,7 @@ void test_main(int argc, char** argv)
 {
     test_messages_info();
 
-    if(argc == 2)
-        message_path = argv[1];
+    const std::string message_path = (argc == 2) ? argv[1] : ".";
 
     const std::string def[] = {
 #ifdef BOOST_LOCALE_WITH_ICU
@@ -485,14 +482,12 @@ void test_main(int argc, char** argv)
         info.language = "he";
         info.country = "IL";
         info.encoding = "UTF-8";
-        if(argc == 2)
-            info.paths.push_back(argv[1]);
-        else
-            info.paths.push_back("./");
+        info.paths.push_back(message_path);
 
         info.domains.push_back(bl::gnu_gettext::messages_info::domain("default"));
         info.callback = file_loader();
 
+        file_loader_is_actually_called = false;
         std::locale l(std::locale::classic(), boost::locale::gnu_gettext::create_messages_facet<char>(info));
         TEST(file_loader_is_actually_called);
         TEST_EQ(bl::translate("hello").str(l), "שלום");
@@ -505,7 +500,7 @@ void test_main(int argc, char** argv)
         {
             boost::locale::generator g;
             g.add_messages_domain("default");
-            g.add_messages_path((argc == 2) ? argv[1] : "./");
+            g.add_messages_path(message_path);
 
             std::locale l = g("he_IL.UTF-8");
 
@@ -530,7 +525,7 @@ void test_main(int argc, char** argv)
         {
             boost::locale::generator g;
             g.add_messages_domain("default/ISO-8859-8");
-            g.add_messages_path((argc == 2) ? argv[1] : "./");
+            g.add_messages_path(message_path);
 
             std::locale l = g("he_IL.UTF-8");
 
