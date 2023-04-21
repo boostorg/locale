@@ -7,7 +7,6 @@
 
 #include "boost/locale/util/encoding.hpp"
 #include "boost/locale/util/string.hpp"
-#include <boost/assert.hpp>
 #if BOOST_LOCALE_USE_WIN32_API
 #    include "boost/locale/util/win_codepages.hpp"
 #    ifndef NOMINMAX
