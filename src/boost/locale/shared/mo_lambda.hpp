@@ -12,7 +12,7 @@
 
 namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
 
-    struct expr {
+    struct BOOST_SYMBOL_VISIBLE expr {
         virtual int operator()(int n) const = 0;
         virtual ~expr() = default;
     };
@@ -24,7 +24,7 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
     public:
         plural_expr() = default;
         explicit plural_expr(expr_ptr p) : p_(std::move(p)) {}
-        BOOST_LOCALE_WRONG_VPTR_OK int operator()(int n) const { return (*p_)(n); }
+        int operator()(int n) const { return (*p_)(n); }
         explicit operator bool() const { return static_cast<bool>(p_); }
     };
 
