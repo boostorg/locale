@@ -23,6 +23,7 @@
 #include "boost/locale/shared/mo_hash.hpp"
 #include "boost/locale/shared/mo_lambda.hpp"
 #include "boost/locale/util/encoding.hpp"
+#include <boost/assert.hpp>
 #include <boost/version.hpp>
 #include <algorithm>
 #include <cstdio>
@@ -402,8 +403,11 @@ namespace boost { namespace locale { namespace gnu_gettext {
         typedef std::basic_string<CharType> string_type;
         typedef message_key<CharType> key_type;
         typedef std::unordered_map<key_type, string_type, hash_function<CharType>> catalog_type;
-        typedef std::vector<catalog_type> catalogs_set_type;
-        typedef std::map<std::string, int> domains_map_type;
+        struct domain_data_type {
+            std::unique_ptr<mo_file> mo_catalog; /// Message catalog (.mo file) if it can be directly used
+            catalog_type catalog;                /// Converted message catalog when .mo file cannot be directly used
+            lambda::plural_expr plural_form;     /// Expression to determine the plural form index
+        };
 
     public:
         typedef std::pair<const CharType*, const CharType*> pair_type;
@@ -419,14 +423,17 @@ namespace boost { namespace locale { namespace gnu_gettext {
             const pair_type ptr = get_string(domain_id, context, single_id);
             if(!ptr.first)
                 return nullptr;
-            lambda::expr::value_type form;
-            if(plural_forms_.at(domain_id))
-                form = plural_forms_[domain_id](n);
+
+            // domain_id is already checked by get_string -> Would return a null-pair
+            BOOST_ASSERT(domain_id >= 0 && static_cast<size_t>(domain_id) < domain_data_.size());
+            lambda::expr::value_type plural_idx;
+            if(domain_data_[domain_id].plural_form)
+                plural_idx = domain_data_[domain_id].plural_form(n);
             else
-                form = n == 1 ? 0 : 1; // Fallback to English plural form
+                plural_idx = n == 1 ? 0 : 1; // Fallback to English plural form
 
             const CharType* p = ptr.first;
-            for(decltype(form) i = 0; p < ptr.second && i < form; ++i) {
+            for(decltype(plural_idx) i = 0; p < ptr.second && i < plural_idx; ++i) {
                 p = std::find(p, ptr.second, CharType(0));
                 if(BOOST_UNLIKELY(p == ptr.second))
                     return nullptr;
@@ -446,9 +453,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
         mo_message(const messages_info& inf) : key_conversion_required_(false)
         {
             const std::vector<messages_info::domain>& domains = inf.domains;
-            catalogs_.resize(domains.size());
-            mo_catalogs_.resize(domains.size());
-            plural_forms_.resize(domains.size());
+            domain_data_.resize(domains.size());
 
             const auto catalog_paths = inf.get_catalog_paths();
             for(unsigned i = 0; i < domains.size(); i++) {
@@ -457,7 +462,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
                 const std::string filename = domain.name + ".mo";
                 for(std::string path : catalog_paths) {
                     path += "/" + filename;
-                    if(load_file(path, inf.encoding, domain.encoding, i, inf.callback))
+                    if(load_file(path, inf.encoding, domain.encoding, domain_data_[i], inf.callback))
                         break;
                 }
             }
@@ -472,7 +477,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
         bool load_file(const std::string& file_name,
                        const std::string& locale_encoding,
                        const std::string& key_encoding,
-                       int idx,
+                       domain_data_type& data,
                        const messages_info::callback_type& callback)
         {
             locale_encoding_ = locale_encoding;
@@ -484,18 +489,18 @@ namespace boost { namespace locale { namespace gnu_gettext {
             std::unique_ptr<mo_file> mo;
 
             {
-                std::vector<char> data;
+                std::vector<char> file_data;
                 if(callback)
-                    data = callback(file_name, locale_encoding);
+                    file_data = callback(file_name, locale_encoding);
                 else {
                     c_file the_file(file_name, locale_encoding);
                     if(!the_file.handle)
                         return false;
-                    data = read_file(the_file.handle);
+                    file_data = read_file(the_file.handle);
                 }
-                if(data.empty())
+                if(file_data.empty())
                     return false;
-                mo.reset(new mo_file(std::move(data)));
+                mo.reset(new mo_file(std::move(file_data)));
             }
 
             const std::string plural = extract(mo->value(0).first, "plural=", "\r\n;");
@@ -505,19 +510,19 @@ namespace boost { namespace locale { namespace gnu_gettext {
                 throw std::runtime_error("Invalid mo-format, encoding is not specified");
 
             if(!plural.empty())
-                plural_forms_[idx] = lambda::compile(plural.c_str());
+                data.plural_form = lambda::compile(plural.c_str());
 
             if(mo_useable_directly(mo_encoding, *mo))
-                mo_catalogs_[idx] = std::move(mo);
+                data.mo_catalog = std::move(mo);
             else {
                 converter<CharType> cvt_value(locale_encoding, mo_encoding);
                 converter<CharType> cvt_key(key_encoding, mo_encoding);
                 for(unsigned i = 0; i < mo->size(); i++) {
                     const char* ckey = mo->key(i);
-                    key_type key(cvt_key(ckey, ckey + strlen(ckey)));
+                    const key_type key(cvt_key(ckey, ckey + strlen(ckey)));
 
                     mo_file::pair_type tmp = mo->value(i);
-                    catalogs_[idx][key] = cvt_value(tmp.first, tmp.second);
+                    data.catalog[key] = cvt_value(tmp.first, tmp.second);
                 }
             }
             return true;
@@ -561,16 +566,18 @@ namespace boost { namespace locale { namespace gnu_gettext {
 
         pair_type get_string(int domain_id, const CharType* context, const CharType* in_id) const
         {
-            pair_type null_pair((const CharType*)0, (const CharType*)0);
-            if(domain_id < 0 || size_t(domain_id) >= catalogs_.size())
+            pair_type null_pair;
+            if(domain_id < 0 || static_cast<size_t>(domain_id) >= domain_data_.size())
                 return null_pair;
+            const auto& data = domain_data_[domain_id];
+
             BOOST_LOCALE_START_CONST_CONDITION
-            if(mo_file_use_traits<CharType>::in_use && mo_catalogs_[domain_id]) {
+            if(mo_file_use_traits<CharType>::in_use && data.mo_catalog) {
                 BOOST_LOCALE_END_CONST_CONDITION
-                return mo_file_use_traits<CharType>::use(*mo_catalogs_[domain_id], context, in_id);
+                return mo_file_use_traits<CharType>::use(*data.mo_catalog, context, in_id);
             } else {
-                key_type key(context, in_id);
-                const catalog_type& cat = catalogs_[domain_id];
+                const key_type key(context, in_id);
+                const catalog_type& cat = data.catalog;
                 const auto p = cat.find(key);
                 if(p == cat.end()) {
                     return null_pair;
@@ -579,10 +586,8 @@ namespace boost { namespace locale { namespace gnu_gettext {
             }
         }
 
-        catalogs_set_type catalogs_;
-        std::vector<std::unique_ptr<mo_file>> mo_catalogs_;
-        std::vector<lambda::plural_expr> plural_forms_;
-        domains_map_type domains_;
+        std::map<std::string, unsigned> domains_;
+        std::vector<domain_data_type> domain_data_;
 
         std::string locale_encoding_;
         std::string key_encoding_;
