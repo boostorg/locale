@@ -217,17 +217,19 @@ namespace boost { namespace locale {
         basic_message& operator=(basic_message&&) = default;
 
         /// Swap two message objects
-        void swap(basic_message& other)
+        void
+        swap(basic_message& other) noexcept(noexcept(std::declval<string_type&>().swap(std::declval<string_type&>())))
         {
-            std::swap(n_, other.n_);
-            std::swap(c_id_, other.c_id_);
-            std::swap(c_context_, other.c_context_);
-            std::swap(c_plural_, other.c_plural_);
-
-            id_.swap(other.id_);
-            context_.swap(other.context_);
-            plural_.swap(other.plural_);
+            using std::swap;
+            swap(n_, other.n_);
+            swap(c_id_, other.c_id_);
+            swap(c_context_, other.c_context_);
+            swap(c_plural_, other.c_plural_);
+            swap(id_, other.id_);
+            swap(context_, other.context_);
+            swap(plural_, other.plural_);
         }
+        friend void swap(basic_message& x, basic_message& y) noexcept(noexcept(x.swap(y))) { x.swap(y); }
 
         /// Message class can be explicitly converted to string class
         operator string_type() const { return str(); }
@@ -255,9 +257,7 @@ namespace boost { namespace locale {
         {
             string_type buffer;
             const char_type* ptr = write(loc, id, buffer);
-            if(ptr == buffer.c_str())
-                return buffer;
-            else
+            if(ptr != buffer.c_str())
                 buffer = ptr;
             return buffer;
         }

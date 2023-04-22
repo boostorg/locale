@@ -309,6 +309,12 @@ void test_plural_expr()
     TEST(!compile("n==1)") && compile("(n==1)"));
     TEST(!compile("n + 1)") && compile("(n + 1)"));
     TEST(!compile("n==1 ? 1 : 2)") && compile("(n==1 ? 1 : 2)"));
+    // Empty parenthesis
+    TEST(!compile("n==()1"));
+    TEST(!compile("n==()"));
+    // Missing operator for unary op
+    TEST(!compile("1==!"));
+    TEST(!compile("1 + -"));
     // No bitwise ops
     TEST(!compile("n << 1"));
     TEST(!compile("n >> 1"));

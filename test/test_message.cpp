@@ -14,6 +14,7 @@
 #include <fstream>
 #include <iostream>
 #include <limits>
+#include <type_traits>
 #include <vector>
 
 namespace bl = boost::locale;
@@ -129,6 +130,36 @@ void test_cntranslate(const std::string& sContext,
         ss.imbue(l);
         ss << bl::translate(c, s, p, n);
         TEST_EQ(ss.str(), expected);
+
+        // Copyable & movable
+        const string_type s2 = ascii_to<Char>("missing Singular");
+        const string_type p2 = ascii_to<Char>("missing Plural");
+        const string_type& expected2 = (n == 1) ? s2 : p2;
+        auto translation1 = bl::translate(c, s, p, n);
+        auto translation2 = bl::translate(c, s2, p2, n);
+        TEST_EQ(translation1.str(l), expected);
+        TEST_EQ(translation2.str(l), expected2);
+        // Copy
+        translation1 = translation2;
+        TEST_EQ(translation1.str(l), expected2);
+        // Move
+        translation1 = bl::translate(c, s, p, n);
+        translation2 = std::move(translation1);
+        TEST_EQ(translation2.str(l), expected);
+        // Swap
+        translation1 = bl::translate(c, s, p, n);
+        translation2 = bl::translate(c, s2, p2, n);
+        TEST_EQ(translation1.str(l), expected);
+        TEST_EQ(translation2.str(l), expected2);
+        using std::swap;
+        swap(translation1, translation2);
+        TEST_EQ(translation1.str(l), expected2);
+        TEST_EQ(translation2.str(l), expected);
+        translation1 = bl::translate(c, s, p, n);
+        translation2 = bl::translate(c, s2, p2, 1); // n==1!
+        swap(translation1, translation2);
+        TEST_EQ(translation1.str(l), s2);
+        TEST_EQ(translation2.str(l), expected);
     }
     TEST_EQ(bl::translate(c, s, p, n).str(l, domain), expected);
     std::locale tmp_locale;
@@ -146,6 +177,14 @@ void test_cntranslate(const std::string& sContext,
         ss.imbue(l);
         ss << bl::as::domain(domain) << bl::translate(c.c_str(), s.c_str(), p.c_str(), n);
         TEST_EQ(ss.str(), expected);
+    }
+    // Missing facet -> No translation
+    {
+        const string_type nonAscii = ((string_type() + Char('\x7F')) + Char('\x82')) + Char('\xF0');
+        const string_type p2 = nonAscii + p + nonAscii;
+        // For char the non-ASCII chars are removed -> original p
+        const string_type expected2 = (n == 1) ? s : (std::is_same<Char, char>::value ? p : p2);
+        TEST_EQ(bl::translate(c, s, p2, n).str(std::locale::classic()), expected2);
     }
 }
 
@@ -361,7 +400,7 @@ void test_translate(const std::string& original,
 #endif
 }
 
-bool iso_8859_8_not_supported = false;
+bool iso_8859_8_supported = true;
 
 void test_main(int argc, char** argv)
 {
@@ -404,10 +443,10 @@ void test_main(int argc, char** argv)
             if(locale_name.find(".ISO") != std::string::npos) {
                 try {
                     l = g(locale_name);
-                } catch(const boost::locale::conv::invalid_charset_error&) {
-                    std::cout << "Looks like ISO-8859-8 is not supported! skipping" << std::endl;
-                    iso_8859_8_not_supported = true;
-                    continue;
+                } catch(const boost::locale::conv::invalid_charset_error&) {                      // LCOV_EXCL_LINE
+                    std::cout << "Looks like ISO-8859-8 is not supported! skipping" << std::endl; // LCOV_EXCL_LINE
+                    iso_8859_8_supported = false;                                                 // LCOV_EXCL_LINE
+                    continue;                                                                     // LCOV_EXCL_LINE
                 }
             } else
                 l = g(locale_name);
@@ -465,8 +504,16 @@ void test_main(int argc, char** argv)
             }
         }
         std::cout << "  Testing fallbacks" << std::endl;
-        test_translate("test", "he_IL", g("he_IL.UTF-8"), "full");
-        test_translate("test", "he", g("he_IL.UTF-8"), "fall");
+        {
+            const std::locale l = g("he_IL.UTF-8");
+            test_translate("test", "he_IL", l, "full");
+            test_translate("test", "he", l, "fall");
+            for(int n = -1; n < 5; ++n) {
+                // No plural forms -> Use english logic
+                // Singular is translated, plural is not
+                test_ntranslate("test", "tests", n, (n == 1) ? "he" : "tests", l, "fall");
+            }
+        }
 
         std::cout << "  Testing automatic conversions " << std::endl;
         std::locale::global(g("he_IL.UTF-8"));
@@ -501,9 +548,7 @@ void test_main(int argc, char** argv)
         TEST(file_loader_is_actually_called);
         TEST_EQ(bl::translate("hello").str(l), "שלום");
     }
-    if(iso_8859_8_not_supported) {
-        std::cout << "ISO 8859-8 not supported so skipping non-US-ASCII keys" << std::endl;
-    } else {
+    if(iso_8859_8_supported) {
         std::cout << "Testing non-US-ASCII keys" << std::endl;
         std::cout << "  UTF-8 keys" << std::endl;
         {

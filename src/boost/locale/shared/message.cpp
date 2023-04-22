@@ -29,6 +29,7 @@
 #include <iostream>
 #include <map>
 #include <memory>
+#include <stdexcept>
 #include <unordered_map>
 #include <vector>
 
@@ -103,17 +104,16 @@ namespace boost { namespace locale { namespace gnu_gettext {
     std::vector<char> read_file(FILE* file)
     {
         fseek(file, 0, SEEK_END);
-        const long len = ftell(file);
-        if(len < 0)
-            throw std::runtime_error("Wrong file object");
-        else if(len > 0) {
+        const auto len = ftell(file);
+        if(BOOST_UNLIKELY(len < 0))
+            throw std::runtime_error("Wrong file object"); // LCOV_EXCL_LINE
+        else {
             fseek(file, 0, SEEK_SET);
             std::vector<char> data(len);
-            if(fread(&data.front(), 1, data.size(), file) != data.size())
-                throw std::runtime_error("Failed to read file");
+            if(BOOST_LIKELY(!data.empty()) && fread(&data.front(), 1, data.size(), file) != data.size())
+                throw std::runtime_error("Failed to read file"); // LCOV_EXCL_LINE
             return data;
-        } else
-            return {};
+        }
     }
 
     class mo_file {
@@ -124,8 +124,9 @@ namespace boost { namespace locale { namespace gnu_gettext {
         {
             if(data_.size() < 4)
                 throw std::runtime_error("invalid 'mo' file format - the file is too short");
-            uint32_t magic = 0;
-            memcpy(&magic, data_.data(), 4);
+            uint32_t magic;
+            static_assert(sizeof(magic) == 4, "!");
+            memcpy(&magic, data_.data(), sizeof(magic));
             if(magic == 0x950412de)
                 native_byteorder_ = true;
             else if(magic == 0xde120495)
@@ -143,7 +144,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
 
         pair_type find(const char* context_in, const char* key_in) const
         {
-            pair_type null_pair(nullptr, nullptr);
+            pair_type null_pair;
             if(!has_hash())
                 return null_pair;
 
@@ -154,12 +155,12 @@ namespace boost { namespace locale { namespace gnu_gettext {
             }
             st = pj_winberger_hash::update_state(st, key_in);
             uint32_t hkey = st;
-            uint32_t incr = 1 + hkey % (hash_size_ - 2);
+            const uint32_t incr = 1 + hkey % (hash_size_ - 2);
             hkey %= hash_size_;
-            uint32_t orig = hkey;
+            const uint32_t orig_hkey = hkey;
 
             do {
-                uint32_t idx = get(hash_offset_ + 4 * hkey);
+                const uint32_t idx = get(hash_offset_ + 4 * hkey);
                 // Not found
                 if(idx == 0)
                     return null_pair;
@@ -168,19 +169,19 @@ namespace boost { namespace locale { namespace gnu_gettext {
                     return value(idx - 1);
                 // Rehash
                 hkey = (hkey + incr) % hash_size_;
-            } while(hkey != orig);
+            } while(hkey != orig_hkey);
             return null_pair;
         }
 
         static bool key_equals(const char* real_key, const char* cntx, const char* key)
         {
-            if(cntx == 0)
+            if(!cntx)
                 return strcmp(real_key, key) == 0;
             else {
-                size_t real_len = strlen(real_key);
-                size_t cntx_len = strlen(cntx);
-                size_t key_len = strlen(key);
-                if(cntx_len + 1 + key_len != real_len)
+                const size_t real_key_len = strlen(real_key);
+                const size_t cntx_len = strlen(cntx);
+                const size_t key_len = strlen(key);
+                if(cntx_len + 1 + key_len != real_key_len)
                     return false;
                 return memcmp(real_key, cntx, cntx_len) == 0 && real_key[cntx_len] == '\4'
                        && memcmp(real_key + cntx_len + 1, key, key_len) == 0;
@@ -211,9 +212,9 @@ namespace boost { namespace locale { namespace gnu_gettext {
     private:
         uint32_t get(unsigned offset) const
         {
-            uint32_t v;
             if(offset > data_.size() - 4)
                 throw std::runtime_error("Bad mo-file format");
+            uint32_t v;
             memcpy(&v, &data_[offset], 4);
             if(!native_byteorder_)
                 v = ((v & 0xFF) << 24) | ((v & 0xFF00) << 8) | ((v & 0xFF0000) >> 8) | ((v & 0xFF000000) >> 24);
@@ -235,9 +236,9 @@ namespace boost { namespace locale { namespace gnu_gettext {
     struct mo_file_use_traits {
         static constexpr bool in_use = false;
         typedef std::pair<const CharType*, const CharType*> pair_type;
-        static pair_type use(const mo_file& /*mo*/, const CharType* /*context*/, const CharType* /*key*/)
+        static pair_type use(const mo_file&, const CharType*, const CharType*)
         {
-            return pair_type((const CharType*)(0), (const CharType*)(0));
+            throw std::logic_error("Unexpected call"); // LCOV_EXCL_LINE
         }
     };
 
@@ -283,7 +284,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
 
         message_key(const string_type& c = string_type()) : c_context_(0), c_key_(0)
         {
-            size_t pos = c.find(CharType(4));
+            const size_t pos = c.find(CharType(4));
             if(pos == string_type::npos) {
                 key_ = c;
             } else {
@@ -301,7 +302,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
         }
         bool operator<(const message_key& other) const
         {
-            int cc = compare(context(), other.context());
+            const int cc = compare(context(), other.context());
             if(cc != 0)
                 return cc < 0;
             return compare(key(), other.key()) < 0;
@@ -329,8 +330,8 @@ namespace boost { namespace locale { namespace gnu_gettext {
         {
             typedef std::char_traits<CharType> traits_type;
             for(;;) {
-                CharType cl = *l++;
-                CharType cr = *r++;
+                const CharType cl = *l++;
+                const CharType cr = *r++;
                 if(cl == 0 && cr == 0)
                     return 0;
                 if(traits_type::lt(cl, cr))
@@ -414,7 +415,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
         const CharType*
         get(int domain_id, const CharType* context, const CharType* single_id, count_type n) const override
         {
-            pair_type ptr = get_string(domain_id, context, single_id);
+            const pair_type ptr = get_string(domain_id, context, single_id);
             if(!ptr.first)
                 return nullptr;
             lambda::expr::value_type form;
@@ -424,15 +425,13 @@ namespace boost { namespace locale { namespace gnu_gettext {
                 form = n == 1 ? 0 : 1; // Fallback to English plural form
 
             const CharType* p = ptr.first;
-            for(decltype(form) i = 0; p < ptr.second && i < form; i++) {
+            for(decltype(form) i = 0; p < ptr.second && i < form; ++i) {
                 p = std::find(p, ptr.second, CharType(0));
-                if(p == ptr.second)
+                if(BOOST_UNLIKELY(p == ptr.second))
                     return nullptr;
                 ++p;
             }
-            if(p >= ptr.second)
-                return nullptr;
-            return p;
+            return (p < ptr.second) ? p : nullptr;
         }
 
         int domain(const std::string& domain) const override
@@ -514,8 +513,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
                 converter<CharType> cvt_key(key_encoding, mo_encoding);
                 for(unsigned i = 0; i < mo->size(); i++) {
                     const char* ckey = mo->key(i);
-                    string_type skey = cvt_key(ckey, ckey + strlen(ckey));
-                    key_type key(skey);
+                    key_type key(cvt_key(ckey, ckey + strlen(ckey)));
 
                     mo_file::pair_type tmp = mo->value(i);
                     catalogs_[idx][key] = cvt_value(tmp.first, tmp.second);
@@ -556,7 +554,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
             if(pos == std::string::npos)
                 return "";
             pos += key.size();
-            size_t end_pos = meta.find_first_of(separator, pos);
+            const size_t end_pos = meta.find_first_of(separator, pos);
             return meta.substr(pos, end_pos - pos);
         }
 

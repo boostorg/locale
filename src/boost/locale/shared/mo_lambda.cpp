@@ -5,11 +5,13 @@
 // https://www.boost.org/LICENSE_1_0.txt
 
 #include "boost/locale/shared/mo_lambda.hpp"
+#include <boost/assert.hpp>
 #include <algorithm>
 #include <cstdlib>
 #include <cstring>
 #include <functional>
 #include <limits>
+#include <stdexcept>
 
 #ifdef BOOST_MSVC
 #    pragma warning(disable : 4512) // assignment operator could not be generated
@@ -99,7 +101,7 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
                 BINOP_CASE(NEQ, binary<std::not_equal_to<expr::value_type>>);
                 BINOP_CASE(AND, binary<std::logical_and<expr::value_type>>);
                 BINOP_CASE(OR, binary<std::logical_or<expr::value_type>>);
-                default: return expr_ptr();
+                default: throw std::logic_error("Unexpected binary operator"); // LCOV_EXCL_LINE
             }
 #undef BINOP_CASE
         }
@@ -229,16 +231,17 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
 
             expr_ptr unary_expr()
             {
-                constexpr token_t level_unary[] = {'-', '!'};
+                constexpr token_t level_unary[] = {'!', '-'};
                 if(is_in(t.next(), level_unary)) {
                     const token_t op = t.get();
                     expr_ptr op1 = unary_expr();
                     if(!op1)
                         return expr_ptr();
-                    switch(op) {
-                        case '-': return make_expr<unary<std::negate<expr::value_type>>>(std::move(op1));
-                        case '!': return make_expr<unary<std::logical_not<expr::value_type>>>(std::move(op1));
-                        default: return expr_ptr();
+                    if(BOOST_LIKELY(op == '!'))
+                        return make_expr<unary<std::logical_not<expr::value_type>>>(std::move(op1));
+                    else {
+                        BOOST_ASSERT(op == '-');
+                        return make_expr<unary<std::negate<expr::value_type>>>(std::move(op1));
                     }
                 } else {
                     return value_expr();
