@@ -9,8 +9,11 @@
 \page changelog Changelog
 
 - Unreleased
-    - Fix UB on invalid index in format strings
-
+    - Breaking changes
+        - Bitwise/binary operators (left/right shift, binary and/or/xor/not) are no longer supported in message catalog files matching GNU gettext behavior
+    - Other improvements and fixes
+        - Fix UB on invalid index in format strings
+        - Use `long long` as the count parameter for pluralized translations
 - 1.82.0
     - Breaking changes
         - `get_system_locale` and dependents will now correctly favor `$LC_ALL` over `LC_CTYPE` as defined by POSIX
