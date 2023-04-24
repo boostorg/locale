@@ -12,15 +12,24 @@
 
 namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
 
-    struct plural {
-        virtual int operator()(int n) const = 0;
-        virtual plural* clone() const = 0;
-        virtual ~plural() = default;
+    struct BOOST_SYMBOL_VISIBLE expr {
+        using value_type = long long;
+        virtual value_type operator()(value_type n) const = 0;
+        virtual ~expr() = default;
+    };
+    using expr_ptr = std::unique_ptr<expr>;
+
+    class plural_expr {
+        expr_ptr p_;
+
+    public:
+        plural_expr() = default;
+        explicit plural_expr(expr_ptr p) : p_(std::move(p)) {}
+        expr::value_type operator()(expr::value_type n) const { return (*p_)(n); }
+        explicit operator bool() const { return static_cast<bool>(p_); }
     };
 
-    typedef std::shared_ptr<plural> plural_ptr;
-
-    BOOST_LOCALE_DECL plural_ptr compile(const char* c_expression);
+    BOOST_LOCALE_DECL plural_expr compile(const char* c_expression);
 
 }}}} // namespace boost::locale::gnu_gettext::lambda
 

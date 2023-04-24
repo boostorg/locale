@@ -43,6 +43,9 @@ namespace boost { namespace locale {
 
     /// \endcond
 
+    /// Type used for the count/n argument to the translation functions choosing between singular and plural forms
+    using count_type = long long;
+
     /// \brief This facet provides message formatting abilities
     template<typename CharType>
     class BOOST_SYMBOL_VISIBLE message_format : public base_message_format<CharType> {
@@ -75,7 +78,7 @@ namespace boost { namespace locale {
         ///
         /// If a translated string is found, it is returned, otherwise NULL is returned
         virtual const char_type*
-        get(int domain_id, const char_type* context, const char_type* single_id, int n) const = 0;
+        get(int domain_id, const char_type* context, const char_type* single_id, count_type n) const = 0;
 
         /// Convert a string that defines \a domain to the integer id used by \a get functions
         virtual int domain(const std::string& domain) const = 0;
@@ -156,7 +159,7 @@ namespace boost { namespace locale {
         /// until the message is destroyed. Generally useful with static constant strings.
         ///
         /// \a n is the number, \a single and \a plural are singular and plural forms of the message
-        explicit basic_message(const char_type* single, const char_type* plural, int n) :
+        explicit basic_message(const char_type* single, const char_type* plural, count_type n) :
             n_(n), c_id_(single), c_context_(0), c_plural_(plural)
         {}
 
@@ -171,8 +174,12 @@ namespace boost { namespace locale {
         /// until the message is destroyed. Generally useful with static constant strings.
         ///
         /// \a n is the number, \a single and \a plural are singular and plural forms of the message
-        explicit basic_message(const char_type* context, const char_type* single, const char_type* plural, int n) :
-            n_(n), c_id_(single), c_context_(context), c_plural_(plural)
+        explicit basic_message(const char_type* context,
+                               const char_type* single,
+                               const char_type* plural,
+                               count_type n) :
+            n_(n),
+            c_id_(single), c_context_(context), c_plural_(plural)
         {}
 
         /// Create a simple message from a string.
@@ -181,7 +188,7 @@ namespace boost { namespace locale {
         /// Create a simple plural form message from strings.
         ///
         /// \a n is the number, \a single and \a plural are single and plural forms of the message
-        explicit basic_message(const string_type& single, const string_type& plural, int number) :
+        explicit basic_message(const string_type& single, const string_type& plural, count_type number) :
             n_(number), c_id_(0), c_context_(0), c_plural_(0), id_(single), plural_(plural)
         {}
 
@@ -196,7 +203,7 @@ namespace boost { namespace locale {
         explicit basic_message(const string_type& context,
                                const string_type& single,
                                const string_type& plural,
-                               int number) :
+                               count_type number) :
             n_(number),
             c_id_(0), c_context_(0), c_plural_(0), id_(single), context_(context), plural_(plural)
         {}
@@ -210,27 +217,25 @@ namespace boost { namespace locale {
         basic_message& operator=(basic_message&&) = default;
 
         /// Swap two message objects
-        void swap(basic_message& other)
+        void
+        swap(basic_message& other) noexcept(noexcept(std::declval<string_type&>().swap(std::declval<string_type&>())))
         {
-            std::swap(n_, other.n_);
-            std::swap(c_id_, other.c_id_);
-            std::swap(c_context_, other.c_context_);
-            std::swap(c_plural_, other.c_plural_);
-
-            id_.swap(other.id_);
-            context_.swap(other.context_);
-            plural_.swap(other.plural_);
+            using std::swap;
+            swap(n_, other.n_);
+            swap(c_id_, other.c_id_);
+            swap(c_context_, other.c_context_);
+            swap(c_plural_, other.c_plural_);
+            swap(id_, other.id_);
+            swap(context_, other.context_);
+            swap(plural_, other.plural_);
         }
+        friend void swap(basic_message& x, basic_message& y) noexcept(noexcept(x.swap(y))) { x.swap(y); }
 
         /// Message class can be explicitly converted to string class
         operator string_type() const { return str(); }
 
         /// Translate message to a string in the default global locale, using default domain
-        string_type str() const
-        {
-            std::locale loc;
-            return str(loc, 0);
-        }
+        string_type str() const { return str(std::locale()); }
 
         /// Translate message to a string in the locale \a locale, using default domain
         string_type str(const std::locale& locale) const { return str(locale, 0); }
@@ -245,23 +250,14 @@ namespace boost { namespace locale {
         }
 
         /// Translate message to a string using the default locale and message domain  \a domain_id
-        string_type str(const std::string& domain_id) const
-        {
-            int id = 0;
-            std::locale loc;
-            if(std::has_facet<facet_type>(loc))
-                id = std::use_facet<facet_type>(loc).domain(domain_id);
-            return str(loc, id);
-        }
+        string_type str(const std::string& domain_id) const { return str(std::locale(), domain_id); }
 
         /// Translate message to a string using locale \a loc and message domain index  \a id
         string_type str(const std::locale& loc, int id) const
         {
             string_type buffer;
             const char_type* ptr = write(loc, id, buffer);
-            if(ptr == buffer.c_str())
-                return buffer;
-            else
+            if(ptr != buffer.c_str())
                 buffer = ptr;
             return buffer;
         }
@@ -298,7 +294,6 @@ namespace boost { namespace locale {
 
         const char_type* write(const std::locale& loc, int domain_id, string_type& buffer) const
         {
-            const char_type* translated = 0;
             static const char_type empty_string[1] = {0};
 
             const char_type* id = this->id();
@@ -312,6 +307,7 @@ namespace boost { namespace locale {
             if(std::has_facet<facet_type>(loc))
                 facet = &std::use_facet<facet_type>(loc);
 
+            const char_type* translated = 0;
             if(facet) {
                 if(!plural) {
                     translated = facet->get(domain_id, context, id);
@@ -334,7 +330,7 @@ namespace boost { namespace locale {
 
         /// members
 
-        int n_;
+        count_type n_;
         const char_type* c_id_;
         const char_type* c_context_;
         const char_type* c_plural_;
@@ -383,15 +379,15 @@ namespace boost { namespace locale {
 
     /// \brief Translate a plural message form, \a single and \a plural are not copied
     template<typename CharType>
-    inline basic_message<CharType> translate(const CharType* single, const CharType* plural, int n)
+    inline basic_message<CharType> translate(const CharType* single, const CharType* plural, count_type n)
     {
         return basic_message<CharType>(single, plural, n);
     }
 
-    /// \brief Translate a plural message from in constext, \a context, \a single and \a plural are not copied
+    /// \brief Translate a plural message from in context, \a context, \a single and \a plural are not copied
     template<typename CharType>
     inline basic_message<CharType>
-    translate(const CharType* context, const CharType* single, const CharType* plural, int n)
+    translate(const CharType* context, const CharType* single, const CharType* plural, count_type n)
     {
         return basic_message<CharType>(context, single, plural, n);
     }
@@ -411,12 +407,12 @@ namespace boost { namespace locale {
         return basic_message<CharType>(context, msg);
     }
 
-    /// \brief Translate a plural message form in constext, \a context, \a single and \a plural are copied
+    /// \brief Translate a plural message form in context, \a context, \a single and \a plural are copied
     template<typename CharType>
     inline basic_message<CharType> translate(const std::basic_string<CharType>& context,
                                              const std::basic_string<CharType>& single,
                                              const std::basic_string<CharType>& plural,
-                                             int n)
+                                             count_type n)
     {
         return basic_message<CharType>(context, single, plural, n);
     }
@@ -424,7 +420,7 @@ namespace boost { namespace locale {
     /// \brief Translate a plural message form, \a single and \a plural are copied
     template<typename CharType>
     inline basic_message<CharType>
-    translate(const std::basic_string<CharType>& single, const std::basic_string<CharType>& plural, int n)
+    translate(const std::basic_string<CharType>& single, const std::basic_string<CharType>& plural, count_type n)
     {
         return basic_message<CharType>(single, plural, n);
     }
@@ -442,7 +438,7 @@ namespace boost { namespace locale {
     /// Translate plural form according to locale \a loc
     template<typename CharType>
     std::basic_string<CharType>
-    ngettext(const CharType* s, const CharType* p, int n, const std::locale& loc = std::locale())
+    ngettext(const CharType* s, const CharType* p, count_type n, const std::locale& loc = std::locale())
     {
         return basic_message<CharType>(s, p, n).str(loc);
     }
@@ -456,8 +452,11 @@ namespace boost { namespace locale {
 
     /// Translate plural form according to locale \a loc in domain \a domain
     template<typename CharType>
-    std::basic_string<CharType>
-    dngettext(const char* domain, const CharType* s, const CharType* p, int n, const std::locale& loc = std::locale())
+    std::basic_string<CharType> dngettext(const char* domain,
+                                          const CharType* s,
+                                          const CharType* p,
+                                          count_type n,
+                                          const std::locale& loc = std::locale())
     {
         return basic_message<CharType>(s, p, n).str(loc, domain);
     }
@@ -475,7 +474,7 @@ namespace boost { namespace locale {
     std::basic_string<CharType> npgettext(const CharType* context,
                                           const CharType* s,
                                           const CharType* p,
-                                          int n,
+                                          count_type n,
                                           const std::locale& loc = std::locale())
     {
         return basic_message<CharType>(context, s, p, n).str(loc);
@@ -495,7 +494,7 @@ namespace boost { namespace locale {
                                            const CharType* context,
                                            const CharType* s,
                                            const CharType* p,
-                                           int n,
+                                           count_type n,
                                            const std::locale& loc = std::locale())
     {
         return basic_message<CharType>(context, s, p, n).str(loc, domain);
