@@ -9,6 +9,7 @@
 
 #include <boost/locale/config.hpp>
 #include <boost/locale/encoding.hpp>
+#include <string>
 
 namespace boost { namespace locale { namespace conv { namespace impl {
 
@@ -33,7 +34,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
 
     class converter_between {
     public:
-        virtual bool open(const char* to_charset, const char* from_charset, method_type how) = 0;
+        virtual bool open(const std::string& to_charset, const std::string& from_charset, method_type how) = 0;
 
         virtual std::string convert(const char* begin, const char* end) = 0;
 
@@ -43,7 +44,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
     template<typename CharType>
     class converter_from_utf {
     public:
-        virtual bool open(const char* charset, method_type how) = 0;
+        virtual bool open(const std::string& charset, method_type how) = 0;
 
         virtual std::string convert(const CharType* begin, const CharType* end) = 0;
 
@@ -53,7 +54,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
     template<typename CharType>
     class converter_to_utf {
     public:
-        virtual bool open(const char* charset, method_type how) = 0;
+        virtual bool open(const std::string& charset, method_type how) = 0;
 
         virtual std::basic_string<CharType> convert(const char* begin, const char* end) = 0;
 

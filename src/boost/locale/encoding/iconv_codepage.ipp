@@ -11,6 +11,7 @@
 #include "boost/locale/encoding/conv.hpp"
 #include "boost/locale/util/iconv.hpp"
 #include <cerrno>
+#include <string>
 
 namespace boost { namespace locale { namespace conv { namespace impl {
 
@@ -119,9 +120,9 @@ namespace boost { namespace locale { namespace conv { namespace impl {
     template<typename CharType>
     class iconv_from_utf : public converter_from_utf<CharType> {
     public:
-        bool open(const char* charset, method_type how) override
+        bool open(const std::string& charset, method_type how) override
         {
-            return self_.do_open(charset, utf_name<CharType>(), how);
+            return self_.do_open(charset.c_str(), utf_name<CharType>(), how);
         }
 
         std::string convert(const CharType* ubegin, const CharType* uend) override
@@ -135,9 +136,9 @@ namespace boost { namespace locale { namespace conv { namespace impl {
 
     class iconv_between : public converter_between {
     public:
-        bool open(const char* to_charset, const char* from_charset, method_type how) override
+        bool open(const std::string& to_charset, const std::string& from_charset, method_type how) override
         {
-            return self_.do_open(to_charset, from_charset, how);
+            return self_.do_open(to_charset.c_str(), from_charset.c_str(), how);
         }
         std::string convert(const char* begin, const char* end) override
         {
@@ -153,9 +154,9 @@ namespace boost { namespace locale { namespace conv { namespace impl {
     public:
         typedef std::basic_string<CharType> string_type;
 
-        bool open(const char* charset, method_type how) override
+        bool open(const std::string& charset, method_type how) override
         {
-            return self_.do_open(utf_name<CharType>(), charset, how);
+            return self_.do_open(utf_name<CharType>(), charset.c_str(), how);
         }
 
         string_type convert(const char* begin, const char* end) override

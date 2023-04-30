@@ -185,7 +185,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
     class wconv_between : public converter_between {
     public:
         wconv_between() : how_(skip), to_code_page_(-1), from_code_page_(-1) {}
-        bool open(const char* to_charset, const char* from_charset, method_type how) override
+        bool open(const std::string& to_charset, const std::string& from_charset, method_type how) override
         {
             how_ = how;
             to_code_page_ = util::encoding_to_windows_codepage(to_charset);
@@ -247,7 +247,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
     template<>
     class wconv_to_utf<char, 1> : public converter_to_utf<char> {
     public:
-        bool open(const char* cs, method_type how) override { return cvt.open("UTF-8", cs, how); }
+        bool open(const std::string& cs, method_type how) override { return cvt.open("UTF-8", cs, how); }
         std::string convert(const char* begin, const char* end) override { return cvt.convert(begin, end); }
 
     private:
@@ -257,7 +257,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
     template<>
     class wconv_from_utf<char, 1> : public converter_from_utf<char> {
     public:
-        bool open(const char* cs, method_type how) override { return cvt.open(cs, "UTF-8", how); }
+        bool open(const std::string& cs, method_type how) override { return cvt.open(cs, "UTF-8", how); }
         std::string convert(const char* begin, const char* end) override { return cvt.convert(begin, end); }
 
     private:
@@ -271,7 +271,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
 
         wconv_to_utf() : how_(skip), code_page_(-1) {}
 
-        bool open(const char* charset, method_type how) override
+        bool open(const std::string& charset, method_type how) override
         {
             how_ = how;
             code_page_ = util::encoding_to_windows_codepage(charset);
@@ -303,7 +303,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
 
         wconv_from_utf() : how_(skip), code_page_(-1) {}
 
-        bool open(const char* charset, method_type how) override
+        bool open(const std::string& charset, method_type how) override
         {
             how_ = how;
             code_page_ = util::encoding_to_windows_codepage(charset);
@@ -357,7 +357,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
 
         wconv_to_utf() : how_(skip), code_page_(-1) {}
 
-        bool open(const char* charset, method_type how) override
+        bool open(const std::string& charset, method_type how) override
         {
             how_ = how;
             code_page_ = util::encoding_to_windows_codepage(charset);
@@ -390,7 +390,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
 
         wconv_from_utf() : how_(skip), code_page_(-1) {}
 
-        bool open(const char* charset, method_type how) override
+        bool open(const std::string& charset, method_type how) override
         {
             how_ = how;
             code_page_ = util::encoding_to_windows_codepage(charset);

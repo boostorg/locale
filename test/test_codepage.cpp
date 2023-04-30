@@ -4,9 +4,7 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#include <boost/locale/encoding.hpp>
 #include <boost/locale/generator.hpp>
-#include <boost/locale/info.hpp>
 #include <boost/locale/localization_backend.hpp>
 #include <algorithm>
 #include <fstream>

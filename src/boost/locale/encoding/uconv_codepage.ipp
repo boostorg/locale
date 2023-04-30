@@ -20,7 +20,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
     public:
         typedef std::basic_string<CharType> string_type;
 
-        bool open(const char* charset, method_type how) override
+        bool open(const std::string& charset, method_type how) override
         {
             close();
             try {
@@ -59,7 +59,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
     template<typename CharType>
     class uconv_from_utf : public converter_from_utf<CharType> {
     public:
-        bool open(const char* charset, method_type how) override
+        bool open(const std::string& charset, method_type how) override
         {
             close();
             try {
@@ -97,7 +97,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
 
     class uconv_between : public converter_between {
     public:
-        bool open(const char* to_charset, const char* from_charset, method_type how) override
+        bool open(const std::string& to_charset, const std::string& from_charset, method_type how) override
         {
             close();
             try {
