@@ -6,9 +6,6 @@
 // https://www.boost.org/LICENSE_1_0.txt
 
 #include <boost/locale/encoding.hpp>
-#include <boost/locale/hold_ptr.hpp>
-#include <memory>
-#include <string>
 
 #include "boost/locale/encoding/conv.hpp"
 #if BOOST_LOCALE_USE_WIN32_API
@@ -32,21 +29,26 @@ namespace boost { namespace locale { namespace conv {
                         const std::string& from_charset,
                         method_type how)
     {
-        hold_ptr<impl::converter_between> cvt;
 #ifdef BOOST_LOCALE_WITH_ICONV
-        cvt.reset(new impl::iconv_between());
-        if(cvt->open(to_charset, from_charset, how))
-            return cvt->convert(begin, end);
+        {
+            impl::iconv_between cvt;
+            if(cvt.open(to_charset, from_charset, how))
+                return cvt.convert(begin, end);
+        }
 #endif
 #ifdef BOOST_LOCALE_WITH_ICU
-        cvt.reset(new impl::uconv_between());
-        if(cvt->open(to_charset, from_charset, how))
-            return cvt->convert(begin, end);
+        {
+            impl::uconv_between cvt;
+            if(cvt.open(to_charset, from_charset, how))
+                return cvt.convert(begin, end);
+        }
 #endif
 #ifdef BOOST_LOCALE_WITH_WCONV
-        cvt.reset(new impl::wconv_between());
-        if(cvt->open(to_charset, from_charset, how))
-            return cvt->convert(begin, end);
+        {
+            impl::wconv_between cvt;
+            if(cvt.open(to_charset, from_charset, how))
+                return cvt.convert(begin, end);
+        }
 #endif
         throw invalid_charset_error(std::string(to_charset) + " or " + from_charset);
     }
@@ -54,21 +56,26 @@ namespace boost { namespace locale { namespace conv {
     template<typename CharType>
     std::basic_string<CharType> to_utf(const char* begin, const char* end, const std::string& charset, method_type how)
     {
-        hold_ptr<impl::converter_to_utf<CharType>> cvt;
 #ifdef BOOST_LOCALE_WITH_ICONV
-        cvt.reset(new impl::iconv_to_utf<CharType>());
-        if(cvt->open(charset, how))
-            return cvt->convert(begin, end);
+        {
+            impl::iconv_to_utf<CharType> cvt;
+            if(cvt.open(charset, how))
+                return cvt.convert(begin, end);
+        }
 #endif
 #ifdef BOOST_LOCALE_WITH_ICU
-        cvt.reset(new impl::uconv_to_utf<CharType>());
-        if(cvt->open(charset, how))
-            return cvt->convert(begin, end);
+        {
+            impl::uconv_to_utf<CharType> cvt;
+            if(cvt.open(charset, how))
+                return cvt.convert(begin, end);
+        }
 #endif
 #ifdef BOOST_LOCALE_WITH_WCONV
-        cvt.reset(new impl::wconv_to_utf<CharType>());
-        if(cvt->open(charset, how))
-            return cvt->convert(begin, end);
+        {
+            impl::wconv_to_utf<CharType> cvt;
+            if(cvt.open(charset, how))
+                return cvt.convert(begin, end);
+        }
 #endif
         throw invalid_charset_error(charset);
     }
@@ -76,21 +83,26 @@ namespace boost { namespace locale { namespace conv {
     template<typename CharType>
     std::string from_utf(const CharType* begin, const CharType* end, const std::string& charset, method_type how)
     {
-        hold_ptr<impl::converter_from_utf<CharType>> cvt;
 #ifdef BOOST_LOCALE_WITH_ICONV
-        cvt.reset(new impl::iconv_from_utf<CharType>());
-        if(cvt->open(charset, how))
-            return cvt->convert(begin, end);
+        {
+            impl::iconv_from_utf<CharType> cvt;
+            if(cvt.open(charset, how))
+                return cvt.convert(begin, end);
+        }
 #endif
 #ifdef BOOST_LOCALE_WITH_ICU
-        cvt.reset(new impl::uconv_from_utf<CharType>());
-        if(cvt->open(charset, how))
-            return cvt->convert(begin, end);
+        {
+            impl::uconv_from_utf<CharType> cvt;
+            if(cvt.open(charset, how))
+                return cvt.convert(begin, end);
+        }
 #endif
 #ifdef BOOST_LOCALE_WITH_WCONV
-        cvt.reset(new impl::wconv_from_utf<CharType>());
-        if(cvt->open(charset, how))
-            return cvt->convert(begin, end);
+        {
+            impl::wconv_from_utf<CharType> cvt;
+            if(cvt.open(charset, how))
+                return cvt.convert(begin, end);
+        }
 #endif
         throw invalid_charset_error(charset);
     }
