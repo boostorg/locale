@@ -9,6 +9,7 @@
 #include "boostLocale/test/tools.hpp"
 #include "boostLocale/test/unit_test.hpp"
 #include <boost/core/ignore_unused.hpp>
+#include <algorithm>
 #include <iomanip>
 #include <locale>
 #include <sstream>
@@ -55,13 +56,13 @@ bool hasLocaleForBackend(const std::string& locale_name, const std::string& back
         return BOOST_LOCALE_ICU_VERSION >= 5901; // First version to use (correct) CLDR data
 }
 
-void test_special_locales(const std::vector<std::string>& backends)
+void test_special_locales()
 {
-    for(const std::string& backendName : backends) {
+    bl::localization_backend_manager backend = bl::localization_backend_manager::global();
+    for(const std::string& backendName : backend.get_all_backends()) {
         std::cout << "Backend: " << backendName << std::endl;
-        bl::localization_backend_manager tmp_backend = bl::localization_backend_manager::global();
-        tmp_backend.select(backendName);
-        bl::localization_backend_manager::global(tmp_backend);
+        backend.select(backendName);
+        bl::localization_backend_manager::global(backend);
 
         bl::generator g;
         namespace as = bl::as;
@@ -117,22 +118,29 @@ void test_special_locales(const std::vector<std::string>& backends)
 
 void test_main(int /*argc*/, char** /*argv*/)
 {
-    std::vector<std::string> backends;
+    {
+        std::vector<std::string> backends;
 #ifdef BOOST_LOCALE_WITH_ICU
-    backends.push_back("icu");
+        backends.push_back("icu");
 #endif
 #ifndef BOOST_LOCALE_NO_STD_BACKEND
-    backends.push_back("std");
+        backends.push_back("std");
 #endif
 #ifndef BOOST_LOCALE_NO_WINAPI_BACKEND
-    backends.push_back("winapi");
+        backends.push_back("winapi");
 #endif
 #ifndef BOOST_LOCALE_NO_POSIX_BACKEND
-    backends.push_back("posix");
+        backends.push_back("posix");
 #endif
+        std::sort(backends.begin(), backends.end());
+
+        std::vector<std::string> all_backends = bl::localization_backend_manager::global().get_all_backends();
+        std::sort(all_backends.begin(), all_backends.end());
+        TEST_EQ(all_backends, backends);
+    }
 
     const bl::localization_backend_manager orig_backend = bl::localization_backend_manager::global();
-    for(const std::string& backendName : backends) {
+    for(const std::string& backendName : orig_backend.get_all_backends()) {
         std::cout << "Backend: " << backendName << std::endl;
         bl::localization_backend_manager tmp_backend = bl::localization_backend_manager::global();
         tmp_backend.select(backendName);
@@ -179,7 +187,7 @@ void test_main(int /*argc*/, char** /*argv*/)
         TEST(std::has_facet<bl::info>(l));
     }
     std::cout << "Test special locales" << std::endl;
-    test_special_locales(backends);
+    test_special_locales();
     std::cout << "Restoring original backend" << std::endl;
     bl::localization_backend_manager::global(orig_backend);
 

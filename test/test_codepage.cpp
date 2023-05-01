@@ -440,27 +440,13 @@ void test_main(int /*argc*/, char** /*argv*/)
     test_utf_name();
     test_win_codepages();
 
-    std::vector<std::string> backends;
-#ifdef BOOST_LOCALE_WITH_ICU
-    backends.push_back("icu");
-#endif
-#ifndef BOOST_LOCALE_NO_STD_BACKEND
-    backends.push_back("std");
-#endif
-#ifndef BOOST_LOCALE_NO_WINAPI_BACKEND
-    backends.push_back("winapi");
-#endif
-#ifndef BOOST_LOCALE_NO_POSIX_BACKEND
-    backends.push_back("posix");
-#endif
-
 #if !defined(BOOST_LOCALE_WITH_ICU) && !defined(BOOST_LOCALE_WITH_ICONV) && BOOST_LOCALE_USE_WIN32_API
     test_iso_8859_8 = IsValidCodePage(28598) != 0;
 #endif
 
     test_simple_conversions();
 
-    for(const std::string& backendName : backends) {
+    for(const std::string& backendName : boost::locale::localization_backend_manager::global().get_all_backends()) {
         boost::locale::localization_backend_manager tmp_backend = boost::locale::localization_backend_manager::global();
         tmp_backend.select(backendName);
         boost::locale::localization_backend_manager::global(tmp_backend);
