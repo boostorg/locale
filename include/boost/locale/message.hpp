@@ -211,11 +211,11 @@ namespace boost { namespace locale {
 
         /// Copy an object
         basic_message(const basic_message&) = default;
-        basic_message(basic_message&&) = default;
+        basic_message(basic_message&&) noexcept = default;
 
         /// Assign other message object to this one
         basic_message& operator=(const basic_message&) = default;
-        basic_message& operator=(basic_message&&) = default;
+        basic_message& operator=(basic_message&&) noexcept = default;
 
         /// Swap two message objects
         void

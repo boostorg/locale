@@ -163,6 +163,10 @@ namespace boost { namespace locale {
         return *this;
     }
 
+    localization_backend_manager::localization_backend_manager(localization_backend_manager&&) noexcept = default;
+    localization_backend_manager&
+    localization_backend_manager::operator=(localization_backend_manager&&) noexcept = default;
+
     std::unique_ptr<localization_backend> localization_backend_manager::get() const
     {
         return std::unique_ptr<localization_backend>(pimpl_->create());
