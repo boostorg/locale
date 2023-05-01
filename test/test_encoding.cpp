@@ -171,6 +171,13 @@ void test_utf_for()
 {
     using boost::locale::conv::invalid_charset_error;
 
+    {
+        using boost::locale::conv::to_utf;
+        using boost::locale::conv::from_utf;
+        TEST_THROWS(to_utf<Char>("Hello", "invalid-charset"), invalid_charset_error);
+        TEST_THROWS(from_utf<Char>(ascii_to<Char>("Hello"), "invalid-charset"), invalid_charset_error);
+    }
+
     test_to_from_utf<Char>(to<char>("grüßen"), utf<Char>("grüßen"), "ISO8859-1");
     if(test_iso_8859_8)
         test_to_from_utf<Char>("\xf9\xec\xe5\xed", utf<Char>("שלום"), "ISO8859-8");
