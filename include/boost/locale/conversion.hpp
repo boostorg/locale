@@ -121,7 +121,7 @@ namespace boost { namespace locale {
     /// in account the locale encoding, because Unicode decomposition and composition are meaningless outside
     /// of a Unicode character set.
     ///
-    /// \note throws std::bad_cast if loc does not have \ref converter facet installed
+    /// \throws std::bad_cast: \a loc does not have \ref converter facet installed
     template<typename CharType>
     std::basic_string<CharType> normalize(const CharType* begin,
                                           const CharType* end,
@@ -137,7 +137,7 @@ namespace boost { namespace locale {
     /// in account the locale encoding, because Unicode decomposition and composition are meaningless outside
     /// of a Unicode character set.
     ///
-    /// \note throws std::bad_cast if loc does not have \ref converter facet installed
+    /// \throws std::bad_cast: \a loc does not have \ref converter facet installed
     template<typename CharType>
     std::basic_string<CharType> normalize(const std::basic_string<CharType>& str,
                                           norm_type n = norm_default,
@@ -152,7 +152,7 @@ namespace boost { namespace locale {
     /// in account the locale encoding, because Unicode decomposition and composition are meaningless outside
     /// of a Unicode character set.
     ///
-    /// \note throws std::bad_cast if loc does not have \ref converter facet installed
+    /// \throws std::bad_cast: \a loc does not have \ref converter facet installed
     template<typename CharType>
     std::basic_string<CharType>
     normalize(const CharType* str, norm_type n = norm_default, const std::locale& loc = std::locale())
@@ -164,7 +164,7 @@ namespace boost { namespace locale {
 
     /// Convert a string in range [begin,end) to upper case according to locale \a loc
     ///
-    /// \note throws std::bad_cast if loc does not have \ref converter facet installed
+    /// \throws std::bad_cast: \a loc does not have \ref converter facet installed
     template<typename CharType>
     std::basic_string<CharType>
     to_upper(const CharType* begin, const CharType* end, const std::locale& loc = std::locale())
@@ -174,7 +174,7 @@ namespace boost { namespace locale {
 
     /// Convert a string \a str to upper case according to locale \a loc
     ///
-    /// \note throws std::bad_cast if loc does not have \ref converter facet installed
+    /// \throws std::bad_cast: \a loc does not have \ref converter facet installed
     template<typename CharType>
     std::basic_string<CharType> to_upper(const std::basic_string<CharType>& str, const std::locale& loc = std::locale())
     {
@@ -183,7 +183,7 @@ namespace boost { namespace locale {
 
     /// Convert a NULL terminated string \a str to upper case according to locale \a loc
     ///
-    /// \note throws std::bad_cast if loc does not have \ref converter facet installed
+    /// \throws std::bad_cast: \a loc does not have \ref converter facet installed
     template<typename CharType>
     std::basic_string<CharType> to_upper(const CharType* str, const std::locale& loc = std::locale())
     {
@@ -194,7 +194,7 @@ namespace boost { namespace locale {
 
     /// Convert a string in range [begin,end) to lower case according to locale \a loc
     ///
-    /// \note throws std::bad_cast if loc does not have \ref converter facet installed
+    /// \throws std::bad_cast: \a loc does not have \ref converter facet installed
     template<typename CharType>
     std::basic_string<CharType>
     to_lower(const CharType* begin, const CharType* end, const std::locale& loc = std::locale())
@@ -204,7 +204,7 @@ namespace boost { namespace locale {
 
     /// Convert a string \a str to lower case according to locale \a loc
     ///
-    /// \note throws std::bad_cast if loc does not have \ref converter facet installed
+    /// \throws std::bad_cast: \a loc does not have \ref converter facet installed
     template<typename CharType>
     std::basic_string<CharType> to_lower(const std::basic_string<CharType>& str, const std::locale& loc = std::locale())
     {
@@ -213,7 +213,7 @@ namespace boost { namespace locale {
 
     /// Convert a NULL terminated string \a str to lower case according to locale \a loc
     ///
-    /// \note throws std::bad_cast if loc does not have \ref converter facet installed
+    /// \throws std::bad_cast: \a loc does not have \ref converter facet installed
     template<typename CharType>
     std::basic_string<CharType> to_lower(const CharType* str, const std::locale& loc = std::locale())
     {
@@ -224,7 +224,7 @@ namespace boost { namespace locale {
 
     /// Convert a string in range [begin,end) to title case according to locale \a loc
     ///
-    /// \note throws std::bad_cast if loc does not have \ref converter facet installed
+    /// \throws std::bad_cast: \a loc does not have \ref converter facet installed
     template<typename CharType>
     std::basic_string<CharType>
     to_title(const CharType* begin, const CharType* end, const std::locale& loc = std::locale())
@@ -234,7 +234,7 @@ namespace boost { namespace locale {
 
     /// Convert a string \a str to title case according to locale \a loc
     ///
-    /// \note throws std::bad_cast if loc does not have \ref converter facet installed
+    /// \throws std::bad_cast: \a loc does not have \ref converter facet installed
     template<typename CharType>
     std::basic_string<CharType> to_title(const std::basic_string<CharType>& str, const std::locale& loc = std::locale())
     {
@@ -243,7 +243,7 @@ namespace boost { namespace locale {
 
     /// Convert a NULL terminated string \a str to title case according to locale \a loc
     ///
-    /// \note throws std::bad_cast if loc does not have \ref converter facet installed
+    /// \throws std::bad_cast: \a loc does not have \ref converter facet installed
     template<typename CharType>
     std::basic_string<CharType> to_title(const CharType* str, const std::locale& loc = std::locale())
     {
@@ -254,7 +254,7 @@ namespace boost { namespace locale {
 
     /// Fold case of a string in range [begin,end) according to locale \a loc
     ///
-    /// \note throws std::bad_cast if loc does not have \ref converter facet installed
+    /// \throws std::bad_cast: \a loc does not have \ref converter facet installed
     template<typename CharType>
     std::basic_string<CharType>
     fold_case(const CharType* begin, const CharType* end, const std::locale& loc = std::locale())
@@ -264,7 +264,7 @@ namespace boost { namespace locale {
 
     /// Fold case of a string \a str according to locale \a loc
     ///
-    /// \note throws std::bad_cast if loc does not have \ref converter facet installed
+    /// \throws std::bad_cast: \a loc does not have \ref converter facet installed
     template<typename CharType>
     std::basic_string<CharType> fold_case(const std::basic_string<CharType>& str,
                                           const std::locale& loc = std::locale())
@@ -274,7 +274,7 @@ namespace boost { namespace locale {
 
     /// Fold case of a NULL terminated string \a str according to locale \a loc
     ///
-    /// \note throws std::bad_cast if loc does not have \ref converter facet installed
+    /// \throws std::bad_cast: \a loc does not have \ref converter facet installed
     template<typename CharType>
     std::basic_string<CharType> fold_case(const CharType* str, const std::locale& loc = std::locale())
     {

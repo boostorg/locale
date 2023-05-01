@@ -23,6 +23,8 @@ namespace boost { namespace locale { namespace conv {
     /// @{
 
     /// Convert a Unicode text in range [begin,end) to other Unicode encoding
+    ///
+    /// \throws conversion_error: Conversion failed (e.g. \a how is \c stop and any character cannot be decoded)
     template<typename CharOut, typename CharIn>
     std::basic_string<CharOut> utf_to_utf(const CharIn* begin, const CharIn* end, method_type how = default_method)
     {
@@ -42,6 +44,8 @@ namespace boost { namespace locale { namespace conv {
     }
 
     /// Convert a Unicode NULL terminated string \a str other Unicode encoding
+    ///
+    /// \throws conversion_error: Conversion failed (e.g. \a how is \c stop and any character cannot be decoded)
     template<typename CharOut, typename CharIn>
     std::basic_string<CharOut> utf_to_utf(const CharIn* str, method_type how = default_method)
     {
@@ -49,6 +53,8 @@ namespace boost { namespace locale { namespace conv {
     }
 
     /// Convert a Unicode string \a str other Unicode encoding
+    ///
+    /// \throws conversion_error: Conversion failed (e.g. \a how is \c stop and any character cannot be decoded)
     template<typename CharOut, typename CharIn>
     std::basic_string<CharOut> utf_to_utf(const std::basic_string<CharIn>& str, method_type how = default_method)
     {

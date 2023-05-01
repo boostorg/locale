@@ -85,7 +85,7 @@ namespace boost { namespace locale {
             /// encoded in \a encoding character set into std::vector<char> and return it.
             ///
             /// - If the file does not exist, it should return an empty vector.
-            /// - If a error occurs during file read it should throw a error.
+            /// - If an error occurs during file read it should throw an exception.
             ///
             /// \note The user should support only the encodings the locales are created for. So if the user
             /// uses only one encoding or the file system is encoding agnostic, he may ignore the \a encoding parameter.

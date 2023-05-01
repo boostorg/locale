@@ -27,11 +27,19 @@ namespace boost { namespace locale {
         /// @{
 
         /// convert text in range [begin,end) encoded with \a charset to UTF according to policy \a how
+        ///
+        /// \throws invalid_charset_error: Character set is not supported
+        /// \throws conversion_error: Conversion failed (e.g. \a how is \c stop and any character cannot be
+        /// encoded or decoded)
         template<typename CharType>
         BOOST_LOCALE_DECL std::basic_string<CharType>
         to_utf(const char* begin, const char* end, const std::string& charset, method_type how = default_method);
 
         /// convert UTF text in range [begin,end) to text encoded with \a charset according to policy \a how
+        ///
+        /// \throws invalid_charset_error: Character set is not supported
+        /// \throws conversion_error: Conversion failed (e.g. \a how is \c stop and any character cannot be
+        /// encoded or decoded)
         template<typename CharType>
         BOOST_LOCALE_DECL std::string from_utf(const CharType* begin,
                                                const CharType* end,
@@ -39,6 +47,10 @@ namespace boost { namespace locale {
                                                method_type how = default_method);
 
         /// convert \a text encoded with \a charset to UTF according to policy \a how
+        ///
+        /// \throws invalid_charset_error: Character set is not supported
+        /// \throws conversion_error: Conversion failed (e.g. \a how is \c stop and any character cannot be
+        /// encoded or decoded)
         template<typename CharType>
         std::basic_string<CharType>
         to_utf(const std::string& text, const std::string& charset, method_type how = default_method)
@@ -47,6 +59,10 @@ namespace boost { namespace locale {
         }
 
         /// Convert \a text encoded with \a charset to UTF according to policy \a how
+        ///
+        /// \throws invalid_charset_error: Character set is not supported
+        /// \throws conversion_error: Conversion failed (e.g. \a how is \c stop and any character cannot be
+        /// encoded or decoded)
         template<typename CharType>
         std::basic_string<CharType>
         to_utf(const char* text, const std::string& charset, method_type how = default_method)
@@ -57,7 +73,10 @@ namespace boost { namespace locale {
         /// convert text in range [begin,end) in locale encoding given by \a loc to UTF according to
         /// policy \a how
         ///
-        /// \note throws std::bad_cast if the loc does not have \ref info facet installed
+        /// \throws std::bad_cast: \a loc does not have \ref info facet installed
+        /// \throws invalid_charset_error: Character set is not supported
+        /// \throws conversion_error: Conversion failed (e.g. \a how is \c stop and any character cannot be
+        /// encoded or decoded)
         template<typename CharType>
         std::basic_string<CharType>
         to_utf(const char* begin, const char* end, const std::locale& loc, method_type how = default_method)
@@ -67,7 +86,10 @@ namespace boost { namespace locale {
 
         /// Convert \a text in locale encoding given by \a loc to UTF according to policy \a how
         ///
-        /// \note throws std::bad_cast if the loc does not have \ref info facet installed
+        /// \throws std::bad_cast: \a loc does not have \ref info facet installed
+        /// \throws invalid_charset_error: Character set is not supported
+        /// \throws conversion_error: Conversion failed (e.g. \a how is \c stop and any character cannot be
+        /// encoded or decoded)
         template<typename CharType>
         std::basic_string<CharType>
         to_utf(const std::string& text, const std::locale& loc, method_type how = default_method)
@@ -77,7 +99,10 @@ namespace boost { namespace locale {
 
         /// Convert \a text in locale encoding given by \a loc to UTF according to policy \a how
         ///
-        /// \note throws std::bad_cast if the loc does not have \ref info facet installed
+        /// \throws std::bad_cast: \a loc does not have \ref info facet installed
+        /// \throws invalid_charset_error: Character set is not supported
+        /// \throws conversion_error: Conversion failed (e.g. \a how is \c stop and any character cannot be
+        /// encoded or decoded)
         template<typename CharType>
         std::basic_string<CharType> to_utf(const char* text, const std::locale& loc, method_type how = default_method)
         {
@@ -85,6 +110,10 @@ namespace boost { namespace locale {
         }
 
         /// convert \a text from UTF to text encoded with \a charset according to policy \a how
+        ///
+        /// \throws invalid_charset_error: Character set is not supported
+        /// \throws conversion_error: Conversion failed (e.g. \a how is \c stop and any character cannot be
+        /// encoded or decoded)
         template<typename CharType>
         std::string
         from_utf(const std::basic_string<CharType>& text, const std::string& charset, method_type how = default_method)
@@ -93,6 +122,10 @@ namespace boost { namespace locale {
         }
 
         /// Convert \a text from UTF to \a charset according to policy \a how
+        ///
+        /// \throws invalid_charset_error: Character set is not supported
+        /// \throws conversion_error: Conversion failed (e.g. \a how is \c stop and any character cannot be
+        /// encoded or decoded)
         template<typename CharType>
         std::string from_utf(const CharType* text, const std::string& charset, method_type how = default_method)
         {
@@ -101,7 +134,10 @@ namespace boost { namespace locale {
 
         /// Convert UTF text in range [begin,end) to text in locale encoding given by \a loc according to policy \a how
         ///
-        /// \note throws std::bad_cast if the loc does not have \ref info facet installed
+        /// \throws std::bad_cast: \a loc does not have \ref info facet installed
+        /// \throws invalid_charset_error: Character set is not supported
+        /// \throws conversion_error: Conversion failed (e.g. \a how is \c stop and any character cannot be
+        /// encoded or decoded)
         template<typename CharType>
         std::string
         from_utf(const CharType* begin, const CharType* end, const std::locale& loc, method_type how = default_method)
@@ -111,7 +147,10 @@ namespace boost { namespace locale {
 
         /// Convert \a text from UTF to locale encoding given by \a loc according to policy \a how
         ///
-        /// \note throws std::bad_cast if the loc does not have \ref info facet installed
+        /// \throws std::bad_cast: \a loc does not have \ref info facet installed
+        /// \throws invalid_charset_error: Character set is not supported
+        /// \throws conversion_error: Conversion failed (e.g. \a how is \c stop and any character cannot be
+        /// encoded or decoded)
         template<typename CharType>
         std::string
         from_utf(const std::basic_string<CharType>& text, const std::locale& loc, method_type how = default_method)
@@ -121,7 +160,10 @@ namespace boost { namespace locale {
 
         /// Convert \a text from UTF to locale encoding given by \a loc according to policy \a how
         ///
-        /// \note throws std::bad_cast if the loc does not have \ref info facet installed
+        /// \throws std::bad_cast: \a loc does not have \ref info facet installed
+        /// \throws invalid_charset_error: Character set is not supported
+        /// \throws conversion_error: Conversion failed (e.g. \a how is \c stop and any character cannot be
+        /// encoded or decoded)
         template<typename CharType>
         std::string from_utf(const CharType* text, const std::locale& loc, method_type how = default_method)
         {
@@ -130,6 +172,10 @@ namespace boost { namespace locale {
 
         /// Convert a text in range [begin,end) to \a to_encoding from \a from_encoding according to
         /// policy \a how
+        ///
+        /// \throws invalid_charset_error: Either character set is not supported
+        /// \throws conversion_error: when the conversion fails (e.g. \a how is \c stop and any character cannot be
+        /// encoded or decoded)
         BOOST_LOCALE_DECL
         std::string between(const char* begin,
                             const char* end,
@@ -139,6 +185,10 @@ namespace boost { namespace locale {
 
         /// Convert \a text to \a to_encoding from \a from_encoding according to
         /// policy \a how
+        ///
+        /// \throws invalid_charset_error: Either character set is not supported
+        /// \throws conversion_error: Conversion failed (e.g. \a how is \c stop and any character cannot be
+        /// encoded or decoded)
         inline std::string between(const char* text,
                                    const std::string& to_encoding,
                                    const std::string& from_encoding,
@@ -149,6 +199,10 @@ namespace boost { namespace locale {
 
         /// Convert \a text to \a to_encoding from \a from_encoding according to
         /// policy \a how
+        ///
+        /// \throws invalid_charset_error: Either character set is not supported
+        /// \throws conversion_error: Conversion failed (e.g. \a how is \c stop and any character cannot be
+        /// encoded or decoded)
         inline std::string between(const std::string& text,
                                    const std::string& to_encoding,
                                    const std::string& from_encoding,

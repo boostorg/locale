@@ -370,7 +370,7 @@ namespace boost { namespace locale {
         return !(*this > other);
     }
 
-    void date_time::swap(date_time& other)
+    void date_time::swap(date_time& other) noexcept
     {
         impl_.swap(other.impl_);
     }
