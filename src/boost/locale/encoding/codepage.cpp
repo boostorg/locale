@@ -12,13 +12,13 @@
 #    define BOOST_LOCALE_WITH_WCONV
 #endif
 #ifdef BOOST_LOCALE_WITH_ICONV
-#    include "boost/locale/encoding/iconv_codepage.ipp"
+#    include "boost/locale/encoding/iconv_converter.hpp"
 #endif
 #ifdef BOOST_LOCALE_WITH_ICU
-#    include "boost/locale/encoding/uconv_codepage.ipp"
+#    include "boost/locale/encoding/uconv_converter.hpp"
 #endif
 #ifdef BOOST_LOCALE_WITH_WCONV
-#    include "boost/locale/encoding/wconv_codepage.ipp"
+#    include "boost/locale/encoding/wconv_converter.hpp"
 #endif
 
 namespace boost { namespace locale { namespace conv {

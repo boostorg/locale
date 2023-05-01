@@ -12,9 +12,9 @@ file(GLOB_RECURSE headers include/*.hpp)
 add_library(boost_locale
   src/boost/locale/encoding/codepage.cpp
   src/boost/locale/encoding/conv.hpp
-  src/boost/locale/encoding/iconv_codepage.ipp
-  src/boost/locale/encoding/uconv_codepage.ipp
-  src/boost/locale/encoding/wconv_codepage.ipp
+  src/boost/locale/encoding/iconv_converter.hpp
+  src/boost/locale/encoding/uconv_converter.hpp
+  src/boost/locale/encoding/wconv_converter.hpp
   src/boost/locale/shared/date_time.cpp
   src/boost/locale/shared/format.cpp
   src/boost/locale/shared/formatting.cpp
