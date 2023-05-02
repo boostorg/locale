@@ -13,6 +13,7 @@
         - Bitwise/binary operators (left/right shift, binary and/or/xor/not) are no longer supported in message catalog files matching GNU gettext behavior
     - Other improvements and fixes
         - Fix UB on invalid index in format strings
+        - Fix conversion of UTF to e.g. iso-2022-jp on Windows without ICU
         - Use `long long` as the count parameter for pluralized translations
         - Make `localization_backend_manager` movable
         - Add missing `noexcept` to move assignments/constructors

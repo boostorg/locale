@@ -23,21 +23,6 @@
 
 namespace boost { namespace locale { namespace conv { namespace impl {
 
-    size_t remove_substitutions(std::vector<char>& v)
-    {
-        if(std::find(v.begin(), v.end(), 0) == v.end()) {
-            return v.size();
-        }
-        std::vector<char> v2;
-        v2.reserve(v.size());
-        for(unsigned i = 0; i < v.size(); i++) {
-            if(v[i] != 0)
-                v2.push_back(v[i]);
-        }
-        v.swap(v2);
-        return v.size();
-    }
-
     void multibyte_to_wide_one_by_one(int codepage, const char* begin, const char* end, std::vector<wchar_t>& buf)
     {
         buf.reserve(end - begin);
@@ -92,6 +77,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
                                     bool do_skip,
                                     std::vector<char>& buf)
     {
+        buf.clear();
         if(begin == end)
             return;
         BOOL substitute = FALSE;
@@ -99,26 +85,23 @@ namespace boost { namespace locale { namespace conv { namespace impl {
         char subst_char = 0;
         char* subst_char_ptr = (codepage == CP_UTF7 || codepage == CP_UTF8) ? nullptr : &subst_char;
 
-        const std::ptrdiff_t num_chars = end - begin;
-        if(num_chars > std::numeric_limits<int>::max())
+        if((end - begin) > std::numeric_limits<int>::max())
             throw conversion_error();
-        int n =
-          WideCharToMultiByte(codepage, 0, begin, static_cast<int>(num_chars), 0, 0, subst_char_ptr, substitute_ptr);
+        const int num_chars = static_cast<int>(end - begin);
+        int n = WideCharToMultiByte(codepage, 0, begin, num_chars, nullptr, 0, subst_char_ptr, substitute_ptr);
+        // Some codepages don't support substitutions
+        if(n == 0 && GetLastError() == ERROR_INVALID_PARAMETER) {
+            subst_char_ptr = nullptr;
+            substitute_ptr = nullptr;
+            n = WideCharToMultiByte(codepage, 0, begin, num_chars, nullptr, 0, subst_char_ptr, substitute_ptr);
+        }
         buf.resize(n);
 
-        if(WideCharToMultiByte(codepage,
-                               0,
-                               begin,
-                               static_cast<int>(num_chars),
-                               buf.data(),
-                               n,
-                               subst_char_ptr,
-                               substitute_ptr)
-           == 0)
+        if(WideCharToMultiByte(codepage, 0, begin, num_chars, buf.data(), n, subst_char_ptr, substitute_ptr) == 0)
             throw conversion_error();
         if(substitute) {
             if(do_skip)
-                remove_substitutions(buf);
+                buf.erase(std::remove(buf.begin(), buf.end(), subst_char), buf.end());
             else
                 throw conversion_error();
         }
@@ -134,15 +117,14 @@ namespace boost { namespace locale { namespace conv { namespace impl {
         std::vector<char> tmp;
         for(;;) {
             wide_to_multibyte_non_zero(codepage, b, e, do_skip, tmp);
-            size_t osize = buf.size();
+            const size_t osize = buf.size();
             buf.resize(osize + tmp.size());
             std::copy(tmp.begin(), tmp.end(), buf.begin() + osize);
-            if(e != end) {
-                buf.push_back('\0');
-                b = e + 1;
-                e = std::find(b, end, L'0');
-            } else
+            if(e == end)
                 break;
+            buf.push_back('\0');
+            b = e + 1;
+            e = std::find(b, end, L'0');
         }
     }
 
