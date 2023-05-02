@@ -201,7 +201,7 @@ namespace boost { namespace locale { namespace util {
                 // These have extra fields to specify timezone
                 if(gmtoff != 0) {
                     // bsd and apple want tm_zone be non-const
-                    tm.tm_zone = &tmp_buf.front();
+                    tm.tm_zone = tmp_buf.data();
                     tm.tm_gmtoff = gmtoff;
                 }
 #endif

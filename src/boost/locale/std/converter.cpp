@@ -33,7 +33,7 @@ namespace boost { namespace locale { namespace impl_std {
                     const ctype_type& ct = std::use_facet<ctype_type>(base_);
                     size_t len = end - begin;
                     std::vector<CharType> res(len + 1, 0);
-                    CharType* lbegin = &res[0];
+                    CharType* lbegin = res.data();
                     std::copy(begin, end, lbegin);
                     if(how == converter_base::upper_case)
                         ct.toupper(lbegin, lbegin + len);
@@ -69,7 +69,7 @@ namespace boost { namespace locale { namespace impl_std {
                     const wctype_type& ct = std::use_facet<wctype_type>(base_);
                     size_t len = tmp.size();
                     std::vector<wchar_t> res(len + 1, 0);
-                    wchar_t* lbegin = &res[0];
+                    wchar_t* lbegin = res.data();
                     std::copy(tmp.c_str(), tmp.c_str() + len, lbegin);
                     if(how == upper_case)
                         ct.toupper(lbegin, lbegin + len);

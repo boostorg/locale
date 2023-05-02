@@ -124,8 +124,8 @@ namespace boost { namespace locale { namespace impl_win {
             throw std::length_error("String to long for int type");
         std::vector<wchar_t> buf(len + 1);
         int l2 =
-          LCMapStringW(l.lcid, flags, begin, static_cast<int>(end - begin), &buf.front(), static_cast<int>(buf.size()));
-        res.assign(&buf.front(), l2);
+          LCMapStringW(l.lcid, flags, begin, static_cast<int>(end - begin), buf.data(), static_cast<int>(buf.size()));
+        res.assign(buf.data(), l2);
         return res;
     }
 
@@ -182,16 +182,16 @@ namespace boost { namespace locale { namespace impl_win {
     {
         const auto len = GetDateFormatW(l.lcid, 0, tm, format, nullptr, 0);
         std::vector<wchar_t> buf(len + 1);
-        GetDateFormatW(l.lcid, 0, tm, format, &buf.front(), len);
-        return &buf.front();
+        GetDateFormatW(l.lcid, 0, tm, format, buf.data(), len);
+        return buf.data();
     }
 
     inline std::wstring wcs_format_time_l(const wchar_t* format, SYSTEMTIME const* tm, const winlocale& l)
     {
         const auto len = GetTimeFormatW(l.lcid, 0, tm, format, nullptr, 0);
         std::vector<wchar_t> buf(len + 1);
-        GetTimeFormatW(l.lcid, 0, tm, format, &buf.front(), len);
-        return &buf.front();
+        GetTimeFormatW(l.lcid, 0, tm, format, buf.data(), len);
+        return buf.data();
     }
 
     inline std::wstring wcsfold(const wchar_t* begin, const wchar_t* end)
@@ -221,8 +221,8 @@ namespace boost { namespace locale { namespace impl_win {
         if(len == std::numeric_limits<int>::max())
             throw std::length_error("String to long for int type");
         std::vector<wchar_t> v(len + 1);
-        len = FoldStringW(flags, begin, static_cast<int>(end - begin), &v.front(), len + 1);
-        return std::wstring(&v.front(), len);
+        len = FoldStringW(flags, begin, static_cast<int>(end - begin), v.data(), len + 1);
+        return std::wstring(v.data(), len);
     }
 
     inline std::wstring wcsxfrm_l(collate_level level, const wchar_t* begin, const wchar_t* end, const winlocale& l)

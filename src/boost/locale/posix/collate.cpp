@@ -65,12 +65,12 @@ namespace boost { namespace locale { namespace impl_posix {
         {
             string_type s(b, e - b);
             std::vector<CharType> buf((e - b) * 2 + 1);
-            size_t n = coll_traits<CharType>::xfrm(&buf.front(), s.c_str(), buf.size(), *lc_);
+            size_t n = coll_traits<CharType>::xfrm(buf.data(), s.c_str(), buf.size(), *lc_);
             if(n > buf.size()) {
                 buf.resize(n);
-                coll_traits<CharType>::xfrm(&buf.front(), s.c_str(), n, *lc_);
+                coll_traits<CharType>::xfrm(buf.data(), s.c_str(), n, *lc_);
             }
-            return string_type(&buf.front(), n);
+            return string_type(buf.data(), n);
         }
 
     private:

@@ -112,7 +112,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
         else {
             fseek(file, 0, SEEK_SET);
             std::vector<char> data(len);
-            if(BOOST_LIKELY(!data.empty()) && fread(&data.front(), 1, data.size(), file) != data.size())
+            if(BOOST_LIKELY(!data.empty()) && fread(data.data(), 1, data.size(), file) != data.size())
                 throw std::runtime_error("Failed to read file"); // LCOV_EXCL_LINE
             return data;
         }

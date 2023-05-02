@@ -82,7 +82,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
         }
 
         buf.resize(n);
-        if(MultiByteToWideChar(codepage, flags, begin, static_cast<int>(num_chars), &buf.front(), n) == 0)
+        if(MultiByteToWideChar(codepage, flags, begin, static_cast<int>(num_chars), buf.data(), n) == 0)
             throw conversion_error();
     }
 
@@ -110,7 +110,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
                                0,
                                begin,
                                static_cast<int>(num_chars),
-                               &buf[0],
+                               buf.data(),
                                n,
                                subst_char_ptr,
                                substitute_ptr)
@@ -131,8 +131,8 @@ namespace boost { namespace locale { namespace conv { namespace impl {
         buf.reserve(end - begin);
         const wchar_t* e = std::find(begin, end, L'\0');
         const wchar_t* b = begin;
+        std::vector<char> tmp;
         for(;;) {
-            std::vector<char> tmp;
             wide_to_multibyte_non_zero(codepage, b, e, do_skip, tmp);
             size_t osize = buf.size();
             buf.resize(osize + tmp.size());
@@ -216,7 +216,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
                 multibyte_to_wide(from_code_page_, begin, end, how_ == skip, tmp);
                 if(tmp.empty())
                     return res;
-                wbegin = &tmp[0];
+                wbegin = tmp.data();
                 wend = wbegin + tmp.size();
             }
 
@@ -228,7 +228,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
             wide_to_multibyte(to_code_page_, wbegin, wend, how_ == skip, ctmp);
             if(ctmp.empty())
                 return res;
-            res.assign(&ctmp.front(), ctmp.size());
+            res.assign(ctmp.data(), ctmp.size());
             return res;
         }
 
@@ -287,7 +287,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
             multibyte_to_wide(code_page_, begin, end, how_ == skip, tmp);
             string_type res;
             if(!tmp.empty())
-                res.assign(reinterpret_cast<CharType*>(&tmp.front()), tmp.size());
+                res.assign(reinterpret_cast<CharType*>(tmp.data()), tmp.size());
             return res;
         }
 
@@ -329,7 +329,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
                     if(buffer.empty())
                         wbegin = wend = nullptr;
                     else {
-                        wbegin = &buffer[0];
+                        wbegin = buffer.data();
                         wend = wbegin + buffer.size();
                     }
                 }
@@ -341,7 +341,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
             wide_to_multibyte(code_page_, wbegin, wend, how_ == skip, ctmp);
             if(ctmp.empty())
                 return res;
-            res.assign(&ctmp.front(), ctmp.size());
+            res.assign(ctmp.data(), ctmp.size());
             return res;
         }
 
@@ -375,7 +375,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
             if(buf.empty())
                 return string_type();
 
-            return utf_to_utf<CharType>(&buf[0], &buf[0] + buf.size(), how_);
+            return utf_to_utf<CharType>(buf.data(), buf.data() + buf.size(), how_);
         }
 
     private:
@@ -409,7 +409,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
             std::string res;
             if(ctmp.empty())
                 return res;
-            res.assign(&ctmp.front(), ctmp.size());
+            res.assign(ctmp.data(), ctmp.size());
             return res;
         }
 

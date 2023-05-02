@@ -35,9 +35,9 @@ namespace boost { namespace locale { namespace conv { namespace impl {
 
             sresult.reserve(uend - ubegin);
 
-            OutChar result[64];
+            OutChar tmp_buf[64];
 
-            char* out_start = reinterpret_cast<char*>(&result[0]);
+            char* out_start = reinterpret_cast<char*>(tmp_buf);
             const char* begin = reinterpret_cast<const char*>(ubegin);
             const char* end = reinterpret_cast<const char*>(uend);
 
@@ -45,7 +45,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
 
             while(state != done) {
                 size_t in_left = end - begin;
-                size_t out_left = sizeof(result);
+                size_t out_left = sizeof(tmp_buf);
 
                 char* out_ptr = out_start;
                 size_t res = 0;
@@ -67,7 +67,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
                     }
                 }
 
-                sresult.append(&result[0], output_count);
+                sresult.append(tmp_buf, output_count);
 
                 if(res == (size_t)(-1)) {
                     if(err == EILSEQ || err == EINVAL) {

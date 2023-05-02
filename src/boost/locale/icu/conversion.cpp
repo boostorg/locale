@@ -104,7 +104,7 @@ namespace boost { namespace locale { namespace impl_icu {
             std::vector<char> buf(max_converted_size);
             UErrorCode err = U_ZERO_ERROR;
             auto size = func(map_,
-                             &buf.front(),
+                             buf.data(),
                              static_cast<size_type>(buf.size()),
                              begin,
                              static_cast<size_type>(end - begin),
@@ -113,14 +113,14 @@ namespace boost { namespace locale { namespace impl_icu {
                 err = U_ZERO_ERROR;
                 buf.resize(size + 1);
                 size = func(map_,
-                            &buf.front(),
+                            buf.data(),
                             static_cast<size_type>(buf.size()),
                             begin,
                             static_cast<size_type>(end - begin),
                             &err);
             }
             check_and_throw_icu_error(err);
-            return std::string(&buf.front(), size);
+            return std::string(buf.data(), size);
         }
         ~raii_casemap() { ucasemap_close(map_); }
 
