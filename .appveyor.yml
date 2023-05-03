@@ -124,6 +124,15 @@ environment:
       B2_CXXSTD: 11,14,17,2a
       B2_TOOLSET: gcc
 
+    - FLAVOR: CodeCov (VS 2019)
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      B2_CXXFLAGS: -permissive-
+      B2_CXXSTD: 14
+      B2_TOOLSET: msvc-14.2
+      B2_ADDRESS_MODEL: 64
+      B2_LINK: static
+      COVERAGE: true
+
 install:
   - git clone --depth 1 https://github.com/boostorg/boost-ci.git C:\boost-ci-cloned
   # Copy ci folder if not testing Boost.CI
