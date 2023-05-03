@@ -23,25 +23,9 @@ template<typename Char>
 void test_to_from_utf(std::string source, std::basic_string<Char> target, std::string encoding)
 {
     std::cout << "-- " << encoding << std::endl;
-    const std::locale l = boost::locale::generator{}("en_US." + encoding);
 
-    using boost::locale::conv::to_utf;
-    TEST_EQ(to_utf<Char>(source, encoding), target);
-    TEST_EQ(to_utf<Char>(source.c_str(), encoding), target);
-    TEST_EQ(to_utf<Char>(source.c_str(), source.c_str() + source.size(), encoding), target);
-
-    TEST_EQ(to_utf<Char>(source, l), target);
-    TEST_EQ(to_utf<Char>(source.c_str(), l), target);
-    TEST_EQ(to_utf<Char>(source.c_str(), source.c_str() + source.size(), l), target);
-
-    using boost::locale::conv::from_utf;
-    TEST_EQ(from_utf<Char>(target, encoding), source);
-    TEST_EQ(from_utf<Char>(target.c_str(), encoding), source);
-    TEST_EQ(from_utf<Char>(target.c_str(), target.c_str() + target.size(), encoding), source);
-
-    TEST_EQ(from_utf<Char>(target, l), source);
-    TEST_EQ(from_utf<Char>(target.c_str(), l), source);
-    TEST_EQ(from_utf<Char>(target.c_str(), target.c_str() + target.size(), l), source);
+    TEST_EQ(boost::locale::conv::to_utf<Char>(source, encoding), target);
+    TEST_EQ(boost::locale::conv::from_utf<Char>(target, encoding), source);
 }
 
 #define TEST_FAIL_CONVERSION(X) TEST_THROWS(X, boost::locale::conv::conversion_error)
@@ -49,20 +33,18 @@ void test_to_from_utf(std::string source, std::basic_string<Char> target, std::s
 template<typename Char>
 void test_error_to_utf(std::string source, std::basic_string<Char> target, std::string encoding)
 {
-    using namespace boost::locale::conv;
-    boost::locale::generator g;
-    std::locale l = g("en_US." + encoding);
+    using boost::locale::conv::to_utf;
+    using boost::locale::conv::stop;
 
+    // Default: Replace, no error
     TEST_EQ(to_utf<Char>(source, encoding), target);
-    TEST_EQ(to_utf<Char>(source.c_str(), encoding), target);
-    TEST_EQ(to_utf<Char>(source.c_str(), source.c_str() + source.size(), encoding), target);
-    TEST_EQ(to_utf<Char>(source, l), target);
-    TEST_EQ(to_utf<Char>(source.c_str(), l), target);
-    TEST_EQ(to_utf<Char>(source.c_str(), source.c_str() + source.size(), l), target);
-
+    // Test all overloads with method=stop -> error
+    // source as string, C-String, range
     TEST_FAIL_CONVERSION(to_utf<Char>(source, encoding, stop));
     TEST_FAIL_CONVERSION(to_utf<Char>(source.c_str(), encoding, stop));
     TEST_FAIL_CONVERSION(to_utf<Char>(source.c_str(), source.c_str() + source.size(), encoding, stop));
+    // Same but encoding via locale
+    const std::locale l = boost::locale::generator{}("en_US." + encoding);
     TEST_FAIL_CONVERSION(to_utf<Char>(source, l, stop));
     TEST_FAIL_CONVERSION(to_utf<Char>(source.c_str(), l, stop));
     TEST_FAIL_CONVERSION(to_utf<Char>(source.c_str(), source.c_str() + source.size(), l, stop));
@@ -71,20 +53,18 @@ void test_error_to_utf(std::string source, std::basic_string<Char> target, std::
 template<typename Char>
 void test_error_from_utf(std::basic_string<Char> source, std::string target, std::string encoding)
 {
-    using namespace boost::locale::conv;
-    boost::locale::generator g;
-    std::locale l = g("en_US." + encoding);
+    using boost::locale::conv::from_utf;
+    using boost::locale::conv::stop;
 
+    // Default: Replace, no error
     TEST_EQ(from_utf<Char>(source, encoding), target);
-    TEST_EQ(from_utf<Char>(source.c_str(), encoding), target);
-    TEST_EQ(from_utf<Char>(source.c_str(), source.c_str() + source.size(), encoding), target);
-    TEST_EQ(from_utf<Char>(source, l), target);
-    TEST_EQ(from_utf<Char>(source.c_str(), l), target);
-    TEST_EQ(from_utf<Char>(source.c_str(), source.c_str() + source.size(), l), target);
-
+    // Test all overloads with method=stop -> error
+    // source as string, C-String, range
     TEST_FAIL_CONVERSION(from_utf<Char>(source, encoding, stop));
     TEST_FAIL_CONVERSION(from_utf<Char>(source.c_str(), encoding, stop));
     TEST_FAIL_CONVERSION(from_utf<Char>(source.c_str(), source.c_str() + source.size(), encoding, stop));
+    // Same but encoding via locale
+    const std::locale l = boost::locale::generator{}("en_US." + encoding);
     TEST_FAIL_CONVERSION(from_utf<Char>(source, l, stop));
     TEST_FAIL_CONVERSION(from_utf<Char>(source.c_str(), l, stop));
     TEST_FAIL_CONVERSION(from_utf<Char>(source.c_str(), source.c_str() + source.size(), l, stop));
@@ -297,22 +277,45 @@ void test_utf_to_utf()
 #endif
 }
 
+/// Test all overloads of to_utf/from_utf templated by Char
 template<typename Char>
 void test_latin1_conversions_for()
 {
     const std::string utf8_string = "A-Za-z0-9grüße";
-    const std::string latin1_string = to<char>(utf8_string);
-    const std::basic_string<Char> wide_string = utf<Char>(utf8_string);
+    const std::string sLatin1 = to<char>(utf8_string);
+    // Sanity check that utf8_string is UTF-8 encoded (using multiple bytes for the special chars)
+    // and sLatin1 is not encoded (1 byte per char)
+    TEST_GT(utf8_string.length(), sLatin1.length());
+    const std::basic_string<Char> sWide = utf<Char>(utf8_string);
+    const std::string encoding = "Latin1";
 
-    using namespace boost::locale::conv;
-    TEST_EQ(to_utf<Char>(latin1_string, "Latin1"), wide_string);
-    TEST_EQ(from_utf(wide_string, "Latin1"), latin1_string);
+    using boost::locale::conv::to_utf;
+    // 3 variants for source: string, C-string, range
+    TEST_EQ(to_utf<Char>(sLatin1, encoding), sWide);
+    TEST_EQ(to_utf<Char>(sLatin1.c_str(), encoding), sWide);
+    TEST_EQ(to_utf<Char>(sLatin1.c_str(), sLatin1.c_str() + sLatin1.size(), encoding), sWide);
+    // Same but encoding given via locale
+    const std::locale l = boost::locale::generator{}("en_US.Latin1");
+    TEST_EQ(to_utf<Char>(sLatin1, l), sWide);
+    TEST_EQ(to_utf<Char>(sLatin1.c_str(), l), sWide);
+    TEST_EQ(to_utf<Char>(sLatin1.c_str(), sLatin1.c_str() + sLatin1.size(), l), sWide);
+
+    using boost::locale::conv::from_utf;
+    // 3 variants for source: string, C-string, range
+    TEST_EQ(from_utf<Char>(sWide, encoding), sLatin1);
+    TEST_EQ(from_utf<Char>(sWide.c_str(), encoding), sLatin1);
+    TEST_EQ(from_utf<Char>(sWide.c_str(), sWide.c_str() + sWide.size(), encoding), sLatin1);
+    // Same but encoding given via locale
+    TEST_EQ(from_utf<Char>(sWide, l), sLatin1);
+    TEST_EQ(from_utf<Char>(sWide.c_str(), l), sLatin1);
+    TEST_EQ(from_utf<Char>(sWide.c_str(), sWide.c_str() + sWide.size(), l), sLatin1);
 
     // Empty string doesn't error/assert
     TEST_EQ(to_utf<Char>("", encoding), utf<Char>(""));
     TEST_EQ(from_utf<Char>(utf<Char>(""), encoding), std::string());
 }
 
+/// Quick check of to_utf/from_utf overloads using the simple Latin1 encoding
 void test_latin1_conversions()
 {
     std::cout << "- Testing Latin1 conversion\n";
