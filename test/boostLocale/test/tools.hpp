@@ -55,17 +55,19 @@ inline unsigned utf8_next(const std::string& s, unsigned& pos)
     return c;
 }
 
-/// Convert/decode an UTF-8 encoded string to the given char type
+/// Convert an UTF encoded string to an UTF-8 encoded string
 template<typename C>
-std::string to_utf8(const std::basic_string<C>& s)
+std::string to_utf8(const std::basic_string<C>& utf_string)
 {
-    return boost::locale::conv::from_utf(s, "UTF-8");
+    return boost::locale::conv::from_utf(utf_string, "UTF-8");
 }
-std::string to_utf8(const std::string& s)
+std::string to_utf8(const std::string& utf_string)
 {
-    return s;
+    return utf_string;
 }
 
+/// Convert/decode an UTF-8 encoded string to the given char type
+/// For `char` this will be Latin1, otherwise UTF-16/UTF-32
 template<typename Char>
 std::basic_string<Char> to(const std::string& utf8)
 {
