@@ -148,9 +148,15 @@ void test_combinations()
     using boost::locale::conv::utf_to_utf;
     typedef utfutf<CharOut> out;
     typedef utfutf<CharIn> in;
-    TEST((utf_to_utf<CharOut, CharIn>(in::ok()) == out::ok()));
-    TEST_FAIL_CONVERSION((utf_to_utf<CharOut, CharIn>(in::bad(), boost::locale::conv::stop)));
-    TEST((utf_to_utf<CharOut, CharIn>(in::bad()) == out::ok()));
+    const CharIn* inOk = in::ok();
+    // Both overloads: C-string and string. Both call the range overload
+    TEST((utf_to_utf<CharOut>(inOk) == out::ok()));
+    TEST((utf_to_utf<CharOut>(std::basic_string<CharIn>(inOk)) == out::ok()));
+    const CharIn* inBad = in::bad();
+    // Again both overloads
+    TEST_FAIL_CONVERSION((utf_to_utf<CharOut>(inBad, boost::locale::conv::stop)));
+    TEST_FAIL_CONVERSION((utf_to_utf<CharOut>(std::basic_string<CharIn>(inBad), boost::locale::conv::stop)));
+    TEST((utf_to_utf<CharOut>(in::bad()) == out::ok()));
 }
 
 void test_all_combinations()
