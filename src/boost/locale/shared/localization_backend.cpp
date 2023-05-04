@@ -163,6 +163,10 @@ namespace boost { namespace locale {
         return *this;
     }
 
+    localization_backend_manager::localization_backend_manager(localization_backend_manager&&) noexcept = default;
+    localization_backend_manager&
+    localization_backend_manager::operator=(localization_backend_manager&&) noexcept = default;
+
     std::unique_ptr<localization_backend> localization_backend_manager::get() const
     {
         return std::unique_ptr<localization_backend>(pimpl_->create());
@@ -196,56 +200,49 @@ namespace boost { namespace locale {
     }
 
     namespace {
-        // prevent initialization order fiasco
+        localization_backend_manager make_default_backend_mgr()
+        {
+            localization_backend_manager mgr;
+#ifdef BOOST_LOCALE_WITH_ICU
+            mgr.adopt_backend("icu", impl_icu::create_localization_backend());
+#endif
+
+#ifndef BOOST_LOCALE_NO_POSIX_BACKEND
+            mgr.adopt_backend("posix", impl_posix::create_localization_backend());
+#endif
+
+#ifndef BOOST_LOCALE_NO_WINAPI_BACKEND
+            mgr.adopt_backend("winapi", impl_win::create_localization_backend());
+#endif
+
+#ifndef BOOST_LOCALE_NO_STD_BACKEND
+            mgr.adopt_backend("std", impl_std::create_localization_backend());
+#endif
+
+            return mgr;
+        }
+
         boost::mutex& localization_backend_manager_mutex()
         {
             static boost::mutex the_mutex;
             return the_mutex;
         }
-        // prevent initialization order fiasco
         localization_backend_manager& localization_backend_manager_global()
         {
-            static localization_backend_manager the_manager;
+            static localization_backend_manager the_manager = make_default_backend_mgr();
             return the_manager;
         }
-
-        struct init {
-            init()
-            {
-                localization_backend_manager mgr;
-#ifdef BOOST_LOCALE_WITH_ICU
-                mgr.adopt_backend("icu", impl_icu::create_localization_backend());
-#endif
-
-#ifndef BOOST_LOCALE_NO_POSIX_BACKEND
-                mgr.adopt_backend("posix", impl_posix::create_localization_backend());
-#endif
-
-#ifndef BOOST_LOCALE_NO_WINAPI_BACKEND
-                mgr.adopt_backend("winapi", impl_win::create_localization_backend());
-#endif
-
-#ifndef BOOST_LOCALE_NO_STD_BACKEND
-                mgr.adopt_backend("std", impl_std::create_localization_backend());
-#endif
-
-                localization_backend_manager::global(mgr);
-            }
-        } do_init;
     } // namespace
 
     localization_backend_manager localization_backend_manager::global()
     {
         boost::unique_lock<boost::mutex> lock(localization_backend_manager_mutex());
-        localization_backend_manager mgr = localization_backend_manager_global();
-        return mgr;
+        return localization_backend_manager_global();
     }
     localization_backend_manager localization_backend_manager::global(const localization_backend_manager& in)
     {
         boost::unique_lock<boost::mutex> lock(localization_backend_manager_mutex());
-        localization_backend_manager mgr = localization_backend_manager_global();
-        localization_backend_manager_global() = in;
-        return mgr;
+        return exchange(localization_backend_manager_global(), in);
     }
 
 }} // namespace boost::locale

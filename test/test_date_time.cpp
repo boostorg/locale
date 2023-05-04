@@ -67,20 +67,6 @@ void test_main(int /*argc*/, char** /*argv*/)
 {
     using namespace boost::locale;
     using namespace boost::locale::period;
-    std::string def[] = {
-#ifdef BOOST_LOCALE_WITH_ICU
-      "icu",
-#endif
-#ifndef BOOST_LOCALE_NO_STD_BACKEND
-      "std",
-#endif
-#ifndef BOOST_LOCALE_NO_POSIX_BACKEND
-      "posix",
-#endif
-#ifndef BOOST_LOCALE_NO_WINAPI_BACKEND
-      "winapi",
-#endif
-    };
     {
         auto* cal_facet = new mock_calendar_facet;
         std::locale old_loc = std::locale::global(std::locale(std::locale(), cal_facet));
@@ -126,7 +112,7 @@ void test_main(int /*argc*/, char** /*argv*/)
         TEST_EQ(mock_calendar::num_instances, 0); // No leaks
         std::locale::global(old_loc);
     }
-    for(const std::string& backend_name : def) {
+    for(const std::string& backend_name : boost::locale::localization_backend_manager::global().get_all_backends()) {
         std::cout << "Testing for backend: " << backend_name << std::endl;
         boost::locale::localization_backend_manager tmp_backend = boost::locale::localization_backend_manager::global();
         tmp_backend.select(backend_name);

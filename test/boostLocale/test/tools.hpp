@@ -30,49 +30,51 @@ public:
 
 inline unsigned utf8_next(const std::string& s, unsigned& pos)
 {
-    unsigned c = (unsigned char)s[pos++];
-    if((unsigned char)(c - 0xc0) >= 0x35)
-        return c;
+    unsigned c = static_cast<unsigned char>(s[pos++]);
     unsigned l;
-    if(c < 192)
-        l = 0;
-    else if(c < 224)
+    if(c <= 127)
+        return c;
+    else if(c <= 193)
+        throw std::logic_error("Invalid UTF8"); // LCOV_EXCL_LINE
+    else if(c <= 223)
         l = 1;
-    else if(c < 240)
+    else if(c <= 239)
         l = 2;
-    else
+    else if(c <= 244)
         l = 3;
+    else
+        throw std::logic_error("Invalid UTF8"); // LCOV_EXCL_LINE
 
     c &= (1 << (6 - l)) - 1;
 
     switch(l) {
-        case 3: c = (c << 6) | (((unsigned char)s[pos++]) & 0x3F); BOOST_FALLTHROUGH;
-        case 2: c = (c << 6) | (((unsigned char)s[pos++]) & 0x3F); BOOST_FALLTHROUGH;
-        case 1: c = (c << 6) | (((unsigned char)s[pos++]) & 0x3F);
+        case 3: c = (c << 6) | (static_cast<unsigned char>(s[pos++]) & 0x3F); BOOST_FALLTHROUGH;
+        case 2: c = (c << 6) | (static_cast<unsigned char>(s[pos++]) & 0x3F); BOOST_FALLTHROUGH;
+        case 1: c = (c << 6) | (static_cast<unsigned char>(s[pos++]) & 0x3F);
     }
     return c;
 }
 
-/// Convert/decode an UTF-8 encoded string to the given char type
+/// Convert an UTF encoded string to an UTF-8 encoded string
 template<typename C>
-std::string to_utf8(const std::basic_string<C>& s)
+std::string to_utf8(const std::basic_string<C>& utf_string)
 {
-    return boost::locale::conv::from_utf(s, "UTF-8");
+    return boost::locale::conv::from_utf(utf_string, "UTF-8");
 }
-std::string to_utf8(const std::string& s)
+std::string to_utf8(const std::string& utf_string)
 {
-    return s;
+    return utf_string;
 }
 
+/// Convert/decode an UTF-8 encoded string to the given char type
+/// For `char` this will be Latin1, otherwise UTF-16/UTF-32
 template<typename Char>
 std::basic_string<Char> to(const std::string& utf8)
 {
     std::basic_string<Char> out;
-    unsigned i = 0;
-    while(i < utf8.size()) {
-        unsigned point;
-        unsigned prev = i;
-        point = utf8_next(utf8, i);
+    for(unsigned i = 0; i < utf8.size();) {
+        const unsigned prev = i;
+        unsigned point = utf8_next(utf8, i);
         BOOST_LOCALE_START_CONST_CONDITION
         if(sizeof(Char) == 1 && point > 255) {
             std::ostringstream ss;

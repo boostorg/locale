@@ -14,6 +14,8 @@
     - Other improvements and fixes
         - Fix UB on invalid index in format strings
         - Use `long long` as the count parameter for pluralized translations
+        - Make `localization_backend_manager` movable
+        - Add missing `noexcept` to move assignments/constructors
 - 1.82.0
     - Breaking changes
         - `get_system_locale` and dependents will now correctly favor `$LC_ALL` over `LC_CTYPE` as defined by POSIX

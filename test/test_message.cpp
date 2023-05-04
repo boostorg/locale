@@ -409,21 +409,7 @@ void test_main(int argc, char** argv)
 
     const std::string message_path = (argc == 2) ? argv[1] : ".";
 
-    const std::string def[] = {
-#ifdef BOOST_LOCALE_WITH_ICU
-      "icu",
-#endif
-#ifndef BOOST_LOCALE_NO_STD_BACKEND
-      "std",
-#endif
-#ifndef BOOST_LOCALE_NO_POSIX_BACKEND
-      "posix",
-#endif
-#ifndef BOOST_LOCALE_NO_WINAPI_BACKEND
-      "winapi",
-#endif
-    };
-    for(const std::string& backend_name : def) {
+    for(const std::string& backend_name : boost::locale::localization_backend_manager::global().get_all_backends()) {
         std::cout << "Testing for backend --------- " << backend_name << std::endl;
         boost::locale::localization_backend_manager tmp_backend = boost::locale::localization_backend_manager::global();
         tmp_backend.select(backend_name);

@@ -70,6 +70,10 @@ namespace boost { namespace locale {
         localization_backend_manager(const localization_backend_manager&);
         /// Assign localization_backend_manager
         localization_backend_manager& operator=(const localization_backend_manager&);
+        /// Move construct localization_backend_manager
+        localization_backend_manager(localization_backend_manager&&) noexcept;
+        /// Move assign localization_backend_manager
+        localization_backend_manager& operator=(localization_backend_manager&&) noexcept;
 
         /// Destructor
         ~localization_backend_manager();
