@@ -346,6 +346,59 @@ void test_latin1_conversions()
 #endif
 }
 
+void test_error_between(const std::string& source,
+                        const std::string& target,
+                        const std::string& to_encoding,
+                        const std::string& from_encoding)
+{
+    using boost::locale::conv::between;
+    TEST_EQ(between(source, to_encoding, from_encoding), target);
+    using boost::locale::conv::stop;
+    TEST_FAIL_CONVERSION(between(source, to_encoding, from_encoding, stop));
+    TEST_FAIL_CONVERSION(between(source.c_str(), to_encoding, from_encoding, stop));
+    TEST_FAIL_CONVERSION(between(source.c_str(), source.c_str() + source.size(), to_encoding, from_encoding, stop));
+}
+
+void test_between()
+{
+    using boost::locale::conv::between;
+    const std::string utf8_string = "A-Za-z0-9grüße";
+    const std::string sLatin1 = to<char>(utf8_string);
+    TEST_GT(utf8_string.length(), sLatin1.length()); // Assert UTF encoding -> multi byte
+    TEST_EQ(between(sLatin1, "UTF-8", "Latin1"), utf8_string);
+    TEST_EQ(between(sLatin1.c_str(), "UTF-8", "Latin1"), utf8_string);
+    TEST_EQ(between(sLatin1.c_str(), sLatin1.c_str() + sLatin1.size(), "UTF-8", "Latin1"), utf8_string);
+    TEST_EQ(between(utf8_string, "Latin1", "UTF-8"), sLatin1);
+    TEST_EQ(between(utf8_string.c_str(), "Latin1", "UTF-8"), sLatin1);
+    TEST_EQ(between(utf8_string.c_str(), utf8_string.c_str() + utf8_string.size(), "Latin1", "UTF-8"), sLatin1);
+    // Same encoding
+    TEST_EQ(between(utf8_string, "UTF-8", "UTF-8"), utf8_string);
+    TEST_EQ(between(sLatin1, "Latin1", "Latin1"), sLatin1);
+    // Wrong encoding throws
+    {
+        using boost::locale::conv::invalid_charset_error;
+        TEST_THROWS(between(sLatin1, "Invalid-Encoding", "Latin1"), invalid_charset_error);
+        TEST_THROWS(between(sLatin1, "UTF-8", "Invalid-Encoding"), invalid_charset_error);
+        TEST_THROWS(between(sLatin1, "Invalid-Encoding", "Invalid-Encoding"), invalid_charset_error);
+    }
+    // Error handling
+    // Unencodable char at start, middle, end
+    test_error_between("שלום hello", " hello", "ISO8859-1", "UTF-8");
+    test_error_between("hello שלום world", "hello  world", "ISO8859-1", "UTF-8");
+    test_error_between("hello שלום", "hello ", "ISO8859-1", "UTF-8");
+    // Undecodable char(s) at start, middle, end
+    test_error_between("\xFFxfoo", "xfoo", "ISO8859-1", "UTF-8");
+    test_error_between("\xFF\xFFyfoo", "yfoo", "ISO8859-1", "UTF-8");
+    test_error_between("f\xFFoo2", "foo2", "ISO8859-1", "UTF-8");
+    test_error_between("f\xFF\xFF\xFFoo3", "foo3", "ISO8859-1", "UTF-8");
+    test_error_between("foo4\xFF", "foo4", "ISO8859-1", "UTF-8");
+    test_error_between("foo5\xFF\xFF", "foo5", "ISO8859-1", "UTF-8");
+    // Same but UTF-8 to UTF-8
+    test_error_between("\xFFzfoo", "zfoo", "UTF-8", "UTF-8");
+    test_error_between("f\xFFoo6", "foo6", "UTF-8", "UTF-8");
+    test_error_between("f\xFF\xFF\xFFoo7", "foo7", "UTF-8", "UTF-8");
+}
+
 void test_utf_name();
 void test_win_codepages();
 
@@ -382,6 +435,7 @@ void test_main(int /*argc*/, char** /*argv*/)
 #endif
 
     test_all_combinations();
+    test_between();
 }
 
 // Internal tests, keep those out of the above scope
