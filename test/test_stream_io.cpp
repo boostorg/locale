@@ -47,7 +47,7 @@ void test_ok(const std::string& content, const std::locale& l, std::basic_string
         const std::string file_path = boost::locale::test::exe_name + "-test_read.txt";
         remove_file_on_exit _(file_path);
         {
-            std::ofstream out_file(file_path);
+            std::ofstream out_file(file_path, std::ios::binary);
             out_file << content;
         }
         stream_type in_file(file_path, stream_type::in);
@@ -69,30 +69,29 @@ void test_ok(const std::string& content, const std::locale& l, std::basic_string
 }
 
 template<typename Char>
-void test_read_fail(const std::string& content, const std::locale& l, int pos)
+void test_read_fail(const std::string& content, const std::locale& l, const int pos)
 {
     const std::string file_path = boost::locale::test::exe_name + "-test.txt";
     remove_file_on_exit _(file_path);
     {
-        std::ofstream f(file_path);
+        std::ofstream f(file_path, std::ios::binary);
         f << content;
     }
 
-    typedef std::basic_fstream<Char> stream_type;
-
-    stream_type f(file_path, stream_type::in);
+    std::basic_fstream<Char> f(file_path, std::ios::in);
     f.imbue(l);
     // Read up until the position
-    for(int i = 0; i < pos; i++) {
+    for(int i = 0; i < pos && f; i++) {
         Char c;
         f.get(c);
-        if(f.fail()) // failed before the position,
-            return;  // e.g. when errors are detected reading more than the current char
-        TEST(f);
     }
-    // if the loop above succeeded, then it must fail now
-    Char c;
-    TEST(f.get(c).fail());
+    // Reading may fail before the position, e.g. when the implementation reads more than the current char and hence
+    // detects the error early
+    if(f) {
+        // Usually it succeeds so far and must fail now
+        Char c;
+        TEST(!f.get(c));
+    }
 }
 
 template<typename Char>
@@ -132,8 +131,6 @@ void test_for_char()
             res += one;
         std::cout << "      U+2008A x 1000" << std::endl;
         test_ok<Char>(res.c_str(), g("en_US.UTF-8")); // U+2008A
-    } else {
-        std::cout << "    UTF-8 Not supported \n";
     }
 
     if(test_iso) {
@@ -175,56 +172,44 @@ void test_main(int /*argc*/, char** /*argv*/)
         tmp_backend.select(backendName);
         boost::locale::localization_backend_manager::global(tmp_backend);
 
+        en_us_8bit = "en_US.ISO8859-1";
+        he_il_8bit = "he_IL.ISO8859-8";
+        ja_jp_shiftjis = "ja_JP.SJIS";
         if(backendName == "std") {
-            en_us_8bit = get_std_name("en_US.ISO8859-1");
-            he_il_8bit = get_std_name("he_IL.ISO8859-8");
-            ja_jp_shiftjis = get_std_name("ja_JP.SJIS");
-            if(!ja_jp_shiftjis.empty() && !test_std_supports_SJIS_codecvt(ja_jp_shiftjis)) {
-                std::cout << "Warning: detected unproper support of " << ja_jp_shiftjis << " locale, disabling it"
-                          << std::endl;
-                ja_jp_shiftjis = "";
-            }
-        } else {
-            en_us_8bit = "en_US.ISO8859-1";
-            he_il_8bit = "he_IL.ISO8859-8";
-            ja_jp_shiftjis = "ja_JP.SJIS";
+            en_us_8bit = get_std_name(en_us_8bit);
+            he_il_8bit = get_std_name(he_il_8bit);
+            std::string real_ja_jp_shiftjis;
+            ja_jp_shiftjis = get_std_name(ja_jp_shiftjis, &real_ja_jp_shiftjis);
+            if(!ja_jp_shiftjis.empty() && !test_std_supports_SJIS_codecvt(real_ja_jp_shiftjis))
+                ja_jp_shiftjis = ""; // LCOV_EXCL_LINE
         }
 
         std::cout << "Testing for backend " << backendName << std::endl;
 
-        test_iso = true;
-        if(backendName == "std" && (he_il_8bit.empty() || en_us_8bit.empty())) {
-            std::cout << "no ISO locales available, passing" << std::endl;
-            test_iso = false;
-        }
-        test_sjis = true;
-        if(backendName == "std" && ja_jp_shiftjis.empty()) {
-            test_sjis = false;
-        }
-        if(backendName == "winapi") {
+        if(backendName == "std") {
+            test_iso = !he_il_8bit.empty() && !en_us_8bit.empty();
+            test_sjis = !ja_jp_shiftjis.empty();
+            test_utf = !get_std_name("en_US.UTF-8").empty() && !get_std_name("he_IL.UTF-8").empty();
+        } else if(backendName == "winapi") {
             test_iso = false;
             test_sjis = false;
-        }
-        test_utf = true;
-#ifndef BOOST_LOCALE_NO_POSIX_BACKEND
-        if(backendName == "posix") {
-            if(!has_posix_locale(he_il_8bit))
-                test_iso = false;
-            if(!has_posix_locale(en_us_8bit))
-                test_iso = false;
-            if(!has_posix_locale("en_US.UTF-8"))
-                test_utf = false;
+            test_utf = true;
+        } else if(backendName == "posix") {
+#ifdef BOOST_LOCALE_NO_POSIX_BACKEND
+            throw std::logic_error("Unexpected backend"); // LCOV_EXCL_LINE
+#else
+            test_iso = has_posix_locale(he_il_8bit) && has_posix_locale(en_us_8bit);
+            test_utf = has_posix_locale("en_US.UTF-8");
 #    ifdef BOOST_LOCALE_WITH_ICONV
-            if(!has_posix_locale(ja_jp_shiftjis))
-                test_sjis = false;
+            test_sjis = has_posix_locale(ja_jp_shiftjis);
 #    else
             test_sjis = false;
 #    endif
-        }
 #endif
-
-        if(backendName == "std" && (get_std_name("en_US.UTF-8").empty() || get_std_name("he_IL.UTF-8").empty())) {
-            test_utf = false;
+        } else {
+            test_iso = true;
+            test_sjis = true;
+            test_utf = true;
         }
 
         test_wide_io();

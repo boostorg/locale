@@ -147,7 +147,7 @@ inline bool test_std_supports_SJIS_codecvt(const std::string& locale_name)
     {
         // Japan in Shift JIS/cp932
         const char* japan_932 = "\x93\xfa\x96\x7b";
-        std::ofstream f(file_path);
+        std::ofstream f(file_path, std::ios::binary);
         f << japan_932;
     }
     bool res = true;
