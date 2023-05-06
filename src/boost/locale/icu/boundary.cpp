@@ -130,12 +130,12 @@ namespace boost { namespace locale {
             UErrorCode err = U_ZERO_ERROR;
             BOOST_LOCALE_START_CONST_CONDITION
             if(sizeof(CharType) == 2 || (sizeof(CharType) == 1 && util::normalize_encoding(encoding) == "utf8")) {
-                UText* ut = 0;
+                UText* ut = nullptr;
                 try {
                     if(sizeof(CharType) == 1)
-                        ut = utext_openUTF8(0, reinterpret_cast<const char*>(begin), end - begin, &err);
+                        ut = utext_openUTF8(nullptr, reinterpret_cast<const char*>(begin), end - begin, &err);
                     else // sizeof(CharType)==2
-                        ut = utext_openUChars(0, reinterpret_cast<const UChar*>(begin), end - begin, &err);
+                        ut = utext_openUChars(nullptr, reinterpret_cast<const UChar*>(begin), end - begin, &err);
                     BOOST_LOCALE_END_CONST_CONDITION
 
                     check_and_throw_icu_error(err);

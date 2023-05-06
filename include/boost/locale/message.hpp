@@ -150,25 +150,25 @@ namespace boost { namespace locale {
         typedef message_format<char_type> facet_type;     ///< The type of the facet the messages are fetched with
 
         /// Create default empty message
-        basic_message() : n_(0), c_id_(0), c_context_(0), c_plural_(0) {}
+        basic_message() : n_(0), c_id_(nullptr), c_context_(nullptr), c_plural_(nullptr) {}
 
         /// Create a simple message from 0 terminated string. The string should exist
         /// until the message is destroyed. Generally useful with static constant strings
-        explicit basic_message(const char_type* id) : n_(0), c_id_(id), c_context_(0), c_plural_(0) {}
+        explicit basic_message(const char_type* id) : n_(0), c_id_(id), c_context_(nullptr), c_plural_(nullptr) {}
 
         /// Create a simple plural form message from 0 terminated strings. The strings should exist
         /// until the message is destroyed. Generally useful with static constant strings.
         ///
         /// \a n is the number, \a single and \a plural are singular and plural forms of the message
         explicit basic_message(const char_type* single, const char_type* plural, count_type n) :
-            n_(n), c_id_(single), c_context_(0), c_plural_(plural)
+            n_(n), c_id_(single), c_context_(nullptr), c_plural_(plural)
         {}
 
         /// Create a simple message from 0 terminated strings, with context
         /// information. The string should exist
         /// until the message is destroyed. Generally useful with static constant strings
         explicit basic_message(const char_type* context, const char_type* id) :
-            n_(0), c_id_(id), c_context_(context), c_plural_(0)
+            n_(0), c_id_(id), c_context_(context), c_plural_(nullptr)
         {}
 
         /// Create a simple plural form message from 0 terminated strings, with context. The strings should exist
@@ -184,18 +184,20 @@ namespace boost { namespace locale {
         {}
 
         /// Create a simple message from a string.
-        explicit basic_message(const string_type& id) : n_(0), c_id_(0), c_context_(0), c_plural_(0), id_(id) {}
+        explicit basic_message(const string_type& id) :
+            n_(0), c_id_(nullptr), c_context_(nullptr), c_plural_(nullptr), id_(id)
+        {}
 
         /// Create a simple plural form message from strings.
         ///
         /// \a n is the number, \a single and \a plural are single and plural forms of the message
         explicit basic_message(const string_type& single, const string_type& plural, count_type number) :
-            n_(number), c_id_(0), c_context_(0), c_plural_(0), id_(single), plural_(plural)
+            n_(number), c_id_(nullptr), c_context_(nullptr), c_plural_(nullptr), id_(single), plural_(plural)
         {}
 
         /// Create a simple message from a string with context.
         explicit basic_message(const string_type& context, const string_type& id) :
-            n_(0), c_id_(0), c_context_(0), c_plural_(0), id_(id), context_(context)
+            n_(0), c_id_(nullptr), c_context_(nullptr), c_plural_(nullptr), id_(id), context_(context)
         {}
 
         /// Create a simple plural form message from strings.
@@ -206,7 +208,7 @@ namespace boost { namespace locale {
                                const string_type& plural,
                                count_type number) :
             n_(number),
-            c_id_(0), c_context_(0), c_plural_(0), id_(single), context_(context), plural_(plural)
+            c_id_(nullptr), c_context_(nullptr), c_plural_(nullptr), id_(single), context_(context), plural_(plural)
         {}
 
         /// Copy an object
@@ -279,7 +281,7 @@ namespace boost { namespace locale {
             if(c_plural_)
                 return c_plural_;
             if(plural_.empty())
-                return 0;
+                return nullptr;
             return plural_.c_str();
         }
         const char_type* context() const
@@ -287,7 +289,7 @@ namespace boost { namespace locale {
             if(c_context_)
                 return c_context_;
             if(context_.empty())
-                return 0;
+                return nullptr;
             return context_.c_str();
         }
 
@@ -304,11 +306,11 @@ namespace boost { namespace locale {
             if(*id == 0)
                 return empty_string;
 
-            const facet_type* facet = 0;
+            const facet_type* facet = nullptr;
             if(std::has_facet<facet_type>(loc))
                 facet = &std::use_facet<facet_type>(loc);
 
-            const char_type* translated = 0;
+            const char_type* translated = nullptr;
             if(facet) {
                 if(!plural) {
                     translated = facet->get(domain_id, context, id);

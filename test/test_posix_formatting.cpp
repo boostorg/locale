@@ -150,7 +150,7 @@ void test_main(int /*argc*/, char** /*argv*/)
             std::cout << locale_name << " not supported" << std::endl;
         } else {
             std::locale generated_locale = gen(locale_name);
-            locale_holder real_locale(newlocale(LC_ALL_MASK, locale_name.c_str(), 0));
+            locale_holder real_locale(newlocale(LC_ALL_MASK, locale_name.c_str(), nullptr));
             TEST_REQUIRE(real_locale);
 
             std::cout << "UTF-8" << std::endl;

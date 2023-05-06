@@ -66,25 +66,19 @@ namespace boost { namespace locale { namespace impl_posix {
             if(real_id_.empty())
                 real_id_ = util::get_system_locale();
 
-            locale_t tmp = newlocale(LC_ALL_MASK, real_id_.c_str(), 0);
-
-            if(!tmp) {
-                tmp = newlocale(LC_ALL_MASK, "C", 0);
-            }
-            if(!tmp) {
+            locale_t tmp = newlocale(LC_ALL_MASK, real_id_.c_str(), nullptr);
+            if(!tmp)
+                tmp = newlocale(LC_ALL_MASK, "C", nullptr);
+            if(!tmp)
                 throw std::runtime_error("newlocale failed");
-            }
 
-            locale_t* tmp_p = 0;
-
+            locale_t* tmp_p;
             try {
-                tmp_p = new locale_t();
+                tmp_p = new locale_t(tmp);
             } catch(...) {
                 freelocale(tmp);
                 throw;
             }
-
-            *tmp_p = tmp;
             lc_ = std::shared_ptr<locale_t>(tmp_p, free_locale_by_ptr);
         }
 

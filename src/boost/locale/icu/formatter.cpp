@@ -372,7 +372,7 @@ namespace boost { namespace locale { namespace impl_icu {
             case strftime: {
                 using namespace flags;
                 std::unique_ptr<icu::DateFormat> new_df;
-                icu::DateFormat* df = 0;
+                icu::DateFormat* df = nullptr;
                 // try to use cached first
                 {
                     icu::SimpleDateFormat* sdf = cache.date_formatter();

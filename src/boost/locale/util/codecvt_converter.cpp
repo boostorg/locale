@@ -204,7 +204,7 @@ namespace boost { namespace locale { namespace util {
     {
         if(check_is_simple_encoding(encoding))
             return new simple_converter(encoding);
-        return 0;
+        return nullptr;
     }
 
     std::unique_ptr<base_converter> create_utf8_converter()

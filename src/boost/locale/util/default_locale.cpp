@@ -28,7 +28,7 @@ static bool get_user_default_locale_info(LCTYPE lcType, char (&buf)[N])
 namespace boost { namespace locale { namespace util {
     std::string get_system_locale(bool use_utf8_on_windows)
     {
-        const char* lang = 0;
+        const char* lang = nullptr;
         if(!lang || !*lang)
             lang = getenv("LC_ALL");
         if(!lang || !*lang)

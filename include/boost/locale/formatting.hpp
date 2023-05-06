@@ -173,7 +173,7 @@ namespace boost { namespace locale {
             template<typename Char>
             std::basic_string<Char> get() const
             {
-                if(type == 0 || *type != typeid(Char))
+                if(type == nullptr || *type != typeid(Char))
                     throw std::bad_cast();
                 std::basic_string<Char> result = reinterpret_cast<const Char*>(ptr);
                 return result;

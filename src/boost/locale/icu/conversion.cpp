@@ -59,7 +59,7 @@ namespace boost { namespace locale { namespace impl_icu {
                 case converter_base::normalization: normalize_string(str, flags); break;
                 case converter_base::upper_case: str.toUpper(locale_); break;
                 case converter_base::lower_case: str.toLower(locale_); break;
-                case converter_base::title_case: str.toTitle(0, locale_); break;
+                case converter_base::title_case: str.toTitle(nullptr, locale_); break;
                 case converter_base::case_folding: str.foldCase(); break;
             }
             return cvt.std(str);
@@ -84,7 +84,7 @@ namespace boost { namespace locale { namespace impl_icu {
         raii_casemap(const raii_casemap&) = delete;
         void operator=(const raii_casemap&) = delete;
 
-        raii_casemap(const std::string& locale_id) : map_(0)
+        raii_casemap(const std::string& locale_id) : map_(nullptr)
         {
             UErrorCode err = U_ZERO_ERROR;
             map_ = ucasemap_open(locale_id.c_str(), 0, &err);

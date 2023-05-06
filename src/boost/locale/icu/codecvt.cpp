@@ -31,8 +31,8 @@ namespace boost { namespace locale { namespace impl_icu {
             // No need to check err each time, this
             // is how ICU works.
             cvt_ = ucnv_open(encoding.c_str(), &err);
-            ucnv_setFromUCallBack(cvt_, UCNV_FROM_U_CALLBACK_STOP, 0, 0, 0, &err);
-            ucnv_setToUCallBack(cvt_, UCNV_TO_U_CALLBACK_STOP, 0, 0, 0, &err);
+            ucnv_setFromUCallBack(cvt_, UCNV_FROM_U_CALLBACK_STOP, nullptr, nullptr, nullptr, &err);
+            ucnv_setToUCallBack(cvt_, UCNV_TO_U_CALLBACK_STOP, nullptr, nullptr, nullptr, &err);
 
             if(!cvt_ || U_FAILURE(err)) {
                 if(cvt_)

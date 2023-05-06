@@ -22,15 +22,15 @@
 namespace boost { namespace locale { namespace util {
     namespace {
 
-        int is_leap(int year)
+        bool is_leap(int year)
         {
             if(year % 400 == 0)
-                return 1;
+                return true;
             if(year % 100 == 0)
-                return 0;
+                return false;
             if(year % 4 == 0)
-                return 1;
-            return 0;
+                return true;
+            return false;
         }
 
         int days_in_month(int year, int month)
@@ -127,7 +127,7 @@ namespace boost { namespace locale { namespace util {
         gregorian_calendar(const std::string& terr)
         {
             first_day_of_week_ = first_day_of_week(terr.c_str());
-            time_ = std::time(0);
+            time_ = std::time(nullptr);
             is_local_ = true;
             tzoff_ = 0;
             from_time(time_);
@@ -217,8 +217,8 @@ namespace boost { namespace locale { namespace util {
                     point = internal_timegm(&val);
 #ifdef BOOST_WINDOWS
                     // Windows uses TLS, thread safe
-                    std::tm* revert_point = 0;
-                    if(point < 0 || (revert_point = gmtime(&point)) == 0)
+                    std::tm* revert_point = nullptr;
+                    if(point < 0 || (revert_point = gmtime(&point)) == nullptr)
                         throw date_time_error("boost::locale::gregorian_calendar time is out of range");
                     val = *revert_point;
 #else
@@ -663,7 +663,7 @@ namespace boost { namespace locale { namespace util {
         void from_time(std::time_t point)
         {
             std::time_t real_point = point + tzoff_;
-            std::tm* t = 0;
+            std::tm* t;
 #ifdef BOOST_WINDOWS
             // Windows uses TLS, thread safe
             t = is_local_ ? localtime(&real_point) : gmtime(&real_point);

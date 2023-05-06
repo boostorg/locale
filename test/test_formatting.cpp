@@ -440,7 +440,7 @@ void test_manip(std::string e_charset = "UTF-8")
     }
 
     {
-        const time_t now = time(0);
+        const time_t now = time(nullptr);
         boost::locale::time_zone::global("GMT+4:00");
         const time_t local_now = now + 3600 * 4;
         char time_str[256];
@@ -646,7 +646,7 @@ void test_format_class(std::string charset = "UTF-8")
     // formatted time
     {
         boost::locale::time_zone::global("GMT+4:00");
-        time_t now = time(0);
+        const time_t now = time(nullptr);
         char local_time_str[256], local_time_str_gmt2[256];
         time_t local_now = now + 3600 * 4;
         strftime(local_time_str, sizeof(local_time_str), "'%H:%M:%S'", gmtime_wrap(&local_now));

@@ -52,7 +52,7 @@ void test_char()
         std::cout << "- " << name << " is not supported, skipping" << std::endl;
     else {
         std::cout << "Testing " << name << std::endl;
-        locale_holder cl(newlocale(LC_ALL_MASK, name.c_str(), 0));
+        locale_holder cl(newlocale(LC_ALL_MASK, name.c_str(), nullptr));
         TEST(cl);
 #ifndef BOOST_LOCALE_NO_POSIX_BACKEND
         if(towupper_l(L'i', cl) == 0x130)

@@ -27,11 +27,10 @@ namespace boost { namespace locale { namespace util {
             return 0;
         int gmtoff = 0;
         const char* begin = ltz.c_str() + 3;
-        char* end = 0;
+        char* end = const_cast<char*>(begin);
         int hours = strtol(begin, &end, 10);
-        if(end != begin) {
+        if(end != begin)
             gmtoff += hours * 3600;
-        }
         if(*end == ':') {
             begin = end + 1;
             int minutes = strtol(begin, &end, 10);
