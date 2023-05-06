@@ -95,9 +95,9 @@ namespace boost { namespace locale { namespace conv { namespace impl {
         if(begin == end)
             return;
         BOOL substitute = FALSE;
-        BOOL* substitute_ptr = codepage == 65001 || codepage == 65000 ? 0 : &substitute;
+        BOOL* substitute_ptr = (codepage == CP_UTF7 || codepage == CP_UTF8) ? nullptr : &substitute;
         char subst_char = 0;
-        char* subst_char_ptr = codepage == 65001 || codepage == 65000 ? 0 : &subst_char;
+        char* subst_char_ptr = (codepage == CP_UTF7 || codepage == CP_UTF8) ? nullptr : &subst_char;
 
         const std::ptrdiff_t num_chars = end - begin;
         if(num_chars > std::numeric_limits<int>::max())
@@ -196,7 +196,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
         }
         std::string convert(const char* begin, const char* end) override
         {
-            if(to_code_page_ == 65001 && from_code_page_ == 65001)
+            if(to_code_page_ == CP_UTF8 && from_code_page_ == CP_UTF8)
                 return utf_to_utf<char>(begin, end, how_);
 
             std::string res;
@@ -206,7 +206,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
             const wchar_t* wbegin = nullptr;
             const wchar_t* wend = nullptr;
 
-            if(from_code_page_ == 65001) {
+            if(from_code_page_ == CP_UTF8) {
                 tmps = utf_to_utf<wchar_t>(begin, end, how_);
                 if(tmps.empty())
                     return res;
@@ -220,9 +220,8 @@ namespace boost { namespace locale { namespace conv { namespace impl {
                 wend = wbegin + tmp.size();
             }
 
-            if(to_code_page_ == 65001) {
+            if(to_code_page_ == CP_UTF8)
                 return utf_to_utf<char>(wbegin, wend, how_);
-            }
 
             std::vector<char> ctmp;
             wide_to_multibyte(to_code_page_, wbegin, wend, how_ == skip, ctmp);
@@ -280,9 +279,8 @@ namespace boost { namespace locale { namespace conv { namespace impl {
 
         string_type convert(const char* begin, const char* end) override
         {
-            if(code_page_ == 65001) {
+            if(code_page_ == CP_UTF8)
                 return utf_to_utf<CharType>(begin, end, how_);
-            }
             std::vector<wchar_t> tmp;
             multibyte_to_wide(code_page_, begin, end, how_ == skip, tmp);
             string_type res;
@@ -312,9 +310,8 @@ namespace boost { namespace locale { namespace conv { namespace impl {
 
         std::string convert(const CharType* begin, const CharType* end) override
         {
-            if(code_page_ == 65001) {
+            if(code_page_ == CP_UTF8)
                 return utf_to_utf<char>(begin, end, how_);
-            }
             const wchar_t* wbegin;
             const wchar_t* wend;
             std::vector<wchar_t> buffer; // if needed
@@ -322,9 +319,9 @@ namespace boost { namespace locale { namespace conv { namespace impl {
                 wbegin = reinterpret_cast<const wchar_t*>(begin);
                 wend = reinterpret_cast<const wchar_t*>(end);
             } else {
-                if(how_ == stop) {
+                if(how_ == stop)
                     throw conversion_error();
-                } else {
+                else {
                     clean_invalid_utf16(begin, end - begin, buffer);
                     if(buffer.empty())
                         wbegin = wend = nullptr;
@@ -366,9 +363,8 @@ namespace boost { namespace locale { namespace conv { namespace impl {
 
         string_type convert(const char* begin, const char* end) override
         {
-            if(code_page_ == 65001) {
+            if(code_page_ == CP_UTF8)
                 return utf_to_utf<CharType>(begin, end, how_);
-            }
             std::vector<wchar_t> buf;
             multibyte_to_wide(code_page_, begin, end, how_ == skip, buf);
 
@@ -399,9 +395,8 @@ namespace boost { namespace locale { namespace conv { namespace impl {
 
         std::string convert(const CharType* begin, const CharType* end) override
         {
-            if(code_page_ == 65001) {
+            if(code_page_ == CP_UTF8)
                 return utf_to_utf<char>(begin, end, how_);
-            }
             std::wstring tmp = utf_to_utf<wchar_t>(begin, end, how_);
 
             std::vector<char> ctmp;
