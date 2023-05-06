@@ -157,7 +157,7 @@ namespace boost { namespace locale { namespace impl_icu {
         int get_option(calendar_option_type opt) const override
         {
             switch(opt) {
-                case is_gregorian: return icu_cast<const icu::GregorianCalendar>(calendar_.get()) != 0;
+                case is_gregorian: return icu_cast<const icu::GregorianCalendar>(calendar_.get()) != nullptr;
                 case is_dst: {
                     guard l(lock_);
                     UErrorCode err = U_ZERO_ERROR;

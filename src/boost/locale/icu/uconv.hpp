@@ -105,18 +105,18 @@ namespace boost { namespace locale { namespace impl_icu {
 
                 try {
                     if(cvt_type == cpcvt_type::skip) {
-                        ucnv_setFromUCallBack(cvt_, UCNV_FROM_U_CALLBACK_SKIP, 0, 0, 0, &err);
+                        ucnv_setFromUCallBack(cvt_, UCNV_FROM_U_CALLBACK_SKIP, nullptr, nullptr, nullptr, &err);
                         check_and_throw_icu_error(err);
 
                         err = U_ZERO_ERROR;
-                        ucnv_setToUCallBack(cvt_, UCNV_TO_U_CALLBACK_SKIP, 0, 0, 0, &err);
+                        ucnv_setToUCallBack(cvt_, UCNV_TO_U_CALLBACK_SKIP, nullptr, nullptr, nullptr, &err);
                         check_and_throw_icu_error(err);
                     } else {
-                        ucnv_setFromUCallBack(cvt_, UCNV_FROM_U_CALLBACK_STOP, 0, 0, 0, &err);
+                        ucnv_setFromUCallBack(cvt_, UCNV_FROM_U_CALLBACK_STOP, nullptr, nullptr, nullptr, &err);
                         check_and_throw_icu_error(err);
 
                         err = U_ZERO_ERROR;
-                        ucnv_setToUCallBack(cvt_, UCNV_TO_U_CALLBACK_STOP, 0, 0, 0, &err);
+                        ucnv_setToUCallBack(cvt_, UCNV_TO_U_CALLBACK_STOP, nullptr, nullptr, nullptr, &err);
                         check_and_throw_icu_error(err);
                     }
                 } catch(...) {

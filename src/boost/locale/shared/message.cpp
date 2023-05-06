@@ -284,7 +284,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
     struct message_key {
         typedef std::basic_string<CharType> string_type;
 
-        message_key(const string_type& c = string_type()) : c_context_(0), c_key_(0)
+        message_key(const string_type& c = string_type()) : c_context_(nullptr), c_key_(nullptr)
         {
             const size_t pos = c.find(CharType(4));
             if(pos == string_type::npos) {
@@ -297,7 +297,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
         message_key(const CharType* c, const CharType* k) : c_key_(k)
         {
             static const CharType empty = 0;
-            if(c != 0)
+            if(c != nullptr)
                 c_context_ = c;
             else
                 c_context_ = &empty;

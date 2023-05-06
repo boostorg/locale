@@ -83,7 +83,7 @@ namespace boost { namespace locale { namespace impl_icu {
             {
                 if(d && readdir_r(d, &de, &read_result) == 0 && read_result != 0)
                     return de.d_name;
-                return 0;
+                return nullptr;
             }
 
         private:
@@ -121,7 +121,7 @@ namespace boost { namespace locale { namespace impl_icu {
             if(!d.is_open())
                 return std::string();
 
-            const char* name = 0;
+            const char* name = nullptr;
             while((name = d.next()) != 0) {
                 std::string file_name = name;
                 if(file_name == "." || file_name == ".." || file_name == "posixrules" || file_name == "localtime") {

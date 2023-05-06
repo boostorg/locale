@@ -133,7 +133,7 @@ namespace boost { namespace locale { namespace boundary {
             typedef mapping<base_iterator> mapping_type;
             typedef segment<base_iterator> segment_type;
 
-            segment_index_iterator() : current_(0, 0), map_(0), mask_(0), full_select_(false) {}
+            segment_index_iterator() : current_(0, 0), map_(nullptr), mask_(0), full_select_(false) {}
 
             segment_index_iterator(base_iterator p, const mapping_type* map, rule_type mask, bool full_select) :
                 map_(map), mask_(mask), full_select_(full_select)
@@ -296,7 +296,7 @@ namespace boost { namespace locale { namespace boundary {
             typedef mapping<base_iterator> mapping_type;
             typedef boundary_point<base_iterator> boundary_point_type;
 
-            boundary_point_index_iterator() : current_(0), map_(0), mask_(0) {}
+            boundary_point_index_iterator() : current_(0), map_(nullptr), mask_(0) {}
 
             boundary_point_index_iterator(bool is_begin, const mapping_type* map, rule_type mask) :
                 map_(map), mask_(mask)

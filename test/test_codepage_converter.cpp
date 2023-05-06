@@ -31,9 +31,9 @@ bool test_from(boost::locale::util::base_converter& cvt, unsigned codepoint, con
     char buf[32] = {0};
     unsigned res = cvt.from_unicode(codepoint, buf, buf + sizeof(buf));
     if(res == boost::locale::util::base_converter::illegal) {
-        return str == 0;
+        return str == nullptr;
     } else {
-        return str != 0 && strlen(str) == res && memcmp(str, buf, res) == 0;
+        return str != nullptr && strlen(str) == res && memcmp(str, buf, res) == 0;
     }
 }
 
@@ -72,7 +72,7 @@ void test_shiftjis(std::unique_ptr<boost::locale::util::base_converter>& cvt)
     TEST_INC(0x30d2, 1); // Full width katakana Hi ヒ
     TEST_INC(0x3072, 1); // Full width hiragana Hi ひ
 
-    TEST_FROM(0, 0x5e9); // Hebrew ש not in ShiftJIS
+    TEST_FROM(nullptr, 0x5e9); // Hebrew ש not in ShiftJIS
 }
 
 void test_main(int /*argc*/, char** /*argv*/)
@@ -201,15 +201,15 @@ void test_main(int /*argc*/, char** /*argv*/)
 
     std::cout << "-- Test no surrogate " << std::endl;
 
-    TEST_FROM(0, 0xD800);
-    TEST_FROM(0, 0xDBFF);
-    TEST_FROM(0, 0xDC00);
-    TEST_FROM(0, 0xDFFF);
+    TEST_FROM(nullptr, 0xD800);
+    TEST_FROM(nullptr, 0xDBFF);
+    TEST_FROM(nullptr, 0xDC00);
+    TEST_FROM(nullptr, 0xDFFF);
 
     std::cout << "-- Test invalid " << std::endl;
 
-    TEST_FROM(0, 0x110000);
-    TEST_FROM(0, 0x1FFFFF);
+    TEST_FROM(nullptr, 0x110000);
+    TEST_FROM(nullptr, 0x1FFFFF);
 
     std::cout << "Test windows-1255" << std::endl;
 
@@ -236,8 +236,8 @@ void test_main(int /*argc*/, char** /*argv*/)
     TEST_FROM("\xc4", 0x5b4);
     TEST_FROM("\xfe", 0x200f);
 
-    TEST_FROM(0, 0xe4);
-    TEST_FROM(0, 0xd0);
+    TEST_FROM(nullptr, 0xe4);
+    TEST_FROM(nullptr, 0xd0);
 
 #ifdef BOOST_LOCALE_WITH_ICU
     std::cout << "Testing Shift-JIS using ICU/uconv" << std::endl;

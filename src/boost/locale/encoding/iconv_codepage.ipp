@@ -54,7 +54,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
                 if(state == normal)
                     res = conv(&begin, &in_left, &out_ptr, &out_left);
                 else
-                    res = conv(0, 0, &out_ptr, &out_left);
+                    res = conv(nullptr, nullptr, &out_ptr, &out_left);
 
                 int err = errno;
 

@@ -481,7 +481,7 @@ void test_main(int /*argc*/, char** /*argv*/)
 
             // Default constructed time_point
             {
-                const time_t current_time = std::time(0);
+                const time_t current_time = std::time(nullptr);
                 date_time time_point_default;
                 // Defaults to current time, i.e. different than a date in 1970
                 date_time time_point_1970 = year(1970) + february() + day(5);

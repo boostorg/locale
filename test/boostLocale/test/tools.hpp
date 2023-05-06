@@ -150,7 +150,7 @@ inline bool test_std_supports_SJIS_codecvt(const std::string& locale_name)
     return res;
 }
 
-std::string get_std_name(const std::string& name, std::string* real_name = 0)
+std::string get_std_name(const std::string& name, std::string* real_name = nullptr)
 {
     if(has_std_locale(name.c_str())) {
         if(real_name)

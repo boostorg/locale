@@ -138,7 +138,7 @@ void test_main(int /*argc*/, char** /*argv*/)
     std::cout << "- Testing timezone and time " << std::endl;
     {
         setlocale(LC_ALL, "C");
-        time_t now = time(0);
+        time_t now = std::time(nullptr);
         char buf[1024];
         strftime(buf, sizeof(buf), "%%c=%c; %%Z=%Z; %%z=%z", localtime_wrap(&now));
         std::cout << "  Local Time    :" << buf << std::endl;

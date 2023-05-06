@@ -36,7 +36,7 @@ namespace boost { namespace locale {
             typedef std::basic_ostream<CharType> stream_type;
             typedef void (*writer_type)(stream_type& output, const void* ptr);
 
-            formattible() : pointer_(0), writer_(&formattible::void_write) {}
+            formattible() : pointer_(nullptr), writer_(&formattible::void_write) {}
 
             formattible(const formattible&) = default;
             formattible(formattible&&) = default;

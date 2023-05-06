@@ -27,7 +27,8 @@ int main(int argc, char** argv)
     for(int i = 0; i < 100000; i++) {
         std::ostringstream ss;
         for(int j = 0; j < 5; j++) {
-            ss << boost::locale::as::datetime << std::time(0) << " " << boost::locale::as::number << 13456.345 << "\n";
+            ss << boost::locale::as::datetime << std::time(nullptr) << " " << boost::locale::as::number << 13456.345
+               << "\n";
         }
         if(i == 0)
             std::cout << ss.str() << std::endl;

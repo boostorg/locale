@@ -710,7 +710,7 @@ namespace boost { namespace locale {
     ///
     /// For example:
     /// \code
-    ///  date_time now(time(0),hebrew_calendar)
+    ///  date_time now(time(nullptr),hebrew_calendar)
     ///  std::cout << "Year: " << period::year(now) << " Full Date:" << now;
     /// \endcode
     ///

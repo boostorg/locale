@@ -203,8 +203,8 @@ namespace boost { namespace locale { namespace conv { namespace impl {
 
             std::vector<wchar_t> tmp; // buffer for mb2w
             std::wstring tmps;        // buffer for utf_to_utf
-            const wchar_t* wbegin = 0;
-            const wchar_t* wend = 0;
+            const wchar_t* wbegin = nullptr;
+            const wchar_t* wend = nullptr;
 
             if(from_code_page_ == 65001) {
                 tmps = utf_to_utf<wchar_t>(begin, end, how_);
@@ -315,11 +315,9 @@ namespace boost { namespace locale { namespace conv { namespace impl {
             if(code_page_ == 65001) {
                 return utf_to_utf<char>(begin, end, how_);
             }
-            const wchar_t* wbegin = 0;
-            const wchar_t* wend = 0;
+            const wchar_t* wbegin;
+            const wchar_t* wend;
             std::vector<wchar_t> buffer; // if needed
-            if(begin == end)
-                return std::string();
             if(validate_utf16(begin, end - begin)) {
                 wbegin = reinterpret_cast<const wchar_t*>(begin);
                 wend = reinterpret_cast<const wchar_t*>(end);
@@ -328,7 +326,9 @@ namespace boost { namespace locale { namespace conv { namespace impl {
                     throw conversion_error();
                 } else {
                     clean_invalid_utf16(begin, end - begin, buffer);
-                    if(!buffer.empty()) {
+                    if(buffer.empty())
+                        wbegin = wend = nullptr;
+                    else {
                         wbegin = &buffer[0];
                         wend = wbegin + buffer.size();
                     }
