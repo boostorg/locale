@@ -82,9 +82,10 @@ void test_main(int /*argc*/, char** /*argv*/)
     std::cout << "Test UTF-8\n";
     std::cout << "- From UTF-8" << std::endl;
 
+    TEST(!create_simple_converter("UTF-8"));
     std::unique_ptr<base_converter> cvt = create_utf8_converter();
 
-    TEST(cvt.get());
+    TEST_REQUIRE(cvt);
     TEST(cvt->is_thread_safe());
     TEST_EQ(cvt->max_len(), 4);
 
@@ -215,7 +216,7 @@ void test_main(int /*argc*/, char** /*argv*/)
 
     cvt = create_simple_converter("windows-1255");
 
-    TEST(cvt.get());
+    TEST_REQUIRE(cvt);
     TEST(cvt->is_thread_safe());
     TEST_EQ(cvt->max_len(), 1);
 
@@ -249,6 +250,7 @@ void test_main(int /*argc*/, char** /*argv*/)
 
     std::cout << "Testing Shift-JIS using POSIX/iconv" << std::endl;
 
+    TEST(!create_simple_converter("Shift_JIS"));
     cvt = boost::locale::create_iconv_converter("Shift-JIS");
 #ifndef BOOST_LOCALE_WITH_ICONV
     TEST(!cvt);
