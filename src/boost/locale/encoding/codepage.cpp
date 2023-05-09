@@ -7,7 +7,6 @@
 
 #include <boost/locale/encoding.hpp>
 
-#include "boost/locale/encoding/conv.hpp"
 #if BOOST_LOCALE_USE_WIN32_API
 #    define BOOST_LOCALE_WITH_WCONV
 #endif
@@ -107,7 +106,119 @@ namespace boost { namespace locale { namespace conv {
         throw invalid_charset_error(charset);
     }
 
+    namespace detail {
+        template<typename CharIn, typename CharOut>
+        charset_converter<CharIn, CharOut>::~charset_converter() = default;
+
+        template<class T>
+        static std::unique_ptr<utf_encoder<typename T::char_out_type>> make_encoder_ptr(T& enc)
+        {
+            return std::unique_ptr<utf_encoder<typename T::char_out_type>>(new T(std::move(enc)));
+        }
+        template<class T>
+        static std::unique_ptr<utf_decoder<typename T::char_in_type>> make_decoder_ptr(T& dec)
+        {
+            return std::unique_ptr<utf_decoder<typename T::char_in_type>>(new T(std::move(dec)));
+        }
+        template<class T>
+        static std::unique_ptr<narrow_converter> make_converter_ptr(T& c)
+        {
+            return std::unique_ptr<narrow_converter>(new T(std::move(c)));
+        }
+
+        template<typename Char>
+        std::unique_ptr<utf_encoder<Char>>
+        make_utf_encoder(const std::string& charset, method_type how, conv_backend impl)
+        {
+#ifdef BOOST_LOCALE_WITH_ICONV
+            if(impl == conv_backend::Default || impl == conv_backend::IConv) {
+                impl::iconv_to_utf<Char> cvt;
+                if(cvt.open(charset, how))
+                    return make_encoder_ptr(cvt);
+            }
+#endif
+#ifdef BOOST_LOCALE_WITH_ICU
+            if(impl == conv_backend::Default || impl == conv_backend::ICU) {
+                impl::uconv_to_utf<Char> cvt;
+                if(cvt.open(charset, how))
+                    return make_encoder_ptr(cvt);
+            }
+#endif
+#ifdef BOOST_LOCALE_WITH_WCONV
+            if(impl == conv_backend::Default || impl == conv_backend::WinAPI) {
+                impl::wconv_to_utf<Char> cvt;
+                if(cvt.open(charset, how))
+                    return make_encoder_ptr(cvt);
+            }
+#endif
+            throw invalid_charset_error(charset);
+        }
+
+        template<typename Char>
+        std::unique_ptr<utf_decoder<Char>>
+        make_utf_decoder(const std::string& charset, method_type how, conv_backend impl)
+        {
+#ifdef BOOST_LOCALE_WITH_ICONV
+            if(impl == conv_backend::Default || impl == conv_backend::IConv) {
+                impl::iconv_from_utf<Char> cvt;
+                if(cvt.open(charset, how))
+                    return make_decoder_ptr(cvt);
+            }
+#endif
+#ifdef BOOST_LOCALE_WITH_ICU
+            if(impl == conv_backend::Default || impl == conv_backend::ICU) {
+                impl::uconv_from_utf<Char> cvt;
+                if(cvt.open(charset, how))
+                    return make_decoder_ptr(cvt);
+            }
+#endif
+#ifdef BOOST_LOCALE_WITH_WCONV
+            if(impl == conv_backend::Default || impl == conv_backend::WinAPI) {
+                impl::wconv_from_utf<Char> cvt;
+                if(cvt.open(charset, how))
+                    return make_decoder_ptr(cvt);
+            }
+#endif
+            throw invalid_charset_error(charset);
+        }
+        std::unique_ptr<narrow_converter> make_narrow_converter(const std::string& src_encoding,
+                                                                const std::string& target_encoding,
+                                                                method_type how,
+                                                                conv_backend impl)
+        {
+#ifdef BOOST_LOCALE_WITH_ICONV
+            if(impl == conv_backend::Default || impl == conv_backend::IConv) {
+                impl::iconv_between cvt;
+                if(cvt.open(target_encoding, src_encoding, how))
+                    return make_converter_ptr(cvt);
+            }
+#endif
+#ifdef BOOST_LOCALE_WITH_ICU
+            if(impl == conv_backend::Default || impl == conv_backend::ICU) {
+                impl::uconv_between cvt;
+                if(cvt.open(target_encoding, src_encoding, how))
+                    return make_converter_ptr(cvt);
+            }
+#endif
+#ifdef BOOST_LOCALE_WITH_WCONV
+            if(impl == conv_backend::Default || impl == conv_backend::WinAPI) {
+                impl::wconv_between cvt;
+                if(cvt.open(target_encoding, src_encoding, how))
+                    return make_converter_ptr(cvt);
+            }
+#endif
+            throw invalid_charset_error(std::string(src_encoding) + " or " + target_encoding);
+        }
+    } // namespace detail
+
 #define BOOST_LOCALE_INSTANTIATE(CHARTYPE)                                                              \
+    namespace detail {                                                                                  \
+        template class charset_converter<char, CHARTYPE>;                                               \
+        template BOOST_LOCALE_DECL std::unique_ptr<utf_encoder<CHARTYPE>>                               \
+        make_utf_encoder(const std::string& charset, method_type how, conv_backend impl);               \
+        template BOOST_LOCALE_DECL std::unique_ptr<utf_decoder<CHARTYPE>>                               \
+        make_utf_decoder(const std::string& charset, method_type how, conv_backend impl);               \
+    }                                                                                                   \
     template BOOST_LOCALE_DECL std::basic_string<CHARTYPE> to_utf<CHARTYPE>(const char* begin,          \
                                                                             const char* end,            \
                                                                             const std::string& charset, \
@@ -116,16 +227,21 @@ namespace boost { namespace locale { namespace conv {
                                                               const CHARTYPE* end,                      \
                                                               const std::string& charset,               \
                                                               method_type how)
+#define BOOST_LOCALE_INSTANTIATE_NO_CHAR(CHARTYPE)        \
+    BOOST_LOCALE_INSTANTIATE(CHARTYPE);                   \
+    namespace detail {                                    \
+        template class charset_converter<CHARTYPE, char>; \
+    }
 
     BOOST_LOCALE_INSTANTIATE(char);
-    BOOST_LOCALE_INSTANTIATE(wchar_t);
+    BOOST_LOCALE_INSTANTIATE_NO_CHAR(wchar_t);
 
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-    BOOST_LOCALE_INSTANTIATE(char16_t);
+    BOOST_LOCALE_INSTANTIATE_NO_CHAR(char16_t);
 #endif
 
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-    BOOST_LOCALE_INSTANTIATE(char32_t);
+    BOOST_LOCALE_INSTANTIATE_NO_CHAR(char32_t);
 #endif
 
 }}} // namespace boost::locale::conv

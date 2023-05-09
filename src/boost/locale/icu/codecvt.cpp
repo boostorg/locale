@@ -9,7 +9,6 @@
 #include <boost/locale/encoding_errors.hpp>
 #include <boost/locale/hold_ptr.hpp>
 #include <boost/locale/util.hpp>
-#include "boost/locale/encoding/conv.hpp"
 #include "boost/locale/icu/all_generator.hpp"
 #include "boost/locale/icu/icu_util.hpp"
 #include "boost/locale/icu/uconv.hpp"

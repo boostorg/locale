@@ -8,7 +8,7 @@
 #define BOOST_LOCALE_IMPL_ICONV_CODEPAGE_HPP
 
 #include <boost/locale/encoding.hpp>
-#include "boost/locale/encoding/conv.hpp"
+#include "boost/locale/util/encoding.hpp"
 #include "boost/locale/util/iconv.hpp"
 #include <cerrno>
 #include <string>
@@ -17,15 +17,11 @@ namespace boost { namespace locale { namespace conv { namespace impl {
 
     class iconverter_base {
     public:
-        iconverter_base() : cvt_((iconv_t)(-1)) {}
-        ~iconverter_base() { close(); }
-
         bool do_open(const char* to, const char* from, method_type how)
         {
-            close();
             cvt_ = iconv_open(to, from);
             how_ = how;
-            return cvt_ != (iconv_t)(-1);
+            return static_cast<bool>(cvt_);
         }
 
         template<typename OutChar, typename InChar>
@@ -100,29 +96,21 @@ namespace boost { namespace locale { namespace conv { namespace impl {
         }
 
     private:
-        void close()
-        {
-            if(cvt_ != (iconv_t)(-1)) {
-                iconv_close(cvt_);
-                cvt_ = (iconv_t)(-1);
-            }
-        }
-
         size_t conv(const char** inbuf, size_t* inchar_left, char** outbuf, size_t* outchar_left)
         {
             return call_iconv(cvt_, inbuf, inchar_left, outbuf, outchar_left);
         }
 
-        iconv_t cvt_;
+        iconv_handle cvt_;
         method_type how_;
     };
 
     template<typename CharType>
-    class iconv_from_utf : public converter_from_utf<CharType> {
+    class iconv_from_utf final : public detail::utf_decoder<CharType> {
     public:
-        bool open(const std::string& charset, method_type how) override
+        bool open(const std::string& charset, method_type how)
         {
-            return self_.do_open(charset.c_str(), utf_name<CharType>(), how);
+            return self_.do_open(charset.c_str(), util::utf_name<CharType>(), how);
         }
 
         std::string convert(const CharType* ubegin, const CharType* uend) override
@@ -134,9 +122,9 @@ namespace boost { namespace locale { namespace conv { namespace impl {
         iconverter_base self_;
     };
 
-    class iconv_between : public converter_between {
+    class iconv_between final : public detail::narrow_converter {
     public:
-        bool open(const std::string& to_charset, const std::string& from_charset, method_type how) override
+        bool open(const std::string& to_charset, const std::string& from_charset, method_type how)
         {
             return self_.do_open(to_charset.c_str(), from_charset.c_str(), how);
         }
@@ -150,16 +138,14 @@ namespace boost { namespace locale { namespace conv { namespace impl {
     };
 
     template<typename CharType>
-    class iconv_to_utf : public converter_to_utf<CharType> {
+    class iconv_to_utf final : public detail::utf_encoder<CharType> {
     public:
-        typedef std::basic_string<CharType> string_type;
-
-        bool open(const std::string& charset, method_type how) override
+        bool open(const std::string& charset, method_type how)
         {
-            return self_.do_open(utf_name<CharType>(), charset.c_str(), how);
+            return self_.do_open(util::utf_name<CharType>(), charset.c_str(), how);
         }
 
-        string_type convert(const char* begin, const char* end) override
+        std::basic_string<CharType> convert(const char* begin, const char* end) override
         {
             return self_.template real_convert<CharType>(begin, end);
         }

@@ -11,7 +11,6 @@
 #    define NOMINMAX
 #endif
 #include <boost/locale/encoding.hpp>
-#include "boost/locale/encoding/conv.hpp"
 #include "boost/locale/util/encoding.hpp"
 #include <algorithm>
 #include <cstddef>
@@ -164,10 +163,10 @@ namespace boost { namespace locale { namespace conv { namespace impl {
         }
     }
 
-    class wconv_between : public converter_between {
+    class wconv_between final : public detail::narrow_converter {
     public:
         wconv_between() : how_(skip), to_code_page_(-1), from_code_page_(-1) {}
-        bool open(const std::string& to_charset, const std::string& from_charset, method_type how) override
+        bool open(const std::string& to_charset, const std::string& from_charset, method_type how)
         {
             how_ = how;
             to_code_page_ = util::encoding_to_windows_codepage(to_charset);
@@ -226,9 +225,9 @@ namespace boost { namespace locale { namespace conv { namespace impl {
     class wconv_from_utf;
 
     template<>
-    class wconv_to_utf<char, 1> : public converter_to_utf<char> {
+    class wconv_to_utf<char, 1> final : public detail::utf_encoder<char> {
     public:
-        bool open(const std::string& cs, method_type how) override { return cvt.open("UTF-8", cs, how); }
+        bool open(const std::string& cs, method_type how) { return cvt.open("UTF-8", cs, how); }
         std::string convert(const char* begin, const char* end) override { return cvt.convert(begin, end); }
 
     private:
@@ -236,9 +235,9 @@ namespace boost { namespace locale { namespace conv { namespace impl {
     };
 
     template<>
-    class wconv_from_utf<char, 1> : public converter_from_utf<char> {
+    class wconv_from_utf<char, 1> final : public detail::utf_decoder<char> {
     public:
-        bool open(const std::string& cs, method_type how) override { return cvt.open(cs, "UTF-8", how); }
+        bool open(const std::string& cs, method_type how) { return cvt.open(cs, "UTF-8", how); }
         std::string convert(const char* begin, const char* end) override { return cvt.convert(begin, end); }
 
     private:
@@ -246,13 +245,13 @@ namespace boost { namespace locale { namespace conv { namespace impl {
     };
 
     template<typename CharType>
-    class wconv_to_utf<CharType, 2> : public converter_to_utf<CharType> {
+    class wconv_to_utf<CharType, 2> final : public detail::utf_encoder<CharType> {
     public:
-        typedef std::basic_string<CharType> string_type;
+        using string_type = std::basic_string<CharType>;
 
         wconv_to_utf() : how_(skip), code_page_(-1) {}
 
-        bool open(const std::string& charset, method_type how) override
+        bool open(const std::string& charset, method_type how)
         {
             how_ = how;
             code_page_ = util::encoding_to_windows_codepage(charset);
@@ -277,13 +276,11 @@ namespace boost { namespace locale { namespace conv { namespace impl {
     };
 
     template<typename CharType>
-    class wconv_from_utf<CharType, 2> : public converter_from_utf<CharType> {
+    class wconv_from_utf<CharType, 2> final : public detail::utf_decoder<CharType> {
     public:
-        typedef std::basic_string<CharType> string_type;
-
         wconv_from_utf() : how_(skip), code_page_(-1) {}
 
-        bool open(const std::string& charset, method_type how) override
+        bool open(const std::string& charset, method_type how)
         {
             how_ = how;
             code_page_ = util::encoding_to_windows_codepage(charset);
@@ -330,13 +327,13 @@ namespace boost { namespace locale { namespace conv { namespace impl {
     };
 
     template<typename CharType>
-    class wconv_to_utf<CharType, 4> : public converter_to_utf<CharType> {
+    class wconv_to_utf<CharType, 4> final : public detail::utf_encoder<CharType> {
     public:
-        typedef std::basic_string<CharType> string_type;
+        using string_type = std::basic_string<CharType>;
 
         wconv_to_utf() : how_(skip), code_page_(-1) {}
 
-        bool open(const std::string& charset, method_type how) override
+        bool open(const std::string& charset, method_type how)
         {
             how_ = how;
             code_page_ = util::encoding_to_windows_codepage(charset);
@@ -362,13 +359,11 @@ namespace boost { namespace locale { namespace conv { namespace impl {
     };
 
     template<typename CharType>
-    class wconv_from_utf<CharType, 4> : public converter_from_utf<CharType> {
+    class wconv_from_utf<CharType, 4> final : public detail::utf_decoder<CharType> {
     public:
-        typedef std::basic_string<CharType> string_type;
-
         wconv_from_utf() : how_(skip), code_page_(-1) {}
 
-        bool open(const std::string& charset, method_type how) override
+        bool open(const std::string& charset, method_type how)
         {
             how_ = how;
             code_page_ = util::encoding_to_windows_codepage(charset);
