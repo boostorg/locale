@@ -78,7 +78,7 @@ void test_by_char(const std::locale& l, std::string name, int lcid)
 
 #ifndef BOOST_LOCALE_NO_WINAPI_BACKEND
         wchar_t buf[256];
-        GetCurrencyFormatW(lcid, 0, L"1043.34", 0, buf, 256);
+        GetCurrencyFormatW(lcid, 0, L"1043.34", nullptr, buf, 256);
         TEST_EQ(to_utf8(ss.str()), to_utf8<wchar_t>(buf));
 #else
         boost::ignore_unused(lcid);
@@ -109,8 +109,8 @@ void test_by_char(const std::locale& l, std::string name, int lcid)
         wchar_t time_buf[256];
         wchar_t date_buf[256];
         SYSTEMTIME st = {1970, 2, 5, 5, 15, 33, 13, 0};
-        GetTimeFormatW(lcid, 0, &st, 0, time_buf, 256);
-        GetDateFormatW(lcid, 0, &st, 0, date_buf, 256);
+        GetTimeFormatW(lcid, 0, &st, nullptr, time_buf, 256);
+        GetDateFormatW(lcid, 0, &st, nullptr, date_buf, 256);
         TEST_EQ(
           to_utf8(ss.str()),
           to_utf8(std::wstring(date_buf) + L"\n" + time_buf + L"\n" + date_buf + L" " + time_buf + L"\n16\n48\n"));

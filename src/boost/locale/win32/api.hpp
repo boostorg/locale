@@ -166,10 +166,10 @@ namespace boost { namespace locale { namespace impl_win {
 
         ss << std::setprecision(std::numeric_limits<double>::digits10 + 1) << value;
         std::wstring sval = ss.str();
-        int len = GetCurrencyFormatW(l.lcid, 0, sval.c_str(), 0, 0, 0);
+        const auto len = GetCurrencyFormatW(l.lcid, 0, sval.c_str(), nullptr, nullptr, 0);
         std::vector<wchar_t> buf(len + 1);
-        GetCurrencyFormatW(l.lcid, 0, sval.c_str(), 0, &buf.front(), len);
-        return &buf.front();
+        GetCurrencyFormatW(l.lcid, 0, sval.c_str(), nullptr, buf.data(), len);
+        return buf.data();
     }
 
     ////////////////////////////////////////////////////////////////////////
@@ -180,7 +180,7 @@ namespace boost { namespace locale { namespace impl_win {
 
     inline std::wstring wcs_format_date_l(const wchar_t* format, SYSTEMTIME const* tm, const winlocale& l)
     {
-        int len = GetDateFormatW(l.lcid, 0, tm, format, 0, 0);
+        const auto len = GetDateFormatW(l.lcid, 0, tm, format, nullptr, 0);
         std::vector<wchar_t> buf(len + 1);
         GetDateFormatW(l.lcid, 0, tm, format, &buf.front(), len);
         return &buf.front();
@@ -188,7 +188,7 @@ namespace boost { namespace locale { namespace impl_win {
 
     inline std::wstring wcs_format_time_l(const wchar_t* format, SYSTEMTIME const* tm, const winlocale& l)
     {
-        int len = GetTimeFormatW(l.lcid, 0, tm, format, 0, 0);
+        const auto len = GetTimeFormatW(l.lcid, 0, tm, format, nullptr, 0);
         std::vector<wchar_t> buf(len + 1);
         GetTimeFormatW(l.lcid, 0, tm, format, &buf.front(), len);
         return &buf.front();
