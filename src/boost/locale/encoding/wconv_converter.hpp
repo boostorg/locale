@@ -133,7 +133,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
         const CharType* begin = str;
         const CharType* end = str + len;
         while(begin != end) {
-            utf::code_point c = utf::utf_traits<CharType, 2>::template decode<const CharType*>(begin, end);
+            utf::code_point c = utf::utf_traits<CharType, 2>::decode(begin, end);
             if(c == utf::illegal || c == utf::incomplete)
                 return false;
         }
@@ -265,8 +265,10 @@ namespace boost { namespace locale { namespace conv { namespace impl {
             std::vector<wchar_t> tmp;
             multibyte_to_wide(code_page_, begin, end, how_ == skip, tmp);
             string_type res;
-            if(!tmp.empty())
+            if(!tmp.empty()) {
+                static_assert(sizeof(CharType) == sizeof(wchar_t), "Cast not possible");
                 res.assign(reinterpret_cast<CharType*>(tmp.data()), tmp.size());
+            }
             return res;
         }
 
@@ -295,6 +297,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
             const wchar_t* wend;
             std::vector<wchar_t> buffer; // if needed
             if(validate_utf16(begin, end - begin)) {
+                static_assert(sizeof(CharType) == sizeof(wchar_t), "Cast not possible");
                 wbegin = reinterpret_cast<const wchar_t*>(begin);
                 wend = reinterpret_cast<const wchar_t*>(end);
             } else {
