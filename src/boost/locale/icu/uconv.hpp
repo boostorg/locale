@@ -218,13 +218,25 @@ namespace boost { namespace locale { namespace impl_icu {
 
         icu::UnicodeString icu_checked(const CharType* begin, const CharType* end) const
         {
+            // Fast path checking if the full string is already valid
+            {
+                UErrorCode err = U_ZERO_ERROR;
+                static_assert(sizeof(CharType) == sizeof(UChar32), "Size mismatch!");
+                u_strFromUTF32(nullptr, 0, nullptr, reinterpret_cast<const UChar32*>(begin), end - begin, &err);
+                if(err != U_INVALID_CHAR_FOUND)
+                    return icu::UnicodeString::fromUTF32(reinterpret_cast<const UChar32*>(begin), end - begin);
+            }
+            // Any char is invalid
+            throw_if_needed();
+            // If not thrown skip invalid chars
             icu::UnicodeString tmp(end - begin, 0, 0); // make initial capacity
             while(begin != end) {
-                UChar32 c = static_cast<UChar32>(*begin++);
-                if(U_IS_UNICODE_CHAR(c))
+                const UChar32 c = static_cast<UChar32>(*begin++);
+                // Maybe simply: UCHAR_MIN_VALUE <= c && c <= UCHAR_MAX_VALUE && !U_IS_SURROGATE(c)
+                UErrorCode err = U_ZERO_ERROR;
+                u_strFromUTF32(nullptr, 0, nullptr, &c, 1, &err);
+                if(err != U_INVALID_CHAR_FOUND)
                     tmp.append(c);
-                else
-                    throw_if_needed();
             }
             return tmp;
         }
