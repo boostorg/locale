@@ -46,6 +46,7 @@ std::ostream& operator<<(std::ostream& s, boost::locale::conv::detail::conv_back
 #define TEST_FAIL_CONVERSION(X) TEST_THROWS(X, boost::locale::conv::conversion_error)
 
 template<typename Char>
+BOOST_LOCALE_NO_SANITIZE("vptr")
 void test_to_utf_for_impls(const std::string& source,
                            const std::basic_string<Char>& target,
                            const std::string& encoding,
@@ -72,6 +73,7 @@ void test_to_utf_for_impls(const std::string& source,
 }
 
 template<typename Char>
+BOOST_LOCALE_NO_SANITIZE("vptr")
 void test_from_utf_for_impls(const std::basic_string<Char>& source,
                              const std::string& target,
                              const std::string& encoding,
@@ -163,6 +165,7 @@ std::basic_string<char> utf(const std::string& s)
 }
 
 template<typename Char>
+BOOST_LOCALE_NO_SANITIZE("vptr")
 void test_with_0()
 {
     std::cout << "-- Test string containing NULL chars" << std::endl;
@@ -448,6 +451,7 @@ void test_latin1_conversions()
 #endif
 }
 
+BOOST_LOCALE_NO_SANITIZE("vptr")
 void test_between_for_impls(const std::string& source,
                             const std::string& target,
                             const std::string& to_encoding,

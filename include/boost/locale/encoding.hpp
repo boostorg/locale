@@ -236,11 +236,17 @@ namespace boost { namespace locale {
             /// Convert text in range [begin,end) to UTF
             ///
             /// \throws conversion_error: Conversion failed
-            string_type convert(const char* begin, const char* end) const { return impl_->convert(begin, end); }
+            BOOST_LOCALE_NO_SANITIZE("vptr") string_type convert(const char* begin, const char* end) const
+            {
+                return impl_->convert(begin, end);
+            }
             /// Convert \a text to UTF
             ///
             /// \throws conversion_error: Conversion failed
-            string_type convert(const boost::string_view& text) const { return impl_->convert(text); }
+            BOOST_LOCALE_NO_SANITIZE("vptr") string_type convert(const boost::string_view& text) const
+            {
+                return impl_->convert(text);
+            }
             /// Convert \a text to UTF
             ///
             /// \throws conversion_error: Conversion failed
@@ -267,11 +273,17 @@ namespace boost { namespace locale {
             /// Convert UTF text in range [begin,end) to local encoding
             ///
             /// \throws conversion_error: Conversion failed
-            std::string convert(const CharType* begin, const CharType* end) const { return impl_->convert(begin, end); }
+            BOOST_LOCALE_NO_SANITIZE("vptr") std::string convert(const CharType* begin, const CharType* end) const
+            {
+                return impl_->convert(begin, end);
+            }
             /// Convert \a text from UTF to local encoding
             ///
             /// \throws conversion_error: Conversion failed
-            std::string convert(const stringview_type& text) const { return impl_->convert(text); }
+            BOOST_LOCALE_NO_SANITIZE("vptr") std::string convert(const stringview_type& text) const
+            {
+                return impl_->convert(text);
+            }
             /// Convert \a text from UTF to local encoding
             ///
             /// \throws conversion_error: Conversion failed
@@ -294,11 +306,17 @@ namespace boost { namespace locale {
             /// Convert text in range [begin,end)
             ///
             /// \throws conversion_error: Conversion failed
-            std::string convert(const char* begin, const char* end) const { return impl_->convert(begin, end); }
+            BOOST_LOCALE_NO_SANITIZE("vptr") std::string convert(const char* begin, const char* end) const
+            {
+                return impl_->convert(begin, end);
+            }
             /// Convert \a text
             ///
             /// \throws conversion_error: Conversion failed
-            std::string convert(const boost::string_view& text) const { return impl_->convert(text); }
+            BOOST_LOCALE_NO_SANITIZE("vptr") std::string convert(const boost::string_view& text) const
+            {
+                return impl_->convert(text);
+            }
             /// Convert \a text
             ///
             /// \throws conversion_error: Conversion failed
