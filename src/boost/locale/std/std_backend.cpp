@@ -17,7 +17,6 @@
 #    ifndef NOMINMAX
 #        define NOMINMAX
 #    endif
-#    include "boost/locale/encoding/conv.hpp"
 #    include "boost/locale/util/encoding.hpp"
 #    include "boost/locale/win32/lcid.hpp"
 #    include <windows.h>

@@ -29,20 +29,7 @@ namespace boost { namespace locale { namespace impl_icu {
     enum class cpcvt_type { skip, stop };
 
     template<typename CharType, int char_size = sizeof(CharType)>
-    class icu_std_converter {
-    public:
-        typedef std::basic_string<CharType> string_type;
-
-        icu_std_converter(std::string charset, cpcvt_type cv = cpcvt_type::skip);
-        icu::UnicodeString icu(const CharType* begin, const CharType* end) const;
-        string_type std(const icu::UnicodeString& str) const;
-        size_t cut(const icu::UnicodeString& str,
-                   const CharType* begin,
-                   const CharType* end,
-                   size_t n,
-                   size_t from_u = 0,
-                   size_t from_c = 0) const;
-    };
+    class icu_std_converter;
 
     template<typename CharType>
     class icu_std_converter<CharType, 1> {
@@ -57,25 +44,20 @@ namespace boost { namespace locale { namespace impl_icu {
         {
             const char* begin = reinterpret_cast<const char*>(vb);
             const char* end = reinterpret_cast<const char*>(ve);
-            uconv cvt(charset_, cvt_type_);
             UErrorCode err = U_ZERO_ERROR;
-            icu::UnicodeString tmp(begin, end - begin, cvt.cvt(), err);
+            icu::UnicodeString tmp(begin, end - begin, cvt_.cvt(), err);
             check_and_throw_icu_error(err);
             return tmp;
         }
 
         string_type std(const icu::UnicodeString& str) const
         {
-            uconv cvt(charset_, cvt_type_);
-            return cvt.go(str.getBuffer(), str.length(), max_len_);
+            return cvt_.go(str.getBuffer(), str.length(), max_len_);
         }
 
-        icu_std_converter(std::string charset, cpcvt_type cvt_type = cpcvt_type::skip) :
-            charset_(charset), cvt_type_(cvt_type)
-        {
-            uconv cvt(charset_, cvt_type);
-            max_len_ = cvt.max_char_size();
-        }
+        icu_std_converter(const std::string& charset, cpcvt_type cvt_type = cpcvt_type::skip) :
+            cvt_(charset, cvt_type), max_len_(cvt_.max_char_size())
+        {}
 
         size_t cut(const icu::UnicodeString& str,
                    const CharType* begin,
@@ -85,8 +67,7 @@ namespace boost { namespace locale { namespace impl_icu {
                    size_t from_char = 0) const
         {
             size_t code_points = str.countChar32(from_u, n);
-            uconv cvt(charset_, cvt_type_);
-            return cvt.cut(code_points, begin + from_char, end);
+            return cvt_.cut(code_points, begin + from_char, end);
         }
 
         struct uconv {
@@ -127,7 +108,7 @@ namespace boost { namespace locale { namespace impl_icu {
 
             int max_char_size() { return ucnv_getMaxCharSize(cvt_); }
 
-            string_type go(const UChar* buf, int length, int max_size)
+            string_type go(const UChar* buf, int length, int max_size) const
             {
                 string_type res;
                 res.resize(UCNV_GET_MAX_BYTES_FOR_STRING(length, max_size));
@@ -139,7 +120,7 @@ namespace boost { namespace locale { namespace impl_icu {
                 return res;
             }
 
-            size_t cut(size_t n, const CharType* begin, const CharType* end)
+            size_t cut(size_t n, const CharType* begin, const CharType* end) const
             {
                 const CharType* saved = begin;
                 while(n > 0 && begin < end) {
@@ -152,7 +133,7 @@ namespace boost { namespace locale { namespace impl_icu {
                 return begin - saved;
             }
 
-            UConverter* cvt() { return cvt_; }
+            UConverter* cvt() const { return cvt_; }
 
             ~uconv() { ucnv_close(cvt_); }
 
@@ -161,9 +142,8 @@ namespace boost { namespace locale { namespace impl_icu {
         };
 
     private:
-        int max_len_;
-        std::string charset_;
-        cpcvt_type cvt_type_;
+        uconv cvt_;
+        const int max_len_;
     };
 
     template<typename CharType>
@@ -202,6 +182,7 @@ namespace boost { namespace locale { namespace impl_icu {
         }
         icu::UnicodeString icu(const CharType* vb, const CharType* ve) const
         {
+            static_assert(sizeof(CharType) == sizeof(UChar), "Size mismatch!");
             const UChar* begin = reinterpret_cast<const UChar*>(vb);
             const UChar* end = reinterpret_cast<const UChar*>(ve);
             icu::UnicodeString tmp(begin, end - begin);
@@ -210,6 +191,7 @@ namespace boost { namespace locale { namespace impl_icu {
 
         string_type std(const icu::UnicodeString& str) const
         {
+            static_assert(sizeof(CharType) == sizeof(UChar), "Size mismatch!");
             const CharType* ptr = reinterpret_cast<const CharType*>(str.getBuffer());
             return string_type(ptr, str.length());
         }
@@ -236,13 +218,25 @@ namespace boost { namespace locale { namespace impl_icu {
 
         icu::UnicodeString icu_checked(const CharType* begin, const CharType* end) const
         {
+            // Fast path checking if the full string is already valid
+            {
+                UErrorCode err = U_ZERO_ERROR;
+                static_assert(sizeof(CharType) == sizeof(UChar32), "Size mismatch!");
+                u_strFromUTF32(nullptr, 0, nullptr, reinterpret_cast<const UChar32*>(begin), end - begin, &err);
+                if(err != U_INVALID_CHAR_FOUND)
+                    return icu::UnicodeString::fromUTF32(reinterpret_cast<const UChar32*>(begin), end - begin);
+            }
+            // Any char is invalid
+            throw_if_needed();
+            // If not thrown skip invalid chars
             icu::UnicodeString tmp(end - begin, 0, 0); // make initial capacity
             while(begin != end) {
-                UChar32 c = static_cast<UChar32>(*begin++);
-                if(U_IS_UNICODE_CHAR(c))
+                const UChar32 c = static_cast<UChar32>(*begin++);
+                // Maybe simply: UCHAR_MIN_VALUE <= c && c <= UCHAR_MAX_VALUE && !U_IS_SURROGATE(c)
+                UErrorCode err = U_ZERO_ERROR;
+                u_strFromUTF32(nullptr, 0, nullptr, &c, 1, &err);
+                if(err != U_INVALID_CHAR_FOUND)
                     tmp.append(c);
-                else
-                    throw_if_needed();
             }
             return tmp;
         }
@@ -254,7 +248,7 @@ namespace boost { namespace locale { namespace impl_icu {
 
         icu::UnicodeString icu(const CharType* begin, const CharType* end) const
         {
-            icu::UnicodeString tmp(end - begin, 0, 0); // make inital capacity
+            icu::UnicodeString tmp(end - begin, 0, 0); // make initial capacity
             while(begin != end) {
                 UChar32 c = static_cast<UChar32>(*begin++);
                 tmp.append(c);

@@ -8,23 +8,20 @@
 #define BOOST_LOCALE_IMPL_ICONV_CODEPAGE_HPP
 
 #include <boost/locale/encoding.hpp>
-#include "boost/locale/encoding/conv.hpp"
+#include "boost/locale/util/encoding.hpp"
 #include "boost/locale/util/iconv.hpp"
 #include <cerrno>
+#include <string>
 
 namespace boost { namespace locale { namespace conv { namespace impl {
 
     class iconverter_base {
     public:
-        iconverter_base() : cvt_((iconv_t)(-1)) {}
-        ~iconverter_base() { close(); }
-
         bool do_open(const char* to, const char* from, method_type how)
         {
-            close();
             cvt_ = iconv_open(to, from);
             how_ = how;
-            return cvt_ != (iconv_t)(-1);
+            return static_cast<bool>(cvt_);
         }
 
         template<typename OutChar, typename InChar>
@@ -34,9 +31,9 @@ namespace boost { namespace locale { namespace conv { namespace impl {
 
             sresult.reserve(uend - ubegin);
 
-            OutChar result[64];
+            OutChar tmp_buf[64];
 
-            char* out_start = reinterpret_cast<char*>(&result[0]);
+            char* out_start = reinterpret_cast<char*>(tmp_buf);
             const char* begin = reinterpret_cast<const char*>(ubegin);
             const char* end = reinterpret_cast<const char*>(uend);
 
@@ -44,7 +41,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
 
             while(state != done) {
                 size_t in_left = end - begin;
-                size_t out_left = sizeof(result);
+                size_t out_left = sizeof(tmp_buf);
 
                 char* out_ptr = out_start;
                 size_t res = 0;
@@ -66,7 +63,7 @@ namespace boost { namespace locale { namespace conv { namespace impl {
                     }
                 }
 
-                sresult.append(&result[0], output_count);
+                sresult.append(tmp_buf, output_count);
 
                 if(res == (size_t)(-1)) {
                     if(err == EILSEQ || err == EINVAL) {
@@ -99,29 +96,21 @@ namespace boost { namespace locale { namespace conv { namespace impl {
         }
 
     private:
-        void close()
-        {
-            if(cvt_ != (iconv_t)(-1)) {
-                iconv_close(cvt_);
-                cvt_ = (iconv_t)(-1);
-            }
-        }
-
         size_t conv(const char** inbuf, size_t* inchar_left, char** outbuf, size_t* outchar_left)
         {
             return call_iconv(cvt_, inbuf, inchar_left, outbuf, outchar_left);
         }
 
-        iconv_t cvt_;
+        iconv_handle cvt_;
         method_type how_;
     };
 
     template<typename CharType>
-    class iconv_from_utf : public converter_from_utf<CharType> {
+    class iconv_from_utf final : public detail::utf_decoder<CharType> {
     public:
-        bool open(const char* charset, method_type how) override
+        bool open(const std::string& charset, method_type how)
         {
-            return self_.do_open(charset, utf_name<CharType>(), how);
+            return self_.do_open(charset.c_str(), util::utf_name<CharType>(), how);
         }
 
         std::string convert(const CharType* ubegin, const CharType* uend) override
@@ -133,11 +122,11 @@ namespace boost { namespace locale { namespace conv { namespace impl {
         iconverter_base self_;
     };
 
-    class iconv_between : public converter_between {
+    class iconv_between final : public detail::narrow_converter {
     public:
-        bool open(const char* to_charset, const char* from_charset, method_type how) override
+        bool open(const std::string& to_charset, const std::string& from_charset, method_type how)
         {
-            return self_.do_open(to_charset, from_charset, how);
+            return self_.do_open(to_charset.c_str(), from_charset.c_str(), how);
         }
         std::string convert(const char* begin, const char* end) override
         {
@@ -149,16 +138,14 @@ namespace boost { namespace locale { namespace conv { namespace impl {
     };
 
     template<typename CharType>
-    class iconv_to_utf : public converter_to_utf<CharType> {
+    class iconv_to_utf final : public detail::utf_encoder<CharType> {
     public:
-        typedef std::basic_string<CharType> string_type;
-
-        bool open(const char* charset, method_type how) override
+        bool open(const std::string& charset, method_type how)
         {
-            return self_.do_open(utf_name<CharType>(), charset, how);
+            return self_.do_open(util::utf_name<CharType>(), charset.c_str(), how);
         }
 
-        string_type convert(const char* begin, const char* end) override
+        std::basic_string<CharType> convert(const char* begin, const char* end) override
         {
             return self_.template real_convert<CharType>(begin, end);
         }

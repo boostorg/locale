@@ -57,9 +57,9 @@ namespace boost { namespace locale { namespace impl_posix {
                 return write_it(out, buf, n);
 
             for(std::vector<char> tmp(sizeof(buf) * 2); tmp.size() <= 4098; tmp.resize(tmp.size() * 2)) {
-                n = strfmon_l(&tmp.front(), tmp.size(), *lc_, format, static_cast<double>(val));
+                n = strfmon_l(tmp.data(), tmp.size(), *lc_, format, static_cast<double>(val));
                 if(n >= 0)
-                    return write_it(out, &tmp.front(), n);
+                    return write_it(out, tmp.data(), n);
             }
             return out;
         }

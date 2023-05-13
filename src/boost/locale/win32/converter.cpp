@@ -56,7 +56,7 @@ namespace boost { namespace locale { namespace impl_win {
                 case normalization: res = wcsnormalize(static_cast<norm_type>(flags), wb, we); break;
                 case title_case: break;
             }
-            return conv::from_utf(res, "UTF-8");
+            return conv::utf_to_utf<char>(res);
         }
 
     private:

@@ -34,6 +34,7 @@ run show_config.cpp
     : : : <test-info>always_show_run_output ;
 # Shared
 run test_catalog.cpp ;
+run test_encoding.cpp ;
 run test_utf.cpp ;
 run test_util.cpp test_helpers.cpp ;
 run test_date_time.cpp ;
@@ -41,7 +42,7 @@ run test_ios_info.cpp ;
 run test_ios_prop.cpp ;
 run test_codecvt.cpp ;
 run test_codepage_converter.cpp ;
-run test_codepage.cpp ;
+run test_stream_io.cpp ;
 run test_message.cpp : $(BOOST_ROOT)/libs/locale/test ;
 run test_generator.cpp ;
 # icu

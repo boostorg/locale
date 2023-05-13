@@ -71,7 +71,7 @@ namespace boost { namespace locale {
         }
 
         /// Swap two pointers
-        void swap(hold_ptr& other)
+        void swap(hold_ptr& other) noexcept
         {
             T* tmp = other.ptr_;
             other.ptr_ = ptr_;

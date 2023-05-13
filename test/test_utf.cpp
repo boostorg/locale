@@ -64,7 +64,7 @@ void test_from_utf(const CharType* const s, unsigned codepoint)
 
     static_assert(tr::max_width == 4 / sizeof(CharType), "Wrong max_width");
 
-    TEST_EQ(tr::template decode<const CharType*>(cur, end), codepoint);
+    TEST_EQ(tr::decode(cur, end), codepoint);
 
     if(codepoint != illegal)
         TEST(cur == end);
@@ -95,7 +95,7 @@ void test_to_utf(const CharType* str, unsigned codepoint)
 {
     CharType buf[5] = {1, 1, 1, 1, 1};
     CharType* p = buf;
-    p = utf_traits<CharType>::template encode<CharType*>(codepoint, p);
+    p = utf_traits<CharType>::encode(codepoint, p);
     const CharType* const end = boost::locale::util::str_end(str);
     TEST_EQ(end - str, p - buf);
     TEST(*p);

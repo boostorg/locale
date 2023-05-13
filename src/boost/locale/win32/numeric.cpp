@@ -30,7 +30,7 @@ namespace boost { namespace locale { namespace impl_win {
 
         std::ostreambuf_iterator<char> write_it(std::ostreambuf_iterator<char> out, const std::wstring& s)
         {
-            const std::string tmp = conv::from_utf(s, "UTF-8");
+            const std::string tmp = conv::utf_to_utf<char>(s);
             return std::copy(tmp.begin(), tmp.end(), out);
         }
     } // namespace
@@ -119,7 +119,7 @@ namespace boost { namespace locale { namespace impl_win {
 
         void to_str(std::wstring& s1, std::wstring& s2) { s2.swap(s1); }
 
-        void to_str(std::wstring& s1, std::string& s2) { s2 = conv::from_utf(s1, "UTF-8"); }
+        void to_str(std::wstring& s1, std::string& s2) { s2 = conv::utf_to_utf<char>(s1); }
         CharType do_decimal_point() const override { return *decimal_point_.c_str(); }
         CharType do_thousands_sep() const override { return *thousands_sep_.c_str(); }
         std::string do_grouping() const override { return grouping_; }

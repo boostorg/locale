@@ -12,7 +12,6 @@
 #include <cstddef>
 #include <cstring>
 
-#include "boost/locale/encoding/conv.hpp"
 #include "boost/locale/util/encoding.hpp"
 
 #ifdef BOOST_MSVC
@@ -68,11 +67,12 @@ namespace boost { namespace locale { namespace util {
         {
             for(unsigned i = 0; i < 128; i++)
                 to_unicode_tbl_[i] = i;
+            const conv::utf_encoder<wchar_t> to_utf(encoding, conv::stop);
             for(unsigned i = 128; i < 256; i++) {
                 char buf[2] = {char(i), 0};
                 uint32_t uchar = utf::illegal;
                 try {
-                    std::wstring const tmp = conv::to_utf<wchar_t>(buf, buf + 1, encoding, conv::stop);
+                    std::wstring const tmp = to_utf.convert(buf, buf + 1);
                     if(tmp.size() == 1) {
                         uchar = tmp[0];
                     } else {
@@ -298,11 +298,6 @@ namespace boost { namespace locale { namespace util {
         return in;
     }
 
-    /// This function installs codecvt that can be used for conversion between single byte
-    /// character encodings like ISO-8859-1, koi8-r, windows-1255 and Unicode code points,
-    ///
-    /// Throws invalid_charset_error if the character set is not supported or isn't single byte character
-    /// set
     std::locale create_simple_codecvt(const std::locale& in, const std::string& encoding, char_facet_t type)
     {
         if(!check_is_simple_encoding(encoding))

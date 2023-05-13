@@ -15,6 +15,21 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#if BOOST_LOCALE_USE_WIN32_API
+#    ifndef NOMINMAX
+#        define NOMINMAX
+#    endif
+#    include <windows.h>
+bool hasWinCodepage(unsigned codepage)
+{
+    return IsValidCodePage(codepage) != 0;
+}
+#else
+bool hasWinCodepage(unsigned)
+{
+    return false;
+}
+#endif
 
 #if defined(BOOST_MSVC) && BOOST_MSVC < 1700
 #    pragma warning(disable : 4428) // universal-character-name encountered in source
@@ -80,7 +95,7 @@ std::basic_string<Char> to(const std::string& utf8)
             std::ostringstream ss;
             ss << "Can't convert codepoint U" << std::hex << point << "("
                << std::string(utf8.begin() + prev, utf8.begin() + i) << ") to Latin1";
-            throw std::runtime_error(ss.str());
+            throw std::logic_error(ss.str());
         } else if(sizeof(Char) == 2 && point > 0xFFFF) { // Deal with surrogates
             point -= 0x10000;
             out += static_cast<Char>(0xD800 | (point >> 10));
@@ -132,7 +147,7 @@ inline bool test_std_supports_SJIS_codecvt(const std::string& locale_name)
     {
         // Japan in Shift JIS/cp932
         const char* japan_932 = "\x93\xfa\x96\x7b";
-        std::ofstream f(file_path);
+        std::ofstream f(file_path, std::ios::binary);
         f << japan_932;
     }
     bool res = true;

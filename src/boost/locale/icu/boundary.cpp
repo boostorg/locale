@@ -55,8 +55,8 @@ namespace boost { namespace locale {
                     int n = rbbi->getRuleStatusVec(buf, 8, err);
 
                     if(err == U_BUFFER_OVERFLOW_ERROR) {
-                        buf = &buffer.front();
                         buffer.resize(n, 0);
+                        buf = buffer.data();
                         n = rbbi->getRuleStatusVec(buf, buffer.size(), err);
                     }
 

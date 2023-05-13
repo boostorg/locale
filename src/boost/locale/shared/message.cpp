@@ -112,7 +112,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
         else {
             fseek(file, 0, SEEK_SET);
             std::vector<char> data(len);
-            if(BOOST_LIKELY(!data.empty()) && fread(&data.front(), 1, data.size(), file) != data.size())
+            if(BOOST_LIKELY(!data.empty()) && fread(data.data(), 1, data.size(), file) != data.size())
                 throw std::runtime_error("Failed to read file"); // LCOV_EXCL_LINE
             return data;
         }
@@ -255,15 +255,15 @@ namespace boost { namespace locale { namespace gnu_gettext {
     template<typename CharType>
     class converter {
     public:
-        converter(std::string /*out_enc*/, std::string in_enc) : in_(in_enc) {}
+        converter(std::string /*out_enc*/, std::string in_enc) : to_utf_(in_enc, conv::stop) {}
 
         std::basic_string<CharType> operator()(const char* begin, const char* end)
         {
-            return conv::to_utf<CharType>(begin, end, in_, conv::stop);
+            return to_utf_.convert(begin, end);
         }
 
     private:
-        std::string in_;
+        conv::utf_encoder<CharType> to_utf_;
     };
 
     template<>
@@ -393,8 +393,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
             return msg;
         if(detail::is_us_ascii_string(msg))
             return msg;
-        std::string tmp = conv::between(msg, locale_encoding, key_encoding, conv::skip);
-        buffer.swap(tmp);
+        buffer = conv::between(msg, locale_encoding, key_encoding, conv::skip);
         return buffer.c_str();
     }
 

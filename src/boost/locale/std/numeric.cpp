@@ -55,7 +55,7 @@ namespace boost { namespace locale { namespace impl_std {
             wtmps.imbue(base_);
             std::use_facet<std::time_put<wchar_t>>(base_)
               .put(wtmps, wtmps, wchar_t(fill), tm, wchar_t(format), wchar_t(modifier));
-            const std::string tmp = conv::from_utf(wtmps.str(), "UTF-8");
+            const std::string tmp = conv::utf_to_utf<char>(wtmps.str());
             return std::copy(tmp.begin(), tmp.end(), out);
         }
 
