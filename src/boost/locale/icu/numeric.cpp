@@ -1,5 +1,7 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2021-2021 Salvo Miosi
+// Copyright (c) 2022-2023 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
@@ -10,13 +12,15 @@
 #include "boost/locale/icu/cdata.hpp"
 #include "boost/locale/icu/formatter.hpp"
 #include "boost/locale/icu/formatters_cache.hpp"
-#include "uconv.hpp"
+#include "boost/locale/icu/uconv.hpp"
 #include <algorithm>
 #include <ios>
 #include <limits>
 #include <locale>
 #include <string>
 #include <type_traits>
+#include <unicode/decimfmt.h>
+#include <unicode/numfmt.h>
 
 namespace boost { namespace locale { namespace impl_icu {
 
@@ -314,9 +318,9 @@ namespace boost { namespace locale { namespace impl_icu {
         icu_numpunct(const cdata& d)
         {
             UErrorCode err = U_ZERO_ERROR;
-            icu::NumberFormat* fmt = icu::NumberFormat::createInstance(d.locale, UNUM_DECIMAL, err);
-            if(icu::DecimalFormat* dec = dynamic_cast<icu::DecimalFormat*>(fmt)) {
-                boost::locale::impl_icu::icu_std_converter<CharType> cnv(d.encoding);
+            icu::NumberFormat* fmt = icu::NumberFormat::createInstance(d.locale(), UNUM_DECIMAL, err);
+            if(icu::DecimalFormat* dec = icu_cast<icu::DecimalFormat>(fmt)) {
+                boost::locale::impl_icu::icu_std_converter<CharType> cnv(d.encoding());
                 const icu::DecimalFormatSymbols* syms = dec->getDecimalFormatSymbols();
                 decimal_point_ = cnv.std(syms->getSymbol(icu::DecimalFormatSymbols::kDecimalSeparatorSymbol));
                 thousands_sep_ = cnv.std(syms->getSymbol(icu::DecimalFormatSymbols::kGroupingSeparatorSymbol));
@@ -332,9 +336,9 @@ namespace boost { namespace locale { namespace impl_icu {
         }
 
     protected:
-        string_type do_decimal_point_str() const BOOST_OVERRIDE { return decimal_point_; }
-        string_type do_thousands_sep_str() const BOOST_OVERRIDE { return thousands_sep_; }
-        std::string do_grouping() const BOOST_OVERRIDE { return grouping_; }
+        string_type do_decimal_point_str() const override { return decimal_point_; }
+        string_type do_thousands_sep_str() const override { return thousands_sep_; }
+        std::string do_grouping() const override { return grouping_; }
 
     private:
         string_type decimal_point_;

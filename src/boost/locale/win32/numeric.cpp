@@ -117,8 +117,8 @@ namespace boost { namespace locale { namespace impl_win {
         void to_str(std::wstring& s1, std::wstring& s2) { s2.swap(s1); }
 
         void to_str(std::wstring& s1, std::string& s2) { s2 = conv::utf_to_utf<char>(s1); }
-        string_type do_decimal_point_str() const BOOST_OVERRIDE { return decimal_point_; }
-        string_type do_thousands_sep_str() const BOOST_OVERRIDE { return thousands_sep_; }
+        string_type do_decimal_point_str() const override { return decimal_point_; }
+        string_type do_thousands_sep_str() const override { return thousands_sep_; }
         std::string do_grouping() const override { return grouping_; }
 
     private:
