@@ -8,6 +8,7 @@
 #ifndef BOOST_LOCALE_MESSAGE_HPP_INCLUDED
 #define BOOST_LOCALE_MESSAGE_HPP_INCLUDED
 
+#include <boost/locale/detail/facet_id.hpp>
 #include <boost/locale/detail/is_supported_char.hpp>
 #include <boost/locale/formatting.hpp>
 #include <boost/locale/util/string.hpp>
@@ -43,7 +44,8 @@ namespace boost { namespace locale {
 
     /// \brief This facet provides message formatting abilities
     template<typename CharType>
-    class BOOST_LOCALE_DECL message_format : public std::locale::facet {
+    class BOOST_SYMBOL_VISIBLE message_format : public std::locale::facet,
+                                                public detail::facet_id<message_format<CharType>> {
         BOOST_LOCALE_ASSERT_IS_SUPPORTED(CharType);
 
     public:
@@ -51,9 +53,6 @@ namespace boost { namespace locale {
         typedef CharType char_type;
         /// String type
         typedef std::basic_string<CharType> string_type;
-
-        /// Locale identification
-        static std::locale::id id;
 
         /// Standard constructor
         message_format(size_t refs = 0) : std::locale::facet(refs) {}
@@ -90,9 +89,6 @@ namespace boost { namespace locale {
         /// Note: for char_type that is char16_t, char32_t and wchar_t it is no-op, returns
         /// msg
         virtual const char_type* convert(const char_type* msg, string_type& buffer) const = 0;
-
-    protected:
-        virtual ~message_format();
     };
 
     /// \cond INTERNAL

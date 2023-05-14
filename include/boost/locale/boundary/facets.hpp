@@ -8,6 +8,7 @@
 #define BOOST_LOCALE_BOUNDARY_FACETS_HPP_INCLUDED
 
 #include <boost/locale/boundary/types.hpp>
+#include <boost/locale/detail/facet_id.hpp>
 #include <boost/locale/detail/is_supported_char.hpp>
 #include <locale>
 #include <vector>
@@ -54,13 +55,13 @@ namespace boost { namespace locale {
         ///
         /// It is implemented for supported character types, at least \c char, \c wchar_t
         template<typename Char>
-        class BOOST_LOCALE_DECL boundary_indexing : public std::locale::facet {
+        class BOOST_SYMBOL_VISIBLE boundary_indexing : public std::locale::facet,
+                                                       public boost::locale::detail::facet_id<boundary_indexing<Char>> {
             BOOST_LOCALE_ASSERT_IS_SUPPORTED(Char);
 
         public:
             /// Default constructor typical for facets
             boundary_indexing(size_t refs = 0) : std::locale::facet(refs) {}
-            ~boundary_indexing();
 
             /// Create index for boundary type \a t for text in range [begin,end)
             ///
@@ -68,9 +69,6 @@ namespace boost { namespace locale {
             /// index is never empty, even if the range [begin,end) is empty it consists
             /// of at least one boundary point with the offset 0.
             virtual index_type map(boundary_type t, const Char* begin, const Char* end) const = 0;
-
-            /// Identification of this facet
-            static std::locale::id id;
         };
 
         /// @}

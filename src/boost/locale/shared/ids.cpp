@@ -14,42 +14,22 @@
 #include <boost/core/ignore_unused.hpp>
 
 namespace boost { namespace locale {
+    namespace detail {
+        template<class Derived>
+        std::locale::id facet_id<Derived>::id;
+    } // namespace detail
+#define BOOST_LOCALE_DEFINE_ID(CLASS) template struct detail::facet_id<CLASS>
 
-    std::locale::id info::id;
-    // Make sure we have the VTable here (Export/Import issues)
-    info::~info() = default;
+    BOOST_LOCALE_DEFINE_ID(info);
+    BOOST_LOCALE_DEFINE_ID(calendar_facet);
 
-    std::locale::id calendar_facet::id;
-    calendar_facet::~calendar_facet() = default;
+#define BOOST_LOCALE_INSTANTIATE(CHARTYPE)            \
+    BOOST_LOCALE_DEFINE_ID(converter<CHARTYPE>);      \
+    BOOST_LOCALE_DEFINE_ID(message_format<CHARTYPE>); \
+    BOOST_LOCALE_DEFINE_ID(boundary::boundary_indexing<CHARTYPE>);
 
-    abstract_calendar::~abstract_calendar() = default;
-
-    template<typename Char>
-    std::locale::id converter<Char>::id;
-    template<typename Char>
-    converter<Char>::~converter() = default;
-
-    template<typename Char>
-    std::locale::id message_format<Char>::id;
-    template<typename Char>
-    message_format<Char>::~message_format() = default;
-
-#define BOOST_LOCALE_INSTANTIATE(CHARTYPE) \
-    template BOOST_LOCALE_DECL class converter<CHARTYPE>;    \
-    template BOOST_LOCALE_DECL class message_format<CHARTYPE>;
     BOOST_LOCALE_FOREACH_CHAR(BOOST_LOCALE_INSTANTIATE)
 #undef BOOST_LOCALE_INSTANTIATE
-
-    namespace boundary {
-        template<typename Char>
-        std::locale::id boundary_indexing<Char>::id;
-        template<typename Char>
-        boundary_indexing<Char>::~boundary_indexing() = default;
-
-#define BOOST_LOCALE_INSTANTIATE(CHARTYPE) template class boundary_indexing<CHARTYPE>;
-        BOOST_LOCALE_FOREACH_CHAR(BOOST_LOCALE_INSTANTIATE)
-#undef BOOST_LOCALE_INSTANTIATE
-    } // namespace boundary
 
     namespace {
         // Initialize each facet once to avoid issues where doing so

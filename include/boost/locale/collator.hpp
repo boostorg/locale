@@ -17,8 +17,6 @@
 
 namespace boost { namespace locale {
 
-    class info;
-
     /// \defgroup collation Collation
     ///
     /// This module introduces collation related classes
