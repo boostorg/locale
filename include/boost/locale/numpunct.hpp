@@ -11,6 +11,7 @@
 #define BOOST_LOCALE_NUMPUNCT_HPP_INCLUDED
 
 #include <boost/locale/config.hpp>
+#include <boost/locale/detail/is_supported_char.hpp>
 #include <locale>
 #include <string>
 
@@ -29,11 +30,13 @@ namespace boost { namespace locale {
     /// - Some backends may provide single char replacements of the encoded separators instead of falling back to the
     ///   "C" locale.
     template<typename CharType>
-    class numpunct_base : public std::numpunct<CharType> {
+    class numpunct : public std::numpunct<CharType> {
+        BOOST_LOCALE_ASSERT_IS_SUPPORTED(CharType);
+
     public:
         using string_type = std::numpunct<CharType>::string_type;
 
-        numpunct_base(size_t refs = 0) : std::numpunct<CharType>(refs) {}
+        numpunct(size_t refs = 0) : std::numpunct<CharType>(refs) {}
 
         /// Provides the character to use as decimal point possibly encoded into multiple code units
         string_type decimal_point_str() const { return do_decimal_point_str(); }
@@ -79,32 +82,6 @@ namespace boost { namespace locale {
             return string_type(t, t + sizeof(t) - 1);
         }
     };
-
-    template<typename CharType>
-    struct numpunct;
-
-    template<>
-    struct numpunct<char> : numpunct_base<char> {
-        numpunct(size_t refs = 0) : numpunct_base<char>(refs) {}
-    };
-
-    template<>
-    struct numpunct<wchar_t> : numpunct_base<wchar_t> {
-        numpunct(size_t refs = 0) : numpunct_base<wchar_t>(refs) {}
-    };
-
-#ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-    template<>
-    struct numpunct<char16_t> : numpunct_base<char16_t> {
-        numpunct(size_t refs = 0) : numpunct_base<char16_t>(refs) {}
-    };
-#endif
-#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-    template<>
-    struct numpunct<char32_t> : numpunct_base<char32_t> {
-        numpunct(size_t refs = 0) : numpunct_base<char32_t>(refs) {}
-    };
-#endif
 }} // namespace boost::locale
 
 #endif
