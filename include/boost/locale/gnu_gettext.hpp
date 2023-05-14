@@ -7,9 +7,11 @@
 #ifndef BOOST_LOCLAE_GNU_GETTEXT_HPP
 #define BOOST_LOCLAE_GNU_GETTEXT_HPP
 
+#include <boost/locale/detail/is_supported_char.hpp>
 #include <boost/locale/message.hpp>
 #include <functional>
 #include <stdexcept>
+#include <type_traits>
 #include <vector>
 
 #ifdef BOOST_MSVC
@@ -106,28 +108,8 @@ namespace boost { namespace locale {
 
         /// Create a message_format facet using GNU Gettext catalogs. It uses \a info structure to get
         /// information about where to read them from and uses it for character set conversion (if needed)
-        template<typename CharType>
-        message_format<CharType>* create_messages_facet(const messages_info& info);
-
-        /// \cond INTERNAL
-
-        template<>
-        BOOST_LOCALE_DECL message_format<char>* create_messages_facet(const messages_info& info);
-
-        template<>
-        BOOST_LOCALE_DECL message_format<wchar_t>* create_messages_facet(const messages_info& info);
-
-#ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-        template<>
-        BOOST_LOCALE_DECL message_format<char16_t>* create_messages_facet(const messages_info& info);
-#endif
-
-#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-        template<>
-        BOOST_LOCALE_DECL message_format<char32_t>* create_messages_facet(const messages_info& info);
-#endif
-
-        /// \endcond
+        template<typename CharType, class = boost::locale::detail::enable_if_is_supported_char<CharType>>
+        BOOST_LOCALE_DECL message_format<CharType>* create_messages_facet(const messages_info& info);
 
     } // namespace gnu_gettext
 

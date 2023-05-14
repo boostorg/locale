@@ -10,6 +10,7 @@
 #include <boost/locale/date_time_facet.hpp>
 #include <boost/locale/info.hpp>
 #include <boost/locale/message.hpp>
+#include "boost/locale/util/foreach_char.hpp"
 #include <boost/core/ignore_unused.hpp>
 
 namespace boost { namespace locale {
@@ -23,68 +24,42 @@ namespace boost { namespace locale {
 
     abstract_calendar::~abstract_calendar() = default;
 
-    std::locale::id converter<char>::id;
-    converter<char>::~converter() = default;
-    std::locale::id base_message_format<char>::id;
-    base_message_format<char>::~base_message_format() = default;
+    template<typename Char>
+    std::locale::id converter<Char>::id;
+    template<typename Char>
+    converter<Char>::~converter() = default;
 
-    std::locale::id converter<wchar_t>::id;
-    converter<wchar_t>::~converter() = default;
-    std::locale::id base_message_format<wchar_t>::id;
-    base_message_format<wchar_t>::~base_message_format() = default;
+    template<typename Char>
+    std::locale::id message_format<Char>::id;
+    template<typename Char>
+    message_format<Char>::~message_format() = default;
 
-#ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-
-    std::locale::id converter<char16_t>::id;
-    converter<char16_t>::~converter() = default;
-    std::locale::id base_message_format<char16_t>::id;
-    base_message_format<char16_t>::~base_message_format() = default;
-
-#endif
-
-#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-
-    std::locale::id converter<char32_t>::id;
-    converter<char32_t>::~converter() = default;
-    std::locale::id base_message_format<char32_t>::id;
-    base_message_format<char32_t>::~base_message_format() = default;
-
-#endif
+#define BOOST_LOCALE_INSTANTIATE(CHARTYPE) \
+    template BOOST_LOCALE_DECL class converter<CHARTYPE>;    \
+    template BOOST_LOCALE_DECL class message_format<CHARTYPE>;
+    BOOST_LOCALE_FOREACH_CHAR(BOOST_LOCALE_INSTANTIATE)
+#undef BOOST_LOCALE_INSTANTIATE
 
     namespace boundary {
+        template<typename Char>
+        std::locale::id boundary_indexing<Char>::id;
+        template<typename Char>
+        boundary_indexing<Char>::~boundary_indexing() = default;
 
-        std::locale::id boundary_indexing<char>::id;
-        boundary_indexing<char>::~boundary_indexing() = default;
-
-        std::locale::id boundary_indexing<wchar_t>::id;
-        boundary_indexing<wchar_t>::~boundary_indexing() = default;
-
-#ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-        std::locale::id boundary_indexing<char16_t>::id;
-        boundary_indexing<char16_t>::~boundary_indexing() = default;
-#endif
-
-#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-        std::locale::id boundary_indexing<char32_t>::id;
-        boundary_indexing<char32_t>::~boundary_indexing() = default;
-#endif
+#define BOOST_LOCALE_INSTANTIATE(CHARTYPE) template class boundary_indexing<CHARTYPE>;
+        BOOST_LOCALE_FOREACH_CHAR(BOOST_LOCALE_INSTANTIATE)
+#undef BOOST_LOCALE_INSTANTIATE
     } // namespace boundary
 
     namespace {
         // Initialize each facet once to avoid issues where doing so
-        // in a multithreaded environment could cause problems (races)
+        // in a multi threaded environment could cause problems (races)
         struct init_all {
             init_all()
             {
                 const std::locale& l = std::locale::classic();
-                init_by<char>(l);
-                init_by<wchar_t>(l);
-#ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-                init_by<char16_t>(l);
-#endif
-#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-                init_by<char32_t>(l);
-#endif
+#define BOOST_LOCALE_INIT_BY(CHAR) init_by<CHAR>(l);
+                BOOST_LOCALE_FOREACH_CHAR(BOOST_LOCALE_INIT_BY)
 
                 init_facet<info>(l);
                 init_facet<calendar_facet>(l);

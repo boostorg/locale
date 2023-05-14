@@ -13,12 +13,8 @@
 
 namespace boost { namespace locale {
 
-#ifndef BOOST_LOCALE_DOXYGEN
-    //
     // Make sure that mbstate can keep 16 bit of UTF-16 sequence
-    //
     static_assert(sizeof(std::mbstate_t) >= 2, "std::mbstate_t is to small");
-#endif
 
 #if defined(_MSC_VER) && _MSC_VER < 1700
 // up to MSVC 11 (2012) do_length is non-standard it counts wide characters instead of narrow and does not change

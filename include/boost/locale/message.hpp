@@ -8,6 +8,7 @@
 #ifndef BOOST_LOCALE_MESSAGE_HPP_INCLUDED
 #define BOOST_LOCALE_MESSAGE_HPP_INCLUDED
 
+#include <boost/locale/detail/is_supported_char.hpp>
 #include <boost/locale/formatting.hpp>
 #include <boost/locale/util/string.hpp>
 #include <locale>
@@ -37,27 +38,25 @@ namespace boost { namespace locale {
     /// @{
     ///
 
-    /// \cond INTERNAL
-
-    template<typename CharType>
-    struct base_message_format;
-
-    /// \endcond
-
     /// Type used for the count/n argument to the translation functions choosing between singular and plural forms
     using count_type = long long;
 
     /// \brief This facet provides message formatting abilities
     template<typename CharType>
-    class BOOST_SYMBOL_VISIBLE message_format : public base_message_format<CharType> {
+    class BOOST_LOCALE_DECL message_format : public std::locale::facet {
+        BOOST_LOCALE_ASSERT_IS_SUPPORTED(CharType);
+
     public:
         /// Character type
         typedef CharType char_type;
         /// String type
         typedef std::basic_string<CharType> string_type;
 
-        /// Default constructor
-        message_format(size_t refs = 0) : base_message_format<CharType>(refs) {}
+        /// Locale identification
+        static std::locale::id id;
+
+        /// Standard constructor
+        message_format(size_t refs = 0) : std::locale::facet(refs) {}
 
         /// This function returns a pointer to the string for a message defined by a \a context
         /// and identification string \a id. Both create a single key for message lookup in
@@ -93,7 +92,7 @@ namespace boost { namespace locale {
         virtual const char_type* convert(const char_type* msg, string_type& buffer) const = 0;
 
     protected:
-        virtual ~message_format() = default;
+        virtual ~message_format();
     };
 
     /// \cond INTERNAL
@@ -503,45 +502,6 @@ namespace boost { namespace locale {
         return basic_message<CharType>(context, s, p, n).str(loc, domain);
     }
 
-    /// \cond INTERNAL
-
-    template<>
-    struct BOOST_LOCALE_DECL base_message_format<char> : public std::locale::facet {
-        base_message_format(size_t refs = 0) : std::locale::facet(refs) {}
-        ~base_message_format();
-        static std::locale::id id;
-    };
-
-    template<>
-    struct BOOST_LOCALE_DECL base_message_format<wchar_t> : public std::locale::facet {
-        base_message_format(size_t refs = 0) : std::locale::facet(refs) {}
-        ~base_message_format();
-        static std::locale::id id;
-    };
-
-#ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-
-    template<>
-    struct BOOST_LOCALE_DECL base_message_format<char16_t> : public std::locale::facet {
-        base_message_format(size_t refs = 0) : std::locale::facet(refs) {}
-        ~base_message_format();
-        static std::locale::id id;
-    };
-
-#endif
-
-#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-
-    template<>
-    struct BOOST_LOCALE_DECL base_message_format<char32_t> : public std::locale::facet {
-        base_message_format(size_t refs = 0) : std::locale::facet(refs) {}
-        ~base_message_format();
-        static std::locale::id id;
-    };
-
-#endif
-
-    /// \endcond
     /// @}
 
     namespace as {

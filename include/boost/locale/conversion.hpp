@@ -7,6 +7,7 @@
 #ifndef BOOST_LOCALE_CONVERTER_HPP_INCLUDED
 #define BOOST_LOCALE_CONVERTER_HPP_INCLUDED
 
+#include <boost/locale/detail/is_supported_char.hpp>
 #include <boost/locale/util/string.hpp>
 #include <locale>
 
@@ -35,76 +36,26 @@ namespace boost { namespace locale {
         };
     };
 
-    template<typename CharType>
-    class converter;
-
-#ifdef BOOST_LOCALE_DOXYGEN
-    ///
     /// \brief The facet that implements text manipulation
     ///
-    /// It is used to performs text conversion operations defined by \ref converter_base::conversion_type.
-    /// It is specialized for four types of characters \c char, \c wchar_t, \c char16_t, \c char32_t
+    /// It is used to perform text conversion operations defined by \ref converter_base::conversion_type.
+    /// It is implemented for supported character types, at least \c char, \c wchar_t
     template<typename Char>
     class BOOST_LOCALE_DECL converter : public converter_base, public std::locale::facet {
+        BOOST_LOCALE_ASSERT_IS_SUPPORTED(Char);
+
     public:
         /// Locale identification
         static std::locale::id id;
 
         /// Standard constructor
         converter(size_t refs = 0) : std::locale::facet(refs) {}
-
+        ~converter();
         /// Convert text in range [\a begin, \a end) according to conversion method \a how. Parameter
         /// \a flags is used for specification of normalization method like nfd, nfc etc.
         virtual std::basic_string<Char>
         convert(conversion_type how, const Char* begin, const Char* end, int flags = 0) const = 0;
     };
-#else
-
-    template<>
-    class BOOST_LOCALE_DECL converter<char> : public converter_base, public std::locale::facet {
-    public:
-        static std::locale::id id;
-
-        converter(size_t refs = 0) : std::locale::facet(refs) {}
-        ~converter();
-        virtual std::string convert(conversion_type how, const char* begin, const char* end, int flags = 0) const = 0;
-    };
-
-    template<>
-    class BOOST_LOCALE_DECL converter<wchar_t> : public converter_base, public std::locale::facet {
-    public:
-        static std::locale::id id;
-        converter(size_t refs = 0) : std::locale::facet(refs) {}
-        ~converter();
-        virtual std::wstring
-        convert(conversion_type how, const wchar_t* begin, const wchar_t* end, int flags = 0) const = 0;
-    };
-
-#    ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-    template<>
-    class BOOST_LOCALE_DECL converter<char16_t> : public converter_base, public std::locale::facet {
-    public:
-        static std::locale::id id;
-        converter(size_t refs = 0) : std::locale::facet(refs) {}
-        ~converter();
-        virtual std::u16string
-        convert(conversion_type how, const char16_t* begin, const char16_t* end, int flags = 0) const = 0;
-    };
-#    endif
-
-#    ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-    template<>
-    class BOOST_LOCALE_DECL converter<char32_t> : public converter_base, public std::locale::facet {
-    public:
-        static std::locale::id id;
-        converter(size_t refs = 0) : std::locale::facet(refs) {}
-        ~converter();
-        virtual std::u32string
-        convert(conversion_type how, const char32_t* begin, const char32_t* end, int flags = 0) const = 0;
-    };
-#    endif
-
-#endif
 
     /// The type that defined <a href="http://unicode.org/reports/tr15/#Norm_Forms">normalization form</a>
     enum norm_type {

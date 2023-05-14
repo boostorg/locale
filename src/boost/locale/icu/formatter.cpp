@@ -12,6 +12,7 @@
 #include "boost/locale/icu/icu_util.hpp"
 #include "boost/locale/icu/time_zone.hpp"
 #include "boost/locale/icu/uconv.hpp"
+#include "boost/locale/util/foreach_char.hpp"
 #include <limits>
 #include <memory>
 #include <unicode/datefmt.h>
@@ -442,16 +443,9 @@ namespace boost { namespace locale { namespace impl_icu {
         return nullptr; // LCOV_EXCL_LINE
     }
 
-    template class formatter<char>;
-    template class formatter<wchar_t>;
+#define BOOST_LOCALE_INSTANTIATE(CHAR) template class formatter<CHAR>;
+    BOOST_LOCALE_FOREACH_CHAR(BOOST_LOCALE_INSTANTIATE)
 
-#ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-    template class formatter<char16_t>;
-#endif
-
-#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-    template class formatter<char32_t>;
-#endif
 }}} // namespace boost::locale::impl_icu
 
 // boostinspect:nominmax

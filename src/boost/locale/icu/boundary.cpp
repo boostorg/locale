@@ -7,11 +7,11 @@
 
 #include <boost/locale/boundary.hpp>
 #include <boost/locale/generator.hpp>
-#include "boost/locale//util/encoding.hpp"
 #include "boost/locale/icu/all_generator.hpp"
 #include "boost/locale/icu/cdata.hpp"
 #include "boost/locale/icu/icu_util.hpp"
 #include "boost/locale/icu/uconv.hpp"
+#include "boost/locale/util/encoding.hpp"
 #if BOOST_LOCALE_ICU_VERSION >= 306
 #    include <unicode/utext.h>
 #endif
