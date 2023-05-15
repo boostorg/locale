@@ -23,6 +23,7 @@
 #include "boost/locale/shared/mo_hash.hpp"
 #include "boost/locale/shared/mo_lambda.hpp"
 #include "boost/locale/util/encoding.hpp"
+#include "boost/locale/util/foreach_char.hpp"
 #include <boost/assert.hpp>
 #include <boost/version.hpp>
 #include <algorithm>
@@ -593,34 +594,15 @@ namespace boost { namespace locale { namespace gnu_gettext {
         bool key_conversion_required_;
     };
 
-    template<>
-    message_format<char>* create_messages_facet(const messages_info& info)
+    template<typename CharType, class /* enable_if */>
+    message_format<CharType>* create_messages_facet(const messages_info& info)
     {
-        return new mo_message<char>(info);
+        return new mo_message<CharType>(info);
     }
 
-    template<>
-    message_format<wchar_t>* create_messages_facet(const messages_info& info)
-    {
-        return new mo_message<wchar_t>(info);
-    }
+#define BOOST_LOCALE_INSTANTIATE(CHARTYPE) \
+    template BOOST_LOCALE_DECL message_format<CHARTYPE>* create_messages_facet(const messages_info& info);
 
-#ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-
-    template<>
-    message_format<char16_t>* create_messages_facet(const messages_info& info)
-    {
-        return new mo_message<char16_t>(info);
-    }
-#endif
-
-#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-
-    template<>
-    message_format<char32_t>* create_messages_facet(const messages_info& info)
-    {
-        return new mo_message<char32_t>(info);
-    }
-#endif
+    BOOST_LOCALE_FOREACH_CHAR(BOOST_LOCALE_INSTANTIATE)
 
 }}} // namespace boost::locale::gnu_gettext
