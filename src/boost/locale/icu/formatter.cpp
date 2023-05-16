@@ -37,11 +37,10 @@ namespace boost { namespace locale { namespace impl_icu {
                 precision += nf.getMaximumIntegerDigits();
 #endif
             nf.setMaximumFractionDigits(precision);
-            if(how == std::ios_base::scientific || how == std::ios_base::fixed) {
+            if(how == std::ios_base::scientific || how == std::ios_base::fixed)
                 nf.setMinimumFractionDigits(precision);
-            } else {
+            else
                 nf.setMinimumFractionDigits(0);
-            }
         }
     } // namespace
 
@@ -269,9 +268,9 @@ namespace boost { namespace locale { namespace impl_icu {
                     escaped = false;
                 }
                 result += strftime_symbol_to_icu(c, cache);
-            } else if(c == '\'') {
+            } else if(c == '\'')
                 result += "''";
-            } else {
+            else {
                 if(!escaped) {
                     result += "'";
                     escaped = true;

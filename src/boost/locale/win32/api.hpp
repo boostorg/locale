@@ -95,18 +95,17 @@ namespace boost { namespace locale { namespace impl_win {
         for(unsigned i = 0; gr[i]; i++) {
             if(gr[i] == L';')
                 continue;
-            if(L'1' <= gr[i] && gr[i] <= L'9') {
+            if(L'1' <= gr[i] && gr[i] <= L'9')
                 res.grouping += char(gr[i] - L'0');
-            } else if(gr[i] == L'0')
+            else if(gr[i] == L'0')
                 inf_group = true;
         }
         if(!inf_group) {
             BOOST_LOCALE_START_CONST_CONDITION
-            if(std::numeric_limits<char>::is_signed) {
+            if(std::numeric_limits<char>::is_signed)
                 res.grouping += std::numeric_limits<char>::min();
-            } else {
+            else
                 res.grouping += std::numeric_limits<char>::max();
-            }
             BOOST_LOCALE_END_CONST_CONDITION
         }
         return res;

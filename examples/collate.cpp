@@ -29,7 +29,6 @@ int main()
         all_strings.insert(tmp);
     }
     // Print them out
-    for(const std::string& str : all_strings) {
+    for(const std::string& str : all_strings)
         std::cout << str << std::endl;
-    }
 }

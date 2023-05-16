@@ -307,21 +307,19 @@ namespace boost { namespace locale {
 
             const char_type* translated = nullptr;
             if(facet) {
-                if(!plural) {
+                if(!plural)
                     translated = facet->get(domain_id, context, id);
-                } else {
+                else
                     translated = facet->get(domain_id, context, id, n_);
-                }
             }
 
             if(!translated) {
                 const char_type* msg = plural ? (n_ == 1 ? id : plural) : id;
 
-                if(facet) {
+                if(facet)
                     translated = facet->convert(msg, buffer);
-                } else {
+                else
                     translated = detail::string_cast_traits<char_type>::cast(msg, buffer);
-                }
             }
             return translated;
         }

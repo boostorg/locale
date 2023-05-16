@@ -108,9 +108,8 @@ namespace boost { namespace locale {
                 if(begin != end) {
                     *begin = 0;
                     return 1;
-                } else {
+                } else
                     return incomplete;
-                }
             }
 
             open(from_utf_, encoding_.c_str(), util::utf_name<uint32_t>());

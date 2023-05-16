@@ -247,11 +247,10 @@ namespace boost { namespace locale { namespace util {
             // adding something big dividable by 7
 
             int start_of_period_in_weeks;
-            if(first_week_day < days_in_full_week) {
+            if(first_week_day < days_in_full_week)
                 start_of_period_in_weeks = -first_week_day;
-            } else {
+            else
                 start_of_period_in_weeks = 7 - first_week_day;
-            }
             int week_number_in_days = day - start_of_period_in_weeks;
             if(week_number_in_days < 0)
                 return -1;
@@ -616,9 +615,8 @@ namespace boost { namespace locale { namespace util {
                 case day_of_week:
                 case day_of_week_local: {
                     int diff = other->tm_.tm_yday - tm_.tm_yday;
-                    if(other->tm_.tm_year != tm_.tm_year) {
+                    if(other->tm_.tm_year != tm_.tm_year)
                         diff += days_from_0(other->tm_.tm_year + 1900) - days_from_0(tm_.tm_year + 1900);
-                    }
                     return get_diff(period::marks::day, diff, other) / factor;
                 }
                 case am_pm: return static_cast<int>((other->time_ - time_) / (3600 * 12));
@@ -671,9 +669,8 @@ namespace boost { namespace locale { namespace util {
             std::tm tmp_tm;
             t = is_local_ ? localtime_r(&real_point, &tmp_tm) : gmtime_r(&real_point, &tmp_tm);
 #endif
-            if(!t) {
+            if(!t)
                 throw date_time_error("boost::locale::gregorian_calendar: invalid time point");
-            }
             tm_ = *t;
             tm_updated_ = *t;
             normalized_ = true;

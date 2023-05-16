@@ -157,9 +157,9 @@ void test_main(int /*argc*/, char** /*argv*/)
         std::cout << lName << " locale" << std::endl;
         std::string real_name;
         std::string name = get_std_name(lName, &real_name);
-        if(name.empty()) {
+        if(name.empty())
             std::cout << lName << " not supported" << std::endl;
-        } else {
+        else {
             std::cout << "\tstd name: " << name << std::endl;
             std::locale l1 = gen(name);
             std::cout << "\treal name: " << real_name << std::endl;
@@ -192,11 +192,11 @@ void test_main(int /*argc*/, char** /*argv*/)
         std::cout << "Testing UTF-8 punct workaround" << std::endl;
         std::string real_name;
         std::string name = get_std_name("ru_RU.UTF-8", &real_name);
-        if(name.empty()) {
+        if(name.empty())
             std::cout << "- No Russian locale" << std::endl;
-        } else if(name != real_name) {
+        else if(name != real_name)
             std::cout << "- Not having UTF-8 locale, no need for workaround" << std::endl;
-        } else {
+        else {
             std::locale l1 = gen(name), l2(real_name.c_str());
             bool fails = false;
             try {
@@ -209,9 +209,9 @@ void test_main(int /*argc*/, char** /*argv*/)
                 fails = true;
             }
 
-            if(!fails) {
+            if(!fails)
                 std::cout << "- No invalid UTF. No need to check" << std::endl;
-            } else {
+            else {
                 std::ostringstream ss;
                 ss.imbue(l1);
                 ss << std::setprecision(10);

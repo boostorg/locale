@@ -30,11 +30,10 @@ bool test_from(boost::locale::util::base_converter& cvt, unsigned codepoint, con
 {
     char buf[32] = {0};
     unsigned res = cvt.from_unicode(codepoint, buf, buf + sizeof(buf));
-    if(res == boost::locale::util::base_converter::illegal) {
+    if(res == boost::locale::util::base_converter::illegal)
         return str == nullptr;
-    } else {
+    else
         return str != nullptr && strlen(str) == res && memcmp(str, buf, res) == 0;
-    }
 }
 
 bool test_incomplete(boost::locale::util::base_converter& cvt, unsigned codepoint, int len)

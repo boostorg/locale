@@ -58,29 +58,26 @@ namespace boost { namespace locale { namespace conv { namespace impl {
                 size_t output_count = (out_ptr - out_start) / sizeof(OutChar);
 
                 if(res != 0 && res != (size_t)(-1)) {
-                    if(how_ == stop) {
+                    if(how_ == stop)
                         throw conversion_error();
-                    }
                 }
 
                 sresult.append(tmp_buf, output_count);
 
                 if(res == (size_t)(-1)) {
                     if(err == EILSEQ || err == EINVAL) {
-                        if(how_ == stop) {
+                        if(how_ == stop)
                             throw conversion_error();
-                        }
 
                         if(begin != end) {
                             begin += sizeof(InChar);
                             if(begin >= end)
                                 break;
-                        } else {
+                        } else
                             break;
-                        }
-                    } else if(err == E2BIG) {
+                    } else if(err == E2BIG)
                         continue;
-                    } else {
+                    else {
                         // We should never get there
                         // but if we do
                         if(how_ == stop)

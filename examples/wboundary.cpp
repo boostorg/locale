@@ -74,23 +74,20 @@ int main()
 
     index.map(boundary::character, text.begin(), text.end());
 
-    for(const boundary::wssegment& p : index) {
+    for(const boundary::wssegment& p : index)
         std::wcout << L"|" << p;
-    }
     std::wcout << L"|\n\n";
 
     index.map(boundary::line, text.begin(), text.end());
 
-    for(const boundary::wssegment& p : index) {
+    for(const boundary::wssegment& p : index)
         std::wcout << L"|" << p;
-    }
     std::wcout << L"|\n\n";
 
     index.map(boundary::sentence, text.begin(), text.end());
 
-    for(const boundary::wssegment& p : index) {
+    for(const boundary::wssegment& p : index)
         std::wcout << L"|" << p;
-    }
     std::wcout << "|\n\n";
 }
 

@@ -103,9 +103,8 @@ namespace boost { namespace locale {
         if(d->caching_enabled) {
             boost::unique_lock<boost::mutex> guard(d->cached_lock);
             const auto p = d->cached.find(id);
-            if(p != d->cached.end()) {
+            if(p != d->cached.end())
                 return p->second;
-            }
         }
         hold_ptr<localization_backend> backend(d->backend_manager.create());
         set_all_options(*backend, id);
@@ -129,9 +128,8 @@ namespace boost { namespace locale {
         if(d->caching_enabled) {
             boost::unique_lock<boost::mutex> guard(d->cached_lock);
             const auto p = d->cached.find(id);
-            if(p == d->cached.end()) {
+            if(p == d->cached.end())
                 d->cached[id] = result;
-            }
         }
         return result;
     }

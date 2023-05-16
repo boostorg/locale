@@ -255,9 +255,8 @@ void test_manip(std::string e_charset = "UTF-8")
     TEST_MIN_MAX(int16_t, "-32,768", "32,767");
     TEST_MIN_MAX(uint16_t, "0", "65,535");
     TEST_PARSE_FAILS(as::number, "-1", uint16_t);
-    if(stdlib_correctly_errors_on_out_of_range_int16()) {
+    if(stdlib_correctly_errors_on_out_of_range_int16())
         TEST_PARSE_FAILS(as::number, "65,535", int16_t);
-    }
 
     TEST_MIN_MAX(int32_t, "-2,147,483,648", "2,147,483,647");
     TEST_MIN_MAX(uint32_t, "0", "4,294,967,295");
@@ -296,9 +295,8 @@ void test_manip(std::string e_charset = "UTF-8")
 #endif
     TEST_FMT_PARSE_1(as::spellout, 10, "ten");
 #if 402 <= BOOST_LOCALE_ICU_VERSION && BOOST_LOCALE_ICU_VERSION < 408
-    if(e_charset == "UTF-8") {
+    if(e_charset == "UTF-8")
         TEST_FMT(as::ordinal, 1, "1\xcb\xa2\xe1\xb5\x97"); // 1st with st as ligatures
-    }
 #else
     TEST_FMT(as::ordinal, 1, "1st");
 #endif

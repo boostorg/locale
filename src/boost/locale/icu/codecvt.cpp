@@ -54,12 +54,10 @@ namespace boost { namespace locale { namespace impl_icu {
             const char* tmp = begin;
             UChar32 c = ucnv_getNextUChar(cvt_, &tmp, end, &err);
             ucnv_reset(cvt_);
-            if(err == U_TRUNCATED_CHAR_FOUND) {
+            if(err == U_TRUNCATED_CHAR_FOUND)
                 return incomplete;
-            }
-            if(U_FAILURE(err)) {
+            if(U_FAILURE(err))
                 return illegal;
-            }
 
             begin = tmp;
             return c;

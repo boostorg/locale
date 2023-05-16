@@ -258,9 +258,8 @@ namespace boost { namespace locale { namespace boundary {
 
             void update_rule()
             {
-                if(current_.second != size()) {
+                if(current_.second != size())
                     value_.rule(index()[current_.second].rule);
-                }
             }
             size_t get_offset(size_t ind) const
             {
@@ -386,9 +385,8 @@ namespace boost { namespace locale { namespace boundary {
 
             void update_rule()
             {
-                if(current_ != size()) {
+                if(current_ != size())
                     value_.rule(index()[current_].rule);
-                }
             }
             size_t get_offset(size_t ind) const
             {

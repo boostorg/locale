@@ -73,11 +73,10 @@ namespace boost { namespace locale { namespace util {
                 uint32_t uchar = utf::illegal;
                 try {
                     std::wstring const tmp = to_utf.convert(buf, buf + 1);
-                    if(tmp.size() == 1) {
+                    if(tmp.size() == 1)
                         uchar = tmp[0];
-                    } else {
+                    else
                         uchar = utf::illegal;
-                    }
                 } catch(const conv::conversion_error& /*e*/) {
                     uchar = utf::illegal;
                 }

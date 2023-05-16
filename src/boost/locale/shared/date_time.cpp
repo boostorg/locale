@@ -125,9 +125,8 @@ namespace boost { namespace locale {
     date_time::date_time(const date_time& other, const date_time_period_set& s)
     {
         impl_.reset(other.impl_->clone());
-        for(unsigned i = 0; i < s.size(); i++) {
+        for(unsigned i = 0; i < s.size(); i++)
             impl_->set_value(s[i].type.mark(), s[i].value);
-        }
         impl_->normalize();
     }
 
@@ -154,16 +153,14 @@ namespace boost { namespace locale {
         impl_(std::use_facet<calendar_facet>(std::locale()).create_calendar())
     {
         impl_->set_timezone(time_zone::global());
-        for(unsigned i = 0; i < s.size(); i++) {
+        for(unsigned i = 0; i < s.size(); i++)
             impl_->set_value(s[i].type.mark(), s[i].value);
-        }
         impl_->normalize();
     }
     date_time::date_time(const date_time_period_set& s, const calendar& cal) : impl_(cal.impl_->clone())
     {
-        for(unsigned i = 0; i < s.size(); i++) {
+        for(unsigned i = 0; i < s.size(); i++)
             impl_->set_value(s[i].type.mark(), s[i].value);
-        }
         impl_->normalize();
     }
 
@@ -268,33 +265,29 @@ namespace boost { namespace locale {
 
     date_time& date_time::operator+=(const date_time_period_set& v)
     {
-        for(unsigned i = 0; i < v.size(); i++) {
+        for(unsigned i = 0; i < v.size(); i++)
             *this += v[i];
-        }
         return *this;
     }
 
     date_time& date_time::operator-=(const date_time_period_set& v)
     {
-        for(unsigned i = 0; i < v.size(); i++) {
+        for(unsigned i = 0; i < v.size(); i++)
             *this -= v[i];
-        }
         return *this;
     }
 
     date_time& date_time::operator<<=(const date_time_period_set& v)
     {
-        for(unsigned i = 0; i < v.size(); i++) {
+        for(unsigned i = 0; i < v.size(); i++)
             *this <<= v[i];
-        }
         return *this;
     }
 
     date_time& date_time::operator>>=(const date_time_period_set& v)
     {
-        for(unsigned i = 0; i < v.size(); i++) {
+        for(unsigned i = 0; i < v.size(); i++)
             *this >>= v[i];
-        }
         return *this;
     }
 

@@ -52,18 +52,16 @@ namespace boost { namespace locale { namespace impl_posix {
                 case converter_base::upper_case: {
                     string_type res;
                     res.reserve(end - begin);
-                    while(begin != end) {
+                    while(begin != end)
                         res += case_traits<CharType>::upper(*begin++, *lc_);
-                    }
                     return res;
                 }
                 case converter_base::lower_case:
                 case converter_base::case_folding: {
                     string_type res;
                     res.reserve(end - begin);
-                    while(begin != end) {
+                    while(begin != end)
                         res += case_traits<CharType>::lower(*begin++, *lc_);
-                    }
                     return res;
                 }
                 case converter_base::normalization:

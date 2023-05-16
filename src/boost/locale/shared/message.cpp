@@ -288,9 +288,9 @@ namespace boost { namespace locale { namespace gnu_gettext {
         message_key(const string_type& c = string_type()) : c_context_(nullptr), c_key_(nullptr)
         {
             const size_t pos = c.find(CharType(4));
-            if(pos == string_type::npos) {
+            if(pos == string_type::npos)
                 key_ = c;
-            } else {
+            else {
                 context_ = c.substr(0, pos);
                 key_ = c.substr(pos + 1);
             }
@@ -543,13 +543,11 @@ namespace boost { namespace locale { namespace gnu_gettext {
                 return false;
             if(!util::are_encodings_equal(mo_encoding, locale_encoding_))
                 return false;
-            if(util::are_encodings_equal(mo_encoding, key_encoding_)) {
+            if(util::are_encodings_equal(mo_encoding, key_encoding_))
                 return true;
-            }
             for(unsigned i = 0; i < mo.size(); i++) {
-                if(!detail::is_us_ascii_string(mo.key(i))) {
+                if(!detail::is_us_ascii_string(mo.key(i)))
                     return false;
-                }
             }
             return true;
         }
@@ -579,9 +577,8 @@ namespace boost { namespace locale { namespace gnu_gettext {
                 const key_type key(context, in_id);
                 const catalog_type& cat = data.catalog;
                 const auto p = cat.find(key);
-                if(p == cat.end()) {
+                if(p == cat.end())
                     return null_pair;
-                }
                 return pair_type(p->second.data(), p->second.data() + p->second.size());
             }
         }

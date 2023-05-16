@@ -115,9 +115,8 @@ int main(int argc, char** argv)
         int passed = results().test_counter - results().error_counter;
         std::cout << std::endl;
         std::cout << "Passed " << passed << " tests\n";
-        if(results().error_counter > 0) {
+        if(results().error_counter > 0)
             std::cout << "Failed " << results().error_counter << " tests\n"; // LCOV_EXCL_LINE
-        }
         std::cout << " " << std::fixed << std::setprecision(1) << std::setw(5)
                   << 100.0 * passed / results().test_counter << "% of tests completed successfully\n";
     }

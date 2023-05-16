@@ -46,23 +46,20 @@ int main()
 
     index.map(boundary::character, text.begin(), text.end());
 
-    for(const boundary::ssegment& p : index) {
+    for(const boundary::ssegment& p : index)
         std::cout << "|" << p;
-    }
     std::cout << "|\n\n";
 
     index.map(boundary::line, text.begin(), text.end());
 
-    for(const boundary::ssegment& p : index) {
+    for(const boundary::ssegment& p : index)
         std::cout << "|" << p;
-    }
     std::cout << "|\n\n";
 
     index.map(boundary::sentence, text.begin(), text.end());
 
-    for(const boundary::ssegment& p : index) {
+    for(const boundary::ssegment& p : index)
         std::cout << "|" << p;
-    }
     std::cout << "|\n\n";
 }
 

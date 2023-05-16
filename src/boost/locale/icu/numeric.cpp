@@ -58,9 +58,8 @@ namespace boost { namespace locale { namespace impl_icu {
             if(!std::numeric_limits<ValueType>::is_integer)
                 return false;
 
-            if(flg == flags::number && (ios.flags() & std::ios_base::basefield) != std::ios_base::dec) {
+            if(flg == flags::number && (ios.flags() & std::ios_base::basefield) != std::ios_base::dec)
                 return true;
-            }
             return false;
         }
     } // namespace detail
@@ -238,14 +237,12 @@ namespace boost { namespace locale { namespace impl_icu {
         do_real_get(iter_type in, iter_type end, std::ios_base& ios, std::ios_base::iostate& err, ValueType& val) const
         {
             stream_type* stream_ptr = dynamic_cast<stream_type*>(&ios);
-            if(!stream_ptr || detail::use_parent(ios, ValueType(0))) {
+            if(!stream_ptr || detail::use_parent(ios, ValueType(0)))
                 return std::num_get<CharType>::do_get(in, end, ios, err, val);
-            }
 
             const auto formatter = formatter_type::create(ios, loc_, enc_);
-            if(!formatter) {
+            if(!formatter)
                 return std::num_get<CharType>::do_get(in, end, ios, err, val);
-            }
 
             string_type tmp;
             tmp.reserve(64);
@@ -254,23 +251,20 @@ namespace boost { namespace locale { namespace impl_icu {
             while(in != end && (((c = *in) <= 32 && (c > 0)) || c == 127)) // Assuming that ASCII is a subset
                 ++in;
 
-            while(tmp.size() < 4096 && in != end && *in != '\n') {
+            while(tmp.size() < 4096 && in != end && *in != '\n')
                 tmp += *in++;
-            }
 
             typedef typename detail::icu_format_type<ValueType>::type icu_type;
             icu_type value;
             size_t parsed_chars;
 
-            if((parsed_chars = formatter->parse(tmp, value)) == 0 || !is_losless_castable<ValueType>(value)) {
+            if((parsed_chars = formatter->parse(tmp, value)) == 0 || !is_losless_castable<ValueType>(value))
                 err |= std::ios_base::failbit;
-            } else {
+            else
                 val = static_cast<ValueType>(value);
-            }
 
-            for(size_t n = tmp.size(); n > parsed_chars; n--) {
+            for(size_t n = tmp.size(); n > parsed_chars; n--)
                 stream_ptr->putback(tmp[n - 1]);
-            }
 
             in = iter_type(*stream_ptr);
 
@@ -312,9 +306,8 @@ namespace boost { namespace locale { namespace impl_icu {
     std::locale install_formatting_facets(const std::locale& in, const cdata& cd)
     {
         std::locale tmp = std::locale(in, new num_format<CharType>(cd));
-        if(!std::has_facet<formatters_cache>(in)) {
+        if(!std::has_facet<formatters_cache>(in))
             tmp = std::locale(tmp, new formatters_cache(cd.locale));
-        }
         return tmp;
     }
 
@@ -322,9 +315,8 @@ namespace boost { namespace locale { namespace impl_icu {
     std::locale install_parsing_facets(const std::locale& in, const cdata& cd)
     {
         std::locale tmp = std::locale(in, new num_parse<CharType>(cd));
-        if(!std::has_facet<formatters_cache>(in)) {
+        if(!std::has_facet<formatters_cache>(in))
             tmp = std::locale(tmp, new formatters_cache(cd.locale));
-        }
         return tmp;
     }
 

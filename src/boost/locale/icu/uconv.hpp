@@ -159,9 +159,9 @@ namespace boost { namespace locale { namespace impl_icu {
                 if(U16_IS_SINGLE(cl))
                     tmp.append(static_cast<UChar32>(cl));
                 else if(U16_IS_LEAD(cl)) {
-                    if(begin == end) {
+                    if(begin == end)
                         throw_if_needed();
-                    } else {
+                    else {
                         UChar ct = *begin++;
                         if(!U16_IS_TRAIL(ct))
                             throw_if_needed();

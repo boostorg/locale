@@ -32,9 +32,8 @@ void test_char()
         std::cout << "- Testing " << name << std::endl;
         l = gen(name);
         test_one<CharType>(l, "Façade", "façade", "FAÇADE");
-    } else {
+    } else
         std::cout << "- en_US.UTF-8 is not supported, skipping" << std::endl;
-    }
 
     name = get_std_name("en_US.ISO8859-1");
     if(!name.empty()) {
@@ -42,9 +41,9 @@ void test_char()
         l = gen(name);
         test_one<CharType>(l, "Hello World", "hello world", "HELLO WORLD");
         test_one<CharType>(l, "Façade", "façade", "FAÇADE");
-    } else {
+    } else
         std::cout << "- en_US.ISO8859-1 is not supported, skipping" << std::endl;
-    }
+
     std::string real_name;
     name = get_std_name("tr_TR.UTF-8", &real_name);
     if(!name.empty()) {
@@ -52,12 +51,10 @@ void test_char()
         if(std::use_facet<std::ctype<wchar_t>>(std::locale(real_name.c_str())).toupper(L'i') != L'I') {
             l = gen(name);
             test_one<CharType>(l, "i", "i", "İ");
-        } else {
+        } else
             std::cout << "Standard library does not support this locale's case conversion correctly" << std::endl;
-        }
-    } else {
+    } else
         std::cout << "- tr_TR.UTF-8 is not supported, skipping" << std::endl;
-    }
 }
 
 void test_main(int /*argc*/, char** /*argv*/)

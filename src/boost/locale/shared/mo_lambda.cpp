@@ -179,9 +179,9 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
                     numeric_value_ = std::min<unsigned long long>(std::numeric_limits<long long>::max(), value);
                     text_ = tmp_ptr;
                     next_tocken_ = NUM;
-                } else if(*text == '\0') {
+                } else if(*text == '\0')
                     next_tocken_ = END;
-                } else {
+                else {
                     next_tocken_ = *text;
                     text_++;
                 }
@@ -202,9 +202,8 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
             expr_ptr compile()
             {
                 expr_ptr res = cond_expr();
-                if(res && t.next() != END) {
+                if(res && t.next() != END)
                     return expr_ptr();
-                }
                 return res;
             }
 
@@ -244,9 +243,8 @@ namespace boost { namespace locale { namespace gnu_gettext { namespace lambda {
                         BOOST_ASSERT(op == '-');
                         return make_expr<unary<std::negate<expr::value_type>>>(std::move(op1));
                     }
-                } else {
+                } else
                     return value_expr();
-                }
             }
 
 #define BINARY_EXPR(lvl, nextLvl, list)                           \

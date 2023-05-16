@@ -36,9 +36,8 @@ namespace boost { namespace locale { namespace conv {
             if(c == utf::illegal || c == utf::incomplete) {
                 if(how == stop)
                     throw conversion_error();
-            } else {
+            } else
                 utf::utf_traits<CharOut>::encode(c, inserter);
-            }
         }
         return result;
     }

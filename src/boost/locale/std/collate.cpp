@@ -71,9 +71,8 @@ namespace boost { namespace locale { namespace impl_std {
                     std::locale base =
                       std::locale(std::locale::classic(), new std::collate_byname<wchar_t>(locale_name.c_str()));
                     return std::locale(in, new utf8_collator_from_wide(base));
-                } else {
+                } else
                     return std::locale(in, new std::collate_byname<char>(locale_name.c_str()));
-                }
             }
 
             case char_facet_t::wchar_f: return std::locale(in, new std::collate_byname<wchar_t>(locale_name.c_str()));

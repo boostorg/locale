@@ -157,11 +157,13 @@ void test_main(int /*argc*/, char** /*argv*/)
 #else
 #    define TEST_HAS_FACET_CHAR32(facet, l) (void)0
 #endif
-#define TEST_HAS_FACETS(facet, l)            \
-    TEST(std::has_facet<facet<char>>(l));    \
-    TEST(std::has_facet<facet<wchar_t>>(l)); \
-    TEST_HAS_FACET_CHAR16(facet, l);         \
-    TEST_HAS_FACET_CHAR32(facet, l)
+#define TEST_HAS_FACETS(facet, l)                \
+    do {                                         \
+        TEST(std::has_facet<facet<char>>(l));    \
+        TEST(std::has_facet<facet<wchar_t>>(l)); \
+        TEST_HAS_FACET_CHAR16(facet, l);         \
+        TEST_HAS_FACET_CHAR32(facet, l);         \
+    } while(false)
 
         // Convert
         TEST_HAS_FACETS(bl::converter, l);
@@ -178,9 +180,8 @@ void test_main(int /*argc*/, char** /*argv*/)
         // Codepage
         TEST_HAS_FACETS(codecvt_by_char_type, l);
         // Boundary
-        if(backendName == "icu") {
+        if(backendName == "icu")
             TEST_HAS_FACETS(bl::boundary::boundary_indexing, l);
-        }
         // calendar
         TEST(std::has_facet<bl::calendar_facet>(l));
         // information

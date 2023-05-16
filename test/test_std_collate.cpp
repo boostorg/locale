@@ -44,9 +44,8 @@ void test_one(const std::locale& l, std::string ia, std::string ib, int diff)
     TEST_EQ(
       diff,
       get_sign(col.transform(a.c_str(), a.c_str() + a.size()).compare(col.transform(b.c_str(), b.c_str() + b.size()))));
-    if(diff == 0) {
+    if(diff == 0)
         TEST_EQ(col.hash(a.c_str(), a.c_str() + a.size()), col.hash(b.c_str(), b.c_str() + b.size()));
-    }
 }
 
 template<typename CharType>
@@ -70,9 +69,8 @@ void test_char()
             l = gen(std_name);
             test_one<CharType>(l, "a", "ç", -1);
             test_one<CharType>(l, "ç", "d", -1);
-        } else {
+        } else
             std::cout << "- " << name << " not supported, skipping" << std::endl;
-        }
     }
 #endif
 }

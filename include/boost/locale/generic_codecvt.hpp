@@ -197,9 +197,8 @@ namespace boost { namespace locale {
                     if(state == 0) {
                         from = prev_from;
                         state = 1;
-                    } else {
+                    } else
                         state = 0;
-                    }
                 }
             }
 #ifndef BOOST_LOCALE_DO_LENGTH_MBSTATE_CONST
@@ -243,9 +242,9 @@ namespace boost { namespace locale {
                     break;
                 }
                 // Normal codepoints go directly to stream
-                if(ch <= 0xFFFF) {
+                if(ch <= 0xFFFF)
                     *to++ = static_cast<uchar>(ch);
-                } else {
+                else {
                     // For other codepoints we do the following
                     //
                     // 1. We can't consume our input as we may find ourselves

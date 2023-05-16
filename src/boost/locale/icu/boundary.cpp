@@ -93,9 +93,8 @@ namespace boost { namespace locale {
                             case character: BOOST_UNREACHABLE_RETURN(0);
                         }
                     }
-                } else {
-                    indx.back().rule |= character_any; // Baisc mark... for character
-                }
+                } else
+                    indx.back().rule |= character_any; // Basic mark... for character
             }
             return indx;
         }

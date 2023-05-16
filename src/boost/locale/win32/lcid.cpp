@@ -46,9 +46,8 @@ namespace boost { namespace locale { namespace impl_win {
 
             unsigned lcid;
             ss >> lcid;
-            if(ss.fail() || !ss.eof()) {
+            if(ss.fail() || !ss.eof())
                 return FALSE;
-            }
 
             char iso_639_lang[16];
             char iso_3166_country[16];
@@ -63,9 +62,8 @@ namespace boost { namespace locale { namespace impl_win {
             if(p != tbl.end()) {
                 if(p->second > lcid)
                     p->second = lcid;
-            } else {
+            } else
                 tbl[lc_name] = lcid;
-            }
         } catch(...) {
             tbl.clear();
             return FALSE;
@@ -89,19 +87,16 @@ namespace boost { namespace locale { namespace impl_win {
 
     unsigned locale_to_lcid(const std::string& locale_name)
     {
-        if(locale_name.empty()) {
+        if(locale_name.empty())
             return LOCALE_USER_DEFAULT;
-        }
         boost::locale::util::locale_data d;
         d.parse(locale_name);
         std::string id = d.language();
 
-        if(!d.country().empty()) {
+        if(!d.country().empty())
             id += "_" + d.country();
-        }
-        if(!d.variant().empty()) {
+        if(!d.variant().empty())
             id += "@" + d.variant();
-        }
 
         const table_type& tbl = get_ready_lcid_table();
         const auto p = tbl.find(id);

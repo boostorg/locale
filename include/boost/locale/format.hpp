@@ -327,9 +327,8 @@ namespace boost { namespace locale {
                         char_type c = format[pos];
                         if(c == comma || c == eq || c == cbrk)
                             break;
-                        else {
+                        else
                             key += static_cast<char>(c);
-                        }
                     }
 
                     if(format[pos] == eq) {
@@ -360,9 +359,9 @@ namespace boost { namespace locale {
                         }
                     }
 
-                    if(use_svalue) {
+                    if(use_svalue)
                         fmt.set_one_flag(key, svalue);
-                    } else
+                    else
                         fmt.set_flag_with_str(key, value);
 
                     if(format[pos] == comma) {

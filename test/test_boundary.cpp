@@ -51,9 +51,8 @@ void test_word_container(Iterator begin,
                 fchunks.push_back(empty_chunk + ichunks[i]);
                 empty_chunk.clear();
                 pos.push_back(ipos[i]);
-            } else {
+            } else
                 empty_chunk += ichunks[i];
-            }
 
             if((imasks[i] & mask) || i == imasks.size() - 1) {
                 Iterator ptr = begin;
@@ -138,12 +137,11 @@ void test_word_container(Iterator begin,
                 map.full_select(false);
                 for(Iterator optr = begin; optr != end; optr++, i++) {
                     p = map.find(optr);
-                    if(chunk_ptr < pos.size() && i >= unsigned(pos[chunk_ptr])) {
+                    if(chunk_ptr < pos.size() && i >= unsigned(pos[chunk_ptr]))
                         chunk_ptr++;
-                    }
-                    if(chunk_ptr >= pos.size()) {
+                    if(chunk_ptr >= pos.size())
                         TEST(p == map.end());
-                    } else {
+                    else {
                         TEST_EQ(p->str(), chunks[chunk_ptr]);
                         TEST_EQ(p->rule(), unsigned(masks[chunk_ptr]));
                     }
@@ -156,12 +154,11 @@ void test_word_container(Iterator begin,
                 map.full_select(true);
                 for(Iterator optr = begin; optr != end; optr++, i++) {
                     p = map.find(optr);
-                    if(chunk_ptr < pos.size() && i >= unsigned(pos[chunk_ptr])) {
+                    if(chunk_ptr < pos.size() && i >= unsigned(pos[chunk_ptr]))
                         chunk_ptr++;
-                    }
-                    if(chunk_ptr >= pos.size()) {
+                    if(chunk_ptr >= pos.size())
                         TEST(p == map.end());
-                    } else {
+                    else {
                         TEST_EQ(p->str(), fchunks[chunk_ptr]);
                         TEST_EQ(p->rule(), unsigned(masks[chunk_ptr]));
                     }

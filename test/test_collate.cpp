@@ -23,9 +23,9 @@ void test_comp(std::locale l, std::basic_string<Char> left, std::basic_string<Ch
         string_type rt = coll.transform(right.c_str(), right.c_str() + right.size());
         if(expected < 0)
             TEST_LT(lt, rt);
-        else if(expected == 0) {
+        else if(expected == 0)
             TEST_EQ(lt, rt);
-        } else
+        else
             TEST_GT(lt, rt);
         long lh = coll.hash(left.c_str(), left.c_str() + left.size());
         long rh = coll.hash(right.c_str(), right.c_str() + right.size());

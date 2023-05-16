@@ -90,9 +90,9 @@ namespace boost { namespace locale { namespace detail {
                 as::currency_iso(ios_);
             else if(value == "nat" || value == "national")
                 as::currency_national(ios_);
-        } else if(key == "per" || key == "percent") {
+        } else if(key == "per" || key == "percent")
             as::percent(ios_);
-        } else if(key == "date") {
+        else if(key == "date") {
             as::date(ios_);
             if(value == "s" || value == "short")
                 as::date_short(ios_);
@@ -127,11 +127,11 @@ namespace boost { namespace locale { namespace detail {
                 as::date_full(ios_);
                 as::time_full(ios_);
             }
-        } else if(key == "spell" || key == "spellout") {
+        } else if(key == "spell" || key == "spellout")
             as::spellout(ios_);
-        } else if(key == "ord" || key == "ordinal") {
+        else if(key == "ord" || key == "ordinal")
             as::ordinal(ios_);
-        } else if(key == "left" || key == "<")
+        else if(key == "left" || key == "<")
             ios_.setf(std::ios_base::left, std::ios_base::adjustfield);
         else if(key == "right" || key == ">")
             ios_.setf(std::ios_base::right, std::ios_base::adjustfield);
