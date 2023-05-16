@@ -16,20 +16,17 @@
 #    endif
 #endif
 
-#include <boost/locale/encoding.hpp>
 #include <boost/locale/gnu_gettext.hpp>
-#include <boost/locale/hold_ptr.hpp>
+
+#include <boost/locale/encoding.hpp>
 #include <boost/locale/message.hpp>
 #include "boost/locale/shared/mo_hash.hpp"
 #include "boost/locale/shared/mo_lambda.hpp"
 #include "boost/locale/util/encoding.hpp"
 #include "boost/locale/util/foreach_char.hpp"
 #include <boost/assert.hpp>
-#include <boost/version.hpp>
-#include <algorithm>
+#include <boost/utility/string_view.hpp>
 #include <cstdio>
-#include <cstring>
-#include <iostream>
 #include <map>
 #include <memory>
 #include <stdexcept>
@@ -121,8 +118,6 @@ namespace boost { namespace locale { namespace gnu_gettext {
 
     class mo_file {
     public:
-        typedef std::pair<const char*, const char*> pair_type;
-
         mo_file(std::vector<char> data) : data_(std::move(data))
         {
             if(data_.size() < 4)
@@ -145,11 +140,10 @@ namespace boost { namespace locale { namespace gnu_gettext {
             hash_offset_ = get(24);
         }
 
-        pair_type find(const char* context_in, const char* key_in) const
+        string_view find(const char* context_in, const char* key_in) const
         {
-            pair_type null_pair;
             if(!has_hash())
-                return null_pair;
+                return {};
 
             pj_winberger_hash::state_type st = pj_winberger_hash::initial_state;
             if(context_in) {
@@ -166,14 +160,14 @@ namespace boost { namespace locale { namespace gnu_gettext {
                 const uint32_t idx = get(hash_offset_ + 4 * hkey);
                 // Not found
                 if(idx == 0)
-                    return null_pair;
+                    return {};
                 // If equal values return translation
                 if(key_equals(key(idx - 1), context_in, key_in))
                     return value(idx - 1);
                 // Rehash
                 hkey = (hkey + incr) % hash_size_;
             } while(hkey != orig_hkey);
-            return null_pair;
+            return {};
         }
 
         static bool key_equals(const char* real_key, const char* cntx, const char* key)
@@ -197,13 +191,13 @@ namespace boost { namespace locale { namespace gnu_gettext {
             return data_.data() + off;
         }
 
-        pair_type value(unsigned id) const
+        string_view value(unsigned id) const
         {
             const uint32_t len = get(translations_offset_ + id * 8);
             const uint32_t off = get(translations_offset_ + id * 8 + 4);
             if(len > data_.size() || off > data_.size() - len)
                 throw std::runtime_error("Bad mo-file format");
-            return pair_type(&data_[off], &data_[off] + len);
+            return string_view(&data_[off], len);
         }
 
         bool has_hash() const { return hash_size_ != 0; }
@@ -238,8 +232,8 @@ namespace boost { namespace locale { namespace gnu_gettext {
     template<typename CharType>
     struct mo_file_use_traits {
         static constexpr bool in_use = false;
-        typedef std::pair<const CharType*, const CharType*> pair_type;
-        static pair_type use(const mo_file&, const CharType*, const CharType*)
+        using string_view_type = basic_string_view<CharType>;
+        static string_view_type use(const mo_file&, const CharType*, const CharType*)
         {
             throw std::logic_error("Unexpected call"); // LCOV_EXCL_LINE
         }
@@ -249,36 +243,29 @@ namespace boost { namespace locale { namespace gnu_gettext {
     struct mo_file_use_traits<char> {
         static constexpr bool in_use = true;
         typedef char CharType;
-        typedef std::pair<const CharType*, const CharType*> pair_type;
-        static pair_type use(const mo_file& mo, const char* context, const char* key) { return mo.find(context, key); }
+        using string_view_type = basic_string_view<CharType>;
+        static string_view_type use(const mo_file& mo, const char* context, const char* key)
+        {
+            return mo.find(context, key);
+        }
     };
 
     template<typename CharType>
-    class converter {
+    class converter : conv::utf_encoder<CharType> {
+        using encoder = conv::utf_encoder<CharType>;
+
     public:
-        converter(std::string /*out_enc*/, std::string in_enc) : to_utf_(in_enc, conv::stop) {}
+        converter(std::string /*out_enc*/, std::string in_enc) : encoder(in_enc, conv::stop) {}
 
-        std::basic_string<CharType> operator()(const char* begin, const char* end)
-        {
-            return to_utf_.convert(begin, end);
-        }
-
-    private:
-        conv::utf_encoder<CharType> to_utf_;
+        using encoder::operator();
     };
 
     template<>
-    class converter<char> {
+    class converter<char> : conv::narrow_converter {
     public:
-        converter(std::string out_enc, std::string in_enc) : out_(out_enc), in_(in_enc) {}
+        converter(const std::string& out_enc, const std::string& in_enc) : narrow_converter(in_enc, out_enc) {}
 
-        std::string operator()(const char* begin, const char* end)
-        {
-            return conv::between(begin, end, out_, in_, conv::stop);
-        }
-
-    private:
-        std::string out_, in_;
+        using narrow_converter::operator();
     };
 
     template<typename CharType>
@@ -410,18 +397,19 @@ namespace boost { namespace locale { namespace gnu_gettext {
         };
 
     public:
-        typedef std::pair<const CharType*, const CharType*> pair_type;
+        using string_view_type = typename mo_file_use_traits<CharType>::string_view_type;
 
         const CharType* get(int domain_id, const CharType* context, const CharType* in_id) const override
         {
-            return get_string(domain_id, context, in_id).first;
+            const auto result = get_string(domain_id, context, in_id);
+            return result.empty() ? nullptr : result.data();
         }
 
         const CharType*
         get(int domain_id, const CharType* context, const CharType* single_id, count_type n) const override
         {
-            const pair_type ptr = get_string(domain_id, context, single_id);
-            if(!ptr.first)
+            auto result = get_string(domain_id, context, single_id);
+            if(result.empty())
                 return nullptr;
 
             // domain_id is already checked by get_string -> Would return a null-pair
@@ -432,14 +420,13 @@ namespace boost { namespace locale { namespace gnu_gettext {
             else
                 plural_idx = n == 1 ? 0 : 1; // Fallback to English plural form
 
-            const CharType* p = ptr.first;
-            for(decltype(plural_idx) i = 0; p < ptr.second && i < plural_idx; ++i) {
-                p = std::find(p, ptr.second, CharType(0));
-                if(BOOST_UNLIKELY(p == ptr.second))
+            for(decltype(plural_idx) i = 0; i < plural_idx; ++i) {
+                const auto pos = result.find(CharType(0));
+                if(BOOST_UNLIKELY(pos == string_view_type::npos))
                     return nullptr;
-                ++p;
+                result.remove_prefix(pos + 1);
             }
-            return (p < ptr.second) ? p : nullptr;
+            return result.empty() ? nullptr : result.data();
         }
 
         int domain(const std::string& domain) const override
@@ -503,8 +490,8 @@ namespace boost { namespace locale { namespace gnu_gettext {
                 mo.reset(new mo_file(std::move(file_data)));
             }
 
-            const std::string plural = extract(mo->value(0).first, "plural=", "\r\n;");
-            const std::string mo_encoding = extract(mo->value(0).first, "charset=", " \r\n;");
+            const std::string plural = extract(mo->value(0), "plural=", "\r\n;");
+            const std::string mo_encoding = extract(mo->value(0), "charset=", " \r\n;");
 
             if(mo_encoding.empty())
                 throw std::runtime_error("Invalid mo-format, encoding is not specified");
@@ -519,10 +506,9 @@ namespace boost { namespace locale { namespace gnu_gettext {
                 converter<CharType> cvt_key(key_encoding, mo_encoding);
                 for(unsigned i = 0; i < mo->size(); i++) {
                     const char* ckey = mo->key(i);
-                    const key_type key(cvt_key(ckey, ckey + strlen(ckey)));
+                    const key_type key(cvt_key(ckey));
 
-                    mo_file::pair_type tmp = mo->value(i);
-                    data.catalog[key] = cvt_value(tmp.first, tmp.second);
+                    data.catalog[key] = cvt_value(mo->value(i));
                 }
             }
             return true;
@@ -552,21 +538,20 @@ namespace boost { namespace locale { namespace gnu_gettext {
             return true;
         }
 
-        static std::string extract(const std::string& meta, const std::string& key, const char* separator)
+        static std::string extract(boost::string_view meta, const std::string& key, const boost::string_view separators)
         {
-            size_t pos = meta.find(key);
-            if(pos == std::string::npos)
+            const size_t pos = meta.find(key);
+            if(pos == boost::string_view::npos)
                 return "";
-            pos += key.size();
-            const size_t end_pos = meta.find_first_of(separator, pos);
-            return meta.substr(pos, end_pos - pos);
+            meta.remove_prefix(pos + key.size());
+            const size_t end_pos = meta.find_first_of(separators);
+            return std::string(meta.substr(0, end_pos));
         }
 
-        pair_type get_string(int domain_id, const CharType* context, const CharType* in_id) const
+        string_view_type get_string(int domain_id, const CharType* context, const CharType* in_id) const
         {
-            pair_type null_pair;
             if(domain_id < 0 || static_cast<size_t>(domain_id) >= domain_data_.size())
-                return null_pair;
+                return {};
             const auto& data = domain_data_[domain_id];
 
             BOOST_LOCALE_START_CONST_CONDITION
@@ -578,8 +563,8 @@ namespace boost { namespace locale { namespace gnu_gettext {
                 const catalog_type& cat = data.catalog;
                 const auto p = cat.find(key);
                 if(p == cat.end())
-                    return null_pair;
-                return pair_type(p->second.data(), p->second.data() + p->second.size());
+                    return {};
+                return p->second;
             }
         }
 
