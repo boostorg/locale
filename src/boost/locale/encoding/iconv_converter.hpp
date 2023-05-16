@@ -37,34 +37,29 @@ namespace boost { namespace locale { namespace conv { namespace impl {
             const char* begin = reinterpret_cast<const char*>(ubegin);
             const char* end = reinterpret_cast<const char*>(uend);
 
-            enum { normal, unshifting, done } state = normal;
+            bool is_unshifting = false;
 
-            while(state != done) {
+            for(;;) {
                 size_t in_left = end - begin;
                 size_t out_left = sizeof(tmp_buf);
-
                 char* out_ptr = out_start;
-                size_t res = 0;
+
                 if(in_left == 0)
-                    state = unshifting;
+                    is_unshifting = true;
 
-                if(state == normal)
-                    res = conv(&begin, &in_left, &out_ptr, &out_left);
-                else
-                    res = conv(nullptr, nullptr, &out_ptr, &out_left);
-
-                int err = errno;
-
-                size_t output_count = (out_ptr - out_start) / sizeof(OutChar);
+                const size_t res = (!is_unshifting) ? conv(&begin, &in_left, &out_ptr, &out_left) :
+                                                      conv(nullptr, nullptr, &out_ptr, &out_left);
 
                 if(res != 0 && res != (size_t)(-1)) {
                     if(how_ == stop)
                         throw conversion_error();
                 }
 
+                const size_t output_count = (out_ptr - out_start) / sizeof(OutChar);
                 sresult.append(tmp_buf, output_count);
 
                 if(res == (size_t)(-1)) {
+                    const int err = errno;
                     if(err == EILSEQ || err == EINVAL) {
                         if(how_ == stop)
                             throw conversion_error();
@@ -77,17 +72,11 @@ namespace boost { namespace locale { namespace conv { namespace impl {
                             break;
                     } else if(err == E2BIG)
                         continue;
-                    else {
-                        // We should never get there
-                        // but if we do
-                        if(how_ == stop)
-                            throw conversion_error();
-                        else
-                            break;
-                    }
+                    else                          // Invalid error code, shouldn't ever happen or iconv has a bug
+                        throw conversion_error(); // LCOV_EXCL_LINE
                 }
-                if(state == unshifting)
-                    state = done;
+                if(is_unshifting)
+                    break;
             }
             return sresult;
         }

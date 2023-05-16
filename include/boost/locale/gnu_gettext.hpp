@@ -60,7 +60,7 @@ namespace boost { namespace locale {
                 /// "UTF-8"
                 domain(const std::string& n)
                 {
-                    size_t pos = n.find('/');
+                    const size_t pos = n.find('/');
                     if(pos == std::string::npos) {
                         name = n;
                         encoding = "UTF-8";

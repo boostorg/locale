@@ -11,8 +11,6 @@
 #include <boost/locale/util/locale_data.hpp>
 #include "boost/locale/icu/all_generator.hpp"
 #include "boost/locale/icu/cdata.hpp"
-#include <algorithm>
-#include <iterator>
 
 #include <unicode/ucnv.h>
 
@@ -85,9 +83,7 @@ namespace boost { namespace locale { namespace impl_icu {
                     minf.country = country_;
                     minf.variant = variant_;
                     minf.encoding = data_.encoding;
-                    std::copy(domains_.begin(),
-                              domains_.end(),
-                              std::back_inserter<gnu_gettext::messages_info::domains_type>(minf.domains));
+                    minf.domains = gnu_gettext::messages_info::domains_type(domains_.begin(), domains_.end());
                     minf.paths = paths_;
                     switch(type) {
                         case char_facet_t::nochar: break;
