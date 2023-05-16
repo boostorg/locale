@@ -420,7 +420,8 @@ void test_main(int argc, char** argv)
         boost::locale::generator g;
         g.add_messages_domain("simple");
         g.add_messages_domain("full");
-        g.add_messages_domain("fall");
+        // Fallback using only ASCII keys, choose a specific encoding != UTF-8, here: Latin1
+        g.add_messages_domain("fall/ISO-8859-1");
         g.add_messages_path(message_path);
         g.set_default_messages_domain("default");
 
@@ -561,7 +562,7 @@ void test_main(int argc, char** argv)
             TEST_EQ(bl::gettext("test-あにま-בדיקה", l), bl::conv::from_utf("test--בדיקה", "ISO-8859-8"));
         }
 
-        std::cout << "  `ANSI' keys" << std::endl;
+        std::cout << "  ANSI keys" << std::endl;
 
         {
             boost::locale::generator g;
