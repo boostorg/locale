@@ -53,7 +53,7 @@ windows_name to_windows_name(const std::string& l)
 }
 #endif
 
-bool loadable(std::string name)
+bool loadable(const std::string& name)
 {
     try {
         std::locale l(name);
