@@ -12,7 +12,7 @@
 #include <string>
 
 namespace boost { namespace locale { namespace impl_std {
-    enum class utf8_support { none, native, native_with_wide, from_wide };
+    enum class utf8_support { none, native_with_wide, from_wide };
 
     std::locale create_convert(const std::locale& in,
                                const std::string& locale_name,

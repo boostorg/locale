@@ -262,15 +262,6 @@ namespace boost { namespace locale { namespace impl_std {
                         tmp = std::locale(tmp, new utf8_moneypunct_from_wide<false>(base));
                         return std::locale(tmp, new util::base_num_format<char>());
                     }
-                    case utf8_support::native: {
-                        std::locale base = std::locale(locale_name);
-
-                        std::locale tmp = std::locale(in, new time_put_from_base<char>(base));
-                        tmp = std::locale(tmp, new utf8_numpunct(locale_name));
-                        tmp = std::locale(tmp, new utf8_moneypunct<true>(locale_name));
-                        tmp = std::locale(tmp, new utf8_moneypunct<false>(locale_name));
-                        return std::locale(tmp, new util::base_num_format<char>());
-                    }
                     case utf8_support::native_with_wide: {
                         std::locale base = std::locale(locale_name);
 
@@ -326,12 +317,6 @@ namespace boost { namespace locale { namespace impl_std {
                         std::locale tmp = std::locale(in, new utf8_numpunct_from_wide(base));
                         tmp = std::locale(tmp, new utf8_moneypunct_from_wide<true>(base));
                         tmp = std::locale(tmp, new utf8_moneypunct_from_wide<false>(base));
-                        return std::locale(tmp, new util::base_num_parse<char>());
-                    }
-                    case utf8_support::native: {
-                        std::locale tmp = std::locale(in, new utf8_numpunct(locale_name));
-                        tmp = std::locale(tmp, new utf8_moneypunct<true>(locale_name));
-                        tmp = std::locale(tmp, new utf8_moneypunct<false>(locale_name));
                         return std::locale(tmp, new util::base_num_parse<char>());
                     }
                     case utf8_support::native_with_wide: {
