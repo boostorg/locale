@@ -253,6 +253,7 @@ jobs:
 
           gen_locale en_US.UTF-8 # Assumed to be there by tests
           # Used by various tests
+          gen_locale de_DE.UTF-8
           gen_locale he_IL.UTF-8
           gen_locale ja_JP.UTF-8
           gen_locale ru_RU.UTF-8
