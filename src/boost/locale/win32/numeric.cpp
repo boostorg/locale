@@ -130,27 +130,25 @@ namespace boost { namespace locale { namespace impl_win {
     template<typename CharType>
     std::locale create_formatting_impl(const std::locale& in, const winlocale& lc)
     {
+        std::locale tmp(in, new num_format<CharType>(lc));
         if(lc.is_c()) {
-            std::locale tmp(in, new numpunct<CharType>());
+            tmp = std::locale(tmp, new numpunct<CharType>());
             tmp = std::locale(tmp, new std::time_put_byname<CharType>("C"));
-            tmp = std::locale(tmp, new num_format<CharType>(lc));
-            return tmp;
         } else {
-            std::locale tmp(in, new num_punct_win<CharType>(lc));
+            tmp = std::locale(tmp, new num_punct_win<CharType>(lc));
             tmp = std::locale(tmp, new time_put_win<CharType>(lc));
-            tmp = std::locale(tmp, new num_format<CharType>(lc));
-            return tmp;
         }
+        return tmp;
     }
 
     template<typename CharType>
-    std::locale create_parsing_impl(std::locale tmp, const winlocale& lc)
+    std::locale create_parsing_impl(const std::locale& in, const winlocale& lc)
     {
+        std::locale tmp(in, new util::base_num_parse<CharType>());
         if(lc.is_c())
             tmp = std::locale(tmp, new numpunct<CharType>());
         else
             tmp = std::locale(tmp, new num_punct_win<CharType>(lc));
-        tmp = std::locale(tmp, new util::base_num_parse<CharType>());
         return tmp;
     }
 
