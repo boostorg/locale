@@ -137,14 +137,7 @@ namespace boost { namespace locale { namespace impl_std {
             } else {
                 if(loadable(lid)) {
                     name_ = lid;
-                    utf_mode_ = utf8_support::native_with_wide;
-#if defined(BOOST_WINDOWS)
-                    // This isn't fully correct:
-                    // It will treat the 2-Byte wchar_t as UTF-16 encoded while it may be UCS-2
-                    // std::basic_filebuf explicitely disallows using suche multi-byte codecvts
-                    // but it works in practice so far, so use it instead of failing for codepoints above U+FFFF
-                    utf_mode_ = utf8_support::from_wide;
-#endif
+                    utf_mode_ = utf8_support::native;
                 } else {
                     std::vector<std::string> alt_names;
                     if(l_win)

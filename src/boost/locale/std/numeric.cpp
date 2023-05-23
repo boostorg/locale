@@ -19,28 +19,6 @@
 
 namespace boost { namespace locale { namespace impl_std {
 
-    template<typename CharType>
-    class time_put_from_base : public std::time_put<CharType> {
-    public:
-        time_put_from_base(const std::locale& base, size_t refs = 0) : std::time_put<CharType>(refs), base_(base) {}
-        typedef typename std::time_put<CharType>::iter_type iter_type;
-
-        iter_type do_put(iter_type out,
-                         std::ios_base& /*ios*/,
-                         CharType fill,
-                         const std::tm* tm,
-                         char format,
-                         char modifier) const override
-        {
-            std::basic_stringstream<CharType> ss;
-            ss.imbue(base_);
-            return std::use_facet<std::time_put<CharType>>(base_).put(out, ss, fill, tm, format, modifier);
-        }
-
-    private:
-        std::locale base_;
-    };
-
     class utf8_time_put_from_wide : public std::time_put<char> {
     public:
         utf8_time_put_from_wide(const std::locale& base, size_t refs = 0) : std::time_put<char>(refs), base_(base) {}
@@ -234,16 +212,16 @@ namespace boost { namespace locale { namespace impl_std {
         tmp = std::locale(tmp, new std::moneypunct_byname<CharType, true>(locale_name));
         tmp = std::locale(tmp, new std::moneypunct_byname<CharType, false>(locale_name));
         tmp = std::locale(tmp, new std::ctype_byname<CharType>(locale_name));
-        return tmp;
+        return std::locale(tmp, new util::base_num_parse<CharType>());
     }
 
     template<typename CharType>
     std::locale create_basic_formatting(const std::locale& in, const std::string& locale_name)
     {
         std::locale tmp = create_basic_parsing<CharType>(in, locale_name);
-        std::locale base(locale_name);
-        tmp = std::locale(tmp, new time_put_from_base<CharType>(base));
-        return tmp;
+        // Some stdlibs don't export the string ctor for std::time_put_byname
+        tmp = std::locale(tmp, new std::time_put_byname<CharType>(locale_name.c_str()));
+        return std::locale(tmp, new util::base_num_format<CharType>());
     }
 
     std::locale
@@ -251,50 +229,28 @@ namespace boost { namespace locale { namespace impl_std {
     {
         switch(type) {
             case char_facet_t::nochar: break;
-            case char_facet_t::char_f: {
-                switch(utf) {
-                    case utf8_support::from_wide: {
-                        std::locale base = std::locale(locale_name);
-
-                        std::locale tmp = std::locale(in, new utf8_time_put_from_wide(base));
-                        tmp = std::locale(tmp, new utf8_numpunct_from_wide(base));
-                        tmp = std::locale(tmp, new utf8_moneypunct_from_wide<true>(base));
-                        tmp = std::locale(tmp, new utf8_moneypunct_from_wide<false>(base));
-                        return std::locale(tmp, new util::base_num_format<char>());
-                    }
-                    case utf8_support::native_with_wide: {
-                        std::locale base = std::locale(locale_name);
-
-                        std::locale tmp = std::locale(in, new time_put_from_base<char>(base));
-                        tmp = std::locale(tmp, new utf8_numpunct_from_wide(base));
-                        tmp = std::locale(tmp, new utf8_moneypunct_from_wide<true>(base));
-                        tmp = std::locale(tmp, new utf8_moneypunct_from_wide<false>(base));
-                        return std::locale(tmp, new util::base_num_format<char>());
-                    }
-                    case utf8_support::none: break;
-                }
-                std::locale tmp = create_basic_formatting<char>(in, locale_name);
-                tmp = std::locale(tmp, new util::base_num_format<char>());
-                return tmp;
-            }
-            case char_facet_t::wchar_f: {
-                std::locale tmp = create_basic_formatting<wchar_t>(in, locale_name);
-                tmp = std::locale(tmp, new util::base_num_format<wchar_t>());
-                return tmp;
-            }
+            case char_facet_t::char_f:
+                if(utf != utf8_support::none) {
+                    const std::locale base(locale_name);
+                    std::time_put<char>* time_put;
+                    if(utf == utf8_support::from_wide)
+                        time_put = new utf8_time_put_from_wide(base);
+                    else
+                        time_put = new std::time_put_byname<char>(locale_name);
+                    std::locale tmp(in, time_put);
+                    // Fix possibly invalid UTF-8
+                    tmp = std::locale(tmp, new utf8_numpunct_from_wide(base));
+                    tmp = std::locale(tmp, new utf8_moneypunct_from_wide<true>(base));
+                    tmp = std::locale(tmp, new utf8_moneypunct_from_wide<false>(base));
+                    return std::locale(tmp, new util::base_num_format<char>());
+                } else
+                    return create_basic_formatting<char>(in, locale_name);
+            case char_facet_t::wchar_f: return create_basic_formatting<wchar_t>(in, locale_name);
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-            case char_facet_t::char16_f: {
-                std::locale tmp = create_basic_formatting<char16_t>(in, locale_name);
-                tmp = std::locale(tmp, new util::base_num_format<char16_t>());
-                return tmp;
-            }
+            case char_facet_t::char16_f: return create_basic_formatting<char16_t>(in, locale_name);
 #endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-            case char_facet_t::char32_f: {
-                std::locale tmp = create_basic_formatting<char32_t>(in, locale_name);
-                tmp = std::locale(tmp, new util::base_num_format<char32_t>());
-                return tmp;
-            }
+            case char_facet_t::char32_f: return create_basic_formatting<char32_t>(in, locale_name);
 #endif
         }
         return in;
@@ -305,52 +261,22 @@ namespace boost { namespace locale { namespace impl_std {
     {
         switch(type) {
             case char_facet_t::nochar: break;
-            case char_facet_t::char_f: {
-                switch(utf) {
-                    case utf8_support::from_wide: {
-                        std::locale base = std::locale::classic();
-
-                        base = std::locale(base, new std::numpunct_byname<wchar_t>(locale_name));
-                        base = std::locale(base, new std::moneypunct_byname<wchar_t, true>(locale_name));
-                        base = std::locale(base, new std::moneypunct_byname<wchar_t, false>(locale_name));
-
-                        std::locale tmp = std::locale(in, new utf8_numpunct_from_wide(base));
-                        tmp = std::locale(tmp, new utf8_moneypunct_from_wide<true>(base));
-                        tmp = std::locale(tmp, new utf8_moneypunct_from_wide<false>(base));
-                        return std::locale(tmp, new util::base_num_parse<char>());
-                    }
-                    case utf8_support::native_with_wide: {
-                        std::locale base = std::locale(locale_name);
-
-                        std::locale tmp = std::locale(in, new utf8_numpunct_from_wide(base));
-                        tmp = std::locale(tmp, new utf8_moneypunct_from_wide<true>(base));
-                        tmp = std::locale(tmp, new utf8_moneypunct_from_wide<false>(base));
-                        return std::locale(tmp, new util::base_num_parse<char>());
-                    }
-                    case utf8_support::none: break;
-                }
-                std::locale tmp = create_basic_parsing<char>(in, locale_name);
-                tmp = std::locale(in, new util::base_num_parse<char>());
-                return tmp;
-            }
-            case char_facet_t::wchar_f: {
-                std::locale tmp = create_basic_parsing<wchar_t>(in, locale_name);
-                tmp = std::locale(in, new util::base_num_parse<wchar_t>());
-                return tmp;
-            }
+            case char_facet_t::char_f:
+                if(utf != utf8_support::none) {
+                    const std::locale base(locale_name);
+                    // Fix possibly invalid UTF-8
+                    std::locale tmp = std::locale(in, new utf8_numpunct_from_wide(base));
+                    tmp = std::locale(tmp, new utf8_moneypunct_from_wide<true>(base));
+                    tmp = std::locale(tmp, new utf8_moneypunct_from_wide<false>(base));
+                    return std::locale(tmp, new util::base_num_parse<char>());
+                } else
+                    return create_basic_parsing<char>(in, locale_name);
+            case char_facet_t::wchar_f: return create_basic_parsing<wchar_t>(in, locale_name);
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-            case char_facet_t::char16_f: {
-                std::locale tmp = create_basic_parsing<char16_t>(in, locale_name);
-                tmp = std::locale(in, new util::base_num_parse<char16_t>());
-                return tmp;
-            }
+            case char_facet_t::char16_f: return create_basic_parsing<char16_t>(in, locale_name);
 #endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-            case char_facet_t::char32_f: {
-                std::locale tmp = create_basic_parsing<char32_t>(in, locale_name);
-                tmp = std::locale(in, new util::base_num_parse<char32_t>());
-                return tmp;
-            }
+            case char_facet_t::char32_f: return create_basic_parsing<char32_t>(in, locale_name);
 #endif
         }
         return in;
