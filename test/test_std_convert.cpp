@@ -48,7 +48,7 @@ void test_char()
     name = get_std_name("tr_TR.UTF-8", &real_name);
     if(!name.empty()) {
         std::cout << "Testing " << name << std::endl;
-        if(std::use_facet<std::ctype<wchar_t>>(std::locale(real_name.c_str())).toupper(L'i') != L'I') {
+        if(std::use_facet<std::ctype<wchar_t>>(std::locale(real_name)).toupper(L'i') != L'I') {
             l = gen(name);
             test_one<CharType>(l, "i", "i", "İ");
         } else

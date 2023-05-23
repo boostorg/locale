@@ -181,7 +181,7 @@ namespace boost { namespace locale { namespace impl_std {
     class utf8_numpunct : public std::numpunct_byname<char> {
     public:
         typedef std::numpunct_byname<char> base_type;
-        utf8_numpunct(const char* name, size_t refs = 0) : std::numpunct_byname<char>(name, refs) {}
+        utf8_numpunct(const std::string& name, size_t refs = 0) : std::numpunct_byname<char>(name, refs) {}
         char do_thousands_sep() const override
         {
             unsigned char bs = base_type::do_thousands_sep();
@@ -206,7 +206,7 @@ namespace boost { namespace locale { namespace impl_std {
     class utf8_moneypunct : public std::moneypunct_byname<char, Intl> {
     public:
         typedef std::moneypunct_byname<char, Intl> base_type;
-        utf8_moneypunct(const char* name, size_t refs = 0) : std::moneypunct_byname<char, Intl>(name, refs) {}
+        utf8_moneypunct(const std::string& name, size_t refs = 0) : std::moneypunct_byname<char, Intl>(name, refs) {}
         char do_thousands_sep() const override
         {
             unsigned char bs = base_type::do_thousands_sep();
@@ -230,10 +230,10 @@ namespace boost { namespace locale { namespace impl_std {
     template<typename CharType>
     std::locale create_basic_parsing(const std::locale& in, const std::string& locale_name)
     {
-        std::locale tmp = std::locale(in, new std::numpunct_byname<CharType>(locale_name.c_str()));
-        tmp = std::locale(tmp, new std::moneypunct_byname<CharType, true>(locale_name.c_str()));
-        tmp = std::locale(tmp, new std::moneypunct_byname<CharType, false>(locale_name.c_str()));
-        tmp = std::locale(tmp, new std::ctype_byname<CharType>(locale_name.c_str()));
+        std::locale tmp = std::locale(in, new std::numpunct_byname<CharType>(locale_name));
+        tmp = std::locale(tmp, new std::moneypunct_byname<CharType, true>(locale_name));
+        tmp = std::locale(tmp, new std::moneypunct_byname<CharType, false>(locale_name));
+        tmp = std::locale(tmp, new std::ctype_byname<CharType>(locale_name));
         return tmp;
     }
 
@@ -241,7 +241,7 @@ namespace boost { namespace locale { namespace impl_std {
     std::locale create_basic_formatting(const std::locale& in, const std::string& locale_name)
     {
         std::locale tmp = create_basic_parsing<CharType>(in, locale_name);
-        std::locale base(locale_name.c_str());
+        std::locale base(locale_name);
         tmp = std::locale(tmp, new time_put_from_base<CharType>(base));
         return tmp;
     }
@@ -254,7 +254,7 @@ namespace boost { namespace locale { namespace impl_std {
             case char_facet_t::char_f: {
                 switch(utf) {
                     case utf8_support::from_wide: {
-                        std::locale base = std::locale(locale_name.c_str());
+                        std::locale base = std::locale(locale_name);
 
                         std::locale tmp = std::locale(in, new utf8_time_put_from_wide(base));
                         tmp = std::locale(tmp, new utf8_numpunct_from_wide(base));
@@ -263,16 +263,16 @@ namespace boost { namespace locale { namespace impl_std {
                         return std::locale(tmp, new util::base_num_format<char>());
                     }
                     case utf8_support::native: {
-                        std::locale base = std::locale(locale_name.c_str());
+                        std::locale base = std::locale(locale_name);
 
                         std::locale tmp = std::locale(in, new time_put_from_base<char>(base));
-                        tmp = std::locale(tmp, new utf8_numpunct(locale_name.c_str()));
-                        tmp = std::locale(tmp, new utf8_moneypunct<true>(locale_name.c_str()));
-                        tmp = std::locale(tmp, new utf8_moneypunct<false>(locale_name.c_str()));
+                        tmp = std::locale(tmp, new utf8_numpunct(locale_name));
+                        tmp = std::locale(tmp, new utf8_moneypunct<true>(locale_name));
+                        tmp = std::locale(tmp, new utf8_moneypunct<false>(locale_name));
                         return std::locale(tmp, new util::base_num_format<char>());
                     }
                     case utf8_support::native_with_wide: {
-                        std::locale base = std::locale(locale_name.c_str());
+                        std::locale base = std::locale(locale_name);
 
                         std::locale tmp = std::locale(in, new time_put_from_base<char>(base));
                         tmp = std::locale(tmp, new utf8_numpunct_from_wide(base));
@@ -319,9 +319,9 @@ namespace boost { namespace locale { namespace impl_std {
                     case utf8_support::from_wide: {
                         std::locale base = std::locale::classic();
 
-                        base = std::locale(base, new std::numpunct_byname<wchar_t>(locale_name.c_str()));
-                        base = std::locale(base, new std::moneypunct_byname<wchar_t, true>(locale_name.c_str()));
-                        base = std::locale(base, new std::moneypunct_byname<wchar_t, false>(locale_name.c_str()));
+                        base = std::locale(base, new std::numpunct_byname<wchar_t>(locale_name));
+                        base = std::locale(base, new std::moneypunct_byname<wchar_t, true>(locale_name));
+                        base = std::locale(base, new std::moneypunct_byname<wchar_t, false>(locale_name));
 
                         std::locale tmp = std::locale(in, new utf8_numpunct_from_wide(base));
                         tmp = std::locale(tmp, new utf8_moneypunct_from_wide<true>(base));
@@ -329,13 +329,13 @@ namespace boost { namespace locale { namespace impl_std {
                         return std::locale(tmp, new util::base_num_parse<char>());
                     }
                     case utf8_support::native: {
-                        std::locale tmp = std::locale(in, new utf8_numpunct(locale_name.c_str()));
-                        tmp = std::locale(tmp, new utf8_moneypunct<true>(locale_name.c_str()));
-                        tmp = std::locale(tmp, new utf8_moneypunct<false>(locale_name.c_str()));
+                        std::locale tmp = std::locale(in, new utf8_numpunct(locale_name));
+                        tmp = std::locale(tmp, new utf8_moneypunct<true>(locale_name));
+                        tmp = std::locale(tmp, new utf8_moneypunct<false>(locale_name));
                         return std::locale(tmp, new util::base_num_parse<char>());
                     }
                     case utf8_support::native_with_wide: {
-                        std::locale base = std::locale(locale_name.c_str());
+                        std::locale base = std::locale(locale_name);
 
                         std::locale tmp = std::locale(in, new utf8_numpunct_from_wide(base));
                         tmp = std::locale(tmp, new utf8_moneypunct_from_wide<true>(base));

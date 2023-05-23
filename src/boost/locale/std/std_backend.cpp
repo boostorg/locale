@@ -51,7 +51,7 @@ std::pair<std::string, std::string> to_windows_name(const std::string& l)
 bool loadable(std::string name)
 {
     try {
-        std::locale l(name.c_str());
+        std::locale l(name);
         return true;
     } catch(const std::exception&) {
         return false;

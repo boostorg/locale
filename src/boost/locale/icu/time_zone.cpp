@@ -95,10 +95,10 @@ namespace boost { namespace locale { namespace impl_icu {
         bool files_equal(const std::string& left, const std::string& right)
         {
             char l[256], r[256];
-            std::ifstream ls(left.c_str());
+            std::ifstream ls(left);
             if(!ls)
                 return false;
-            std::ifstream rs(right.c_str());
+            std::ifstream rs(right);
             if(!rs)
                 return false;
             do {

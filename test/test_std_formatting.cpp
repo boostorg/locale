@@ -163,7 +163,7 @@ void test_main(int /*argc*/, char** /*argv*/)
             std::cout << "\tstd name: " << name << std::endl;
             std::locale l1 = gen(name);
             std::cout << "\treal name: " << real_name << std::endl;
-            std::locale l2(real_name.c_str());
+            std::locale l2(real_name);
             if(lName.find(".UTF-8") != std::string::npos) {
                 std::cout << "\tUTF-8" << std::endl;
                 if(name == real_name)
@@ -197,7 +197,7 @@ void test_main(int /*argc*/, char** /*argv*/)
         else if(name != real_name)
             std::cout << "- Not having UTF-8 locale, no need for workaround" << std::endl;
         else {
-            std::locale l1 = gen(name), l2(real_name.c_str());
+            std::locale l1 = gen(name), l2(real_name);
             bool fails = false;
             try {
                 std::ostringstream ss;

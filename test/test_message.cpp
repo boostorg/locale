@@ -112,9 +112,9 @@ void test_cntranslate(const std::string& sContext,
     typedef std::basic_string<Char> string_type;
     const string_type expected = to_correct_string<Char>(sExpected, l);
 
-    const string_type c = to<Char>(sContext.c_str());
-    const string_type s = to<Char>(sSingular.c_str());
-    const string_type p = to<Char>(sPlural.c_str());
+    const string_type c = to<Char>(sContext);
+    const string_type s = to<Char>(sSingular);
+    const string_type p = to<Char>(sPlural);
 
     if(domain == "default") {
         TEST_EQ(bl::translate(c, s, p, n).str(l), expected);
@@ -199,8 +199,8 @@ void test_ntranslate(const std::string& sSingular,
 {
     typedef std::basic_string<Char> string_type;
     const string_type expected = to_correct_string<Char>(sExpected, l);
-    const string_type s = to<Char>(sSingular.c_str());
-    const string_type p = to<Char>(sPlural.c_str());
+    const string_type s = to<Char>(sSingular);
+    const string_type p = to<Char>(sPlural);
     if(domain == "default") {
         TEST_EQ(bl::translate(s, p, n).str(l), expected);
         TEST_EQ(bl::translate(s.c_str(), p.c_str(), n).str(l), expected);
@@ -245,8 +245,8 @@ void test_ctranslate(const std::string& sContext,
 {
     typedef std::basic_string<Char> string_type;
     const string_type expected = to_correct_string<Char>(sExpected, l);
-    const string_type original = to<Char>(sOriginal.c_str());
-    const string_type c = to<Char>(sContext.c_str());
+    const string_type original = to<Char>(sOriginal);
+    const string_type c = to<Char>(sContext);
     if(domain == "default") {
         TEST_EQ(bl::translate(c, original).str(l), expected);
         TEST_EQ(bl::translate(c.c_str(), original.c_str()).str(l), expected);
@@ -290,7 +290,7 @@ void test_translate(const std::string& sOriginal,
 {
     typedef std::basic_string<Char> string_type;
     const string_type expected = to_correct_string<Char>(sExpected, l);
-    const string_type original = to<Char>(sOriginal.c_str());
+    const string_type original = to<Char>(sOriginal);
     if(domain == "default") {
         TEST_EQ(bl::translate(original).str(l), expected);
         TEST_EQ(bl::translate(original.c_str()).str(l), expected);
