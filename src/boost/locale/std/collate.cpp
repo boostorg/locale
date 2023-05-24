@@ -9,6 +9,7 @@
 #include <ios>
 #include <locale>
 #include <string>
+#include <type_traits>
 
 namespace boost { namespace locale { namespace impl_std {
 
@@ -36,7 +37,16 @@ namespace boost { namespace locale { namespace impl_std {
         {
             const std::wstring tmp = conv::utf_to_utf<wchar_t>(b, e);
             const std::wstring wkey = std::use_facet<wfacet>(base_).transform(tmp.c_str(), tmp.c_str() + tmp.size());
-            return conv::utf_to_utf<char>(wkey);
+            // wkey is only for lexicographical sorting, so may no be valid UTF
+            // --> Convert to char array in big endian order so sorting stays the same
+            std::string key;
+            key.reserve(wkey.size() * sizeof(wchar_t));
+            for(const wchar_t c : wkey) {
+                const auto tv = static_cast<std::make_unsigned<wchar_t>::type>(c);
+                for(unsigned i = 1; i <= sizeof(tv); ++i)
+                    key += char((tv >> (sizeof(tv) - i) * 8) & 0xFF);
+            }
+            return key;
         }
 
     private:
