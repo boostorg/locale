@@ -15,7 +15,9 @@ namespace boost { namespace locale { namespace impl_std {
     class utf8_collator_from_wide : public std::collate<char> {
     public:
         typedef std::collate<wchar_t> wfacet;
-        utf8_collator_from_wide(const std::locale& base, size_t refs = 0) : std::collate<char>(refs), base_(base) {}
+        utf8_collator_from_wide(const std::string& locale_name) :
+            base_(std::locale::classic(), new std::collate_byname<wchar_t>(locale_name))
+        {}
         int do_compare(const char* lb, const char* le, const char* rb, const char* re) const override
         {
             const std::wstring l = conv::utf_to_utf<wchar_t>(lb, le);
@@ -34,27 +36,7 @@ namespace boost { namespace locale { namespace impl_std {
         {
             const std::wstring tmp = conv::utf_to_utf<wchar_t>(b, e);
             const std::wstring wkey = std::use_facet<wfacet>(base_).transform(tmp.c_str(), tmp.c_str() + tmp.size());
-            std::string key;
-            BOOST_LOCALE_START_CONST_CONDITION
-            if(sizeof(wchar_t) == 2)
-                key.reserve(wkey.size() * 2);
-            else
-                key.reserve(wkey.size() * 3);
-            for(const wchar_t c : wkey) {
-                if(sizeof(wchar_t) == 2) {
-                    const uint16_t tv = static_cast<uint16_t>(c);
-                    key += char(tv >> 8);
-                    key += char(tv & 0xFF);
-                } else { // 4
-                    const uint32_t tv = static_cast<uint32_t>(c);
-                    // 21 bit
-                    key += char((tv >> 16) & 0xFF);
-                    key += char((tv >> 8) & 0xFF);
-                    key += char(tv & 0xFF);
-                }
-            }
-            BOOST_LOCALE_END_CONST_CONDITION
-            return key;
+            return conv::utf_to_utf<char>(wkey);
         }
 
     private:
@@ -66,14 +48,11 @@ namespace boost { namespace locale { namespace impl_std {
     {
         switch(type) {
             case char_facet_t::nochar: break;
-            case char_facet_t::char_f: {
-                if(utf == utf8_support::from_wide) {
-                    std::locale base =
-                      std::locale(std::locale::classic(), new std::collate_byname<wchar_t>(locale_name));
-                    return std::locale(in, new utf8_collator_from_wide(base));
-                } else
+            case char_facet_t::char_f:
+                if(utf == utf8_support::from_wide)
+                    return std::locale(in, new utf8_collator_from_wide(locale_name));
+                else
                     return std::locale(in, new std::collate_byname<char>(locale_name));
-            }
 
             case char_facet_t::wchar_f: return std::locale(in, new std::collate_byname<wchar_t>(locale_name));
 
