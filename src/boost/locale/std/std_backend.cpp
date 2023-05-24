@@ -13,7 +13,7 @@
 #include <iterator>
 #include <vector>
 
-#if defined(BOOST_WINDOWS)
+#if BOOST_LOCALE_USE_WIN32_API
 #    ifndef NOMINMAX
 #        define NOMINMAX
 #    endif
@@ -26,7 +26,7 @@
 #include "boost/locale/util/numeric.hpp"
 
 namespace {
-#if defined(BOOST_WINDOWS)
+#if BOOST_LOCALE_USE_WIN32_API
 std::pair<std::string, std::string> to_windows_name(const std::string& l)
 {
     std::pair<std::string, std::string> res("C", "0");
@@ -105,7 +105,7 @@ namespace boost { namespace locale { namespace impl_std {
             data_.parse(lid);
             name_ = "C";
 
-#if defined(BOOST_WINDOWS)
+#if BOOST_LOCALE_USE_WIN32_API
             const std::pair<std::string, std::string> wl_inf = to_windows_name(lid);
             const std::string& win_name = wl_inf.first;
             const auto& win_codepage = wl_inf.second;
@@ -114,7 +114,7 @@ namespace boost { namespace locale { namespace impl_std {
             if(!data_.is_utf8()) {
                 if(loadable(lid))
                     name_ = lid;
-#if defined(BOOST_WINDOWS)
+#if BOOST_LOCALE_USE_WIN32_API
                 else if(loadable(win_name)) {
                     if(util::are_encodings_equal(win_codepage, data_.encoding()))
                         name_ = win_name;
@@ -140,7 +140,7 @@ namespace boost { namespace locale { namespace impl_std {
                     utf_mode_ = utf8_support::from_wide;
 #endif
                 }
-#if defined(BOOST_WINDOWS)
+#if BOOST_LOCALE_USE_WIN32_API
                 else if(loadable(win_name))
                 {
                     name_ = win_name;

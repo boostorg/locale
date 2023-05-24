@@ -73,7 +73,7 @@
 #    define BOOST_LOCALE_USE_WIN32_API 0
 #endif
 
-// To be used to supress false positives of UBSAN
+// To be used to suppress false positives of UBSAN
 #if defined(__clang__) && defined(__has_attribute)
 #    if __has_attribute(no_sanitize)
 #        define BOOST_LOCALE_NO_SANITIZE(what) __attribute__((no_sanitize(what)))
