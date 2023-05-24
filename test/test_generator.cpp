@@ -116,6 +116,28 @@ void test_special_locales()
     }
 }
 
+// For a non-existing locale the C locale will be used as a fallback
+void test_invalid_locale()
+{
+    std::ostringstream classicStream;
+    classicStream.imbue(std::locale::classic());
+    const boost::locale::util::locale_data systemLocale(boost::locale::util::get_system_locale());
+
+    bl::localization_backend_manager tmp_backend = bl::localization_backend_manager::global();
+    tmp_backend.select("std");
+    bl::localization_backend_manager::global(tmp_backend);
+    bl::generator g;
+    std::locale nonExistingLocale = g("noLang_noCountry." + systemLocale.encoding());
+    const auto& info = std::use_facet<bl::info>(nonExistingLocale);
+    TEST_EQ(info.language(), "nolang");
+    TEST_EQ(info.country(), "NOCOUNTRY");
+    std::ostringstream os;
+    os.imbue(nonExistingLocale);
+    os << boost::locale::as::number << 123456789 << " " << 1234567.89;
+    classicStream << 123456789 << " " << 1234567.89;
+    TEST_EQ(os.str(), classicStream.str());
+}
+
 void test_main(int /*argc*/, char** /*argv*/)
 {
     {
@@ -189,6 +211,7 @@ void test_main(int /*argc*/, char** /*argv*/)
     }
     std::cout << "Test special locales" << std::endl;
     test_special_locales();
+    test_invalid_locale();
     std::cout << "Restoring original backend" << std::endl;
     bl::localization_backend_manager::global(orig_backend);
 
