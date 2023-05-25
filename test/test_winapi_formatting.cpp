@@ -138,8 +138,7 @@ void test_date_time(std::locale l)
       {"%", "%"}};
 
     for(const auto& patternAndResult : testCases) {
-        ss.str("");
-        ss << boost::locale::as::ftime("%" + patternAndResult.first) << a_datetime;
+        empty_stream(ss) << boost::locale::as::ftime("%" + patternAndResult.first) << a_datetime;
         TEST_EQ(ss.str(), patternAndResult.second);
     }
 }

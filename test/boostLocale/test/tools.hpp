@@ -140,6 +140,14 @@ bool has_std_locale(const char* name)
     }
 }
 
+/// Clear a string stream and return it
+template<class T>
+T& empty_stream(T& s)
+{
+    s.str(std::basic_string<typename T::char_type>());
+    return s;
+}
+
 inline bool test_std_supports_SJIS_codecvt(const std::string& locale_name)
 {
     const std::string file_path = boost::locale::test::exe_name + "-test-siftjis.txt";

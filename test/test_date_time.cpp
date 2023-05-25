@@ -26,9 +26,8 @@
 #    pragma warning(disable : 4244) // loose data
 #endif
 
-#define TEST_EQ_FMT(t, X) \
-    ss.str("");           \
-    ss << (t);            \
+#define TEST_EQ_FMT(t, X)    \
+    empty_stream(ss) << (t); \
     test_eq_impl(ss.str(), X, #t "==" #X, __LINE__)
 
 // Very simple container for a part of the tests. Counts its instances

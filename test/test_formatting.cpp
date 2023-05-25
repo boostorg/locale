@@ -451,13 +451,11 @@ void test_manip(std::string e_charset = "UTF-8")
         ss << as::ftime(format_string) << now;
         strftime(time_str, sizeof(time_str), format.c_str(), gmtime_wrap(&local_now));
         TEST_EQ(ss.str(), to<CharType>(time_str));
-        ss.str(string_type()); // Clear
         // We can manually tell it to use the local time zone
-        ss << as::ftime(format_string) << as::local_time << now;
+        empty_stream(ss) << as::ftime(format_string) << as::local_time << now;
         TEST_EQ(ss.str(), to<CharType>(time_str));
-        ss.str(string_type()); // Clear
         // Or e.g. GMT
-        ss << as::ftime(format_string) << as::gmt << now;
+        empty_stream(ss) << as::ftime(format_string) << as::gmt << now;
         strftime(time_str, sizeof(time_str), format.c_str(), gmtime_wrap(&now));
         TEST_EQ(ss.str(), to<CharType>(time_str));
     }
@@ -527,12 +525,11 @@ void test_format_class(std::string charset = "UTF-8")
             ss.imbue(loc);
 
             // Stream formatted output
-            ss << format_type(fmt_string) % 1 % 2 % 3;
+            empty_stream(ss) << format_type(fmt_string) % 1 % 2 % 3;
             TEST_EQ(ss.str(), expected);
 
             // Stream translated output
-            ss.str(string_type());
-            ss << format_type(boost::locale::translate(fmt_string)) % 1 % 2 % 3;
+            empty_stream(ss) << format_type(boost::locale::translate(fmt_string)) % 1 % 2 % 3;
             TEST_EQ(ss.str(), expected);
         }
 
@@ -661,10 +658,9 @@ void test_format_class(std::string charset = "UTF-8")
         ss << as::time_zone("GMT+02:00");
         format_type fmt_stream(ascii_to<CharType>("{1,ftime='''%H:%M:%S'''}"));      // Use timezone of stream
         format_type fmt_local(ascii_to<CharType>("{1,local,ftime='''%H:%M:%S'''}")); // Use global timezone
-        ss << fmt_stream % now;
+        empty_stream(ss) << fmt_stream % now;
         TEST_EQ(ss.str(), to<CharType>(local_time_str_gmt2));
-        ss.str(string_type());
-        ss << fmt_local % now;
+        empty_stream(ss) << fmt_local % now;
         TEST_EQ(ss.str(), to<CharType>(local_time_str));
     }
 

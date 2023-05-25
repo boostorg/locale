@@ -7,6 +7,7 @@
 #include <boost/locale/util.hpp>
 #include <boost/locale/util/locale_data.hpp>
 #include "boostLocale/test/test_helpers.hpp"
+#include "boostLocale/test/tools.hpp"
 #include "boostLocale/test/unit_test.hpp"
 #include <cstdlib>
 #include <stdexcept>
@@ -269,11 +270,10 @@ void test_try_to_int()
 
     std::ostringstream ss;
     ss.imbue(std::locale::classic());
-    ss << std::numeric_limits<int>::min();
+    empty_stream(ss) << std::numeric_limits<int>::min();
     TEST(try_to_int(ss.str(), v));
     TEST_EQ(v, std::numeric_limits<int>::min());
-    ss.str("");
-    ss << std::numeric_limits<int>::max();
+    empty_stream(ss) << std::numeric_limits<int>::max();
     TEST(try_to_int(ss.str(), v));
     TEST_EQ(v, std::numeric_limits<int>::max());
 
@@ -283,11 +283,9 @@ void test_try_to_int()
     TEST(!try_to_int("1a", v));
     TEST(!try_to_int("a1", v));
     static_assert(sizeof(long long) > sizeof(int), "Value below under/overflows!");
-    ss.str("");
-    ss << static_cast<long long>(std::numeric_limits<int>::min()) - 1;
+    empty_stream(ss) << static_cast<long long>(std::numeric_limits<int>::min()) - 1;
     TEST(!try_to_int(ss.str(), v));
-    ss.str("");
-    ss << static_cast<long long>(std::numeric_limits<int>::max()) + 1;
+    empty_stream(ss) << static_cast<long long>(std::numeric_limits<int>::max()) + 1;
     TEST(!try_to_int(ss.str(), v));
 }
 

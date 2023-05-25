@@ -103,13 +103,12 @@ void test_special_locales()
             // The std locale may not fully support the 150 region and use a different format
             if(backendName == "std") {
                 os.imbue(std::locale(os.getloc(), new std::time_put_byname<char>(enEuropeName)));
-                os << std::put_time(gmtime_wrap(&datetime), "%X");
+                empty_stream(os) << std::put_time(gmtime_wrap(&datetime), "%X");
                 expectedTimeFormat = os.str();
-                os.str("");
             }
 
             os.imbue(l);
-            os << as::time << as::gmt << as::time_short;
+            empty_stream(os) << as::time << as::gmt << as::time_short;
             os << datetime;
             TEST_EQ(os.str().substr(0, expectedTimeFormat.size()), expectedTimeFormat);
         }
