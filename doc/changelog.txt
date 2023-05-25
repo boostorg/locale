@@ -11,6 +11,7 @@
 - Unreleased
     - Breaking changes
         - Bitwise/binary operators (left/right shift, binary and/or/xor/not) are no longer supported in message catalog files matching GNU gettext behavior
+        - Std backend on Windows uses the classic locale instead of the system locale when the requested locale does not exist (now same as on other OSs)
     - Other improvements and fixes
         - Introduce converter classes as alternative to `to_utf`/`from_utf`/`between`
         - Fix UB on invalid index in format strings

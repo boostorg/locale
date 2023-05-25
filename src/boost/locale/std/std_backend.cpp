@@ -13,7 +13,7 @@
 #include <iterator>
 #include <vector>
 
-#if defined(BOOST_WINDOWS)
+#if BOOST_LOCALE_USE_WIN32_API
 #    ifndef NOMINMAX
 #        define NOMINMAX
 #    endif
@@ -26,24 +26,29 @@
 #include "boost/locale/util/numeric.hpp"
 
 namespace {
-#if defined(BOOST_WINDOWS)
-std::pair<std::string, std::string> to_windows_name(const std::string& l)
+#if BOOST_LOCALE_USE_WIN32_API
+struct windows_name {
+    windows_name() : name("C"), codepage("0") {}
+    std::string name, codepage;
+};
+
+windows_name to_windows_name(const std::string& l)
 {
-    std::pair<std::string, std::string> res("C", "0");
-    unsigned lcid = boost::locale::impl_win::locale_to_lcid(l);
-    char win_lang[256] = {0};
-    char win_country[256] = {0};
-    char win_codepage[10] = {0};
-    if(GetLocaleInfoA(lcid, LOCALE_SENGLANGUAGE, win_lang, sizeof(win_lang)) == 0)
+    windows_name res;
+    const unsigned lcid = boost::locale::impl_win::locale_to_lcid(l);
+    char win_lang[256]{};
+    if(lcid == 0 || GetLocaleInfoA(lcid, LOCALE_SENGLANGUAGE, win_lang, sizeof(win_lang)) == 0)
         return res;
-    res.first = win_lang;
+    res.name = win_lang;
+    char win_country[256]{};
     if(GetLocaleInfoA(lcid, LOCALE_SENGCOUNTRY, win_country, sizeof(win_country)) != 0) {
-        res.first += "_";
-        res.first += win_country;
+        res.name += "_";
+        res.name += win_country;
     }
 
+    char win_codepage[10]{};
     if(GetLocaleInfoA(lcid, LOCALE_IDEFAULTANSICODEPAGE, win_codepage, sizeof(win_codepage)) != 0)
-        res.second = win_codepage;
+        res.codepage = win_codepage;
     return res;
 }
 #endif
@@ -105,24 +110,23 @@ namespace boost { namespace locale { namespace impl_std {
             data_.parse(lid);
             name_ = "C";
 
-#if defined(BOOST_WINDOWS)
-            const std::pair<std::string, std::string> wl_inf = to_windows_name(lid);
-            const std::string& win_name = wl_inf.first;
-            const auto& win_codepage = wl_inf.second;
+#if BOOST_LOCALE_USE_WIN32_API
+            const auto l_win = to_windows_name(lid);
 #endif
 
             if(!data_.is_utf8()) {
                 if(loadable(lid))
                     name_ = lid;
-#if defined(BOOST_WINDOWS)
-                else if(loadable(win_name)) {
-                    if(util::are_encodings_equal(win_codepage, data_.encoding()))
-                        name_ = win_name;
+#if BOOST_LOCALE_USE_WIN32_API
+                else if(loadable(l_win.name)) {
+                    if(util::are_encodings_equal(l_win.codepage, data_.encoding()))
+                        name_ = l_win.name;
                     else {
                         int codepage_int;
-                        if(util::try_to_int(win_codepage, codepage_int)
-                           && codepage_int == util::encoding_to_windows_codepage(data_.encoding())) {
-                            name_ = win_name;
+                        if(util::try_to_int(l_win.codepage, codepage_int)
+                           && codepage_int == util::encoding_to_windows_codepage(data_.encoding()))
+                        {
+                            name_ = l_win.name;
                         }
                     }
                 }
@@ -140,10 +144,10 @@ namespace boost { namespace locale { namespace impl_std {
                     utf_mode_ = utf8_support::from_wide;
 #endif
                 }
-#if defined(BOOST_WINDOWS)
-                else if(loadable(win_name))
+#if BOOST_LOCALE_USE_WIN32_API
+                else if(loadable(l_win.name))
                 {
-                    name_ = win_name;
+                    name_ = l_win.name;
                     utf_mode_ = utf8_support::from_wide;
                 }
 #endif

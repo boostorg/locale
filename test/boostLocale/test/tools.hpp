@@ -173,8 +173,8 @@ std::string get_std_name(const std::string& name, std::string* real_name = nullp
         return name;
     }
 
-#ifdef BOOST_WINDOWS
-    bool utf8 = name.find("UTF-8") != std::string::npos;
+#if BOOST_LOCALE_USE_WIN32_API
+    const bool utf8 = name.find("UTF-8") != std::string::npos;
 
     if(name == "en_US.UTF-8" || name == "en_US.ISO8859-1") {
         if(has_std_locale("English_United States.1252")) {
