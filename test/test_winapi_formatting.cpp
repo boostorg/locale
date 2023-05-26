@@ -87,34 +87,39 @@ void test_by_char(const std::locale& l, std::string name, int lcid)
 
     {
         std::cout << "--- Testing as::date/time" << std::endl;
-        ss_type ss;
-        ss.imbue(l);
 
-        time_t a_date = 3600 * 24 * (31 + 4); // Feb 5th
-        time_t a_time = 3600 * 15 + 60 * 33;  // 15:33:13
-        time_t a_timesec = 13;
-        time_t a_datetime = a_date + a_time + a_timesec;
+        const time_t a_date = 3600 * 24 * (31 + 4);     // Feb 5th
+        const time_t a_time = 3600 * 15 + 60 * 33 + 13; // 15:33:13
+        const time_t a_datetime = a_date + a_time;
 
-        ss << as::time_zone("GMT");
-
-        ss << as::date << a_datetime << CharType('\n');
-        ss << as::time << a_datetime << CharType('\n');
-        ss << as::datetime << a_datetime << CharType('\n');
-        ss << as::time_zone("GMT+01:00");
-        ss << as::ftime(ascii_to<CharType>("%H")) << a_datetime << CharType('\n');
-        ss << as::time_zone("GMT+00:15");
-        ss << as::ftime(ascii_to<CharType>("%M")) << a_datetime << CharType('\n');
-
+        wchar_t time_buf[256]{};
+        wchar_t date_buf[256]{};
 #ifndef BOOST_LOCALE_NO_WINAPI_BACKEND
-        wchar_t time_buf[256];
-        wchar_t date_buf[256];
         SYSTEMTIME st = {1970, 2, 5, 5, 15, 33, 13, 0};
         GetTimeFormatW(lcid, 0, &st, nullptr, time_buf, 256);
         GetDateFormatW(lcid, 0, &st, nullptr, date_buf, 256);
-        TEST_EQ(
-          to_utf8(ss.str()),
-          to_utf8(std::wstring(date_buf) + L"\n" + time_buf + L"\n" + date_buf + L" " + time_buf + L"\n16\n48\n"));
+#else
+        if(!time_buf[0])
+            return;
 #endif
+        const std::string expDate = to_utf8(std::wstring(date_buf));
+        const std::string expTime = to_utf8(std::wstring(time_buf));
+
+        ss_type ss;
+        ss.imbue(l);
+
+        ss << as::time_zone("GMT");
+
+        empty_stream(ss) << as::date << a_datetime;
+        TEST_EQ(to_utf8(ss.str()), expDate);
+        empty_stream(ss) << as::time << a_datetime;
+        TEST_EQ(to_utf8(ss.str()), expTime);
+        empty_stream(ss) << as::datetime << a_datetime;
+        TEST_EQ(to_utf8(ss.str()), expDate + " " + expTime);
+        empty_stream(ss) << as::time_zone("GMT+01:00") << as::ftime(ascii_to<CharType>("%H")) << a_datetime;
+        TEST_EQ(to_utf8(ss.str()), "16");
+        empty_stream(ss) << as::time_zone("GMT+00:15") << as::ftime(ascii_to<CharType>("%M")) << a_datetime;
+        TEST_EQ(to_utf8(ss.str()), "48");
     }
 }
 

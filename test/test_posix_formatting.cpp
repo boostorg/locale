@@ -20,11 +20,19 @@
 #include "boostLocale/test/tools.hpp"
 #include "boostLocale/test/unit_test.hpp"
 
+#ifdef BOOST_LOCALE_NO_POSIX_BACKEND
+// Dummy just to make it compile
+size_t strftime_l(char*, size_t, const char*, const std::tm*, locale_t)
+{
+    return 0;
+}
+#endif
+
 template<typename CharType>
-std::basic_string<CharType> to_utf(const std::string& s, locale_t lc)
+std::basic_string<CharType> from_narrow(const std::string& s, locale_t lc)
 {
 #ifdef BOOST_LOCALE_NO_POSIX_BACKEND
-    const std::string charset = "UTF-8";
+    const std::string charset;
     boost::ignore_unused(lc);
 #else
     const std::string charset = nl_langinfo_l(CODESET, lc);
@@ -33,12 +41,12 @@ std::basic_string<CharType> to_utf(const std::string& s, locale_t lc)
 }
 
 template<>
-std::basic_string<char> to_utf(const std::string& s, locale_t)
+std::basic_string<char> from_narrow(const std::string& s, locale_t)
 {
     return s;
 }
 
-template<typename CharType, typename RefCharType>
+template<typename CharType>
 void test_by_char(const std::locale& l, locale_t lreal)
 {
     typedef std::basic_stringstream<CharType> ss_type;
@@ -69,7 +77,7 @@ void test_by_char(const std::locale& l, locale_t lreal)
         TEST_EQ(n, 1045.45);
 
         if(std::use_facet<boost::locale::info>(l).country() == "US")
-            TEST_EQ(ss.str(), to_utf<CharType>("1,045.45", lreal));
+            TEST_EQ(ss.str(), from_narrow<CharType>("1,045.45", lreal));
     }
 
     {
@@ -86,7 +94,7 @@ void test_by_char(const std::locale& l, locale_t lreal)
         ss << as::currency;
         TEST(ss << 1043.34);
 
-        TEST_EQ(ss.str(), to_utf<CharType>(buf, lreal));
+        TEST_EQ(ss.str(), from_narrow<CharType>(buf, lreal));
     }
 
     {
@@ -101,35 +109,39 @@ void test_by_char(const std::locale& l, locale_t lreal)
         ss << as::currency << as::currency_iso;
         TEST(ss << 1043.34);
 
-        TEST_EQ(ss.str(), to_utf<CharType>(buf, lreal));
+        TEST_EQ(ss.str(), from_narrow<CharType>(buf, lreal));
     }
 
     {
         std::cout << "- Testing as::date/time" << std::endl;
-        ss_type ss;
-        ss.imbue(l);
 
-        time_t a_date = 3600 * 24 * (31 + 4); // Feb 5th
-        time_t a_time = 3600 * 15 + 60 * 33;  // 15:33:05
-        time_t a_timesec = 13;
-        time_t a_datetime = a_date + a_time + a_timesec;
-
-        ss << as::time_zone("GMT");
-
-        ss << as::date << a_datetime << CharType('\n');
-        ss << as::time << a_datetime << CharType('\n');
-        ss << as::datetime << a_datetime << CharType('\n');
-        ss << as::time_zone("GMT+01:00");
-        ss << as::ftime(ascii_to<CharType>("%H")) << a_datetime << CharType('\n');
-        ss << as::time_zone("GMT+00:15");
-        ss << as::ftime(ascii_to<CharType>("%M")) << a_datetime << CharType('\n');
+        const time_t a_date = 3600 * 24 * (31 + 4);     // Feb 5th
+        const time_t a_time = 3600 * 15 + 60 * 33 + 13; // 15:33:13
+        const time_t a_datetime = a_date + a_time;
 
         char buf[64]{};
-#ifndef BOOST_LOCALE_NO_POSIX_BACKEND
-        std::tm tm = *gmtime_wrap(&a_datetime);
-        TEST_GT(strftime_l(buf, sizeof(buf), "%x\n%X\n%c\n16\n48\n", &tm, lreal), 0u);
-#endif
-        TEST_EQ(ss.str(), to_utf<CharType>(buf, lreal));
+        const std::tm tm = *gmtime_wrap(&a_datetime);
+        TEST_REQUIRE(strftime_l(buf, sizeof(buf), "%x", &tm, lreal) != 0u);
+        const auto expDate = from_narrow<CharType>(buf, lreal);
+        TEST_REQUIRE(strftime_l(buf, sizeof(buf), "%X", &tm, lreal) != 0u);
+        const auto expTime = from_narrow<CharType>(buf, lreal);
+        TEST_REQUIRE(strftime_l(buf, sizeof(buf), "%c", &tm, lreal) != 0u);
+        const auto expDateTime = from_narrow<CharType>(buf, lreal);
+
+        ss_type ss;
+        ss.imbue(l);
+        ss << as::time_zone("GMT");
+
+        empty_stream(ss) << as::date << a_datetime;
+        TEST_EQ(ss.str(), expDate);
+        empty_stream(ss) << as::time << a_datetime;
+        TEST_EQ(ss.str(), expTime);
+        empty_stream(ss) << as::datetime << a_datetime;
+        TEST_EQ(ss.str(), expDateTime);
+        empty_stream(ss) << as::time_zone("GMT+01:00") << as::ftime(ascii_to<CharType>("%H")) << a_datetime;
+        TEST_EQ(ss.str(), ascii_to<CharType>("16"));
+        empty_stream(ss) << as::time_zone("GMT+00:15") << as::ftime(ascii_to<CharType>("%M")) << a_datetime;
+        TEST_EQ(ss.str(), ascii_to<CharType>("48"));
     }
 }
 
@@ -154,10 +166,10 @@ void test_main(int /*argc*/, char** /*argv*/)
             TEST_REQUIRE(real_locale);
 
             std::cout << "UTF-8" << std::endl;
-            test_by_char<char, char>(generated_locale, real_locale);
+            test_by_char<char>(generated_locale, real_locale);
 
             std::cout << "Wide UTF-" << sizeof(wchar_t) * 8 << std::endl;
-            test_by_char<wchar_t, char>(generated_locale, real_locale);
+            test_by_char<wchar_t>(generated_locale, real_locale);
         }
     }
     {
