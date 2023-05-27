@@ -8,6 +8,7 @@
 #include <boost/locale/generator.hpp>
 #include <boost/locale/utf8_codecvt.hpp>
 #include <boost/locale/util.hpp>
+#include <boost/locale/util/string.hpp>
 #include <algorithm>
 #include <cstddef>
 #include <cstring>
@@ -67,9 +68,9 @@ namespace boost { namespace locale { namespace util {
         {
             for(unsigned i = 0; i < 128; i++)
                 to_unicode_tbl_[i] = i;
-            const conv::utf_encoder<wchar_t> to_utf(encoding, conv::stop);
+            const conv::utf_encoder<wchar_t> to_utf(encoding, conv::skip);
             for(unsigned i = 128; i < 256; i++) {
-                char buf[2] = {char(i), 0};
+                char buf[2] = {util::to_char(i), 0};
                 uint32_t uchar = utf::illegal;
                 try {
                     std::wstring const tmp = to_utf.convert(buf, buf + 1);
@@ -77,8 +78,8 @@ namespace boost { namespace locale { namespace util {
                         uchar = tmp[0];
                     else
                         uchar = utf::illegal;
-                } catch(const conv::conversion_error& /*e*/) {
-                    uchar = utf::illegal;
+                } catch(const conv::conversion_error&) { // LCOV_EXCL_LINE
+                    uchar = utf::illegal;                // LCOV_EXCL_LINE
                 }
                 to_unicode_tbl_[i] = uchar;
             }
@@ -115,7 +116,7 @@ namespace boost { namespace locale { namespace util {
                 pos = (pos + 1) % hash_table_size;
             if(c == 0)
                 return utf::illegal;
-            *begin = c;
+            *begin = to_char(c);
             return 1;
         }
 
