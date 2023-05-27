@@ -258,7 +258,7 @@ void test_try_to_int()
 {
     using boost::locale::util::try_to_int;
 
-    int v;
+    int v = 1337;
     TEST(try_to_int("0", v));
     TEST_EQ(v, 0);
 
