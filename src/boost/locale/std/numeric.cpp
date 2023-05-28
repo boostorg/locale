@@ -18,6 +18,35 @@
 #include "boost/locale/util/numeric.hpp"
 
 namespace boost { namespace locale { namespace impl_std {
+    /// Forwarding time_put facet
+    /// Almost the same as `std::time_put_byname` but replaces the locale of the `ios_base` in `do_put` so that e.g.
+    /// weekday names are translated and formatting is as per the language of the base locale
+    template<typename CharType>
+    class time_put_from_base : public std::time_put<CharType> {
+    public:
+        using iter_type = typename std::time_put<CharType>::iter_type;
+
+        time_put_from_base(const std::locale& base) :
+            base_facet_(std::use_facet<std::time_put<CharType>>(base)), base_ios_(nullptr)
+        {
+            // Imbue the ios with the base locale so the facets `do_put` uses its formatting information
+            base_ios_.imbue(base);
+        }
+
+        iter_type do_put(iter_type out,
+                         std::ios_base& /*ios*/,
+                         CharType fill,
+                         const std::tm* tm,
+                         char format,
+                         char modifier) const override
+        {
+            return base_facet_.put(out, base_ios_, fill, tm, format, modifier);
+        }
+
+    private:
+        const std::time_put<CharType>& base_facet_;
+        mutable std::basic_ios<CharType> base_ios_;
+    };
 
     class utf8_time_put_from_wide : public std::time_put<char> {
     public:
@@ -219,8 +248,7 @@ namespace boost { namespace locale { namespace impl_std {
     std::locale create_basic_formatting(const std::locale& in, const std::string& locale_name)
     {
         std::locale tmp = create_basic_parsing<CharType>(in, locale_name);
-        // Some stdlibs don't export the string ctor for std::time_put_byname
-        tmp = std::locale(tmp, new std::time_put_byname<CharType>(locale_name.c_str()));
+        tmp = std::locale(tmp, new time_put_from_base<CharType>(std::locale(locale_name)));
         return std::locale(tmp, new util::base_num_format<CharType>());
     }
 
@@ -236,7 +264,7 @@ namespace boost { namespace locale { namespace impl_std {
                     if(utf == utf8_support::from_wide)
                         time_put = new utf8_time_put_from_wide(base);
                     else
-                        time_put = new std::time_put_byname<char>(locale_name);
+                        time_put = new time_put_from_base<char>(base);
                     std::locale tmp(in, time_put);
                     // Fix possibly invalid UTF-8
                     tmp = std::locale(tmp, new utf8_numpunct_from_wide(base));
