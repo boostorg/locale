@@ -226,11 +226,10 @@ namespace boost { namespace locale { namespace util {
         code_converter(base_converter_ptr cvt, size_t refs = 0) :
             generic_codecvt<CharType, code_converter<CharType>>(refs), cvt_(std::move(cvt))
         {
-            max_len_ = cvt_->max_len();
             thread_safe_ = cvt_->is_thread_safe();
         }
 
-        int max_encoding_length() const { return max_len_; }
+        int max_encoding_length() const { return cvt_->max_len(); }
 
         base_converter_ptr initial_state(generic_codecvt_base::initial_convertion_state /* unused */) const
         {
@@ -258,7 +257,6 @@ namespace boost { namespace locale { namespace util {
 
     private:
         base_converter_ptr cvt_;
-        int max_len_;
         bool thread_safe_;
     };
 

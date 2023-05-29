@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2020-2023 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
@@ -9,6 +10,7 @@
 
 #include <boost/locale/encoding.hpp>
 #include "boost/locale/icu/icu_util.hpp"
+#include <boost/core/exchange.hpp>
 
 #include <memory>
 #include <string>
@@ -26,7 +28,94 @@
 
 namespace boost { namespace locale { namespace impl_icu {
 
+    class icu_handle {
+        UConverter* h_;
+        void close()
+        {
+            if(h_)
+                ucnv_close(h_);
+        }
+
+    public:
+        explicit icu_handle(UConverter* h = nullptr) : h_(h) {}
+
+        icu_handle(const icu_handle& rhs) = delete;
+        icu_handle(icu_handle&& rhs) noexcept : h_(exchange(rhs.h_, nullptr)) {}
+
+        icu_handle& operator=(const icu_handle& rhs) = delete;
+        icu_handle& operator=(icu_handle&& rhs) noexcept
+        {
+            h_ = exchange(rhs.h_, nullptr);
+            return *this;
+        }
+        icu_handle& operator=(UConverter* h)
+        {
+            close();
+            h_ = h;
+            return *this;
+        }
+        ~icu_handle() { close(); }
+
+        operator UConverter*() const { return h_; }
+        explicit operator bool() const { return h_ != nullptr; }
+    };
+
     enum class cpcvt_type { skip, stop };
+
+    struct uconv {
+        uconv(const uconv& other) = delete;
+        void operator=(const uconv& other) = delete;
+
+        uconv(const std::string& charset, cpcvt_type cvt_type = cpcvt_type::skip)
+        {
+            UErrorCode err = U_ZERO_ERROR;
+            cvt_ = ucnv_open(charset.c_str(), &err);
+            if(!cvt_ || U_FAILURE(err))
+                throw conv::invalid_charset_error(charset);
+
+            if(cvt_type == cpcvt_type::skip) {
+                ucnv_setFromUCallBack(cvt_, UCNV_FROM_U_CALLBACK_SKIP, nullptr, nullptr, nullptr, &err);
+                ucnv_setToUCallBack(cvt_, UCNV_TO_U_CALLBACK_SKIP, nullptr, nullptr, nullptr, &err);
+                check_and_throw_icu_error(err);
+            } else {
+                ucnv_setFromUCallBack(cvt_, UCNV_FROM_U_CALLBACK_STOP, nullptr, nullptr, nullptr, &err);
+                ucnv_setToUCallBack(cvt_, UCNV_TO_U_CALLBACK_STOP, nullptr, nullptr, nullptr, &err);
+                check_and_throw_icu_error(err);
+            }
+        }
+
+        int max_char_size() const { return ucnv_getMaxCharSize(cvt_); }
+
+        std::string go(const UChar* buf, int length, int max_size) const
+        {
+            std::string res;
+            res.resize(UCNV_GET_MAX_BYTES_FOR_STRING(length, max_size));
+            char* ptr = reinterpret_cast<char*>(&res[0]);
+            UErrorCode err = U_ZERO_ERROR;
+            int n = ucnv_fromUChars(cvt_, ptr, res.size(), buf, length, &err);
+            check_and_throw_icu_error(err);
+            res.resize(n);
+            return res;
+        }
+
+        size_t cut(size_t n, const char* begin, const char* end) const
+        {
+            const char* saved = begin;
+            while(n > 0 && begin < end) {
+                UErrorCode err = U_ZERO_ERROR;
+                ucnv_getNextUChar(cvt_, &begin, end, &err);
+                if(U_FAILURE(err))
+                    return 0;
+                n--;
+            }
+            return begin - saved;
+        }
+
+        UConverter* cvt() const { return cvt_; }
+
+    private:
+        icu_handle cvt_;
+    };
 
     template<typename CharType, int char_size = sizeof(CharType)>
     class icu_std_converter;
@@ -69,77 +158,6 @@ namespace boost { namespace locale { namespace impl_icu {
             size_t code_points = str.countChar32(from_u, n);
             return cvt_.cut(code_points, begin + from_char, end);
         }
-
-        struct uconv {
-            uconv(const uconv& other) = delete;
-            void operator=(const uconv& other) = delete;
-
-            uconv(const std::string& charset, cpcvt_type cvt_type = cpcvt_type::skip)
-            {
-                UErrorCode err = U_ZERO_ERROR;
-                cvt_ = ucnv_open(charset.c_str(), &err);
-                if(!cvt_ || U_FAILURE(err)) {
-                    if(cvt_)
-                        ucnv_close(cvt_);
-                    throw conv::invalid_charset_error(charset);
-                }
-
-                try {
-                    if(cvt_type == cpcvt_type::skip) {
-                        ucnv_setFromUCallBack(cvt_, UCNV_FROM_U_CALLBACK_SKIP, nullptr, nullptr, nullptr, &err);
-                        check_and_throw_icu_error(err);
-
-                        err = U_ZERO_ERROR;
-                        ucnv_setToUCallBack(cvt_, UCNV_TO_U_CALLBACK_SKIP, nullptr, nullptr, nullptr, &err);
-                        check_and_throw_icu_error(err);
-                    } else {
-                        ucnv_setFromUCallBack(cvt_, UCNV_FROM_U_CALLBACK_STOP, nullptr, nullptr, nullptr, &err);
-                        check_and_throw_icu_error(err);
-
-                        err = U_ZERO_ERROR;
-                        ucnv_setToUCallBack(cvt_, UCNV_TO_U_CALLBACK_STOP, nullptr, nullptr, nullptr, &err);
-                        check_and_throw_icu_error(err);
-                    }
-                } catch(...) {
-                    ucnv_close(cvt_);
-                    throw;
-                }
-            }
-
-            int max_char_size() { return ucnv_getMaxCharSize(cvt_); }
-
-            string_type go(const UChar* buf, int length, int max_size) const
-            {
-                string_type res;
-                res.resize(UCNV_GET_MAX_BYTES_FOR_STRING(length, max_size));
-                char* ptr = reinterpret_cast<char*>(&res[0]);
-                UErrorCode err = U_ZERO_ERROR;
-                int n = ucnv_fromUChars(cvt_, ptr, res.size(), buf, length, &err);
-                check_and_throw_icu_error(err);
-                res.resize(n);
-                return res;
-            }
-
-            size_t cut(size_t n, const CharType* begin, const CharType* end) const
-            {
-                const CharType* saved = begin;
-                while(n > 0 && begin < end) {
-                    UErrorCode err = U_ZERO_ERROR;
-                    ucnv_getNextUChar(cvt_, &begin, end, &err);
-                    if(U_FAILURE(err))
-                        return 0;
-                    n--;
-                }
-                return begin - saved;
-            }
-
-            UConverter* cvt() const { return cvt_; }
-
-            ~uconv() { ucnv_close(cvt_); }
-
-        private:
-            UConverter* cvt_;
-        };
 
     private:
         uconv cvt_;

@@ -116,13 +116,12 @@ namespace boost { namespace locale {
     ///     { ... }
     ///
     ///     /* State is unused but required by generic_codecvt */
-    ///     struct std::unique_ptr<UConverter,void (*)(UConverter*)> state_type;
+    ///     using state_type = std::unique_ptr<UConverter,void (*)(UConverter*)>;
     ///
     ///     state_type &&initial_state(generic_codecvt_base::initial_convertion_state /*unused*/) const
     ///     {
     ///         UErrorCode err = U_ZERO_ERROR;
-    ///         state_type ptr(ucnv_safeClone(converter_,0,0,&err,ucnv_close);
-    ///         return std::move(ptr);
+    ///         return state_type(ucnv_safeClone(converter_,0,0,&err),ucnv_close);
     ///     }
     ///
     ///     boost::locale::utf::code_point to_unicode(state_type &ptr,char const *&begin,char const *end) const

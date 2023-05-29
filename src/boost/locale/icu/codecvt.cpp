@@ -23,26 +23,7 @@
 namespace boost { namespace locale { namespace impl_icu {
     class uconv_converter : public util::base_converter {
     public:
-        uconv_converter(const std::string& encoding) : encoding_(encoding)
-        {
-            UErrorCode err = U_ZERO_ERROR;
-
-            // No need to check err each time, this
-            // is how ICU works.
-            cvt_ = ucnv_open(encoding.c_str(), &err);
-            ucnv_setFromUCallBack(cvt_, UCNV_FROM_U_CALLBACK_STOP, nullptr, nullptr, nullptr, &err);
-            ucnv_setToUCallBack(cvt_, UCNV_TO_U_CALLBACK_STOP, nullptr, nullptr, nullptr, &err);
-
-            if(!cvt_ || U_FAILURE(err)) {
-                if(cvt_)
-                    ucnv_close(cvt_);
-                throw conv::invalid_charset_error(encoding);
-            }
-
-            max_len_ = ucnv_getMaxCharSize(cvt_);
-        }
-
-        ~uconv_converter() { ucnv_close(cvt_); }
+        uconv_converter(const std::string& encoding) : encoding_(encoding), cvt_(encoding, cpcvt_type::stop) {}
 
         bool is_thread_safe() const override { return false; }
 
@@ -52,8 +33,8 @@ namespace boost { namespace locale { namespace impl_icu {
         {
             UErrorCode err = U_ZERO_ERROR;
             const char* tmp = begin;
-            UChar32 c = ucnv_getNextUChar(cvt_, &tmp, end, &err);
-            ucnv_reset(cvt_);
+            UChar32 c = ucnv_getNextUChar(cvt_.cvt(), &tmp, end, &err);
+            ucnv_reset(cvt_.cvt());
             if(err == U_TRUNCATED_CHAR_FOUND)
                 return incomplete;
             if(U_FAILURE(err))
@@ -79,8 +60,8 @@ namespace boost { namespace locale { namespace impl_icu {
                 len = 2;
             }
             UErrorCode err = U_ZERO_ERROR;
-            int olen = ucnv_fromUChars(cvt_, begin, end - begin, code_point, len, &err);
-            ucnv_reset(cvt_);
+            int olen = ucnv_fromUChars(cvt_.cvt(), begin, end - begin, code_point, len, &err);
+            ucnv_reset(cvt_.cvt());
             if(err == U_BUFFER_OVERFLOW_ERROR)
                 return incomplete;
             if(U_FAILURE(err))
@@ -88,12 +69,11 @@ namespace boost { namespace locale { namespace impl_icu {
             return olen;
         }
 
-        int max_len() const override { return max_len_; }
+        int max_len() const override { return cvt_.max_char_size(); }
 
     private:
         std::string encoding_;
-        UConverter* cvt_;
-        int max_len_;
+        uconv cvt_;
     };
 
     std::unique_ptr<util::base_converter> create_uconv_converter(const std::string& encoding)
