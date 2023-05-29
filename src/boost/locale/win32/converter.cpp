@@ -43,7 +43,7 @@ namespace boost { namespace locale { namespace impl_win {
         std::string
         convert(converter_base::conversion_type how, const char* begin, const char* end, int flags = 0) const override
         {
-            std::wstring tmp = conv::to_utf<wchar_t>(begin, end, "UTF-8");
+            const std::wstring tmp = conv::utf_to_utf<wchar_t>(begin, end);
             const wchar_t* wb = tmp.c_str();
             const wchar_t* we = wb + tmp.size();
 

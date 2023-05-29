@@ -70,8 +70,8 @@ namespace boost { namespace locale { namespace impl_std {
             typedef std::numpunct<wchar_t> wfacet_type;
             const wfacet_type& wfacet = std::use_facet<wfacet_type>(base);
 
-            truename_ = conv::from_utf<wchar_t>(wfacet.truename(), "UTF-8");
-            falsename_ = conv::from_utf<wchar_t>(wfacet.falsename(), "UTF-8");
+            truename_ = conv::utf_to_utf<char>(wfacet.truename());
+            falsename_ = conv::utf_to_utf<char>(wfacet.falsename());
 
             wchar_t tmp_decimal_point = wfacet.decimal_point();
             wchar_t tmp_thousands_sep = wfacet.thousands_sep();
@@ -120,9 +120,9 @@ namespace boost { namespace locale { namespace impl_std {
             typedef std::moneypunct<wchar_t, Intl> wfacet_type;
             const wfacet_type& wfacet = std::use_facet<wfacet_type>(base);
 
-            curr_symbol_ = conv::from_utf<wchar_t>(wfacet.curr_symbol(), "UTF-8");
-            positive_sign_ = conv::from_utf<wchar_t>(wfacet.positive_sign(), "UTF-8");
-            negative_sign_ = conv::from_utf<wchar_t>(wfacet.negative_sign(), "UTF-8");
+            curr_symbol_ = conv::utf_to_utf<char>(wfacet.curr_symbol());
+            positive_sign_ = conv::utf_to_utf<char>(wfacet.positive_sign());
+            negative_sign_ = conv::utf_to_utf<char>(wfacet.negative_sign());
             frac_digits_ = wfacet.frac_digits();
             pos_format_ = wfacet.pos_format();
             neg_format_ = wfacet.neg_format();

@@ -551,8 +551,8 @@ void test_main(int argc, char** argv)
             TEST_EQ(bl::gettext("לא קיים", l), "לא קיים");
 
             // wide
-            std::wstring wtest = bl::conv::to_utf<wchar_t>("בדיקה", "UTF-8");
-            std::wstring wmiss = bl::conv::to_utf<wchar_t>("לא קיים", "UTF-8");
+            std::wstring wtest = bl::conv::utf_to_utf<wchar_t>("בדיקה");
+            std::wstring wmiss = bl::conv::utf_to_utf<wchar_t>("לא קיים");
             TEST_EQ(bl::gettext(wtest.c_str(), l), L"test");
             TEST_EQ(bl::gettext(wmiss.c_str(), l), wmiss);
 

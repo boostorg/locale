@@ -20,19 +20,19 @@ namespace boost { namespace locale { namespace impl_win {
         int
         do_compare(collate_level level, const char* lb, const char* le, const char* rb, const char* re) const override
         {
-            std::wstring l = conv::to_utf<wchar_t>(lb, le, "UTF-8");
-            std::wstring r = conv::to_utf<wchar_t>(rb, re, "UTF-8");
+            const std::wstring l = conv::utf_to_utf<wchar_t>(lb, le);
+            const std::wstring r = conv::utf_to_utf<wchar_t>(rb, re);
             return wcscoll_l(level, l.c_str(), l.c_str() + l.size(), r.c_str(), r.c_str() + r.size(), lc_);
         }
         long do_hash(collate_level level, const char* b, const char* e) const override
         {
-            std::string key = do_transform(level, b, e);
+            const std::string key = do_transform(level, b, e);
             return gnu_gettext::pj_winberger_hash_function(key.c_str(), key.c_str() + key.size());
         }
         std::string do_transform(collate_level level, const char* b, const char* e) const override
         {
-            std::wstring tmp = conv::to_utf<wchar_t>(b, e, "UTF-8");
-            std::wstring wkey = wcsxfrm_l(level, tmp.c_str(), tmp.c_str() + tmp.size(), lc_);
+            const std::wstring tmp = conv::utf_to_utf<wchar_t>(b, e);
+            const std::wstring wkey = wcsxfrm_l(level, tmp.c_str(), tmp.c_str() + tmp.size(), lc_);
             std::string key;
             BOOST_LOCALE_START_CONST_CONDITION
             if(sizeof(wchar_t) == 2)

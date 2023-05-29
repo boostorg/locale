@@ -18,8 +18,8 @@ namespace boost { namespace locale { namespace impl_std {
         utf8_collator_from_wide(const std::locale& base, size_t refs = 0) : std::collate<char>(refs), base_(base) {}
         int do_compare(const char* lb, const char* le, const char* rb, const char* re) const override
         {
-            std::wstring l = conv::to_utf<wchar_t>(lb, le, "UTF-8");
-            std::wstring r = conv::to_utf<wchar_t>(rb, re, "UTF-8");
+            const std::wstring l = conv::utf_to_utf<wchar_t>(lb, le);
+            const std::wstring r = conv::utf_to_utf<wchar_t>(rb, re);
             return std::use_facet<wfacet>(base_).compare(l.c_str(),
                                                          l.c_str() + l.size(),
                                                          r.c_str(),
@@ -27,12 +27,12 @@ namespace boost { namespace locale { namespace impl_std {
         }
         long do_hash(const char* b, const char* e) const override
         {
-            std::wstring tmp = conv::to_utf<wchar_t>(b, e, "UTF-8");
+            const std::wstring tmp = conv::utf_to_utf<wchar_t>(b, e);
             return std::use_facet<wfacet>(base_).hash(tmp.c_str(), tmp.c_str() + tmp.size());
         }
         std::string do_transform(const char* b, const char* e) const override
         {
-            const std::wstring tmp = conv::to_utf<wchar_t>(b, e, "UTF-8");
+            const std::wstring tmp = conv::utf_to_utf<wchar_t>(b, e);
             const std::wstring wkey = std::use_facet<wfacet>(base_).transform(tmp.c_str(), tmp.c_str() + tmp.size());
             std::string key;
             BOOST_LOCALE_START_CONST_CONDITION

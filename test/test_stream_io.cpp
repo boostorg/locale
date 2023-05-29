@@ -147,7 +147,7 @@ void test_for_char()
         std::cout << "    Shift-JIS" << std::endl;
         test_ok<Char>("\x93\xfa\x96\x7b",
                       g(ja_jp_shiftjis),
-                      boost::locale::conv::to_utf<Char>("\xe6\x97\xa5\xe6\x9c\xac", "UTF-8")); // Japan
+                      boost::locale::conv::utf_to_utf<Char>("\xe6\x97\xa5\xe6\x9c\xac")); // Japan
     }
 }
 void test_wide_io()

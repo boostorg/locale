@@ -70,6 +70,14 @@ void test_to_utf_for_impls(const std::string& source,
             TEST_FAIL_CONVERSION(convPtr->convert(source));
         }
     }
+    if(encoding == "UTF-8") {
+        using boost::locale::conv::utf_to_utf;
+        TEST_EQ(utf_to_utf<Char>(source), target);
+        if(expectSuccess)
+            TEST_EQ(utf_to_utf<char>(source), source);
+        else
+            TEST_FAIL_CONVERSION(utf_to_utf<Char>(source, boost::locale::conv::stop));
+    }
 }
 
 template<typename Char>
@@ -96,6 +104,14 @@ void test_from_utf_for_impls(const std::basic_string<Char>& source,
               boost::locale::conv::detail::make_utf_decoder<Char>(encoding, boost::locale::conv::stop, impl);
             TEST_FAIL_CONVERSION(convPtr->convert(source));
         }
+    }
+    if(encoding == "UTF-8") {
+        using boost::locale::conv::utf_to_utf;
+        TEST_EQ(utf_to_utf<char>(source), target);
+        if(expectSuccess)
+            TEST_EQ(utf_to_utf<Char>(source), source);
+        else
+            TEST_FAIL_CONVERSION(utf_to_utf<char>(source, boost::locale::conv::stop));
     }
 }
 
@@ -184,6 +200,11 @@ void test_with_0()
             TEST_EQ(from_utf->convert(s_with_null2), s_with_null);
         }
     }
+    using boost::locale::conv::utf_to_utf;
+    TEST_EQ(utf_to_utf<Char>(s_with_null), s_with_null2);
+    TEST_EQ(utf_to_utf<Char>(s_with_null2), s_with_null2);
+    TEST_EQ(utf_to_utf<char>(s_with_null2), s_with_null);
+    TEST_EQ(utf_to_utf<char>(s_with_null), s_with_null);
 }
 
 template<typename Char, int n = sizeof(Char)>
@@ -475,6 +496,12 @@ void test_between_for_impls(const std::string& source,
               boost::locale::conv::detail::make_narrow_converter(source, target, boost::locale::conv::stop, impl);
             TEST_FAIL_CONVERSION(convPtr->convert(source));
         }
+    }
+    if(to_encoding == "UTF-8" && from_encoding == "UTF-8") {
+        using boost::locale::conv::utf_to_utf;
+        TEST_EQ(utf_to_utf<char>(source), target);
+        if(!expectSuccess)
+            TEST_FAIL_CONVERSION(utf_to_utf<char>(source, boost::locale::conv::stop));
     }
 }
 

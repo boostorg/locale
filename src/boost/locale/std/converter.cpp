@@ -65,7 +65,7 @@ namespace boost { namespace locale { namespace impl_std {
                 case upper_case:
                 case lower_case:
                 case case_folding: {
-                    std::wstring tmp = conv::to_utf<wchar_t>(begin, end, "UTF-8");
+                    std::wstring tmp = conv::utf_to_utf<wchar_t>(begin, end);
                     const wctype_type& ct = std::use_facet<wctype_type>(base_);
                     wchar_t* lbegin = &tmp.front();
                     const size_t len = tmp.size();
@@ -73,7 +73,7 @@ namespace boost { namespace locale { namespace impl_std {
                         ct.toupper(lbegin, lbegin + len);
                     else
                         ct.tolower(lbegin, lbegin + len);
-                    return conv::from_utf<wchar_t>(lbegin, lbegin + len, "UTF-8");
+                    return conv::utf_to_utf<char>(lbegin, lbegin + len);
                 }
                 case title_case:
                 case normalization: break;

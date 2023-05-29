@@ -84,22 +84,22 @@ namespace boost { namespace locale { namespace impl_posix {
         {
             switch(how) {
                 case upper_case: {
-                    const std::wstring tmp = conv::to_utf<wchar_t>(begin, end, "UTF-8");
+                    const std::wstring tmp = conv::utf_to_utf<wchar_t>(begin, end);
                     std::wstring wres;
                     wres.reserve(tmp.size());
                     for(const wchar_t c : tmp)
                         wres += towupper_l(c, *lc_);
-                    return conv::from_utf<wchar_t>(wres, "UTF-8");
+                    return conv::utf_to_utf<char>(wres);
                 }
 
                 case lower_case:
                 case case_folding: {
-                    const std::wstring tmp = conv::to_utf<wchar_t>(begin, end, "UTF-8");
+                    const std::wstring tmp = conv::utf_to_utf<wchar_t>(begin, end);
                     std::wstring wres;
                     wres.reserve(tmp.size());
                     for(const wchar_t c : tmp)
                         wres += towlower_l(c, *lc_);
-                    return conv::from_utf<wchar_t>(wres, "UTF-8");
+                    return conv::utf_to_utf<char>(wres);
                 }
                 case normalization:
                 case title_case: break;

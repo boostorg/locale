@@ -74,7 +74,7 @@ inline unsigned utf8_next(const std::string& s, unsigned& pos)
 template<typename C>
 std::string to_utf8(const std::basic_string<C>& utf_string)
 {
-    return boost::locale::conv::from_utf(utf_string, "UTF-8");
+    return boost::locale::conv::utf_to_utf<char>(utf_string);
 }
 std::string to_utf8(const std::string& utf_string)
 {
