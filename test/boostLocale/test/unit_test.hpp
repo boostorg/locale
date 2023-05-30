@@ -107,8 +107,9 @@ int main(int argc, char** argv)
     try {
         test_main(argc, argv);
     } catch(const std::exception& e) {
-        std::cerr << "Failed " << e.what() << std::endl; // LCOV_EXCL_LINE
-        return EXIT_FAILURE;                             // LCOV_EXCL_LINE
+        std::cerr << "Failed with exception "                                 // LCOV_EXCL_LINE
+                  << typeid(e).name() << '(' << e.what() << ')' << std::endl; // LCOV_EXCL_LINE
+        return EXIT_FAILURE;                                                  // LCOV_EXCL_LINE
     }
     using boost::locale::test::results;
     if(results().test_counter > 0) {
