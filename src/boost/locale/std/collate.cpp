@@ -6,6 +6,7 @@
 
 #include <boost/locale/encoding.hpp>
 #include "boost/locale/std/all_generator.hpp"
+#include <boost/assert.hpp>
 #include <ios>
 #include <locale>
 #include <string>
@@ -53,6 +54,23 @@ namespace boost { namespace locale { namespace impl_std {
         std::locale base_;
     };
 
+    // Workaround for a bug in the C++ or C standard library so far observed on the Appveyor VS2017 image
+    bool collation_works(const std::locale& l)
+    {
+        const auto& col = std::use_facet<std::collate<char>>(l);
+        const std::string a = "a";
+        const std::string b = "b";
+        try {
+            // On some broken system libs transform throws an exception
+            const auto ta = col.transform(a.c_str(), a.c_str() + a.size());
+            const auto tb = col.transform(b.c_str(), b.c_str() + b.size());
+            // This should always be true but on some broken system libs `l(a,b) == !l(b,a) == false`
+            return l(a, b) == !l(b, a) && (l(a, b) == (ta < tb));
+        } catch(const std::exception&) { // LCOV_EXCL_LINE
+            return false;                // LCOV_EXCL_LINE
+        }
+    }
+
     std::locale
     create_collate(const std::locale& in, const std::string& locale_name, char_facet_t type, utf8_support utf)
     {
@@ -61,8 +79,14 @@ namespace boost { namespace locale { namespace impl_std {
             case char_facet_t::char_f:
                 if(utf == utf8_support::from_wide)
                     return std::locale(in, new utf8_collator_from_wide(locale_name));
-                else
-                    return std::locale(in, new std::collate_byname<char>(locale_name));
+                else {
+                    std::locale res = std::locale(in, new std::collate_byname<char>(locale_name));
+                    if(utf != utf8_support::none && !collation_works(res)) {
+                        res = std::locale(res, new utf8_collator_from_wide(locale_name)); // LCOV_EXCL_LINE
+                    }
+                    BOOST_ASSERT_MSG(collation_works(res), "Broken collation");
+                    return res;
+                }
 
             case char_facet_t::wchar_f: return std::locale(in, new std::collate_byname<wchar_t>(locale_name));
 
