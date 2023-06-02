@@ -152,7 +152,11 @@ namespace boost { namespace locale { namespace impl_std {
                 }
 #endif
                 else
-                    utf_mode_ = utf8_support::none;
+                    throw std::runtime_error("Can't load UTF-8 locale " + lid
+#if BOOST_LOCALE_USE_WIN32_API
+                                             + " or " + l_win.name
+#endif
+                    );
             }
         }
 
