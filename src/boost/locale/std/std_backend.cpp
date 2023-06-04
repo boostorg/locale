@@ -108,13 +108,13 @@ namespace boost { namespace locale { namespace impl_std {
             }
             in_use_id_ = lid;
             data_.parse(lid);
-            name_ = "C";
 
 #if BOOST_LOCALE_USE_WIN32_API
             const auto l_win = to_windows_name(lid);
 #endif
 
             if(!data_.is_utf8()) {
+                utf_mode_ = utf8_support::none;
                 if(loadable(lid))
                     name_ = lid;
 #if BOOST_LOCALE_USE_WIN32_API
@@ -127,11 +127,13 @@ namespace boost { namespace locale { namespace impl_std {
                            && codepage_int == util::encoding_to_windows_codepage(data_.encoding()))
                         {
                             name_ = l_win.name;
-                        }
+                        } else
+                            name_ = "C";
                     }
                 }
 #endif
-                utf_mode_ = utf8_support::none;
+                else
+                    name_ = "C";
             } else {
                 if(loadable(lid)) {
                     name_ = lid;
@@ -154,16 +156,8 @@ namespace boost { namespace locale { namespace impl_std {
                 else
                 {
                     const std::string non_utf8 = util::locale_data(data_).encoding("").to_string();
-                    if(loadable(non_utf8))) {
-                        name_ = non_utf8;
-                        utf_mode_ = utf8_support::from_wide;
-                    } else {
-                        throw std::runtime_error("Can't load UTF-8 locale " + lid
-    #if BOOST_LOCALE_USE_WIN32_API
-                                                + " or " + l_win.name
-    #endif
-                        );
-                    }
+                    name_ = loadable(non_utf8) ? non_utf8 : "C";
+                    utf_mode_ = utf8_support::from_wide;
                 }
             }
         }
