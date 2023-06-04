@@ -124,15 +124,7 @@ namespace boost { namespace locale { namespace util {
         std::string tmp = input.substr(0, end);
         if(tmp.empty())
             return false;
-        // No assumptions, but uppercase
-        for(char& c : tmp) {
-            if(util::is_lower_ascii(c))
-                c += 'A' - 'a';
-        }
-        encoding_ = tmp;
-
-        utf8_ = util::normalize_encoding(encoding_) == "utf8";
-
+        encoding(std::move(tmp));
         if(end >= input.size())
             return true;
         else {
@@ -154,6 +146,18 @@ namespace boost { namespace locale { namespace util {
                 c += 'a' - 'A';
         }
         return true;
+    }
+
+    locale_data& locale_data::encoding(std::string new_encoding)
+    {
+        // No assumptions, but uppercase
+        for(char& c : new_encoding) {
+            if(util::is_lower_ascii(c))
+                c += 'A' - 'a';
+        }
+        encoding_ = std::move(new_encoding);
+        utf8_ = util::normalize_encoding(encoding_) == "utf8";
+        return *this;
     }
 
 }}} // namespace boost::locale::util

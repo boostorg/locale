@@ -6,6 +6,7 @@
 // https://www.boost.org/LICENSE_1_0.txt
 
 #include <boost/locale.hpp>
+#include <boost/locale/conversion.hpp>
 #include "../src/boost/locale/win32/lcid.hpp"
 #include "boostLocale/test/tools.hpp"
 #include "boostLocale/test/unit_test.hpp"
@@ -131,7 +132,23 @@ void test_special_locales()
     }
 }
 
+bool has_unicode_classic_locale()
+{
+    std::locale l = std::locale::classic();
+    for(const auto name : {"C.UTF-8", "C.utf8"}) {
+        try {
+            l = std::locale(name);
+            break;
+        } catch(...) {
+        }
+    }
+    const wchar_t s = L'\u03B4';
+    // Check that that the Unicode character is handled
+    return std::use_facet<std::ctype<wchar_t>>(l).toupper(s) != s;
+}
+
 // For a non-existing locale the C locale will be used as a fallback
+// If UTF-8 is requested/reported then UTF-8 will still be used as much as possible
 void test_invalid_locale()
 {
     std::ostringstream classicStream;
@@ -151,6 +168,29 @@ void test_invalid_locale()
     os << boost::locale::as::number << 123456789 << " " << 1234567.89;
     classicStream << 123456789 << " " << 1234567.89;
     TEST_EQ(os.str(), classicStream.str());
+
+    // Request UTF-8 explicitly and check that it is used even when the locale doesn't exist
+    if(!info.utf8())
+        nonExistingLocale = g("noLang_noCountry.UTF-8");
+    if(has_unicode_classic_locale()) {
+        // Case conversion works only if the backend supports classic locale with Unicode
+        TEST_EQ(boost::locale::to_upper("δ", nonExistingLocale), "Δ");
+    }
+    // The codecvt facet always supports UTF-8
+    {
+        auto& cvt = std::use_facet<std::codecvt<wchar_t, char, std::mbstate_t>>(nonExistingLocale);
+        // String with Unicode chars from different cultures
+        const std::wstring wide_str = L"\U0001D49E-\u043F\u0440\u0438\u0432\u0435\u0442-\u3084\u3042";
+
+        std::mbstate_t state{};
+        const wchar_t* from_next = wide_str.c_str();
+        const wchar_t* from_end = from_next + wide_str.size();
+        char out_str[32]{};
+        char* to_next = out_str;
+        TEST_EQ(cvt.out(state, from_next, from_end, from_next, out_str, out_str + sizeof(out_str), to_next), cvt.ok);
+        const std::string utf8_str = boost::locale::conv::utf_to_utf<char>(wide_str);
+        TEST_EQ(out_str, utf8_str);
+    }
 }
 
 void test_main(int /*argc*/, char** /*argv*/)
