@@ -28,8 +28,8 @@
 namespace {
 #if BOOST_LOCALE_USE_WIN32_API
 struct windows_name {
-    windows_name() : name("C"), codepage("0") {}
     std::string name, codepage;
+    explicit operator bool() const { return !name.empty() && !codepage.empty(); }
 };
 
 windows_name to_windows_name(const std::string& l)
@@ -118,7 +118,7 @@ namespace boost { namespace locale { namespace impl_std {
                 if(loadable(lid))
                     name_ = lid;
 #if BOOST_LOCALE_USE_WIN32_API
-                else if(loadable(l_win.name)) {
+                else if(l_win && loadable(l_win.name)) {
                     if(util::are_encodings_equal(l_win.codepage, data_.encoding()))
                         name_ = l_win.name;
                     else {
@@ -147,7 +147,7 @@ namespace boost { namespace locale { namespace impl_std {
 #endif
                 }
 #if BOOST_LOCALE_USE_WIN32_API
-                else if(loadable(l_win.name))
+                else if(l_win && loadable(l_win.name))
                 {
                     name_ = l_win.name;
                     utf_mode_ = utf8_support::from_wide;
