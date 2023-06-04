@@ -9,6 +9,7 @@
 #include <boost/locale/localization_backend.hpp>
 #include <boost/locale/util.hpp>
 #include <boost/locale/util/locale_data.hpp>
+#include <boost/core/ignore_unused.hpp>
 #include <algorithm>
 #include <iterator>
 #include <vector>
@@ -17,16 +18,15 @@
 #    ifndef NOMINMAX
 #        define NOMINMAX
 #    endif
-#    include "boost/locale/util/encoding.hpp"
 #    include "boost/locale/win32/lcid.hpp"
 #    include <windows.h>
 #endif
 #include "boost/locale/std/all_generator.hpp"
+#include "boost/locale/util/encoding.hpp"
 #include "boost/locale/util/gregorian.hpp"
 #include "boost/locale/util/numeric.hpp"
 
 namespace {
-#if BOOST_LOCALE_USE_WIN32_API
 struct windows_name {
     std::string name, codepage;
     explicit operator bool() const { return !name.empty() && !codepage.empty(); }
@@ -34,6 +34,7 @@ struct windows_name {
 
 windows_name to_windows_name(const std::string& l)
 {
+#if BOOST_LOCALE_USE_WIN32_API
     windows_name res;
     const unsigned lcid = boost::locale::impl_win::locale_to_lcid(l);
     char win_lang[256]{};
@@ -50,8 +51,11 @@ windows_name to_windows_name(const std::string& l)
     if(GetLocaleInfoA(lcid, LOCALE_IDEFAULTANSICODEPAGE, win_codepage, sizeof(win_codepage)) != 0)
         res.codepage = win_codepage;
     return res;
-}
+#else
+    boost::ignore_unused(l);
+    return {};
 #endif
+}
 
 bool loadable(const std::string& name)
 {
@@ -109,15 +113,12 @@ namespace boost { namespace locale { namespace impl_std {
             in_use_id_ = lid;
             data_.parse(lid);
 
-#if BOOST_LOCALE_USE_WIN32_API
             const auto l_win = to_windows_name(lid);
-#endif
 
             if(!data_.is_utf8()) {
                 utf_mode_ = utf8_support::none;
                 if(loadable(lid))
                     name_ = lid;
-#if BOOST_LOCALE_USE_WIN32_API
                 else if(l_win && loadable(l_win.name)) {
                     if(util::are_encodings_equal(l_win.codepage, data_.encoding()))
                         name_ = l_win.name;
@@ -130,9 +131,7 @@ namespace boost { namespace locale { namespace impl_std {
                         } else
                             name_ = "C";
                     }
-                }
-#endif
-                else
+                } else
                     name_ = "C";
             } else {
                 if(loadable(lid)) {
@@ -145,16 +144,10 @@ namespace boost { namespace locale { namespace impl_std {
                     // but it works in practice so far, so use it instead of failing for codepoints above U+FFFF
                     utf_mode_ = utf8_support::from_wide;
 #endif
-                }
-#if BOOST_LOCALE_USE_WIN32_API
-                else if(l_win && loadable(l_win.name))
-                {
+                } else if(l_win && loadable(l_win.name)) {
                     name_ = l_win.name;
                     utf_mode_ = utf8_support::from_wide;
-                }
-#endif
-                else
-                {
+                } else {
                     const std::string non_utf8 = util::locale_data(data_).encoding("").to_string();
                     name_ = loadable(non_utf8) ? non_utf8 : "C";
                     utf_mode_ = utf8_support::from_wide;
