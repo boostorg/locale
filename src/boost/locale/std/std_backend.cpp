@@ -9,6 +9,7 @@
 #include <boost/locale/localization_backend.hpp>
 #include <boost/locale/util.hpp>
 #include <boost/locale/util/locale_data.hpp>
+#include <boost/assert.hpp>
 #include <boost/core/ignore_unused.hpp>
 #include <algorithm>
 #include <iterator>
@@ -144,12 +145,27 @@ namespace boost { namespace locale { namespace impl_std {
                     // but it works in practice so far, so use it instead of failing for codepoints above U+FFFF
                     utf_mode_ = utf8_support::from_wide;
 #endif
-                } else if(l_win && loadable(l_win.name)) {
-                    name_ = l_win.name;
-                    utf_mode_ = utf8_support::from_wide;
                 } else {
-                    const std::string non_utf8 = util::locale_data(data_).encoding("").to_string();
-                    name_ = loadable(non_utf8) ? non_utf8 : "C";
+                    std::vector<std::string> alt_names;
+                    if(l_win)
+                        alt_names.push_back(l_win.name);
+                    // Try different spellings
+                    alt_names.push_back(util::locale_data(data_).encoding("UTF-8").to_string());
+                    alt_names.push_back(util::locale_data(data_).encoding("utf8", false).to_string());
+                    // Without encoding, let from_wide classes handle it
+                    alt_names.push_back(util::locale_data(data_).encoding("").to_string());
+                    // Final try: Classic locale, but enable Unicode (if supported)
+                    alt_names.push_back("C.UTF-8");
+                    alt_names.push_back("C.utf8");
+                    // If everything fails rely on the classic locale
+                    alt_names.push_back("C");
+                    for(const std::string& name : alt_names) {
+                        if(loadable(name)) {
+                            name_ = name;
+                            break;
+                        }
+                    }
+                    BOOST_ASSERT(!name_.empty());
                     utf_mode_ = utf8_support::from_wide;
                 }
             }
