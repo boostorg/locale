@@ -129,6 +129,8 @@ void test_main(int /*argc*/, char** /*argv*/)
       "Japanese_Japan.932",
       "en_001.UTF-8",
       "en_150.UTF-8",
+      "C.UTF-8",
+      "C.utf8",
     };
     std::cout << "- Testing locales availability on the operation system:" << std::endl;
     check_locales(locales_to_check);
