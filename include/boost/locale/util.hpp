@@ -10,7 +10,7 @@
 #include <boost/locale/generator.hpp>
 #include <boost/locale/utf.hpp>
 #include <boost/assert.hpp>
-#include <boost/cstdint.hpp>
+#include <cstdint>
 #include <locale>
 #include <memory>
 #include <typeinfo>

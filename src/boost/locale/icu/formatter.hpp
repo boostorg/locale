@@ -8,7 +8,7 @@
 #define BOOST_LOCALE_FORMATTER_HPP_INCLUDED
 
 #include <boost/locale/config.hpp>
-#include <boost/cstdint.hpp>
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <unicode/locid.h>

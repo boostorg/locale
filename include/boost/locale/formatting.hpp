@@ -10,8 +10,8 @@
 
 #include <boost/locale/time_zone.hpp>
 #include <boost/assert.hpp>
-#include <boost/cstdint.hpp>
 #include <boost/utility/string_view.hpp>
+#include <cstdint>
 #include <cstring>
 #include <istream>
 #include <ostream>

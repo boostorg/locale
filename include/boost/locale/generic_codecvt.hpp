@@ -9,7 +9,7 @@
 #define BOOST_LOCALE_GENERIC_CODECVT_HPP
 
 #include <boost/locale/utf.hpp>
-#include <boost/cstdint.hpp>
+#include <cstdint>
 #include <locale>
 
 namespace boost { namespace locale {
@@ -187,7 +187,7 @@ namespace boost { namespace locale {
               implementation().initial_state(generic_codecvt_base::to_unicode_state);
             while(max > 0 && from < from_end) {
                 const char* prev_from = from;
-                boost::uint32_t ch = implementation().to_unicode(cvt_state, from, from_end);
+                std::uint32_t ch = implementation().to_unicode(cvt_state, from, from_end);
                 if(ch == boost::locale::utf::incomplete || ch == boost::locale::utf::illegal) {
                     from = prev_from;
                     break;
@@ -250,8 +250,8 @@ namespace boost { namespace locale {
                     //    once again and then we would consume our input together with writing
                     //    second surrogate pair
                     ch -= 0x10000;
-                    boost::uint16_t w1 = static_cast<boost::uint16_t>(0xD800 | (ch >> 10));
-                    boost::uint16_t w2 = static_cast<boost::uint16_t>(0xDC00 | (ch & 0x3FF));
+                    std::uint16_t w1 = static_cast<std::uint16_t>(0xD800 | (ch >> 10));
+                    std::uint16_t w2 = static_cast<std::uint16_t>(0xDC00 | (ch & 0x3FF));
                     if(!state) {
                         from = from_saved;
                         *to++ = w1;
@@ -283,22 +283,22 @@ namespace boost { namespace locale {
             //
             // State: state!=0 - a first surrogate pair was observed (state = first pair),
             // we expect the second one to come and then zero the state
-            boost::uint16_t state = detail::read_state(std_state);
+            std::uint16_t state = detail::read_state(std_state);
             typename CodecvtImpl::state_type cvt_state =
               implementation().initial_state(generic_codecvt_base::from_unicode_state);
             while(to < to_end && from < from_end) {
-                boost::uint32_t ch = 0;
+                std::uint32_t ch = 0;
                 if(state != 0) {
                     // if the state indicates that 1st surrogate pair was written
                     // we should make sure that the second one that comes is actually
                     // second surrogate
-                    boost::uint16_t w1 = state;
-                    boost::uint16_t w2 = *from;
+                    std::uint16_t w1 = state;
+                    std::uint16_t w2 = *from;
                     // we don't forward from as writing may fail to incomplete or
                     // partial conversion
                     if(0xDC00 <= w2 && w2 <= 0xDFFF) {
-                        boost::uint16_t vh = w1 - 0xD800;
-                        boost::uint16_t vl = w2 - 0xDC00;
+                        std::uint16_t vh = w1 - 0xD800;
+                        std::uint16_t vl = w2 - 0xDC00;
                         ch = ((uint32_t(vh) << 10) | vl) + 0x10000;
                     } else {
                         // Invalid surrogate
@@ -327,7 +327,7 @@ namespace boost { namespace locale {
                     r = std::codecvt_base::error;
                     break;
                 }
-                boost::uint32_t len = implementation().from_unicode(cvt_state, ch, to, to_end);
+                std::uint32_t len = implementation().from_unicode(cvt_state, ch, to, to_end);
                 if(len == boost::locale::utf::incomplete) {
                     r = std::codecvt_base::partial;
                     break;
@@ -380,7 +380,7 @@ namespace boost { namespace locale {
               implementation().initial_state(generic_codecvt_base::to_unicode_state);
             while(max > 0 && from < from_end) {
                 const char* save_from = from;
-                boost::uint32_t ch = implementation().to_unicode(cvt_state, from, from_end);
+                std::uint32_t ch = implementation().to_unicode(cvt_state, from, from_end);
                 if(ch == boost::locale::utf::incomplete || ch == boost::locale::utf::illegal) {
                     from = save_from;
                     break;
@@ -442,13 +442,13 @@ namespace boost { namespace locale {
             std::codecvt_base::result r = std::codecvt_base::ok;
             auto cvt_state = implementation().initial_state(generic_codecvt_base::from_unicode_state);
             while(to < to_end && from < from_end) {
-                boost::uint32_t ch = 0;
+                std::uint32_t ch = 0;
                 ch = *from;
                 if(!boost::locale::utf::is_valid_codepoint(ch)) {
                     r = std::codecvt_base::error;
                     break;
                 }
-                boost::uint32_t len = implementation().from_unicode(cvt_state, ch, to, to_end);
+                std::uint32_t len = implementation().from_unicode(cvt_state, ch, to, to_end);
                 if(len == boost::locale::utf::incomplete) {
                     r = std::codecvt_base::partial;
                     break;

@@ -9,7 +9,7 @@
 
 #include <boost/locale/config.hpp>
 #include <boost/locale/detail/facet_id.hpp>
-#include <boost/cstdint.hpp>
+#include <cstdint>
 #include <locale>
 
 #ifdef BOOST_MSVC

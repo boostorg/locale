@@ -8,7 +8,7 @@
 #define BOOST_LOCALE_UTF_HPP_INCLUDED
 
 #include <boost/locale/config.hpp>
-#include <boost/cstdint.hpp>
+#include <cstdint>
 
 namespace boost { namespace locale {
     /// \brief Namespace that holds basic operations on UTF encoded sequences

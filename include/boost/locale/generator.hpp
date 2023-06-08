@@ -8,7 +8,7 @@
 #define BOOST_LOCALE_GENERATOR_HPP
 
 #include <boost/locale/hold_ptr.hpp>
-#include <boost/cstdint.hpp>
+#include <cstdint>
 #include <locale>
 #include <memory>
 #include <string>

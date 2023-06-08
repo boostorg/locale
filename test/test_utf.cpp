@@ -13,32 +13,32 @@
 
 using namespace boost::locale::utf;
 
-const boost::uint32_t* u32_seq(boost::uint32_t a)
+const std::uint32_t* u32_seq(std::uint32_t a)
 {
-    static boost::uint32_t buf[2];
+    static std::uint32_t buf[2];
     buf[0] = a;
     buf[1] = 0;
     return buf;
 }
 
-const boost::uint16_t* u16_seq(boost::uint16_t a)
+const std::uint16_t* u16_seq(std::uint16_t a)
 {
-    static boost::uint16_t buf[2];
+    static std::uint16_t buf[2];
     buf[0] = a;
     buf[1] = 0;
     return buf;
 }
 
-const boost::uint16_t* u16_seq(boost::uint16_t a, boost::uint16_t b)
+const std::uint16_t* u16_seq(std::uint16_t a, std::uint16_t b)
 {
-    static boost::uint16_t buf[3];
+    static std::uint16_t buf[3];
     buf[0] = a;
     buf[1] = b;
     buf[2] = 0;
     return buf;
 }
 
-const char16_t* c16_seq(boost::uint16_t a)
+const char16_t* c16_seq(std::uint16_t a)
 {
     static char16_t buf[2];
     buf[0] = static_cast<char16_t>(a);
@@ -46,7 +46,7 @@ const char16_t* c16_seq(boost::uint16_t a)
     return buf;
 }
 
-const char32_t* c32_seq(boost::uint32_t a)
+const char32_t* c32_seq(std::uint32_t a)
 {
     static char32_t buf[2];
     buf[0] = static_cast<char32_t>(a);
