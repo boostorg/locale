@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2021-2023 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
@@ -400,7 +401,7 @@ namespace boost { namespace locale {
                 return parameters_[id];
         }
 
-        static void imbue_locale(void* ptr, const std::locale& l) { reinterpret_cast<stream_type*>(ptr)->imbue(l); }
+        static void imbue_locale(void* ptr, const std::locale& l) { static_cast<stream_type*>(ptr)->imbue(l); }
 
         static constexpr unsigned base_params_ = 8;
 

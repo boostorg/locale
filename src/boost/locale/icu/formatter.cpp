@@ -1,6 +1,6 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
-// Copyright (c) 2021-2022 Alexander Grund
+// Copyright (c) 2021-2023 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
@@ -387,7 +387,7 @@ namespace boost { namespace locale { namespace impl_icu {
                                 break;
                             case strftime: {
                                 icu_std_converter<CharType> cvt_(encoding);
-                                const std::basic_string<CharType>& f = info.date_time_pattern<CharType>();
+                                const std::basic_string<CharType> f = info.date_time_pattern<CharType>();
                                 pattern = strftime_to_icu(cvt_.icu(f.c_str(), f.c_str() + f.size()), locale);
                             } break;
                         }
@@ -416,7 +416,7 @@ namespace boost { namespace locale { namespace impl_icu {
                             break;
                         case strftime: {
                             icu_std_converter<CharType> cvt_(encoding);
-                            const std::basic_string<CharType>& f = info.date_time_pattern<CharType>();
+                            const std::basic_string<CharType> f = info.date_time_pattern<CharType>();
                             icu::UnicodeString pattern =
                               strftime_to_icu(cvt_.icu(f.data(), f.data() + f.size()), locale);
                             UErrorCode err = U_ZERO_ERROR;
