@@ -18,27 +18,17 @@
 #include <cstring>
 
 namespace boost { namespace locale { namespace util {
-    static std::string do_normalize_encoding(const char* encoding, const size_t len)
+    std::string normalize_encoding(const string_view encoding)
     {
         std::string result;
-        result.reserve(len);
-        for(char c = *encoding; c != 0; c = *(++encoding)) {
+        result.reserve(encoding.length());
+        for(char c : encoding) {
             if(is_lower_ascii(c) || is_numeric_ascii(c))
                 result += c;
             else if(is_upper_ascii(c))
                 result += char(c - 'A' + 'a');
         }
         return result;
-    }
-
-    std::string normalize_encoding(const std::string& encoding)
-    {
-        return do_normalize_encoding(encoding.c_str(), encoding.size());
-    }
-
-    std::string normalize_encoding(const char* encoding)
-    {
-        return do_normalize_encoding(encoding, std::strlen(encoding));
     }
 
 #if BOOST_LOCALE_USE_WIN32_API
@@ -61,12 +51,7 @@ namespace boost { namespace locale { namespace util {
         return -1;
     }
 
-    int encoding_to_windows_codepage(const char* encoding)
-    {
-        return normalized_encoding_to_windows_codepage(normalize_encoding(encoding));
-    }
-
-    int encoding_to_windows_codepage(const std::string& encoding)
+    int encoding_to_windows_codepage(const string_view encoding)
     {
         return normalized_encoding_to_windows_codepage(normalize_encoding(encoding));
     }

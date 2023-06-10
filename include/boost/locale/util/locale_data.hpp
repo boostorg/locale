@@ -40,6 +40,9 @@ namespace boost { namespace locale { namespace util {
         const std::string& country() const { return country_; }
         /// Return encoding/codeset, e.g. ISO8859-1 or UTF-8
         const std::string& encoding() const { return encoding_; }
+        /// Set encoding, will be made uppercase by default as-if it was parsed
+        /// Returns \c *this for chaining
+        locale_data& encoding(std::string new_encoding, bool uppercase = true);
         /// Return variant/modifier, e.g. euro or stroke
         const std::string& variant() const { return variant_; }
         /// Return iff the encoding is UTF-8
