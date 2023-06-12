@@ -61,6 +61,8 @@ environment:
       B2_CXXFLAGS: -permissive-
       B2_CXXSTD: 2a
       B2_TOOLSET: msvc-14.1
+      # The VS2017 image has some issues which we workaround, so collect coverage for that.
+      COVERAGE: true
 
     - FLAVOR: Visual Studio 2019
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
