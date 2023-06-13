@@ -80,7 +80,23 @@ void test_special_locales()
         backend.select(backendName);
         bl::localization_backend_manager::global(backend);
 
+        {
+            const auto utf8LocaleName = bl::util::get_system_locale(true);
+            const auto ansiLocaleName = bl::util::get_system_locale(false);
+            bl::generator g;
+            g.use_ansi_encoding(true);
+            std::locale l = g("");
+            TEST_EQ(std::use_facet<bl::info>(l).name(), ansiLocaleName);
+            g.use_ansi_encoding(false);
+            l = g("");
+            TEST_EQ(std::use_facet<bl::info>(l).name(), utf8LocaleName);
+            g.use_ansi_encoding(true);
+            l = g("");
+            TEST_EQ(std::use_facet<bl::info>(l).name(), ansiLocaleName);
+        }
+
         bl::generator g;
+
         namespace as = bl::as;
         constexpr time_t datetime = 60 * 60 * 24 * (31 + 4) // Feb 5th
                                     + (15 * 60 + 42) * 60;  // 15:42

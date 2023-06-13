@@ -156,8 +156,7 @@ namespace boost { namespace locale {
     void generator::set_all_options(localization_backend& backend, const std::string& id) const
     {
         backend.set_option("locale", id);
-        if(d->use_ansi_encoding)
-            backend.set_option("use_ansi_encoding", "true");
+        backend.set_option("use_ansi_encoding", d->use_ansi_encoding ? "true" : "false");
         for(const std::string& domain : d->domains)
             backend.set_option("message_application", domain);
         for(const std::string& path : d->paths)
