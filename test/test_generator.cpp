@@ -159,7 +159,7 @@ void test_install_chartype(const std::string& backendName)
     for(const std::string localeName : {"C", "en_US.UTF-8"}) {
         std::cout << "--- Locale: " << localeName << std::endl;
         const std::locale origLocale = bl::generator{}(localeName);
-        const auto backend = bl::localization_backend_manager::global().get();
+        const auto backend = bl::localization_backend_manager::global().create();
         backend->set_option("locale", localeName);
         for(auto category = bl::per_character_facet_first; category <= bl::per_character_facet_last; ++category) {
             std::cout << "---- Testing category " << static_cast<unsigned>(category) << '\n';

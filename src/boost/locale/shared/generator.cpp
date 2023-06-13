@@ -106,7 +106,7 @@ namespace boost { namespace locale {
             if(p != d->cached.end())
                 return p->second;
         }
-        hold_ptr<localization_backend> backend(d->backend_manager.create());
+        auto backend = d->backend_manager.create();
         set_all_options(*backend, id);
 
         std::locale result = base;
