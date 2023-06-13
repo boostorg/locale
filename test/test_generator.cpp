@@ -82,7 +82,8 @@ void test_special_locales()
 
         {
             const auto utf8LocaleName = bl::util::get_system_locale(true);
-            const auto ansiLocaleName = bl::util::get_system_locale(false);
+            // The WinAPI backend only supports UTF-8 encoding and hence always returns the UTF-8 locale
+            const auto ansiLocaleName = (backendName == "winapi") ? utf8LocaleName : bl::util::get_system_locale(false);
             bl::generator g;
             g.use_ansi_encoding(true);
             std::locale l = g("");
@@ -266,68 +267,66 @@ void test_main(int /*argc*/, char** /*argv*/)
             // information
             TEST(blt::has_facet<bl::info>(l));
         }
+
+        std::locale l = g("en_US.UTF-8");
+        TEST(has_message(l));
+        g.categories(g.categories() ^ bl::category_t::message);
+        g.locale_cache_enabled(true);
+        g("en_US.UTF-8");
+        g.categories(g.categories() | bl::category_t::message);
+        l = g("en_US.UTF-8");
+        TEST(!has_message(l));
+        g.clear_cache();
+        g.locale_cache_enabled(false);
+        l = g("en_US.UTF-8");
+        TEST(has_message(l));
+        g.characters(g.characters() ^ bl::char_facet_t::char_f);
+        l = g("en_US.UTF-8");
+        TEST(!has_message(l));
+        g.characters(g.characters() | bl::char_facet_t::char_f);
+        l = g("en_US.UTF-8");
+        TEST(has_message(l));
+
+        l = g("en_US.ISO8859-1");
+        TEST_EQ(std::use_facet<bl::info>(l).language(), "en");
+        TEST_EQ(std::use_facet<bl::info>(l).country(), "US");
+        TEST(!std::use_facet<bl::info>(l).utf8());
+        TEST_EQ(std::use_facet<bl::info>(l).encoding(), "ISO8859-1");
+
+        l = g("en_US.UTF-8");
+        TEST_EQ(std::use_facet<bl::info>(l).language(), "en");
+        TEST_EQ(std::use_facet<bl::info>(l).country(), "US");
+        TEST(std::use_facet<bl::info>(l).utf8());
+        TEST_EQ(std::use_facet<bl::info>(l).encoding(), "UTF-8");
+
+        l = g("en_US.ISO8859-1");
+        TEST_EQ(std::use_facet<bl::info>(l).language(), "en");
+        TEST_EQ(std::use_facet<bl::info>(l).country(), "US");
+        TEST(!std::use_facet<bl::info>(l).utf8());
+        TEST_EQ(std::use_facet<bl::info>(l).encoding(), "ISO8859-1");
+
+        // Check that generate() extends the given locale, not replaces it
+        std::locale l_wt(std::locale::classic(), new test_facet);
+        TEST(blt::has_facet<test_facet>(g.generate(l_wt, "en_US.UTF-8")));
+        TEST(!blt::has_facet<test_facet>(g.generate("en_US.UTF-8")));
+        TEST(blt::has_facet<test_facet>(g.generate(l_wt, "en_US.ISO8859-1")));
+        TEST(!blt::has_facet<test_facet>(g.generate("en_US.ISO8859-1")));
+
+        // Check caching works
+        g.locale_cache_enabled(true);
+        // Generate a locale with a specific facet which is then cached
+        g.generate(l_wt, "en_US.UTF-8");
+        g.generate(l_wt, "en_US.ISO8859-1");
+        // Cached locale is returned -> facet is still there
+        TEST(blt::has_facet<test_facet>(g("en_US.UTF-8")));
+        TEST(blt::has_facet<test_facet>(g("en_US.ISO8859-1")));
+        // Check a property to verify it doesn't simply return the same locale for each call
+        TEST(std::use_facet<bl::info>(g("en_US.UTF-8")).utf8());
+        TEST(!std::use_facet<bl::info>(g("en_US.ISO8859-1")).utf8());
+
         test_install_chartype(backendName);
     }
     std::cout << "Test special locales" << std::endl;
     test_special_locales();
     test_invalid_locale();
-    std::cout << "Restoring original backend" << std::endl;
-    bl::localization_backend_manager::global(orig_backend);
-
-    bl::generator g;
-    std::locale l = g("en_US.UTF-8");
-    TEST(has_message(l));
-    g.categories(g.categories() ^ bl::category_t::message);
-    g.locale_cache_enabled(true);
-    g("en_US.UTF-8");
-    g.categories(g.categories() | bl::category_t::message);
-    l = g("en_US.UTF-8");
-    TEST(!has_message(l));
-    g.clear_cache();
-    g.locale_cache_enabled(false);
-    l = g("en_US.UTF-8");
-    TEST(has_message(l));
-    g.characters(g.characters() ^ bl::char_facet_t::char_f);
-    l = g("en_US.UTF-8");
-    TEST(!has_message(l));
-    g.characters(g.characters() | bl::char_facet_t::char_f);
-    l = g("en_US.UTF-8");
-    TEST(has_message(l));
-
-    l = g("en_US.ISO8859-1");
-    TEST_EQ(std::use_facet<bl::info>(l).language(), "en");
-    TEST_EQ(std::use_facet<bl::info>(l).country(), "US");
-    TEST(!std::use_facet<bl::info>(l).utf8());
-    TEST_EQ(std::use_facet<bl::info>(l).encoding(), "ISO8859-1");
-
-    l = g("en_US.UTF-8");
-    TEST_EQ(std::use_facet<bl::info>(l).language(), "en");
-    TEST_EQ(std::use_facet<bl::info>(l).country(), "US");
-    TEST(std::use_facet<bl::info>(l).utf8());
-    TEST_EQ(std::use_facet<bl::info>(l).encoding(), "UTF-8");
-
-    l = g("en_US.ISO8859-1");
-    TEST_EQ(std::use_facet<bl::info>(l).language(), "en");
-    TEST_EQ(std::use_facet<bl::info>(l).country(), "US");
-    TEST(!std::use_facet<bl::info>(l).utf8());
-    TEST_EQ(std::use_facet<bl::info>(l).encoding(), "ISO8859-1");
-
-    // Check that generate() extends the given locale, not replaces it
-    std::locale l_wt(std::locale::classic(), new test_facet);
-    TEST(blt::has_facet<test_facet>(g.generate(l_wt, "en_US.UTF-8")));
-    TEST(!blt::has_facet<test_facet>(g.generate("en_US.UTF-8")));
-    TEST(blt::has_facet<test_facet>(g.generate(l_wt, "en_US.ISO8859-1")));
-    TEST(!blt::has_facet<test_facet>(g.generate("en_US.ISO8859-1")));
-
-    // Check caching works
-    g.locale_cache_enabled(true);
-    // Generate a locale with a specific facet which is then cached
-    g.generate(l_wt, "en_US.UTF-8");
-    g.generate(l_wt, "en_US.ISO8859-1");
-    // Cached locale is returned -> facet is still there
-    TEST(blt::has_facet<test_facet>(g("en_US.UTF-8")));
-    TEST(blt::has_facet<test_facet>(g("en_US.ISO8859-1")));
-    // Check a property to verify it doesn't simply return the same locale for each call
-    TEST(std::use_facet<bl::info>(g("en_US.UTF-8")).utf8());
-    TEST(!std::use_facet<bl::info>(g("en_US.ISO8859-1")).utf8());
 }
