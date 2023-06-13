@@ -153,6 +153,30 @@ void test_invalid_locale()
     TEST_EQ(os.str(), classicStream.str());
 }
 
+void test_install_chartype(const std::string& backendName)
+{
+    // Use ASCII and UTF-8 encoding
+    for(const std::string localeName : {"C", "en_US.UTF-8"}) {
+        std::cout << "--- Locale: " << localeName << std::endl;
+        const std::locale origLocale = bl::generator{}(localeName);
+        const auto backend = bl::localization_backend_manager::global().get();
+        backend->set_option("locale", localeName);
+        for(auto category = bl::per_character_facet_first; category <= bl::per_character_facet_last; ++category) {
+            std::cout << "---- Testing category " << static_cast<unsigned>(category) << '\n';
+            // This should modify the locale
+            const std::locale newLocale_char = backend->install(origLocale, category, bl::char_facet_t::char_f);
+            // This should not
+            const std::locale newLocale_nochar = backend->install(origLocale, category, bl::char_facet_t::nochar);
+            // But the boundary facet is only implemented in ICU, so for all else the locale is still unchanged
+            if(category != bl::category_t::boundary || backendName == "icu")
+                TEST(origLocale != newLocale_char);
+            else
+                TEST(origLocale == newLocale_char);
+            TEST(origLocale == newLocale_nochar);
+        }
+    }
+}
+
 void test_main(int /*argc*/, char** /*argv*/)
 {
     {
@@ -226,6 +250,7 @@ void test_main(int /*argc*/, char** /*argv*/)
             // information
             TEST(blt::has_facet<bl::info>(l));
         }
+        test_install_chartype(backendName);
     }
     std::cout << "Test special locales" << std::endl;
     test_special_locales();
