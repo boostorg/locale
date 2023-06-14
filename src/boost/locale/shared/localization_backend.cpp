@@ -167,7 +167,7 @@ namespace boost { namespace locale {
     localization_backend_manager&
     localization_backend_manager::operator=(localization_backend_manager&&) noexcept = default;
 
-    std::unique_ptr<localization_backend> localization_backend_manager::get() const
+    std::unique_ptr<localization_backend> localization_backend_manager::create() const
     {
         return std::unique_ptr<localization_backend>(pimpl_->create());
     }
@@ -177,10 +177,6 @@ namespace boost { namespace locale {
         pimpl_->adopt_backend(name, backend.release());
     }
 
-    localization_backend* localization_backend_manager::create() const
-    {
-        return pimpl_->create();
-    }
     void localization_backend_manager::adopt_backend(const std::string& name, localization_backend* backend)
     {
         pimpl_->adopt_backend(name, backend);

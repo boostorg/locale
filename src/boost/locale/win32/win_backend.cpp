@@ -51,19 +51,16 @@ namespace boost { namespace locale { namespace impl_win {
             if(!invalid_)
                 return;
             invalid_ = false;
-            if(locale_id_.empty()) {
+            if(locale_id_.empty())
                 real_id_ = util::get_system_locale(true); // always UTF-8
-                lc_ = winlocale(real_id_);
-            } else {
-                lc_ = winlocale(locale_id_);
+            else
                 real_id_ = locale_id_;
-            }
             util::locale_data d;
             d.parse(real_id_);
-            if(!d.is_utf8()) {
-                lc_ = winlocale();
-                // Make it C as non-UTF8 locales are not supported
-            }
+            if(!d.is_utf8())
+                lc_ = winlocale(); // Make it C as non-UTF8 locales are not supported
+            else
+                lc_ = winlocale(real_id_);
         }
 
         std::locale install(const std::locale& base, category_t category, char_facet_t type) override
