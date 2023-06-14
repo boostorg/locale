@@ -78,19 +78,18 @@ namespace boost { namespace locale {
         /// Destructor
         ~localization_backend_manager();
 
-        /// Create new localization backend according to current settings.
-        std::unique_ptr<localization_backend> get() const;
+        /// Create new localization backend according to current settings. Ownership is passed to caller
+        std::unique_ptr<localization_backend> create() const;
 
-        BOOST_DEPRECATED("This function is deprecated, use 'get()' instead")
-        std::unique_ptr<localization_backend> get_unique_ptr() const { return get(); }
+        BOOST_DEPRECATED("This function is deprecated, use 'create()' instead")
+        std::unique_ptr<localization_backend> get() const { return create(); }
+        BOOST_DEPRECATED("This function is deprecated, use 'create()' instead")
+        std::unique_ptr<localization_backend> get_unique_ptr() const { return create(); }
 
         /// Add new backend to the manager, each backend should be uniquely defined by its name.
         ///
         /// This library provides: "icu", "posix", "winapi" and "std" backends.
         void add_backend(const std::string& name, std::unique_ptr<localization_backend> backend);
-
-        /// Create new localization backend according to current settings. Ownership is passed to caller
-        localization_backend* create() const;
 
         /// Add new backend to the manager, each backend should be uniquely defined by its name.
         /// ownership on backend is transfered

@@ -109,7 +109,7 @@ void test_main(int /*argc*/, char** /*argv*/)
 #else
         std::cout << "- C++ locale: " << loc.name() << std::endl;
 #endif
-    } catch(const std::exception&) {
+    } catch(const std::exception&) {                     // LCOV_EXCL_LINE
         std::cout << "- C++ locale: is not supported\n"; // LCOV_EXCL_LINE
     }
 
