@@ -251,6 +251,7 @@ jobs:
           gen_locale he_IL.UTF-8
           gen_locale ja_JP.UTF-8
           gen_locale ru_RU.UTF-8
+          gen_locale sv_SE.UTF-8
           gen_locale tr_TR.UTF-8
           # ISO locales used by some tests
           gen_locale en_US.iso88591
