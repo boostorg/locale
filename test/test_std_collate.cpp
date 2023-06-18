@@ -81,6 +81,7 @@ void test_char()
 #endif
 }
 
+BOOST_LOCALE_DISABLE_UNREACHABLE_CODE_WARNING
 void test_main(int /*argc*/, char** /*argv*/)
 {
 #ifdef BOOST_LOCALE_NO_STD_BACKEND
