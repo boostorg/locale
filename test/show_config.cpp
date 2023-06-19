@@ -13,10 +13,6 @@
 #include <locale>
 #include <stdexcept>
 #include <vector>
-#ifndef BOOST_LOCALE_NO_WINAPI_BACKEND
-#    include "../src/boost/locale/win32/lcid.hpp"
-#endif
-#include <boost/core/ignore_unused.hpp>
 
 #ifdef BOOST_LOCALE_WITH_ICU
 #    include <unicode/uversion.h>
@@ -45,16 +41,6 @@ const char* env(const char* s)
     if(r)
         return r;
     return "";
-}
-
-bool has_win_locale(const std::string& locale_name)
-{
-#ifdef BOOST_LOCALE_NO_WINAPI_BACKEND
-    boost::ignore_unused(locale_name);
-    return false;
-#else
-    return boost::locale::impl_win::locale_to_lcid(locale_name) != 0;
-#endif
 }
 
 void check_locales(const std::vector<const char*>& names)

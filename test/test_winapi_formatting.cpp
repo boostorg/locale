@@ -148,6 +148,7 @@ void test_date_time(std::locale l)
     }
 }
 
+BOOST_LOCALE_DISABLE_UNREACHABLE_CODE_WARNING
 void test_main(int /*argc*/, char** /*argv*/)
 {
 #ifdef BOOST_LOCALE_NO_WINAPI_BACKEND
@@ -165,7 +166,7 @@ void test_main(int /*argc*/, char** /*argv*/)
     {
         const std::string name = name_lcid.first;
         std::cout << "- " << name << " locale" << std::endl;
-        if(boost::locale::impl_win::locale_to_lcid(name) == 0) {
+        if(!has_win_locale(name)) {
             std::cout << "-- not supported, skipping" << std::endl;
             continue;
         }

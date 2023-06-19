@@ -362,13 +362,31 @@ jobs:
         shell: pwsh
         run: 'Add-Content $Env:BOOST_ROOT/project-config.jam "path-constant ICU_PATH : `"$($pwd.Path)\ICU`" ;"'
 
+      - name: Run tests (WinAPI, without coverage)
+        if: '!matrix.coverage'
+        run: |
+          set B2_FLAGS=boost.locale.icu=off boost.locale.iconv=off boost.locale.std=off boost.locale.winapi=on
+          ci\build.bat
+          rmdir /s /q bin.v2
+        env:
+          B2_TOOLSET: ${{matrix.toolset}}
+          B2_CXXSTD: ${{matrix.cxxstd}}
+          B2_ADDRESS_MODEL: ${{matrix.addrmd}}
+
+      - name: Run tests (ICU, without coverage)
+        if: '!matrix.coverage'
+        run: |
+          set B2_FLAGS=boost.locale.icu=on boost.locale.iconv=off boost.locale.std=off boost.locale.winapi=off
+          ci\build.bat
+          rmdir /s /q bin.v2
+        env:
+          B2_TOOLSET: ${{matrix.toolset}}
+          B2_CXXSTD: ${{matrix.cxxstd}}
+          B2_ADDRESS_MODEL: ${{matrix.addrmd}}
+
       - name: Run tests (without coverage)
         if: '!matrix.coverage'
         run: |
-          set B2_FLAGS=boost.locale.icu=off boost.locale.iconv=off
-          ci\build.bat
-          rmdir /s /q bin.v2
-          set B2_FLAGS=
           set B2_TARGETS=libs/%SELF%/test//show_config --verbose-test
           ci\build.bat
           set B2_TARGETS=
@@ -378,7 +396,7 @@ jobs:
           B2_CXXSTD: ${{matrix.cxxstd}}
           B2_ADDRESS_MODEL: ${{matrix.addrmd}}
 
-      - name: Show config before collection coverage
+      - name: Show config before collecting coverage
         if: matrix.coverage
         run: |
           set B2_TARGETS=libs/%SELF%/test//show_config --verbose-test

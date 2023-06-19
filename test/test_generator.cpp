@@ -58,14 +58,9 @@ namespace bl = boost::locale;
 
 bool hasLocaleForBackend(const std::string& locale_name, const std::string& backendName)
 {
-    if(backendName == "winapi") {
-#ifdef BOOST_LOCALE_NO_WINAPI_BACKEND
-        boost::ignore_unused(locale_name); // LCOV_EXCL_LINE
-        return false;                      // LCOV_EXCL_LINE
-#else
-        return bl::impl_win::locale_to_lcid(locale_name) != 0;
-#endif
-    } else if(backendName == "std")
+    if(backendName == "winapi")
+        return has_win_locale(locale_name);
+    else if(backendName == "std")
         return has_std_locale(locale_name.c_str());
     else if(backendName == "posix")
         return has_posix_locale(locale_name);

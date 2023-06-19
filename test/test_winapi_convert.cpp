@@ -53,6 +53,7 @@ void test_norm(std::string orig, std::string normal, boost::locale::norm_type ty
     test_normc<wchar_t>(to<wchar_t>(orig), to<wchar_t>(normal), type);
 }
 
+BOOST_LOCALE_DISABLE_UNREACHABLE_CODE_WARNING
 void test_main(int /*argc*/, char** /*argv*/)
 {
 #ifdef BOOST_LOCALE_NO_WINAPI_BACKEND

@@ -15,6 +15,11 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#ifndef BOOST_LOCALE_NO_WINAPI_BACKEND
+#    include "../src/boost/locale/win32/lcid.hpp"
+#else
+#    include <boost/core/ignore_unused.hpp>
+#endif
 #if BOOST_LOCALE_USE_WIN32_API
 #    ifndef NOMINMAX
 #        define NOMINMAX
@@ -138,6 +143,16 @@ bool has_std_locale(const char* name)
     } catch(...) {
         return false;
     }
+}
+
+bool has_win_locale(const std::string& locale_name)
+{
+#ifdef BOOST_LOCALE_NO_WINAPI_BACKEND
+    boost::ignore_unused(locale_name); // LCOV_EXCL_LINE
+    return false;                      // LCOV_EXCL_LINE
+#else
+    return boost::locale::impl_win::locale_to_lcid(locale_name) != 0;
+#endif
 }
 
 /// Clear a string stream and return it
