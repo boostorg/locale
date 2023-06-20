@@ -16,6 +16,7 @@
 #include <memory>
 #include <set>
 #include <string>
+#include <type_traits>
 
 #ifdef BOOST_MSVC
 #    pragma warning(push)
@@ -212,7 +213,8 @@ namespace boost { namespace locale {
 
         /// Assign other message object to this one
         basic_message& operator=(const basic_message&) = default;
-        basic_message& operator=(basic_message&&) noexcept = default;
+        basic_message&
+        operator=(basic_message&&) noexcept(std::is_nothrow_move_assignable<string_type>::value) = default;
 
         /// Swap two message objects
         void
