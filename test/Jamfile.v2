@@ -15,8 +15,8 @@ project : requirements
     <toolset>gcc:<cxxflags>-Wzero-as-null-pointer-constant
     [ predef-check "BOOST_COMP_GNUC >= 8.0.0" : : <cxxflags>-Wsuggest-override ]
     [ predef-check "BOOST_COMP_GNUC >= 8.0.0" and "BOOST_COMP_GNUC < 12" : : <warnings-as-errors>on ]
-    <toolset>clang:<cxxflags>-Wzero-as-null-pointer-constant
     <toolset>clang-5:<warnings-as-errors>on
+    [ predef-check "BOOST_COMP_CLANG >= 5" : : <cxxflags>-Wzero-as-null-pointer-constant ]
     [ predef-check "BOOST_COMP_CLANG >= 9" and "BOOST_COMP_CLANG < 14" : : <warnings-as-errors>on ]
     <include>.
     # Make sure we get all defines we need
