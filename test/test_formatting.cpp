@@ -25,6 +25,7 @@ const std::string test_locale_name = "en_US";
 std::string message_path = "./";
 
 #ifdef BOOST_LOCALE_WITH_ICU
+#    include <unicode/datefmt.h>
 #    include <unicode/numfmt.h>
 #    include <unicode/timezone.h>
 #    include <unicode/uversion.h>
@@ -66,6 +67,8 @@ std::string get_icu_currency_iso(const double value)
 
 #endif
 
+using format_style_t = std::ios_base&(std::ios_base&);
+
 #ifdef BOOST_LOCALE_WITH_ICU
 std::string get_icu_gmt_name(icu::TimeZone::EDisplayType style)
 {
@@ -75,10 +78,55 @@ std::string get_icu_gmt_name(icu::TimeZone::EDisplayType style)
 
 // This changes between ICU versions, e.g. "GMT" or "Greenwich Mean Time"
 const std::string icu_full_gmt_name = get_icu_gmt_name(icu::TimeZone::EDisplayType::LONG);
-// e.g. "GMT", "GMT+00:00"
-const std::string icu_gmt_name = get_icu_gmt_name(icu::TimeZone::EDisplayType::SHORT);
+
+std::string get_ICU_time(format_style_t style, const time_t ts, const char* tz = nullptr)
+{
+    using icu::DateFormat;
+    DateFormat::EStyle icu_style = DateFormat::kDefault;
+    namespace as = boost::locale::as;
+    if(style == as::time_short)
+        icu_style = DateFormat::kShort;
+    else if(style == as::time_medium)
+        icu_style = DateFormat::kMedium;
+    else if(style == as::time_long)
+        icu_style = DateFormat::kLong;
+    else if(style == as::time_full)
+        icu_style = DateFormat::kFull;
+    std::unique_ptr<icu::DateFormat> fmt(icu::DateFormat::createTimeInstance(icu_style, get_icu_test_locale()));
+    if(!tz)
+        fmt->setTimeZone(*icu::TimeZone::getGMT());
+    else
+        fmt->adoptTimeZone(icu::TimeZone::createTimeZone(icu::UnicodeString::fromUTF8(tz)));
+    icu::UnicodeString s;
+    return from_icu_string(fmt->format(ts * 1000., s));
+}
+
+std::string get_ICU_datetime(format_style_t style, const time_t ts)
+{
+    using icu::DateFormat;
+    DateFormat::EStyle icu_style = DateFormat::kDefault;
+    namespace as = boost::locale::as;
+    if(style == as::time_short)
+        icu_style = DateFormat::kShort;
+    else if(style == as::time_medium)
+        icu_style = DateFormat::kMedium;
+    else if(style == as::time_long)
+        icu_style = DateFormat::kLong;
+    else if(style == as::time_full)
+        icu_style = DateFormat::kFull;
+    std::unique_ptr<icu::DateFormat> fmt(
+      icu::DateFormat::createDateTimeInstance(icu_style, icu_style, get_icu_test_locale()));
+    fmt->setTimeZone(*icu::TimeZone::getGMT());
+    icu::UnicodeString s;
+    return from_icu_string(fmt->format(ts * 1000., s));
+}
+
 #else
-const std::string icu_full_gmt_name, icu_gmt_name;
+const std::string icu_full_gmt_name;
+// clang-format off
+std::string get_ICU_time(...){ return ""; } // LCOV_EXCL_LINE
+std::string get_ICU_datetime(...){ return ""; } // LCOV_EXCL_LINE
+// clang-format on
 #endif
 
 using namespace boost::locale;
@@ -314,87 +362,92 @@ void test_manip(std::string e_charset = "UTF-8")
 
     TEST_PARSE_FAILS(as::date >> as::date_short, "aa/bb/cc", double);
 
-    TEST_FMT_PARSE_2_2(as::time, as::gmt, a_datetime, "3:33:13 PM", a_time + a_timesec);
-    TEST_FMT_PARSE_3_2(as::time, as::time_short, as::gmt, a_datetime, "3:33 PM", a_time);
-    TEST_FMT_PARSE_3_2(as::time, as::time_medium, as::gmt, a_datetime, "3:33:13 PM", a_time + a_timesec);
-    TEST_FMT_PARSE_3_2(as::time, as::time_long, as::gmt, a_datetime, "3:33:13 PM " + icu_gmt_name, a_time + a_timesec);
+    std::string icu_time_def = get_ICU_time(as::time, a_datetime);
+    std::string icu_time_short = get_ICU_time(as::time_short, a_datetime);
+    std::string icu_time_medium = get_ICU_time(as::time_medium, a_datetime);
+    std::string icu_time_long = get_ICU_time(as::time_long, a_datetime);
+    std::string icu_time_full = get_ICU_time(as::time_full, a_datetime);
+
+    TEST_PARSE(as::time >> as::gmt, "3:33:13 PM", a_time + a_timesec);
+    TEST_FMT_PARSE_2_2(as::time, as::gmt, a_datetime, icu_time_def, a_time + a_timesec);
+
+    TEST_PARSE(as::time >> as::time_short >> as::gmt, "3:33 PM", a_time);
+    TEST_FMT_PARSE_3_2(as::time, as::time_short, as::gmt, a_datetime, icu_time_short, a_time);
+
+    TEST_PARSE(as::time >> as::time_medium >> as::gmt, "3:33:13 PM", a_time + a_timesec);
+    TEST_FMT_PARSE_3_2(as::time, as::time_medium, as::gmt, a_datetime, icu_time_medium, a_time + a_timesec);
+
+    TEST_PARSE(as::time >> as::time_long >> as::gmt, "3:33:13 PM GMT", a_time + a_timesec);
+    TEST_FMT_PARSE_3_2(as::time, as::time_long, as::gmt, a_datetime, icu_time_long, a_time + a_timesec);
     // ICU 4.8.0 has a bug which makes parsing the full time fail when anything follows the time zone
 #if BOOST_LOCALE_ICU_VERSION_EXACT != 40800
-    TEST_FMT_PARSE_3_2(as::time,
-                       as::time_full,
-                       as::gmt,
-                       a_datetime,
-                       "3:33:13 PM " + icu_full_gmt_name,
-                       a_time + a_timesec);
+    TEST_PARSE(as::time >> as::time_full >> as::gmt, "3:33:13 PM GMT+00:00", a_time + a_timesec);
+    TEST_FMT_PARSE_3_2(as::time, as::time_full, as::gmt, a_datetime, icu_time_full, a_time + a_timesec);
 #endif
     TEST_PARSE_FAILS(as::time, "AM", double);
 
-    TEST_FMT_PARSE_2_2(as::time, as::time_zone("GMT+01:00"), a_datetime, "4:33:13 PM", a_time + a_timesec);
-    TEST_FMT_PARSE_3_2(as::time, as::time_short, as::time_zone("GMT+01:00"), a_datetime, "4:33 PM", a_time);
+    icu_time_def = get_ICU_time(as::time, a_datetime, "GMT+01:00");
+    icu_time_short = get_ICU_time(as::time_short, a_datetime, "GMT+01:00");
+    icu_time_medium = get_ICU_time(as::time_medium, a_datetime, "GMT+01:00");
+    icu_time_long = get_ICU_time(as::time_long, a_datetime, "GMT+01:00");
+    icu_time_full = get_ICU_time(as::time_full, a_datetime, "GMT+01:00");
+
+    TEST_PARSE(as::time >> as::time_zone("GMT+01:00"), "4:33:13 PM", a_time + a_timesec);
+    TEST_FMT_PARSE_2_2(as::time, as::time_zone("GMT+01:00"), a_datetime, icu_time_def, a_time + a_timesec);
+
+    TEST_PARSE(as::time >> as::time_short >> as::time_zone("GMT+01:00"), "4:33 PM", a_time);
+    TEST_FMT_PARSE_3_2(as::time, as::time_short, as::time_zone("GMT+01:00"), a_datetime, icu_time_short, a_time);
+
+    TEST_PARSE(as::time >> as::time_medium >> as::time_zone("GMT+01:00"), "4:33:13 PM", a_time + a_timesec);
     TEST_FMT_PARSE_3_2(as::time,
                        as::time_medium,
                        as::time_zone("GMT+01:00"),
                        a_datetime,
-                       "4:33:13 PM",
+                       icu_time_medium,
                        a_time + a_timesec);
 
-#if U_ICU_VERSION_MAJOR_NUM >= 51
-#    define GMT_P100 "GMT+1"
-#else
-#    define GMT_P100 "GMT+01:00"
-#endif
-
-#if U_ICU_VERSION_MAJOR_NUM >= 50
-#    define ICU_COMMA ","
-#    define ICUAT " at"
-#else
-#    define ICU_COMMA ""
-#    define ICUAT ""
-#endif
-
+    TEST_PARSE(as::time >> as::time_long >> as::time_zone("GMT+01:00"), "4:33:13 PM GMT+01:00", a_time + a_timesec);
     TEST_FMT_PARSE_3_2(as::time,
                        as::time_long,
                        as::time_zone("GMT+01:00"),
                        a_datetime,
-                       "4:33:13 PM " GMT_P100,
+                       icu_time_long,
                        a_time + a_timesec);
 #if !(BOOST_LOCALE_ICU_VERSION == 308 && defined(__CYGWIN__)) // Known failure due to ICU issue
+    TEST_PARSE(as::time >> as::time_full >> as::time_zone("GMT+01:00"), "4:33:13 PM GMT+01:00", a_time + a_timesec);
     TEST_FMT_PARSE_3_2(as::time,
                        as::time_full,
                        as::time_zone("GMT+01:00"),
                        a_datetime,
-                       "4:33:13 PM GMT+01:00",
+                       icu_time_full,
                        a_time + a_timesec);
 #endif
 
-    TEST_FMT_PARSE_2(as::datetime, as::gmt, a_datetime, "Feb 5, 1970" ICU_COMMA " 3:33:13 PM");
-    TEST_FMT_PARSE_4_2(as::datetime,
-                       as::date_short,
-                       as::time_short,
-                       as::gmt,
-                       a_datetime,
-                       "2/5/70" ICU_COMMA " 3:33 PM",
-                       a_date + a_time);
-    TEST_FMT_PARSE_4(as::datetime,
-                     as::date_medium,
-                     as::time_medium,
-                     as::gmt,
-                     a_datetime,
-                     "Feb 5, 1970" ICU_COMMA " 3:33:13 PM");
-    TEST_FMT_PARSE_4(as::datetime,
-                     as::date_long,
-                     as::time_long,
-                     as::gmt,
-                     a_datetime,
-                     "February 5, 1970" ICUAT " 3:33:13 PM " + icu_gmt_name);
+    const std::string icu_def = get_ICU_datetime(as::time, a_datetime);
+    const std::string icu_short = get_ICU_datetime(as::time_short, a_datetime);
+    const std::string icu_medium = get_ICU_datetime(as::time_medium, a_datetime);
+    const std::string icu_long = get_ICU_datetime(as::time_long, a_datetime);
+    const std::string icu_full = get_ICU_datetime(as::time_full, a_datetime);
+
+    TEST_PARSE(as::datetime >> as::gmt, "Feb 5, 1970, 3:33:13 PM", a_datetime);
+    TEST_FMT_PARSE_2(as::datetime, as::gmt, a_datetime, icu_def);
+
+    TEST_PARSE(as::datetime >> as::date_short >> as::time_short >> as::gmt, "2/5/70, 3:33 PM", a_date + a_time);
+    TEST_FMT_PARSE_4_2(as::datetime, as::date_short, as::time_short, as::gmt, a_datetime, icu_short, a_date + a_time);
+
+    TEST_PARSE(as::datetime >> as::date_medium >> as::time_medium >> as::gmt, "Feb 5, 1970, 3:33:13 PM", a_datetime);
+    TEST_FMT_PARSE_4(as::datetime, as::date_medium, as::time_medium, as::gmt, a_datetime, icu_medium);
+
+    TEST_PARSE(as::datetime >> as::date_long >> as::time_long >> as::gmt,
+               "February 5, 1970 at 3:33:13 PM GMT",
+               a_datetime);
+    TEST_FMT_PARSE_4(as::datetime, as::date_long, as::time_long, as::gmt, a_datetime, icu_long);
 #if BOOST_LOCALE_ICU_VERSION_EXACT != 40800
     // ICU 4.8.0 has a bug which makes parsing the full time fail when anything follows the time zone
-    TEST_FMT_PARSE_4(as::datetime,
-                     as::date_full,
-                     as::time_full,
-                     as::gmt,
-                     a_datetime,
-                     "Thursday, February 5, 1970" ICUAT " 3:33:13 PM " + icu_full_gmt_name);
+    TEST_PARSE(as::datetime >> as::date_full >> as::time_full >> as::gmt,
+               "Thursday, February 5, 1970 at 3:33:13 PM Greenwich Mean Time",
+               a_datetime);
+    TEST_FMT_PARSE_4(as::datetime, as::date_full, as::time_full, as::gmt, a_datetime, icu_full);
 #endif
 
     const std::pair<char, std::string> mark_test_cases[] = {
@@ -402,7 +455,7 @@ void test_manip(std::string e_charset = "UTF-8")
       std::make_pair('A', "Thursday"),
       std::make_pair('b', "Feb"),
       std::make_pair('B', "February"),
-      std::make_pair('c', "Thursday, February 5, 1970" ICUAT " 3:33:13 PM " + icu_full_gmt_name),
+      std::make_pair('c', icu_full),
       std::make_pair('d', "05"),
       std::make_pair('e', "5"),
       std::make_pair('h', "Feb"),
@@ -419,7 +472,7 @@ void test_manip(std::string e_charset = "UTF-8")
       std::make_pair('t', "\t"),
       std::make_pair('T', "15:33:13"),
       std::make_pair('x', "Feb 5, 1970"),
-      std::make_pair('X', "3:33:13 PM"),
+      std::make_pair('X', get_ICU_time(as::time, a_datetime)),
       std::make_pair('y', "70"),
       std::make_pair('Y', "1970"),
       std::make_pair('Z', icu_full_gmt_name),
@@ -434,7 +487,7 @@ void test_manip(std::string e_charset = "UTF-8")
         std::basic_ostringstream<CharType> ss;
         ss.imbue(loc);
         ss << as::ftime(format_string) << as::gmt << a_datetime;
-        TEST_EQ(ss.str(), to<CharType>(mark_result.second));
+        TEST_EQ(ss.str(), to_correct_string<CharType>(mark_result.second, loc));
     }
 
     {
@@ -668,22 +721,34 @@ void test_format_class(std::string charset = "UTF-8")
     time_t a_time = 3600 * 15 + 60 * 33;  // 15:33:05
     time_t a_timesec = 13;
     time_t a_datetime = a_date + a_time + a_timesec;
+    const std::string icu_time_def = get_ICU_time(as::time, a_datetime);
+    const std::string icu_time_short = get_ICU_time(as::time_short, a_datetime);
+    const std::string icu_time_medium = get_ICU_time(as::time_medium, a_datetime);
+    const std::string icu_time_long = get_ICU_time(as::time_long, a_datetime);
+    const std::string icu_time_full = get_ICU_time(as::time_full, a_datetime);
+    const std::string icu_datetime_def = get_ICU_datetime(as::time, a_datetime);
+    const std::string icu_datetime_short = get_ICU_datetime(as::time_short, a_datetime);
+    const std::string icu_datetime_medium = get_ICU_datetime(as::time_medium, a_datetime);
+    const std::string icu_datetime_long = get_ICU_datetime(as::time_long, a_datetime);
+    const std::string icu_datetime_full = get_ICU_datetime(as::time_full, a_datetime);
+
     TEST_FORMAT_CLS("{1,date,gmt}", a_datetime, "Feb 5, 1970");
-    TEST_FORMAT_CLS("{1,time,gmt}", a_datetime, "3:33:13 PM");
-    TEST_FORMAT_CLS("{1,datetime,gmt}", a_datetime, "Feb 5, 1970" ICU_COMMA " 3:33:13 PM");
-    TEST_FORMAT_CLS("{1,dt,gmt}", a_datetime, "Feb 5, 1970" ICU_COMMA " 3:33:13 PM");
+    TEST_FORMAT_CLS("{1,time,gmt}", a_datetime, icu_time_def);
+    TEST_FORMAT_CLS("{1,datetime,gmt}", a_datetime, icu_datetime_def);
+    TEST_FORMAT_CLS("{1,dt,gmt}", a_datetime, icu_datetime_def);
     // With length modifier
-    TEST_FORMAT_CLS("{1,time=short,gmt}", a_datetime, "3:33 PM");
-    TEST_FORMAT_CLS("{1,time=s,gmt}", a_datetime, "3:33 PM");
-    TEST_FORMAT_CLS("{1,time=medium,gmt}", a_datetime, "3:33:13 PM");
-    TEST_FORMAT_CLS("{1,time=m,gmt}", a_datetime, "3:33:13 PM");
-    TEST_FORMAT_CLS("{1,time=long,gmt}", a_datetime, "3:33:13 PM " + icu_gmt_name);
-    TEST_FORMAT_CLS("{1,time=l,gmt}", a_datetime, "3:33:13 PM " + icu_gmt_name);
+    TEST_FORMAT_CLS("{1,time=short,gmt}", a_datetime, icu_time_short);
+    TEST_FORMAT_CLS("{1,time=s,gmt}", a_datetime, icu_time_short);
+    TEST_FORMAT_CLS("{1,time=medium,gmt}", a_datetime, icu_time_medium);
+    TEST_FORMAT_CLS("{1,time=m,gmt}", a_datetime, icu_time_medium);
+    TEST_FORMAT_CLS("{1,time=long,gmt}", a_datetime, icu_time_long);
+    TEST_FORMAT_CLS("{1,time=l,gmt}", a_datetime, icu_time_long);
     TEST_FORMAT_CLS("{1,date=full,gmt}", a_datetime, "Thursday, February 5, 1970");
     TEST_FORMAT_CLS("{1,date=f,gmt}", a_datetime, "Thursday, February 5, 1970");
     // Handle timezones and reuse of arguments
-    TEST_FORMAT_CLS("{1,time=s,gmt};{1,time=s,timezone=GMT+01:00}", a_datetime, "3:33 PM;4:33 PM");
-    TEST_FORMAT_CLS("{1,time=s,gmt};{1,time=s,tz=GMT+01:00}", a_datetime, "3:33 PM;4:33 PM");
+    const std::string icu_time_short2 = get_ICU_time(as::time_short, a_datetime, "GMT+01:00");
+    TEST_FORMAT_CLS("{1,time=s,gmt};{1,time=s,timezone=GMT+01:00}", a_datetime, icu_time_short + ";" + icu_time_short2);
+    TEST_FORMAT_CLS("{1,time=s,gmt};{1,time=s,tz=GMT+01:00}", a_datetime, icu_time_short + ";" + icu_time_short2);
     // Handle single quotes
     TEST_FORMAT_CLS("{1,gmt,ftime='%H'''}", a_datetime, "15'");
     TEST_FORMAT_CLS("{1,gmt,ftime='''%H'}", a_datetime, "'15");
