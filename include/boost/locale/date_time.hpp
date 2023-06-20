@@ -567,8 +567,8 @@ namespace boost { namespace locale {
 
         /// Copy a date_time
         date_time(const date_time& other);
-        // Move construct a new date_time
-        date_time(date_time&&) = default;
+        // Move construct a date_time
+        date_time(date_time&&) noexcept = default;
 
         /// copy date_time and change some fields according to the \a set
         date_time(const date_time& other, const date_time_period_set& set);
@@ -576,7 +576,7 @@ namespace boost { namespace locale {
         /// assign the date_time
         date_time& operator=(const date_time& other);
         // Move assign a date_time
-        date_time& operator=(date_time&&) = default;
+        date_time& operator=(date_time&&) noexcept = default;
 
         /// Create a date_time object using POSIX time \a time and default calendar
         ///
