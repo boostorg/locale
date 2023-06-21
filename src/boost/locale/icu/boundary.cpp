@@ -25,6 +25,16 @@
 #    pragma warning(disable : 4267) // 'argument' : conversion from 'size_t'
 #endif
 
+#if BOOST_LOCALE_ICU_VERSION >= 306
+namespace std {
+template<>
+struct default_delete<UText> {
+    using pointer = UText*;
+    void operator()(pointer ptr) { utext_close(ptr); }
+};
+} // namespace std
+#endif
+
 namespace boost { namespace locale {
     namespace boundary { namespace impl_icu {
 
@@ -129,28 +139,23 @@ namespace boost { namespace locale {
             UErrorCode err = U_ZERO_ERROR;
             BOOST_LOCALE_START_CONST_CONDITION
             if(sizeof(CharType) == 2 || (sizeof(CharType) == 1 && util::normalize_encoding(encoding) == "utf8")) {
-                UText* ut = nullptr;
-                try {
-                    if(sizeof(CharType) == 1)
-                        ut = utext_openUTF8(nullptr, reinterpret_cast<const char*>(begin), end - begin, &err);
-                    else // sizeof(CharType)==2
-                        ut = utext_openUChars(nullptr, reinterpret_cast<const UChar*>(begin), end - begin, &err);
-                    BOOST_LOCALE_END_CONST_CONDITION
-
-                    check_and_throw_icu_error(err);
-                    err = U_ZERO_ERROR;
-                    if(!ut)
-                        throw std::runtime_error("Failed to create UText");
-                    bi->setText(ut, err);
-                    check_and_throw_icu_error(err);
-                    indx = map_direct(t, bi.get(), end - begin);
-                } catch(...) {
-                    if(ut)
-                        utext_close(ut);
-                    throw;
+                UText ut_stack = UTEXT_INITIALIZER;
+                std::unique_ptr<UText> ut;
+                if(sizeof(CharType) == 1)
+                    ut.reset(utext_openUTF8(&ut_stack, reinterpret_cast<const char*>(begin), end - begin, &err));
+                else {
+                    static_assert(sizeof(UChar) == 2, "!");
+                    ut.reset(utext_openUChars(&ut_stack, reinterpret_cast<const UChar*>(begin), end - begin, &err));
                 }
-                if(ut)
-                    utext_close(ut);
+                BOOST_LOCALE_END_CONST_CONDITION
+
+                check_and_throw_icu_error(err);
+                err = U_ZERO_ERROR;
+                if(!ut)
+                    throw std::runtime_error("Failed to create UText");
+                bi->setText(ut.get(), err);
+                check_and_throw_icu_error(err);
+                indx = map_direct(t, bi.get(), end - begin);
             } else
 #endif
             {
