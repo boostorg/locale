@@ -429,23 +429,23 @@ void test_manip(std::string e_charset = "UTF-8")
     const std::string icu_long = get_ICU_datetime(as::time_long, a_datetime);
     const std::string icu_full = get_ICU_datetime(as::time_full, a_datetime);
 
-    TEST_PARSE(as::datetime >> as::gmt, "Feb 5, 1970, 3:33:13 PM", a_datetime);
+    TEST_PARSE(as::datetime >> as::gmt, "Feb 5, 1970 3:33:13 PM", a_datetime);
     TEST_FMT_PARSE_2(as::datetime, as::gmt, a_datetime, icu_def);
 
-    TEST_PARSE(as::datetime >> as::date_short >> as::time_short >> as::gmt, "2/5/70, 3:33 PM", a_date + a_time);
+    TEST_PARSE(as::datetime >> as::date_short >> as::time_short >> as::gmt, "2/5/70 3:33 PM", a_date + a_time);
     TEST_FMT_PARSE_4_2(as::datetime, as::date_short, as::time_short, as::gmt, a_datetime, icu_short, a_date + a_time);
 
-    TEST_PARSE(as::datetime >> as::date_medium >> as::time_medium >> as::gmt, "Feb 5, 1970, 3:33:13 PM", a_datetime);
+    TEST_PARSE(as::datetime >> as::date_medium >> as::time_medium >> as::gmt, "Feb 5, 1970 3:33:13 PM", a_datetime);
     TEST_FMT_PARSE_4(as::datetime, as::date_medium, as::time_medium, as::gmt, a_datetime, icu_medium);
 
     TEST_PARSE(as::datetime >> as::date_long >> as::time_long >> as::gmt,
-               "February 5, 1970 at 3:33:13 PM GMT",
+               "February 5, 1970 3:33:13 PM GMT",
                a_datetime);
     TEST_FMT_PARSE_4(as::datetime, as::date_long, as::time_long, as::gmt, a_datetime, icu_long);
 #if BOOST_LOCALE_ICU_VERSION_EXACT != 40800
     // ICU 4.8.0 has a bug which makes parsing the full time fail when anything follows the time zone
     TEST_PARSE(as::datetime >> as::date_full >> as::time_full >> as::gmt,
-               "Thursday, February 5, 1970 at 3:33:13 PM Greenwich Mean Time",
+               "Thursday, February 5, 1970 3:33:13 PM Greenwich Mean Time",
                a_datetime);
     TEST_FMT_PARSE_4(as::datetime, as::date_full, as::time_full, as::gmt, a_datetime, icu_full);
 #endif
