@@ -12,7 +12,7 @@
 #include "boost/locale/icu/icu_util.hpp"
 #include "boost/locale/icu/uconv.hpp"
 #include "boost/locale/util/encoding.hpp"
-#if BOOST_LOCALE_ICU_VERSION >= 306
+#if BOOST_LOCALE_ICU_VERSION >= 5502
 #    include <unicode/utext.h>
 #endif
 #include <memory>
@@ -25,7 +25,7 @@
 #    pragma warning(disable : 4267) // 'argument' : conversion from 'size_t'
 #endif
 
-#if BOOST_LOCALE_ICU_VERSION >= 306
+#if BOOST_LOCALE_ICU_VERSION >= 5502
 namespace std {
 template<>
 struct default_delete<UText> {
@@ -132,10 +132,9 @@ namespace boost { namespace locale {
                           const icu::Locale& loc,
                           const std::string& encoding)
         {
-            index_type indx;
             std::unique_ptr<icu::BreakIterator> bi = get_iterator(t, loc);
-
-#if BOOST_LOCALE_ICU_VERSION >= 306
+            // Versions prior to ICU 55.2 returned wrong splits when used with UText input
+#if BOOST_LOCALE_ICU_VERSION >= 5502
             UErrorCode err = U_ZERO_ERROR;
             BOOST_LOCALE_START_CONST_CONDITION
             if(sizeof(CharType) == 2 || (sizeof(CharType) == 1 && util::normalize_encoding(encoding) == "utf8")) {
@@ -155,7 +154,7 @@ namespace boost { namespace locale {
                     throw std::runtime_error("Failed to create UText");
                 bi->setText(ut.get(), err);
                 check_and_throw_icu_error(err);
-                indx = map_direct(t, bi.get(), end - begin);
+                return map_direct(t, bi.get(), end - begin);
             } else
 #endif
             {
@@ -163,15 +162,15 @@ namespace boost { namespace locale {
                 const icu::UnicodeString str = cvt.icu(begin, end);
                 bi->setText(str);
                 const index_type indirect = map_direct(t, bi.get(), str.length());
-                indx = indirect;
+                index_type indx = indirect;
                 for(size_t i = 1; i < indirect.size(); i++) {
                     const size_t offset_indirect = indirect[i - 1].offset;
                     const size_t diff = indirect[i].offset - offset_indirect;
                     const size_t offset_direct = indx[i - 1].offset;
                     indx[i].offset = offset_direct + cvt.cut(str, begin, end, diff, offset_indirect, offset_direct);
                 }
+                return indx;
             }
-            return indx;
         } // do_map
 
         template<typename CharType>
