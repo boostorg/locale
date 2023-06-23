@@ -16,15 +16,15 @@
 /// \cond INTERNAL
 namespace boost { namespace locale { namespace conv { namespace detail {
     template<typename CharIn, typename CharOut>
-    class BOOST_LOCALE_DECL charset_converter {
+    class BOOST_SYMBOL_VISIBLE charset_converter {
     public:
         using char_out_type = CharOut;
         using char_in_type = CharIn;
         using string_type = std::basic_string<CharOut>;
 
-        virtual ~charset_converter();
+        virtual ~charset_converter() = default;
         virtual string_type convert(const CharIn* begin, const CharIn* end) = 0;
-        BOOST_LOCALE_NO_SANITIZE("vptr") string_type convert(const boost::basic_string_view<CharIn>& text)
+        string_type convert(const boost::basic_string_view<CharIn>& text)
         {
             return convert(text.data(), text.data() + text.length());
         }
@@ -52,15 +52,6 @@ namespace boost { namespace locale { namespace conv { namespace detail {
                           method_type how,
                           conv_backend impl = conv_backend::Default);
 }}}} // namespace boost::locale::conv::detail
-
-namespace std {
-/// Specialization to avoid UBSAN false positives when using charset_converter in std::unique_ptr
-template<typename CharIn, typename CharOut>
-struct default_delete<::boost::locale::conv::detail::charset_converter<CharIn, CharOut>> {
-    using pointer = ::boost::locale::conv::detail::charset_converter<CharIn, CharOut>*;
-    BOOST_LOCALE_NO_SANITIZE("vptr") void operator()(pointer ptr) { delete ptr; }
-};
-} // namespace std
 
 /// \endcond
 
