@@ -15,6 +15,10 @@
 #include "boost/locale/util/foreach_char.hpp"
 #include <limits>
 #include <memory>
+#ifdef BOOST_MSVC
+#    pragma warning(push)
+#    pragma warning(disable : 4251) // "identifier" : class "type" needs to have dll-interface...
+#endif
 #include <unicode/datefmt.h>
 #include <unicode/decimfmt.h>
 #include <unicode/numfmt.h>
@@ -22,6 +26,7 @@
 #include <unicode/smpdtfmt.h>
 
 #ifdef BOOST_MSVC
+#    pragma warning(pop)
 #    pragma warning(disable : 4244) // lose data
 #endif
 

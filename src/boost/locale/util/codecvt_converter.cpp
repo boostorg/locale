@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2022-2023 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
@@ -9,6 +10,7 @@
 #include <boost/locale/utf8_codecvt.hpp>
 #include <boost/locale/util.hpp>
 #include <boost/locale/util/string.hpp>
+#include <boost/assert.hpp>
 #include <algorithm>
 #include <cstddef>
 #include <cstring>
@@ -186,14 +188,18 @@ namespace boost { namespace locale { namespace util {
         }
     } // namespace
 
-    bool check_is_simple_encoding(const std::string& encoding)
+    std::vector<std::string> get_simple_encodings()
+    {
+        return std::vector<std::string>(simple_encoding_table, std::end(simple_encoding_table));
+    }
+
+    bool is_simple_encoding(const std::string& encoding)
     {
         std::string norm = util::normalize_encoding(encoding);
-        return std::binary_search<const char**>(simple_encoding_table,
-                                                simple_encoding_table
-                                                  + sizeof(simple_encoding_table) / sizeof(const char*),
-                                                norm.c_str(),
-                                                compare_strings);
+        return std::binary_search(simple_encoding_table,
+                                  std::end(simple_encoding_table),
+                                  norm.c_str(),
+                                  compare_strings);
     }
 
     std::unique_ptr<base_converter> create_simple_converter(const std::string& encoding)
@@ -202,7 +208,7 @@ namespace boost { namespace locale { namespace util {
     }
     base_converter* create_simple_converter_new_ptr(const std::string& encoding)
     {
-        if(check_is_simple_encoding(encoding))
+        if(is_simple_encoding(encoding))
             return new simple_converter(encoding);
         return nullptr;
     }
@@ -298,7 +304,7 @@ namespace boost { namespace locale { namespace util {
 
     std::locale create_simple_codecvt(const std::locale& in, const std::string& encoding, char_facet_t type)
     {
-        if(!check_is_simple_encoding(encoding))
+        if(!is_simple_encoding(encoding))
             throw boost::locale::conv::invalid_charset_error("Invalid simple encoding " + encoding);
 
         switch(type) {

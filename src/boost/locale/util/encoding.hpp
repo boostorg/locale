@@ -12,6 +12,7 @@
 #include <boost/utility/string_view.hpp>
 #include <cstdint>
 #include <string>
+#include <vector>
 
 namespace boost { namespace locale { namespace util {
 
@@ -44,6 +45,8 @@ namespace boost { namespace locale { namespace util {
     {
         return normalize_encoding(l) == normalize_encoding(r);
     }
+
+    BOOST_LOCALE_DECL std::vector<std::string> get_simple_encodings();
 
 #if BOOST_LOCALE_USE_WIN32_API
     int encoding_to_windows_codepage(string_view encoding);

@@ -574,6 +574,7 @@ void test_between()
 }
 
 void test_utf_name();
+void test_simple_encodings();
 void test_win_codepages();
 
 void test_main(int /*argc*/, char** /*argv*/)
@@ -585,6 +586,7 @@ void test_main(int /*argc*/, char** /*argv*/)
     TEST_THROWS(to<char>("€"), std::logic_error);
     // Sanity check internal details
     test_utf_name();
+    test_simple_encodings();
     test_win_codepages();
 
     test_latin1_conversions();
@@ -638,6 +640,23 @@ void test_utf_name()
 #endif
     TEST_EQ(boost::locale::util::utf_name<char16_t>(), std::string(isLittleEndian() ? "UTF-16LE" : "UTF-16BE"));
     TEST_EQ(boost::locale::util::utf_name<char32_t>(), std::string(isLittleEndian() ? "UTF-32LE" : "UTF-32BE"));
+}
+
+void test_simple_encodings()
+{
+    using namespace boost::locale::util;
+    const auto encodings = get_simple_encodings();
+    for(auto it = encodings.begin(), end = encodings.end(); it != end; ++it) {
+        TEST_EQ(normalize_encoding(*it), *it); // Must be normalized
+        const auto it2 = std::find(it + 1, end, *it);
+        TEST(it2 == end);
+        if(it2 != end)
+            std::cerr << "Duplicate entry: " << *it << '\n'; // LCOV_EXCL_LINE
+    }
+    const auto it = std::is_sorted_until(encodings.begin(), encodings.end());
+    TEST(it == encodings.end());
+    if(it != encodings.end())
+        std::cerr << "First wrongly sorted element: " << *it << '\n'; // LCOV_EXCL_LINE
 }
 
 void test_win_codepages()
