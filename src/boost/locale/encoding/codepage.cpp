@@ -107,9 +107,6 @@ namespace boost { namespace locale { namespace conv {
     }
 
     namespace detail {
-        template<typename CharIn, typename CharOut>
-        charset_converter<CharIn, CharOut>::~charset_converter() = default;
-
         template<class T>
         static std::unique_ptr<utf_encoder<typename T::char_out_type>> make_encoder_ptr(T& enc)
         {
