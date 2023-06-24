@@ -292,8 +292,20 @@ void test_manip(std::string e_charset = "UTF-8")
 {
     using string_type = std::basic_string<CharType>;
     boost::locale::generator g;
-    std::locale loc = g(test_locale_name + "." + e_charset);
+    for(const auto& name_number : {std::make_pair("en_US", "1,200.1"),
+                                   std::make_pair("he_IL", "1,200.1"),
+                                   std::make_pair("ru_RU",
+                                                  "1\xC2\xA0"
+                                                  "200,1")})
+    {
+        const std::string locName = std::string(name_number.first) + "." + e_charset;
+        std::cout << "-- " << locName << '\n';
+        const std::locale loc = g(locName);
+        TEST_FMT_PARSE_1(as::posix, 1200.1, "1200.1");
+        TEST_FMT_PARSE_1(as::number, 1200.1, name_number.second);
+    }
 
+    const std::locale loc = g(test_locale_name + "." + e_charset);
     TEST_FMT_PARSE_1(as::posix, 1200.1, "1200.1");
     TEST_FMT_PARSE_1(as::number, 1200.1, "1,200.1");
     TEST_FMT(as::number << std::setfill(CharType('_')) << std::setw(6), 1534, "_1,534");

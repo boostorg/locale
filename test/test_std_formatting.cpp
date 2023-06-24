@@ -33,6 +33,13 @@ void test_by_char(const std::locale& l, const std::locale& lreal)
         TEST(ss >> n);
         TEST_EQ(n, 1045.45);
         TEST_EQ(ss.str(), ascii_to<CharType>("1045.45"));
+        ss_ref_type ss_ref;
+        ss_ref.imbue(std::locale::classic());
+        empty_stream(ss) << std::setw(8) << 1 << CharType(':') << 2 << CharType(':') << 1234 << CharType(':')
+                         << std::setw(8) << std::setfill(CharType('0')) << std::hex << 1234;
+        ss_ref << std::setw(8) << 1 << RefCharType(':') << 2 << RefCharType(':') << 1234 << RefCharType(':')
+               << std::setw(8) << std::setfill(RefCharType('0')) << std::hex << 1234;
+        TEST_EQ(to_utf8(ss.str()), to_utf8(ss_ref.str()));
     }
 
     {
