@@ -39,19 +39,21 @@ void test_char()
 }
 
 template<typename Char>
-void test_normc(std::basic_string<Char> orig, std::basic_string<Char> normal, boost::locale::norm_type type)
+void test_normc(const std::basic_string<Char>& orig, // LCOV_EXCL_LINE
+                const std::basic_string<Char>& normal,
+                const boost::locale::norm_type type)
 {
     std::locale l = boost::locale::generator().generate("en_US.UTF-8");
     TEST_EQ(boost::locale::normalize(orig, type, l), normal);
     TEST_EQ(boost::locale::normalize(orig.c_str(), type, l), normal);
     TEST_EQ(boost::locale::normalize(orig.c_str(), orig.c_str() + orig.size(), type, l), normal);
-}
+} // LCOV_EXCL_LINE
 
-void test_norm(std::string orig, std::string normal, boost::locale::norm_type type)
+void test_norm(const std::string orig, const std::string normal, const boost::locale::norm_type type) // LCOV_EXCL_LINE
 {
     test_normc<char>(orig, normal, type);
     test_normc<wchar_t>(to<wchar_t>(orig), to<wchar_t>(normal), type);
-}
+} // LCOV_EXCL_LINE
 
 BOOST_LOCALE_DISABLE_UNREACHABLE_CODE_WARNING
 void test_main(int /*argc*/, char** /*argv*/)

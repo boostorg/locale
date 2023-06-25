@@ -24,7 +24,7 @@
 // Dummy just to make it compile
 size_t strftime_l(char*, size_t, const char*, const std::tm*, locale_t)
 {
-    return 0;
+    return 0; // LCOV_EXCL_LINE
 }
 #endif
 
@@ -32,8 +32,8 @@ template<typename CharType>
 std::basic_string<CharType> from_narrow(const std::string& s, locale_t lc)
 {
 #ifdef BOOST_LOCALE_NO_POSIX_BACKEND
-    const std::string charset;
-    boost::ignore_unused(lc);
+    const std::string charset; // LCOV_EXCL_LINE
+    boost::ignore_unused(lc);  // LCOV_EXCL_LINE
 #else
     const std::string charset = nl_langinfo_l(CODESET, lc);
 #endif
@@ -159,7 +159,7 @@ void test_main(int /*argc*/, char** /*argv*/)
     for(const std::string locale_name : {"en_US.UTF-8", "en_US.ISO8859-1", "he_IL.UTF-8", "he_IL.ISO8859-8"}) {
         std::cout << locale_name << " locale" << std::endl;
         if(!has_posix_locale(locale_name))
-            std::cout << locale_name << " not supported" << std::endl;
+            std::cout << locale_name << " not supported, skipping" << std::endl; // LCOV_EXCL_LINE
         else {
             std::locale generated_locale = gen(locale_name);
             locale_holder real_locale(newlocale(LC_ALL_MASK, locale_name.c_str(), nullptr));
@@ -176,7 +176,7 @@ void test_main(int /*argc*/, char** /*argv*/)
         std::cout << "Testing UTF-8 punct issues" << std::endl;
         const std::string locale_name = "ru_RU.UTF-8";
         if(!has_posix_locale(locale_name))
-            std::cout << "- No Russian locale" << std::endl;
+            std::cout << "- No Russian locale, skipping" << std::endl; // LCOV_EXCL_LINE
         else {
             std::ostringstream ss;
             ss.imbue(gen(locale_name));

@@ -683,7 +683,7 @@ void test_format_class(std::string charset = "UTF-8")
 #if BOOST_LOCALE_ICU_VERSION >= 400
         TEST_FORMAT_CLS("{1,cur,locale=de_DE}", 10, "10,00\xC2\xA0€");
 #else
-        TEST_FORMAT_CLS("{1,cur,locale=de_DE}", 10, "10,00 €");
+        TEST_FORMAT_CLS("{1,cur,locale=de_DE}", 10, "10,00 €"); // LCOV_EXCL_LINE
 #endif
     }
 #if BOOST_LOCALE_ICU_VERSION >= 402

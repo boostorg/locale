@@ -179,7 +179,7 @@ void test_main(int /*argc*/, char** /*argv*/)
                 if(name == real_name)
                     test_by_char<char, char>(l1, l2);
                 else
-                    test_by_char<char, wchar_t>(l1, l2);
+                    test_by_char<char, wchar_t>(l1, l2); // LCOV_EXCL_LINE
             } else {
                 std::cout << "\tchar" << std::endl;
                 test_by_char<char, char>(l1, l2);

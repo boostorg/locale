@@ -61,7 +61,7 @@ void test_to_utf_for_impls(const std::string& source,
               boost::locale::conv::detail::make_utf_encoder<Char>(encoding, boost::locale::conv::skip, impl);
             TEST_EQ(convPtr->convert(source), target);
         } catch(invalid_charset_error&) {
-            continue;
+            continue; // LCOV_EXCL_LINE
         }
         if(!expectSuccess) {
             auto convPtr =
@@ -95,7 +95,7 @@ void test_from_utf_for_impls(const std::basic_string<Char>& source,
               boost::locale::conv::detail::make_utf_decoder<Char>(encoding, boost::locale::conv::skip, impl);
             TEST_EQ(convPtr->convert(source), target);
         } catch(invalid_charset_error&) {
-            continue;
+            continue; // LCOV_EXCL_LINE
         }
         if(!expectSuccess) {
             auto convPtr =
@@ -485,7 +485,7 @@ void test_between_for_impls(const std::string& source,
             auto convPtr = make_narrow_converter(from_encoding, to_encoding, boost::locale::conv::skip, impl);
             TEST_EQ(convPtr->convert(source), target);
         } catch(invalid_charset_error&) {
-            continue;
+            continue; // LCOV_EXCL_LINE
         }
         if(!expectSuccess) {
             auto convPtr = make_narrow_converter(from_encoding, to_encoding, boost::locale::conv::stop, impl);

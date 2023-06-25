@@ -12,7 +12,7 @@
 #include <iomanip>
 
 template<typename Char>
-void test_comp(const std::locale& l,
+void test_comp(const std::locale& l, // LCOV_EXCL_LINE
                const std::basic_string<Char>& left,
                const std::basic_string<Char>& right,
                const boost::locale::collate_level level,
@@ -56,11 +56,11 @@ void test_comp(const std::locale& l,
         TEST_EQ(lh, rh);
     else
         TEST_NE(lh, rh);
-}
+} // LCOV_EXCL_LINE
 
 #define TEST_COMP(c, _l, _r) test_comp<c>(l, _l, _r, level, expected)
 
-void compare(const std::string left,
+void compare(const std::string left, // LCOV_EXCL_LINE
              const std::string right,
              const boost::locale::collate_level level,
              const int expected)
@@ -77,9 +77,9 @@ void compare(const std::string left,
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
     TEST_COMP(char32_t, to<char32_t>(left), to<char32_t>(right));
 #endif
-}
+} // LCOV_EXCL_LINE
 
-void test_collate()
+void test_collate() // LCOV_EXCL_LINE
 {
     constexpr int le = -1, gt = 1, eq = 0;
     using boost::locale::collate_level;
@@ -101,7 +101,7 @@ void test_collate()
     compare("ä", "a", collate_level::identical, gt);
     compare("a", "a", collate_level::identical, eq);
     compare("ä", "ä", collate_level::identical, eq);
-}
+} // LCOV_EXCL_LINE
 
 BOOST_LOCALE_DISABLE_UNREACHABLE_CODE_WARNING
 void test_main(int /*argc*/, char** /*argv*/)

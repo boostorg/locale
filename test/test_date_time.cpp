@@ -378,38 +378,23 @@ void test_main(int /*argc*/, char** /*argv*/)
 #endif
             BOOST_LOCALE_START_CONST_CONDITION
 
-            if((ICU_cldr_issue))
-                TEST_EQ(time_point.get(week_of_month()), 2);
-            else
-                TEST_EQ(time_point.get(week_of_month()), 1);
+            TEST_EQ(time_point.get(week_of_month()), ICU_cldr_issue ? 2 : 1);
 
             time_point = year(2010) + january() + day() * 3;
 
-            if((ICU_cldr_issue))
-                TEST_EQ(time_point.get(week_of_year()), 1);
-            else
-                TEST_EQ(time_point.get(week_of_year()), 53);
+            TEST_EQ(time_point.get(week_of_year()), ICU_cldr_issue ? 1 : 53);
 
             time_point = year() * 2010 + january() + day() * 4;
 
-            if((ICU_cldr_issue))
-                TEST_EQ(time_point.get(week_of_year()), 2);
-            else
-                TEST_EQ(time_point.get(week_of_year()), 1);
+            TEST_EQ(time_point.get(week_of_year()), ICU_cldr_issue ? 2 : 1);
 
             time_point = year() * 2010 + january() + day() * 10;
 
-            if((ICU_cldr_issue))
-                TEST_EQ(time_point.get(week_of_year()), 2);
-            else
-                TEST_EQ(time_point.get(week_of_year()), 1);
+            TEST_EQ(time_point.get(week_of_year()), ICU_cldr_issue ? 2 : 1);
 
             time_point = year() * 2010 + january() + day() * 11;
 
-            if((ICU_cldr_issue))
-                TEST_EQ(time_point.get(week_of_year()), 3);
-            else
-                TEST_EQ(time_point.get(week_of_year()), 2);
+            TEST_EQ(time_point.get(week_of_year()), ICU_cldr_issue ? 3 : 2);
 
             BOOST_LOCALE_END_CONST_CONDITION
 
