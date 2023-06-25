@@ -672,6 +672,9 @@ namespace boost { namespace locale {
         /// This time can be fetched from Operating system clock using C function time, gettimeofday and others.
         void time(double v);
 
+        /// Get the name of the associated timezone
+        std::string timezone() const;
+
         /// compare date_time in the timeline (ignores difference in calendar, timezone etc)
         bool operator==(const date_time& other) const;
         /// compare date_time in the timeline (ignores difference in calendar, timezone etc)

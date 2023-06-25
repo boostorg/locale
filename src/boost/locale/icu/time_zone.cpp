@@ -47,10 +47,8 @@ namespace boost { namespace locale { namespace impl_icu {
     {
         if(time_zone.empty())
             return icu::TimeZone::createDefault();
-        else {
-            icu::TimeZone* icu_tz = icu::TimeZone::createTimeZone(time_zone.c_str());
-            return icu_tz;
-        }
+        else
+            return icu::TimeZone::createTimeZone(time_zone.c_str());
     }
 
 #else

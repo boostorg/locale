@@ -318,6 +318,11 @@ namespace boost { namespace locale {
         impl_->set_time(ptime);
     }
 
+    std::string date_time::timezone() const
+    {
+        return impl_->get_timezone();
+    }
+
     namespace {
         int compare(const posix_time& left, const posix_time& right)
         {

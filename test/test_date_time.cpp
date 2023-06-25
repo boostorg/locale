@@ -74,6 +74,7 @@ void test_main(int /*argc*/, char** /*argv*/)
             cal_facet->proto_cal.time = 42 * 1e3;
             date_time t1;
             TEST_EQ(t1.time(), 42);
+            TEST_EQ(t1.timezone(), "mock TZ");
             TEST_EQ(mock_calendar::num_instances, 1);
             cal_facet->proto_cal.time = 99 * 1e3;
             date_time t2;
@@ -160,6 +161,7 @@ void test_main(int /*argc*/, char** /*argv*/)
             const time_t a_datetime = a_date + a_time;
 
             const date_time tp_5_feb_1970_153313 = date_time(a_datetime); // 5th Feb 1970 15:33:13
+            TEST_EQ(tp_5_feb_1970_153313.timezone(), tz);
             ss << as::ftime("%Y-%m-%d");
             TEST_EQ_FMT(tp_5_feb_1970_153313, "1970-02-05");
             ss << as::ftime("%Y-%m-%d %H:%M:%S");
