@@ -11,10 +11,9 @@ file(GLOB_RECURSE headers include/*.hpp)
 
 add_library(boost_locale
   src/boost/locale/encoding/codepage.cpp
-  src/boost/locale/encoding/conv.hpp
-  src/boost/locale/encoding/iconv_codepage.ipp
-  src/boost/locale/encoding/uconv_codepage.ipp
-  src/boost/locale/encoding/wconv_codepage.ipp
+  src/boost/locale/encoding/iconv_converter.hpp
+  src/boost/locale/encoding/uconv_converter.hpp
+  src/boost/locale/encoding/wconv_converter.hpp
   src/boost/locale/shared/date_time.cpp
   src/boost/locale/shared/format.cpp
   src/boost/locale/shared/formatting.cpp
@@ -29,6 +28,7 @@ add_library(boost_locale
   src/boost/locale/util/default_locale.cpp
   src/boost/locale/util/encoding.cpp
   src/boost/locale/util/encoding.hpp
+  src/boost/locale/util/foreach_char.hpp
   src/boost/locale/util/info.cpp
   src/boost/locale/util/locale_data.cpp
   src/boost/locale/util/numeric.hpp
@@ -46,6 +46,7 @@ target_link_libraries(boost_locale
     Boost::assert
     Boost::config
     Boost::iterator
+    Boost::utility
   PRIVATE
     Boost::core
     Boost::predef

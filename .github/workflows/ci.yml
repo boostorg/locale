@@ -249,8 +249,10 @@ jobs:
           gen_locale en_US.UTF-8 # Assumed to be there by tests
           # Used by various tests
           gen_locale he_IL.UTF-8
-          gen_locale ru_RU.UTF-8
           gen_locale ja_JP.UTF-8
+          gen_locale ru_RU.UTF-8
+          gen_locale sv_SE.UTF-8
+          gen_locale tr_TR.UTF-8
           # ISO locales used by some tests
           gen_locale en_US.iso88591
           gen_locale he_IL.iso88598
@@ -360,12 +362,44 @@ jobs:
         shell: pwsh
         run: 'Add-Content $Env:BOOST_ROOT/project-config.jam "path-constant ICU_PATH : `"$($pwd.Path)\ICU`" ;"'
 
-      - name: Run tests
+      - name: Run tests (WinAPI, without coverage)
         if: '!matrix.coverage'
         run: |
-          set B2_FLAGS=boost.locale.icu=off boost.locale.iconv=off
+          set B2_FLAGS=boost.locale.icu=off boost.locale.iconv=off boost.locale.std=off boost.locale.winapi=on
           ci\build.bat
-          set B2_FLAGS=-a
+          rmdir /s /q bin.v2
+        env:
+          B2_TOOLSET: ${{matrix.toolset}}
+          B2_CXXSTD: ${{matrix.cxxstd}}
+          B2_ADDRESS_MODEL: ${{matrix.addrmd}}
+
+      - name: Run tests (ICU, without coverage)
+        if: '!matrix.coverage'
+        run: |
+          set B2_FLAGS=boost.locale.icu=on boost.locale.iconv=off boost.locale.std=off boost.locale.winapi=off
+          ci\build.bat
+          rmdir /s /q bin.v2
+        env:
+          B2_TOOLSET: ${{matrix.toolset}}
+          B2_CXXSTD: ${{matrix.cxxstd}}
+          B2_ADDRESS_MODEL: ${{matrix.addrmd}}
+
+      - name: Run tests (without coverage)
+        if: '!matrix.coverage'
+        run: |
+          set B2_TARGETS=libs/%SELF%/test//show_config --verbose-test
+          ci\build.bat
+          set B2_TARGETS=
+          ci\build.bat
+        env:
+          B2_TOOLSET: ${{matrix.toolset}}
+          B2_CXXSTD: ${{matrix.cxxstd}}
+          B2_ADDRESS_MODEL: ${{matrix.addrmd}}
+
+      - name: Show config before collecting coverage
+        if: matrix.coverage
+        run: |
+          set B2_TARGETS=libs/%SELF%/test//show_config --verbose-test
           ci\build.bat
         env:
           B2_TOOLSET: ${{matrix.toolset}}
@@ -455,8 +489,11 @@ jobs:
         include:
           - { os: ubuntu-20.04, build_shared: ON,  build_type: Debug, generator: 'Unix Makefiles' }
           - { os: ubuntu-20.04, build_shared: OFF, build_type: Debug, generator: 'Unix Makefiles' }
-          - { os: windows-2019, build_shared: ON,  build_type: Debug, generator: 'Visual Studio 16 2019' }
-          - { os: windows-2019, build_shared: OFF, build_type: Debug, generator: 'Visual Studio 16 2019' }
+          - { os: ubuntu-20.04, build_shared: OFF, build_type: Debug, generator: 'Unix Makefiles', icu: '71.1' }
+          - { os: ubuntu-22.04, build_shared: OFF, build_type: Debug, generator: 'Unix Makefiles', icu: '72.1' }
+          - { os: ubuntu-22.04, build_shared: OFF, build_type: Debug, generator: 'Unix Makefiles', icu: '73.1' }
+          - { os: windows-2019, build_shared: ON,  build_type: Debug, generator: 'Visual Studio 16 2019', icu: '71.1' }
+          - { os: windows-2019, build_shared: OFF, build_type: Debug, generator: 'Visual Studio 16 2019', icu: '73.1' }
 
     timeout-minutes: 120
     runs-on: ${{matrix.os}}
@@ -478,15 +515,31 @@ jobs:
         env: {B2_DONT_BOOTSTRAP: 1}
         run: source ci/github/install.sh
 
-      - name: Get ICU
-        if: runner.os == 'Windows'
+      - name: Setup ICU (Windows)
+        if: runner.os == 'Windows' && matrix.icu
         shell: pwsh
         run: |
             $ICU_ROOT="$($pwd.Path)\ICU"
-            cmake -DICU_ROOT="$ICU_ROOT" -DICU_VERSION="71.1" -P tools/download_icu.cmake
             Add-Content $Env:GITHUB_ENV "ICU_ROOT=$ICU_ROOT"
             # Make sure shared libs can be found at runtime
             Add-Content $Env:GITHUB_PATH "$ICU_ROOT\bin64"
+      - name: Setup ICU (Non-Windows)
+        if: runner.os != 'Windows' && matrix.icu
+        run: |
+            ICU_ROOT="$PWD/ICU"
+            echo "ICU_ROOT=$ICU_ROOT" >> $GITHUB_ENV
+            # Make sure shared libs can be found at runtime
+            echo "LD_LIBRARY_PATH=$ICU_ROOT/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
+      - name: Get cached ICU
+        if: matrix.icu
+        uses: actions/cache@v3
+        id: cache-icu
+        with:
+          path: ICU
+          key: ICU-${{matrix.os}}-${{matrix.icu}}
+      - name: Download ICU
+        if: matrix.icu && steps.cache-icu.outputs.cache-hit != 'true'
+        run: cmake -DICU_VERSION="${{matrix.icu}}" -P tools/download_icu.cmake
 
       - name: Run CMake tests
         run: |

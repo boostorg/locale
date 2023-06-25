@@ -44,9 +44,8 @@ void test_one(const std::locale& l, std::string ia, std::string ib, int diff)
     TEST_EQ(
       diff,
       get_sign(col.transform(a.c_str(), a.c_str() + a.size()).compare(col.transform(b.c_str(), b.c_str() + b.size()))));
-    if(diff == 0) {
+    if(diff == 0)
         TEST_EQ(col.hash(a.c_str(), a.c_str() + a.size()), col.hash(b.c_str(), b.c_str() + b.size()));
-    }
 }
 
 template<typename CharType>
@@ -63,20 +62,26 @@ void test_char()
 #if defined(_LIBCPP_VERSION) && (defined(__APPLE__) || defined(__FreeBSD__))
     std::cout << "- Collation is broken on this OS's standard C++ library, skipping\n";
 #else
-    for(const std::string name : {"en_US.UTF-8", "en_US.ISO8859-1"}) {
+    for(const std::string name : {"en_US.UTF-8", "sv_SE.UTF-8", "en_US.ISO8859-1"}) {
         const std::string std_name = get_std_name(name);
         if(!std_name.empty()) {
             std::cout << "- Testing " << std_name << std::endl;
             l = gen(std_name);
             test_one<CharType>(l, "a", "ç", -1);
             test_one<CharType>(l, "ç", "d", -1);
-        } else {
+            const auto& info = std::use_facet<boost::locale::info>(l);
+            if(info.utf8()) {
+                // In Swedish locale the collation/ordering of this is different than in English
+                // This makes this a nice test case that the correct collation is used.
+                test_one<CharType>(l, "ängel", "år", info.language() == "sv" ? 1 : -1);
+            }
+        } else
             std::cout << "- " << name << " not supported, skipping" << std::endl;
-        }
     }
 #endif
 }
 
+BOOST_LOCALE_DISABLE_UNREACHABLE_CODE_WARNING
 void test_main(int /*argc*/, char** /*argv*/)
 {
 #ifdef BOOST_LOCALE_NO_STD_BACKEND

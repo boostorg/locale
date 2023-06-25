@@ -9,7 +9,7 @@
 
 #include <boost/locale/generic_codecvt.hpp>
 #include <boost/locale/utf.hpp>
-#include <boost/cstdint.hpp>
+#include <cstdint>
 #include <locale>
 
 namespace boost { namespace locale {

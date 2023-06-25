@@ -12,27 +12,18 @@
 #include <limits>
 #include <vector>
 #ifdef BOOST_LOCALE_WITH_ICONV
+#    include "boost/locale/util/encoding.hpp"
 #    include "boost/locale/util/iconv.hpp"
 #endif
 
 namespace boost { namespace locale {
 
 #ifdef BOOST_LOCALE_WITH_ICONV
-    static const char* utf32_encoding()
-    {
-        union {
-            char one;
-            uint32_t value;
-        } test;
-        test.value = 1;
-        return (test.one == 1) ? "UTF-32LE" : "UTF-32BE";
-    }
-
     class mb2_iconv_converter : public util::base_converter {
     public:
         mb2_iconv_converter(const std::string& encoding) : encoding_(encoding)
         {
-            iconv_handle d = iconv_open(utf32_encoding(), encoding.c_str());
+            iconv_handle d(iconv_open(util::utf_name<uint32_t>(), encoding.c_str()));
             if(!d)
                 throw std::runtime_error("Unsupported encoding" + encoding);
 
@@ -95,7 +86,7 @@ namespace boost { namespace locale {
             } else if(begin + 1 == end)
                 return incomplete;
 
-            open(to_utf_, utf32_encoding(), encoding_.c_str());
+            open(to_utf_, util::utf_name<uint32_t>(), encoding_.c_str());
 
             // maybe illegal or may be double byte
 
@@ -117,12 +108,11 @@ namespace boost { namespace locale {
                 if(begin != end) {
                     *begin = 0;
                     return 1;
-                } else {
+                } else
                     return incomplete;
-                }
             }
 
-            open(from_utf_, encoding_.c_str(), utf32_encoding());
+            open(from_utf_, encoding_.c_str(), util::utf_name<uint32_t>());
 
             const uint32_t inbuf[2] = {cp, 0};
             size_t insize = sizeof(inbuf);

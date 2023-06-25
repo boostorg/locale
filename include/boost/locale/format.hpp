@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2021-2023 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
@@ -12,6 +13,7 @@
 #include <boost/locale/message.hpp>
 #include <sstream>
 #include <stdexcept>
+#include <string>
 #include <vector>
 
 #ifdef BOOST_MSVC
@@ -35,15 +37,15 @@ namespace boost { namespace locale {
             typedef std::basic_ostream<CharType> stream_type;
             typedef void (*writer_type)(stream_type& output, const void* ptr);
 
-            formattible() : pointer_(0), writer_(&formattible::void_write) {}
+            formattible() noexcept : pointer_(nullptr), writer_(&formattible::void_write) {}
 
-            formattible(const formattible&) = default;
-            formattible(formattible&&) = default;
-            formattible& operator=(const formattible&) = default;
-            formattible& operator=(formattible&&) = default;
+            formattible(const formattible&) noexcept = default;
+            formattible(formattible&&) noexcept = default;
+            formattible& operator=(const formattible&) noexcept = default;
+            formattible& operator=(formattible&&) noexcept = default;
 
             template<typename Type>
-            explicit formattible(const Type& value)
+            explicit formattible(const Type& value) noexcept
             {
                 pointer_ = static_cast<const void*>(&value);
                 writer_ = &write<Type>;
@@ -173,8 +175,8 @@ namespace boost { namespace locale {
     ///    \endcode
     ///
     ///
-    /// Invalid formatting strings are slightly ignored. This would prevent from translator
-    /// to crash the program in unexpected location.
+    /// Invalid formatting strings are silently ignored.
+    /// This protects against a translator crashing the program in an unexpected location.
     template<typename CharType>
     class basic_format {
     public:
@@ -326,9 +328,8 @@ namespace boost { namespace locale {
                         char_type c = format[pos];
                         if(c == comma || c == eq || c == cbrk)
                             break;
-                        else {
+                        else
                             key += static_cast<char>(c);
-                        }
                     }
 
                     if(format[pos] == eq) {
@@ -359,9 +360,9 @@ namespace boost { namespace locale {
                         }
                     }
 
-                    if(use_svalue) {
+                    if(use_svalue)
                         fmt.set_one_flag(key, svalue);
-                    } else
+                    else
                         fmt.set_flag_with_str(key, value);
 
                     if(format[pos] == comma) {
@@ -400,7 +401,7 @@ namespace boost { namespace locale {
                 return parameters_[id];
         }
 
-        static void imbue_locale(void* ptr, const std::locale& l) { reinterpret_cast<stream_type*>(ptr)->imbue(l); }
+        static void imbue_locale(void* ptr, const std::locale& l) { static_cast<stream_type*>(ptr)->imbue(l); }
 
         static constexpr unsigned base_params_ = 8;
 

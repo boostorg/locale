@@ -10,6 +10,7 @@
 #include <boost/locale/localization_backend.hpp>
 #include "boostLocale/test/tools.hpp"
 #include "boostLocale/test/unit_test.hpp"
+#include <cmath>
 #include <ctime>
 #include <iomanip>
 #include <limits>
@@ -25,9 +26,8 @@
 #    pragma warning(disable : 4244) // loose data
 #endif
 
-#define TEST_EQ_FMT(t, X) \
-    ss.str("");           \
-    ss << (t);            \
+#define TEST_EQ_FMT(t, X)    \
+    empty_stream(ss) << (t); \
     test_eq_impl(ss.str(), X, #t "==" #X, __LINE__)
 
 // Very simple container for a part of the tests. Counts its instances
@@ -66,20 +66,6 @@ void test_main(int /*argc*/, char** /*argv*/)
 {
     using namespace boost::locale;
     using namespace boost::locale::period;
-    std::string def[] = {
-#ifdef BOOST_LOCALE_WITH_ICU
-      "icu",
-#endif
-#ifndef BOOST_LOCALE_NO_STD_BACKEND
-      "std",
-#endif
-#ifndef BOOST_LOCALE_NO_POSIX_BACKEND
-      "posix",
-#endif
-#ifndef BOOST_LOCALE_NO_WINAPI_BACKEND
-      "winapi",
-#endif
-    };
     {
         auto* cal_facet = new mock_calendar_facet;
         std::locale old_loc = std::locale::global(std::locale(std::locale(), cal_facet));
@@ -125,12 +111,11 @@ void test_main(int /*argc*/, char** /*argv*/)
         TEST_EQ(mock_calendar::num_instances, 0); // No leaks
         std::locale::global(old_loc);
     }
-    for(int type = 0; type < int(sizeof(def) / sizeof(def[0])); type++) {
-        boost::locale::localization_backend_manager tmp_backend = boost::locale::localization_backend_manager::global();
-        tmp_backend.select(def[type]);
-        boost::locale::localization_backend_manager::global(tmp_backend);
-        const std::string backend_name = def[type];
+    for(const std::string& backend_name : boost::locale::localization_backend_manager::global().get_all_backends()) {
         std::cout << "Testing for backend: " << backend_name << std::endl;
+        boost::locale::localization_backend_manager tmp_backend = boost::locale::localization_backend_manager::global();
+        tmp_backend.select(backend_name);
+        boost::locale::localization_backend_manager::global(tmp_backend);
         {
             boost::locale::generator g;
 
@@ -174,7 +159,7 @@ void test_main(int /*argc*/, char** /*argv*/)
             const time_t a_time = 15 * one_h + 60 * 33 + 13; // 15:33:13
             const time_t a_datetime = a_date + a_time;
 
-            const date_time tp_5_feb_1970_153313 = date_time(a_datetime); /// 5th Feb 1970 15:33:13
+            const date_time tp_5_feb_1970_153313 = date_time(a_datetime); // 5th Feb 1970 15:33:13
             ss << as::ftime("%Y-%m-%d");
             TEST_EQ_FMT(tp_5_feb_1970_153313, "1970-02-05");
             ss << as::ftime("%Y-%m-%d %H:%M:%S");
@@ -297,7 +282,7 @@ void test_main(int /*argc*/, char** /*argv*/)
             TEST_EQ_FMT(tp_5_april_1990_153313 - month(12 * 3 + 1), "1987-03-05 15:33:13");
             TEST_EQ_FMT(tp_5_april_1990_153313 >> month(12 * 3 + 1), "1990-03-05 15:33:13");
             // Check that possible int overflows get handled
-            const int max_full_years_in_months = (std::numeric_limits<int>::max() / 12) * 12;
+            constexpr int max_full_years_in_months = (std::numeric_limits<int>::max() / 12) * 12;
             TEST_EQ_FMT(tp_5_april_1990_153313 >> month(max_full_years_in_months), "1990-04-05 15:33:13");
             TEST_EQ_FMT(tp_5_april_1990_153313 << month(max_full_years_in_months), "1990-04-05 15:33:13");
             TEST_EQ_FMT(tp_5_april_1990_153313 + day(30 + 2), "1990-05-07 15:33:13");
@@ -495,16 +480,17 @@ void test_main(int /*argc*/, char** /*argv*/)
 
             // Default constructed time_point
             {
-                const time_t current_time = std::time(0);
+                const time_t current_time = std::time(nullptr);
                 date_time time_point_default;
                 // Defaults to current time, i.e. different than a date in 1970
                 date_time time_point_1970 = year(1970) + february() + day(5);
                 TEST(time_point_default != time_point_1970);
-                // We can not check an exact time as we can't know
-                // at which exact time the time point was recorded
+                // We can not check an exact time as we can't know at which exact time the time point was recorded. So
+                // only check that it refers to the same hour
                 const double time_point_time = time_point_default.time();
                 TEST_GE(time_point_time, current_time);
-                TEST_EQ(static_cast<time_t>(time_point_time / 3600), current_time / 3600); // Roughly match
+                constexpr double secsPerHour = 60 * 60;
+                TEST_LE(time_point_time - current_time, secsPerHour);
                 // However at least the date should match
                 const tm current_time_gmt = *gmtime_wrap(&current_time);
                 TEST_EQ(time_point_default.get(year()), current_time_gmt.tm_year + 1900);

@@ -8,7 +8,7 @@
 #define BOOST_LOCALE_UTF_HPP_INCLUDED
 
 #include <boost/locale/config.hpp>
-#include <boost/cstdint.hpp>
+#include <cstdint>
 
 namespace boost { namespace locale {
     /// \brief Namespace that holds basic operations on UTF encoded sequences
@@ -125,15 +125,14 @@ namespace boost { namespace locale {
 
             static int width(code_point value)
             {
-                if(value <= 0x7F) {
+                if(value <= 0x7F)
                     return 1;
-                } else if(value <= 0x7FF) {
+                else if(value <= 0x7FF)
                     return 2;
-                } else if(BOOST_LIKELY(value <= 0xFFFF)) {
+                else if(BOOST_LIKELY(value <= 0xFFFF))
                     return 3;
-                } else {
+                else
                     return 4;
-                }
             }
 
             static bool is_trail(char_type ci)
@@ -235,9 +234,9 @@ namespace boost { namespace locale {
             template<typename Iterator>
             static Iterator encode(code_point value, Iterator out)
             {
-                if(value <= 0x7F) {
+                if(value <= 0x7F)
                     *out++ = static_cast<char_type>(value);
-                } else if(value <= 0x7FF) {
+                else if(value <= 0x7FF) {
                     *out++ = static_cast<char_type>((value >> 6) | 0xC0);
                     *out++ = static_cast<char_type>((value & 0x3F) | 0x80);
                 } else if(BOOST_LIKELY(value <= 0xFFFF)) {
@@ -285,9 +284,8 @@ namespace boost { namespace locale {
                 if(BOOST_UNLIKELY(current == last))
                     return incomplete;
                 uint16_t w1 = *current++;
-                if(BOOST_LIKELY(w1 < 0xD800 || 0xDFFF < w1)) {
+                if(BOOST_LIKELY(w1 < 0xD800 || 0xDFFF < w1))
                     return w1;
-                }
                 if(w1 > 0xDBFF)
                     return illegal;
                 if(current == last)
@@ -301,9 +299,8 @@ namespace boost { namespace locale {
             static code_point decode_valid(It& current)
             {
                 uint16_t w1 = *current++;
-                if(BOOST_LIKELY(w1 < 0xD800 || 0xDFFF < w1)) {
+                if(BOOST_LIKELY(w1 < 0xD800 || 0xDFFF < w1))
                     return w1;
-                }
                 uint16_t w2 = *current++;
                 return combine_surrogate(w1, w2);
             }
@@ -313,9 +310,9 @@ namespace boost { namespace locale {
             template<typename It>
             static It encode(code_point u, It out)
             {
-                if(BOOST_LIKELY(u <= 0xFFFF)) {
+                if(BOOST_LIKELY(u <= 0xFFFF))
                     *out++ = static_cast<char_type>(u);
-                } else {
+                else {
                     u -= 0x10000;
                     *out++ = static_cast<char_type>(0xD800 | (u >> 10));
                     *out++ = static_cast<char_type>(0xDC00 | (u & 0x3FF));

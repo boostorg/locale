@@ -10,7 +10,7 @@
 #include <boost/locale/generator.hpp>
 #include <boost/locale/utf.hpp>
 #include <boost/assert.hpp>
-#include <boost/cstdint.hpp>
+#include <cstdint>
 #include <locale>
 #include <memory>
 #include <typeinfo>
@@ -204,8 +204,8 @@ namespace boost { namespace locale {
         /// This function installs codecvt that can be used for conversion between single byte
         /// character encodings like ISO-8859-1, koi8-r, windows-1255 and Unicode code points,
         ///
-        /// Throws boost::locale::conv::invalid_charset_error if the character set is not supported or isn't single byte
-        /// character set
+        /// \throws boost::locale::conv::invalid_charset_error: Character set is not supported or isn't a single
+        /// byte character set
         BOOST_LOCALE_DECL
         std::locale create_simple_codecvt(const std::locale& in, const std::string& encoding, char_facet_t type);
     } // namespace util
