@@ -262,24 +262,23 @@ namespace boost { namespace locale {
     private:
         class format_guard {
         public:
-            format_guard(detail::format_parser& fmt) : fmt_(&fmt), restored_(false) {}
+            format_guard(detail::format_parser& fmt) : fmt_(fmt), restored_(false) {}
             void restore()
             {
                 if(restored_)
                     return;
-                fmt_->restore();
+                fmt_.restore();
                 restored_ = true;
             }
             ~format_guard()
             {
-                try {
-                    restore();
-                } catch(...) {
-                }
+                // clang-format off
+                try { restore(); } catch(...) {}
+                // clang-format on
             }
 
         private:
-            detail::format_parser* fmt_;
+            detail::format_parser& fmt_;
             bool restored_;
         };
 
@@ -366,14 +365,12 @@ namespace boost { namespace locale {
                     if(format[pos] == comma) {
                         pos++;
                         continue;
-                    } else if(format[pos] == cbrk) {
-                        unsigned position = fmt.get_position();
-                        out << get(position);
-                        guard.restore();
-                        pos++;
-                        break;
                     } else {
-                        guard.restore();
+                        if(format[pos] == cbrk) {
+                            unsigned position = fmt.get_position();
+                            out << get(position);
+                            pos++;
+                        }
                         break;
                     }
                 }
