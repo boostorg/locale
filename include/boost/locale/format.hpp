@@ -284,16 +284,15 @@ namespace boost { namespace locale {
 
         void format_output(stream_type& out, const string_type& sformat) const
         {
-            char_type obrk = '{';
-            char_type cbrk = '}';
-            char_type eq = '=';
-            char_type comma = ',';
-            char_type quote = '\'';
+            constexpr char_type obrk = '{';
+            constexpr char_type cbrk = '}';
+            constexpr char_type eq = '=';
+            constexpr char_type comma = ',';
+            constexpr char_type quote = '\'';
 
-            size_t pos = 0;
-            size_t size = sformat.size();
+            const size_t size = sformat.size();
             const CharType* format = sformat.c_str();
-            while(format[pos] != 0) {
+            for(size_t pos = 0; format[pos];) {
                 if(format[pos] != obrk) {
                     if(format[pos] == cbrk && format[pos + 1] == cbrk) {
                         out << cbrk;
@@ -304,13 +303,11 @@ namespace boost { namespace locale {
                     }
                     continue;
                 }
-
-                if(pos + 1 < size && format[pos + 1] == obrk) {
+                pos++;
+                if(format[pos] == obrk) {
                     out << obrk;
-                    pos += 2;
                     continue;
                 }
-                pos++;
 
                 detail::format_parser fmt(out, static_cast<void*>(&out), &basic_format::imbue_locale);
 
@@ -321,12 +318,8 @@ namespace boost { namespace locale {
                     std::string svalue;
                     string_type value;
                     bool use_svalue = true;
-                    for(; format[pos]; pos++) {
-                        char_type c = format[pos];
-                        if(c == comma || c == eq || c == cbrk)
-                            break;
-                        else
-                            key += static_cast<char>(c);
+                    for(char_type c = format[pos]; !(c == 0 || c == comma || c == eq || c == cbrk); c = format[++pos]) {
+                        key += static_cast<char>(c);
                     }
 
                     if(format[pos] == eq) {
@@ -362,10 +355,9 @@ namespace boost { namespace locale {
                     else
                         fmt.set_flag_with_str(key, value);
 
-                    if(format[pos] == comma) {
+                    if(format[pos] == comma)
                         pos++;
-                        continue;
-                    } else {
+                    else {
                         if(format[pos] == cbrk) {
                             unsigned position = fmt.get_position();
                             out << get(position);

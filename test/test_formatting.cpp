@@ -650,7 +650,9 @@ void test_format_class(std::string charset = "UTF-8")
         // Restore
         std::locale::global(old_locale);
     }
-
+    // Allows many params
+    TEST_EQ(do_format<CharType>(loc, "{1}{2}{3}{4}{5}{10}{9}{8}{7}{6}", 11, 22, 33, 44, 55, 'a', 'b', 'c', 'd', 'f'),
+            ascii_to<CharType>("1122334455fdcba"));
     // Not passed placeholders are removed
     TEST_EQ(do_format<CharType>(loc, "{1}{3}{2}", "hello", "world"), ascii_to<CharType>("helloworld"));
     TEST_EQ(do_format<CharType>(loc, "{1}"), ascii_to<CharType>(""));
