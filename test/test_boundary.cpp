@@ -416,6 +416,11 @@ void test_op_one_side(const std::string& sl, const std::string& sr, int val)
 {
     boost::locale::boundary::ssegment l(sl.begin(), sl.end(), 0), r(sr.begin(), sr.end(), 0);
 
+#if BOOST_LOCALE_SPACESHIP_NULLPTR_WARNING
+#    pragma clang diagnostic push
+#    pragma clang diagnostic ignored "-Wzero-as-null-pointer-constant"
+#endif
+
     // segment
     TEST_EQ((l == r), (val == 0));
     TEST_EQ((l != r), (val != 0));
@@ -460,6 +465,10 @@ void test_op_one_side(const std::string& sl, const std::string& sr, int val)
     TEST_EQ((sl < sr), (val < 0));
     TEST_EQ((sl >= sr), (val >= 0));
     TEST_EQ((sl > sr), (val > 0));
+
+#if BOOST_LOCALE_SPACESHIP_NULLPTR_WARNING
+#    pragma clang diagnostic pop
+#endif
 }
 
 void test_op(const std::string& sl, const std::string& sr, int val)
