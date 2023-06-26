@@ -626,11 +626,21 @@ void test_format_class(std::string charset = "UTF-8")
         // Movable
         {
             format_type fmt2 = format_type(ascii_to<CharType>("{3} {1} {2}"));
-            int i1 = 1, i2 = 2, i3 = 3;
+            const int i1 = 1, i2 = 2, i3 = 3, i42 = 42;
             fmt2 % i1 % i2 % i3;
             fmt2 = format_type(ascii_to<CharType>("{1}"));
             TEST_EQ(fmt2.str(), ascii_to<CharType>("")); // No bound value
-            TEST_EQ((fmt2 % 42).str(), ascii_to<CharType>("42"));
+            TEST_EQ((fmt2 % i42).str(), ascii_to<CharType>("42"));
+            // Can't move with bound params
+            TEST_THROWS(format_type fmt3(std::move(fmt2)), std::exception);
+            TEST_EQ(fmt2.str(), ascii_to<CharType>("42")); // Original unchanged
+            fmt2 = format_type(ascii_to<CharType>("{1}"));
+            fmt2 % i1;
+            format_type fmt3(string_type{});
+            TEST_THROWS(fmt3 = std::move(fmt2), std::exception);
+            fmt2 = format_type(ascii_to<CharType>("{1}"));
+            fmt3 = std::move(fmt2);
+            TEST_EQ((fmt3 % 42).str(), ascii_to<CharType>("42"));
 
             fmt2 = format_type(hello);
             TEST_EQ(fmt2.str(), hello); // Not translated

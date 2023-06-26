@@ -179,6 +179,8 @@ namespace boost { namespace locale {
     /// This protects against a translator crashing the program in an unexpected location.
     template<typename CharType>
     class basic_format {
+        int throw_if_params_bound() const;
+
     public:
         typedef CharType char_type;                    ///< Underlying character type
         typedef basic_message<char_type> message_type; ///< The translation message type
@@ -201,16 +203,12 @@ namespace boost { namespace locale {
         void operator=(const basic_format& other) = delete;
         /// Moveable
         basic_format(basic_format&& other) :
-            message_(std::move(other.message_)), format_(std::move(other.format_)), translate_(other.translate_),
-            parameters_count_(0)
-        {
-            if(other.parameters_count_)
-                throw std::invalid_argument("Can't move a basic_format with bound parameters");
-        }
+            message_((other.throw_if_params_bound(), std::move(other.message_))), format_(std::move(other.format_)),
+            translate_(other.translate_), parameters_count_(0)
+        {}
         basic_format& operator=(basic_format&& other)
         {
-            if(other.parameters_count_)
-                throw std::invalid_argument("Can't move a basic_format with bound parameters");
+            other.throw_if_params_bound();
             message_ = std::move(other.message_);
             format_ = std::move(other.format_);
             translate_ = other.translate_;
@@ -439,6 +437,13 @@ namespace boost { namespace locale {
     typedef basic_format<char32_t> u32format;
 #endif
 
+    template<typename CharType>
+    int basic_format<CharType>::throw_if_params_bound() const
+    {
+        if(parameters_count_)
+            throw std::invalid_argument("Can't move a basic_format with bound parameters");
+        return 0;
+    }
     /// @}
 }} // namespace boost::locale
 
