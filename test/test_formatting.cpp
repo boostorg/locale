@@ -10,6 +10,7 @@
 #include <boost/locale/format.hpp>
 #include <boost/locale/formatting.hpp>
 #include <boost/locale/generator.hpp>
+#include <boost/locale/localization_backend.hpp>
 #include <cstdint>
 #include <ctime>
 #include <iomanip>
@@ -263,17 +264,26 @@ void test_parse_fail_impl(std::basic_istringstream<CharType>& ss, int line)
         BOOST_LOCALE_START_CONST_CONDITION                                    \
     } while(0) BOOST_LOCALE_END_CONST_CONDITION
 
-#define TEST_MIN_MAX_FMT(type, minval, maxval)                      \
-    TEST_FMT(as::number, std::numeric_limits<type>::min(), minval); \
-    TEST_FMT(as::number, std::numeric_limits<type>::max(), maxval)
+#define TEST_MIN_MAX_FMT(as, type, minval, maxval)          \
+    TEST_FMT(as, std::numeric_limits<type>::min(), minval); \
+    TEST_FMT(as, std::numeric_limits<type>::max(), maxval)
 
-#define TEST_MIN_MAX_PARSE(type, minval, maxval)                      \
-    TEST_PARSE(as::number, minval, std::numeric_limits<type>::min()); \
-    TEST_PARSE(as::number, maxval, std::numeric_limits<type>::max())
+#define TEST_MIN_MAX_PARSE(as, type, minval, maxval)          \
+    TEST_PARSE(as, minval, std::numeric_limits<type>::min()); \
+    TEST_PARSE(as, maxval, std::numeric_limits<type>::max())
 
-#define TEST_MIN_MAX(type, minval, maxval)  \
-    TEST_MIN_MAX_FMT(type, minval, maxval); \
-    TEST_MIN_MAX_PARSE(type, minval, maxval)
+#define TEST_MIN_MAX(type, minval, maxval)              \
+    TEST_MIN_MAX_FMT(as::number, type, minval, maxval); \
+    TEST_MIN_MAX_PARSE(as::number, type, minval, maxval)
+
+#define TEST_MIN_MAX_POSIX(type)                                                      \
+    do {                                                                              \
+        const std::string minval = as_posix_string(std::numeric_limits<type>::min()); \
+        const std::string maxval = as_posix_string(std::numeric_limits<type>::max()); \
+        TEST_MIN_MAX_FMT(as::posix, type, minval, maxval);                            \
+        TEST_MIN_MAX_PARSE(as::posix, type, minval, maxval);                          \
+        BOOST_LOCALE_START_CONST_CONDITION                                            \
+    } while(0) BOOST_LOCALE_END_CONST_CONDITION
 
 bool stdlib_correctly_errors_on_out_of_range_int16()
 {
@@ -287,9 +297,52 @@ bool stdlib_correctly_errors_on_out_of_range_int16()
     return fails;
 }
 
+template<typename T>
+std::string as_posix_string(const T v)
+{
+    std::ostringstream ss;
+    ss.imbue(std::locale::classic());
+    ss << v;
+    return ss.str();
+}
+
+template<typename CharType>
+void test_as_posix(const std::string& e_charset = "UTF-8")
+{
+    using boost::locale::localization_backend_manager;
+    const auto orig_backend = localization_backend_manager::global();
+    for(const std::string& backendName : orig_backend.get_all_backends()) {
+        std::cout << "Backend: " << backendName << std::endl;
+        auto backend = orig_backend;
+        backend.select(backendName);
+        localization_backend_manager::global(backend);
+        for(const std::string name : {"en_US", "ru_RU", "de_DE"}) {
+            const std::locale loc = boost::locale::generator{}(name + "." + e_charset);
+            TEST_MIN_MAX_POSIX(int16_t);
+            TEST_MIN_MAX_POSIX(uint16_t);
+
+            TEST_MIN_MAX_POSIX(int32_t);
+            TEST_MIN_MAX_POSIX(uint32_t);
+            TEST_MIN_MAX_POSIX(signed long);
+            TEST_MIN_MAX_POSIX(unsigned long);
+
+            TEST_MIN_MAX_POSIX(int64_t);
+            TEST_MIN_MAX_POSIX(uint64_t);
+            TEST_MIN_MAX_POSIX(signed long long);
+            TEST_MIN_MAX_POSIX(unsigned long long);
+
+            TEST_FMT_PARSE_1(as::posix, 1.25f, "1.25");
+            TEST_FMT_PARSE_1(as::posix, -4.57, "-4.57");
+            TEST_FMT_PARSE_1(as::posix, 3.815l, "3.815");
+        }
+    }
+    localization_backend_manager::global(orig_backend);
+}
+
 template<typename CharType>
 void test_manip(std::string e_charset = "UTF-8")
 {
+    test_as_posix<CharType>(e_charset);
     using string_type = std::basic_string<CharType>;
     boost::locale::generator g;
     for(const auto& name_number : {std::make_pair("en_US", "1,200.1"),
@@ -325,7 +378,7 @@ void test_manip(std::string e_charset = "UTF-8")
 
     TEST_MIN_MAX(int64_t, "-9,223,372,036,854,775,808", "9,223,372,036,854,775,807");
     // ICU does not support uint64, but we have a fallback to format it at least
-    TEST_MIN_MAX_FMT(uint64_t, "0", "18446744073709551615");
+    TEST_MIN_MAX_FMT(as::number, uint64_t, "0", "18446744073709551615");
     TEST_PARSE_FAILS(as::number, "-1", uint64_t);
 
     TEST_FMT_PARSE_3(as::number, std::left, std::setw(3), 15, "15 ");
