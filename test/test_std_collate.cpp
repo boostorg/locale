@@ -57,6 +57,7 @@ void test_char()
     std::locale l = gen("en_US.UTF-8");
 
     test_one<CharType>(l, "a", "b", -1);
+    test_one<CharType>(l, "b", "a", 1);
     test_one<CharType>(l, "a", "a", 0);
 
 #if defined(_LIBCPP_VERSION) && (defined(__APPLE__) || defined(__FreeBSD__))
@@ -76,7 +77,7 @@ void test_char()
                 test_one<CharType>(l, "ängel", "år", info.language() == "sv" ? 1 : -1);
             }
         } else
-            std::cout << "- " << name << " not supported, skipping" << std::endl;
+            std::cout << "- " << name << " not supported, skipping" << std::endl; // LCOV_EXCL_LINE
     }
 #endif
 }

@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2022-2023 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
@@ -185,15 +186,10 @@ namespace boost { namespace locale {
             return create_codecvt(in, std::unique_ptr<base_converter>(cvt), type);
         }
 
-        /// This function creates a \a base_converter that can be used for conversion between UTF-8 and
-        /// unicode code points
+        BOOST_DEPRECATED("This function is deprecated, use 'create_utf8_converter()'")
         BOOST_LOCALE_DECL base_converter* create_utf8_converter_new_ptr();
 
-        /// This function creates a \a base_converter that can be used for conversion between single byte
-        /// character encodings like ISO-8859-1, koi8-r, windows-1255 and Unicode code points,
-        ///
-        /// If \a encoding is not supported, empty pointer is returned. You should check if
-        /// the returned pointer is NULL.
+        BOOST_DEPRECATED("This function is deprecated, use 'create_simple_converter()'")
         BOOST_LOCALE_DECL base_converter* create_simple_converter_new_ptr(const std::string& encoding);
 
         /// Install utf8 codecvt to UTF-16 or UTF-32 into locale \a in and return

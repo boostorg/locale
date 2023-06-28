@@ -143,10 +143,18 @@ void test_cntranslate(const std::string& sContext,
         // Copy
         translation1 = translation2;
         TEST_EQ(translation1.str(l), expected2);
+        {
+            bl::basic_message<Char> t3(translation2);
+            TEST_EQ(t3.str(l), expected2);
+        }
         // Move
         translation1 = bl::translate(c, s, p, n);
         translation2 = std::move(translation1);
         TEST_EQ(translation2.str(l), expected);
+        {
+            bl::basic_message<Char> t3(std::move(translation2));
+            TEST_EQ(t3.str(l), expected);
+        }
         // Swap
         translation1 = bl::translate(c, s, p, n);
         translation2 = bl::translate(c, s2, p2, n);

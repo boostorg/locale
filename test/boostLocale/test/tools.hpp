@@ -160,6 +160,7 @@ template<class T>
 T& empty_stream(T& s)
 {
     s.str(std::basic_string<typename T::char_type>());
+    s.clear();
     return s;
 }
 

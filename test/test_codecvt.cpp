@@ -6,6 +6,7 @@
 // https://www.boost.org/LICENSE_1_0.txt
 
 #include <boost/locale/utf8_codecvt.hpp>
+#include <algorithm>
 #include <cstring>
 #include <iomanip>
 #include <iostream>
@@ -22,17 +23,6 @@
 static const char* utf8_name =
   "\xf0\x9d\x92\x9e-\xD0\xBF\xD1\x80\xD0\xB8\xD0\xB2\xD0\xB5\xD1\x82-\xE3\x82\x84\xE3\x81\x82.txt";
 static const wchar_t* wide_name = L"\U0001D49E-\u043F\u0440\u0438\u0432\u0435\u0442-\u3084\u3042.txt";
-
-const char* res(std::codecvt_base::result r)
-{
-    switch(r) {
-        case std::codecvt_base::ok: return "ok";
-        case std::codecvt_base::partial: return "partial";
-        case std::codecvt_base::error: return "error";
-        case std::codecvt_base::noconv: return "noconv";
-        default: return "error";
-    }
-}
 
 typedef std::codecvt<wchar_t, char, std::mbstate_t> cvt_type;
 
@@ -64,7 +54,7 @@ void test_codecvt_in_n_m(const cvt_type& cvt, int n, int m)
         int count = cvt.length(mb2, from, end, to_end - to);
         TEST_EQ(memcmp(&mb, &mb2, sizeof(mb)), 0);
         if(count != from_next - from)
-            std::cout << count << " " << from_next - from << std::endl;
+            std::cout << count << " " << from_next - from << std::endl; // LCOV_EXCL_LINE
         TEST_EQ(count, from_next - from);
 
         if(r == cvt_type::partial) {
@@ -116,9 +106,7 @@ void test_codecvt_out_n_m(const cvt_type& cvt, int n, int m)
             // Otherwise "Need more output"
             if(from_next != from_end) {
                 TEST_LT(to_end - to_next, cvt.max_length());
-                to_end += n;
-                if(to_end > real_to_end)
-                    to_end = real_to_end;
+                to_end = std::min(to_end + n, real_to_end);
             }
         } else
             TEST_EQ(r, cvt_type::ok);
@@ -150,9 +138,9 @@ void test_codecvt_conv()
             try {
                 test_codecvt_in_n_m(cvt, i, j);
                 test_codecvt_out_n_m(cvt, i, j);
-            } catch(...) {
-                std::cerr << "Wlen=" << j << " Nlen=" << i << std::endl;
-                throw;
+            } catch(...) {                                               // LCOV_EXCL_LINE
+                std::cerr << "Wlen=" << j << " Nlen=" << i << std::endl; // LCOV_EXCL_LINE
+                throw;                                                   // LCOV_EXCL_LINE
             }
         }
     }
@@ -283,4 +271,3 @@ void test_main(int /*argc*/, char** /*argv*/)
     test_codecvt_err();
     test_char_char();
 }
-///

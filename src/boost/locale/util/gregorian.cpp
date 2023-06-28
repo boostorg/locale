@@ -19,6 +19,10 @@
 #include <memory>
 #include <string>
 
+#define BOOST_LOCALE_CASE_INVALID(action)                      \
+    BOOST_ASSERT_MSG(false, "Shouldn't use 'invalid' value."); \
+    action
+
 namespace boost { namespace locale { namespace util {
     namespace {
 
@@ -187,8 +191,10 @@ namespace boost { namespace locale { namespace util {
                     int diff = 7 * (value - current_week);
                     tm_updated_.tm_mday += diff;
                 } break;
-                case period::marks::first_day_of_week: ///< For example Sunday in US, Monday in France
-                case invalid: return;
+                    ///< For example Sunday in US, Monday in France
+                case period::marks::first_day_of_week:                             // LCOV_EXCL_LINE
+                    throw std::invalid_argument("Can't change first day of week"); // LCOV_EXCL_LINE
+                case invalid: BOOST_LOCALE_CASE_INVALID(return );                  // LCOV_EXCL_LINE
             }
             normalized_ = false;
         }
@@ -206,12 +212,10 @@ namespace boost { namespace locale { namespace util {
 #ifndef BOOST_WINDOWS
                         // windows does not handle negative time_t, under other plaforms
                         // it may be actually valid value in  1969-12-31 23:59:59
-                        // so we check that a filed was updated - does not happen in case of error
+                        // so we check that a field was updated - does not happen in case of error
                         if(val.tm_wday == -1)
 #endif
-                        {
-                            throw date_time_error("boost::locale::gregorian_calendar: invalid time");
-                        }
+                            throw date_time_error("boost::locale::gregorian_calendar: invalid time"); // LCOV_EXCL_LINE
                     }
                 } else {
                     point = internal_timegm(&val);
@@ -289,7 +293,7 @@ namespace boost { namespace locale { namespace util {
                             BOOST_LOCALE_END_CONST_CONDITION
                         case current: return tm_.tm_year + 1900;
                     };
-                    break;
+                    throw std::invalid_argument("Invalid abstract_calendar::value_type"); // LCOV_EXCL_LINE
                 case month:
                     switch(v) {
                         case absolute_minimum:
@@ -300,7 +304,7 @@ namespace boost { namespace locale { namespace util {
                         case actual_maximum: return 11;
                         case current: return tm_.tm_mon;
                     };
-                    break;
+                    throw std::invalid_argument("Invalid abstract_calendar::value_type"); // LCOV_EXCL_LINE
                 case day:
                     switch(v) {
                         case absolute_minimum:
@@ -311,7 +315,7 @@ namespace boost { namespace locale { namespace util {
                         case actual_maximum: return days_in_month(tm_.tm_year + 1900, tm_.tm_mon + 1);
                         case current: return tm_.tm_mday;
                     };
-                    break;
+                    throw std::invalid_argument("Invalid abstract_calendar::value_type"); // LCOV_EXCL_LINE
                 case day_of_year: ///< The number of day in year, starting from 1
                     switch(v) {
                         case absolute_minimum:
@@ -322,7 +326,7 @@ namespace boost { namespace locale { namespace util {
                         case actual_maximum: return is_leap(tm_.tm_year + 1900) ? 366 : 365;
                         case current: return tm_.tm_yday + 1;
                     }
-                    break;
+                    throw std::invalid_argument("Invalid abstract_calendar::value_type"); // LCOV_EXCL_LINE
                 case day_of_week: ///< Day of week, starting from Sunday, [1..7]
                     switch(v) {
                         case absolute_minimum:
@@ -333,7 +337,7 @@ namespace boost { namespace locale { namespace util {
                         case actual_maximum: return 7;
                         case current: return tm_.tm_wday + 1;
                     }
-                    break;
+                    throw std::invalid_argument("Invalid abstract_calendar::value_type"); // LCOV_EXCL_LINE
                 case day_of_week_local: ///< Local day of week, for example in France Monday is 1, in US Sunday is 1,
                                         ///< [1..7]
                     switch(v) {
@@ -345,8 +349,8 @@ namespace boost { namespace locale { namespace util {
                         case actual_maximum: return 7;
                         case current: return (tm_.tm_wday - first_day_of_week_ + 7) % 7 + 1;
                     }
-                    break;
-                case hour: ///< 24 clock hour [0..23]
+                    throw std::invalid_argument("Invalid abstract_calendar::value_type"); // LCOV_EXCL_LINE
+                case hour:                                                                ///< 24 clock hour [0..23]
                     switch(v) {
                         case absolute_minimum:
                         case greatest_minimum:
@@ -356,8 +360,8 @@ namespace boost { namespace locale { namespace util {
                         case actual_maximum: return 23;
                         case current: return tm_.tm_hour;
                     }
-                    break;
-                case hour_12: ///< 12 clock hour [0..11]
+                    throw std::invalid_argument("Invalid abstract_calendar::value_type"); // LCOV_EXCL_LINE
+                case hour_12:                                                             ///< 12 clock hour [0..11]
                     switch(v) {
                         case absolute_minimum:
                         case greatest_minimum:
@@ -367,8 +371,8 @@ namespace boost { namespace locale { namespace util {
                         case actual_maximum: return 11;
                         case current: return tm_.tm_hour % 12;
                     }
-                    break;
-                case am_pm: ///< am or pm marker, [0..1]
+                    throw std::invalid_argument("Invalid abstract_calendar::value_type"); // LCOV_EXCL_LINE
+                case am_pm:                                                               ///< am or pm marker, [0..1]
                     switch(v) {
                         case absolute_minimum:
                         case greatest_minimum:
@@ -378,8 +382,8 @@ namespace boost { namespace locale { namespace util {
                         case actual_maximum: return 1;
                         case current: return tm_.tm_hour >= 12 ? 1 : 0;
                     }
-                    break;
-                case minute: ///< minute [0..59]
+                    throw std::invalid_argument("Invalid abstract_calendar::value_type"); // LCOV_EXCL_LINE
+                case minute:                                                              ///< minute [0..59]
                     switch(v) {
                         case absolute_minimum:
                         case greatest_minimum:
@@ -389,8 +393,8 @@ namespace boost { namespace locale { namespace util {
                         case actual_maximum: return 59;
                         case current: return tm_.tm_min;
                     }
-                    break;
-                case second: ///< second [0..59]
+                    throw std::invalid_argument("Invalid abstract_calendar::value_type"); // LCOV_EXCL_LINE
+                case second:                                                              ///< second [0..59]
                     switch(v) {
                         case absolute_minimum:
                         case greatest_minimum:
@@ -400,7 +404,7 @@ namespace boost { namespace locale { namespace util {
                         case actual_maximum: return 59;
                         case current: return tm_.tm_sec;
                     }
-                    break;
+                    throw std::invalid_argument("Invalid abstract_calendar::value_type"); // LCOV_EXCL_LINE
                 case period::marks::first_day_of_week: ///< For example Sunday in US, Monday in France
                     return first_day_of_week_ + 1;
 
@@ -418,13 +422,11 @@ namespace boost { namespace locale { namespace util {
                             return get_week_number(end_of_year_days, dow_of_end_of_year);
                         }
                         case current: {
-                            int val = get_week_number(tm_.tm_yday, tm_.tm_wday);
-                            if(val < 0)
-                                return 53;
-                            return val;
+                            const int val = get_week_number(tm_.tm_yday, tm_.tm_wday);
+                            return (val < 0) ? 53 : val;
                         }
-                    }
-                    break;
+                    }                                                                     // LCOV_EXCL_LINE
+                    throw std::invalid_argument("Invalid abstract_calendar::value_type"); // LCOV_EXCL_LINE
                 case week_of_month: ///< The week number within current month
                     switch(v) {
                         case absolute_minimum:
@@ -438,13 +440,11 @@ namespace boost { namespace locale { namespace util {
                             return get_week_number(end_of_month_days, dow_of_end_of_month);
                         }
                         case current: {
-                            int val = get_week_number(tm_.tm_mday, tm_.tm_wday);
-                            if(val < 0)
-                                return 5;
-                            return val;
+                            const int val = get_week_number(tm_.tm_mday, tm_.tm_wday);
+                            return (val < 0) ? 5 : val;
                         }
-                    }
-                    break;
+                    }                                                                     // LCOV_EXCL_LINE
+                    throw std::invalid_argument("Invalid abstract_calendar::value_type"); // LCOV_EXCL_LINE
                 case day_of_week_in_month: ///< Original number of the day of the week in month.
                     switch(v) {
                         case absolute_minimum:
@@ -461,10 +461,10 @@ namespace boost { namespace locale { namespace util {
                             return 5;
                         case current: return (tm_.tm_mday - 1) / 7 + 1;
                     }
-                    break;
-                case invalid: BOOST_ASSERT_MSG(false, "Shouldn't use 'invalid' value."); break;
+                    throw std::invalid_argument("Invalid abstract_calendar::value_type"); // LCOV_EXCL_LINE
+                case invalid: BOOST_LOCALE_CASE_INVALID(break);                           // LCOV_EXCL_LINE
             }
-            return 0;
+            throw std::invalid_argument("Invalid period_mark"); // LCOV_EXCL_LINE
         }
 
         /// Set current time point
@@ -489,6 +489,7 @@ namespace boost { namespace locale { namespace util {
                 case is_gregorian: throw date_time_error("is_gregorian is not settable options for calendar");
                 case is_dst: throw date_time_error("is_dst is not settable options for calendar");
             }
+            throw std::invalid_argument("Invalid option type"); // LCOV_EXCL_LINE
         }
         /// Get option for calendar, currently only check if it is Gregorian calendar
         int get_option(calendar_option_type opt) const override
@@ -497,69 +498,66 @@ namespace boost { namespace locale { namespace util {
                 case is_gregorian: return 1;
                 case is_dst: return tm_.tm_isdst == 1;
             }
-            return 0;
+            throw std::invalid_argument("Invalid option type"); // LCOV_EXCL_LINE
         }
 
         /// Adjust period's \a p value by \a difference items using a update_type \a u.
         /// Note: not all values are adjustable
         void adjust_value(period::marks::period_mark m, update_type u, int difference) override
         {
-            switch(u) {
-                case move: {
-                    using namespace period::marks;
-                    switch(m) {
-                        case year:          ///< Year, it is calendar specific
-                        case extended_year: ///< Extended year for Gregorian/Julian calendars, where 1 BC == 0, 2 BC ==
-                                            ///< -1.
-                            tm_updated_.tm_year += difference;
-                            break;
-                        case month: tm_updated_.tm_mon += difference; break;
-                        case day:
-                        case day_of_year:
-                        case day_of_week:       ///< Day of week, starting from Sunday, [1..7]
-                        case day_of_week_local: ///< Local day of week, for example in France Monday is 1, in US Sunday
-                                                ///< is 1, [1..7]
-                            tm_updated_.tm_mday += difference;
-                            break;
-                        case hour:    ///< 24 clock hour [0..23]
-                        case hour_12: ///< 12 clock hour [0..11]
-                            tm_updated_.tm_hour += difference;
-                            break;
-                        case am_pm: ///< am or pm marker, [0..1]
-                            tm_updated_.tm_hour += 12 * difference;
-                            break;
-                        case minute: ///< minute [0..59]
-                            tm_updated_.tm_min += difference;
-                            break;
-                        case second: tm_updated_.tm_sec += difference; break;
-                        case week_of_year:         ///< The week number in the year
-                        case week_of_month:        ///< The week number within current month
-                        case day_of_week_in_month: ///< Original number of the day of the week in month.
-                            tm_updated_.tm_mday += difference * 7;
-                            break;
-                        case era:
-                        case period::marks::first_day_of_week:
-                        case invalid: break; // Not adjustable and ignored
-                    }
-                    normalized_ = false;
-                    normalize();
-                } break;
-                case roll: {
-                    const int cur_min = get_value(m, actual_minimum);
-                    const int cur_max = get_value(m, actual_maximum);
-                    BOOST_ASSERT(cur_max >= cur_min);
-                    const int range = cur_max - cur_min + 1;
-                    int value = get_value(m, current) - cur_min;
-                    BOOST_ASSERT(value >= 0 && value < range);
-                    BOOST_ASSERT_MSG(difference <= std::numeric_limits<int>::max(), "Input is to large");
-                    value = (value + difference) % range;
-                    // If the sum above was negative the result of the modulo operation "can" be negative too.
-                    if(value < 0)
-                        value += range;
-                    BOOST_ASSERT(value >= 0 && value < range);
-                    set_value(m, value + cur_min);
-                    normalize();
+            if(u == move) {
+                using namespace period::marks;
+                switch(m) {
+                    case year:          ///< Year, it is calendar specific
+                    case extended_year: ///< Extended year for Gregorian/Julian calendars, where 1 BC == 0, 2 BC == -1
+                        tm_updated_.tm_year += difference;
+                        break;
+                    case month: tm_updated_.tm_mon += difference; break;
+                    case day:
+                    case day_of_year:
+                    case day_of_week:       ///< starting from Sunday, [1..7]
+                    case day_of_week_local: ///< Local DoW, e.g. in France Monday=1, in US Sunday=1, [1..7]
+                        tm_updated_.tm_mday += difference;
+                        break;
+                    case hour:    ///< 24 clock hour [0..23]
+                    case hour_12: ///< 12 clock hour [0..11]
+                        tm_updated_.tm_hour += difference;
+                        break;
+                    case am_pm: ///< am or pm marker, [0..1]
+                        tm_updated_.tm_hour += 12 * difference;
+                        break;
+                    case minute: ///< minute [0..59]
+                        tm_updated_.tm_min += difference;
+                        break;
+                    case second: tm_updated_.tm_sec += difference; break;
+                    case week_of_year:         ///< The week number in the year
+                    case week_of_month:        ///< The week number within current month
+                    case day_of_week_in_month: ///< Original number of the day of the week in month.
+                        tm_updated_.tm_mday += difference * 7;
+                        break;
+                    case era: throw std::invalid_argument("era not adjustable");       // LCOV_EXCL_LINE
+                    case period::marks::first_day_of_week:                             // LCOV_EXCL_LINE
+                        throw std::invalid_argument("Can't change first day of week"); // LCOV_EXCL_LINE
+                    case invalid: BOOST_LOCALE_CASE_INVALID(return );                  // LCOV_EXCL_LINE
                 }
+                normalized_ = false;
+                normalize();
+            } else {
+                BOOST_ASSERT(u == roll);
+                const int cur_min = get_value(m, actual_minimum);
+                const int cur_max = get_value(m, actual_maximum);
+                BOOST_ASSERT(cur_max >= cur_min);
+                const int range = cur_max - cur_min + 1;
+                int value = get_value(m, current) - cur_min;
+                BOOST_ASSERT(value >= 0 && value < range);
+                BOOST_ASSERT_MSG(difference <= std::numeric_limits<int>::max(), "Input is to large");
+                value = (value + difference) % range;
+                // If the sum above was negative the result of the modulo operation "can" be negative too.
+                if(value < 0)
+                    value += range;
+                BOOST_ASSERT(value >= 0 && value < range);
+                set_value(m, value + cur_min);
+                normalize();
             }
         }
 
@@ -624,10 +622,12 @@ namespace boost { namespace locale { namespace util {
                 case hour_12: return static_cast<int>((other->time_ - time_) / 3600);
                 case minute: return static_cast<int>((other->time_ - time_) / 60);
                 case second: return static_cast<int>(other->time_ - time_);
-                case invalid:
-                case period::marks::first_day_of_week: break; // Not adjustable
+                case invalid:                            // LCOV_EXCL_LINE
+                    BOOST_LOCALE_CASE_INVALID(return 0); // LCOV_EXCL_LINE
+                // Not adjustable
+                case period::marks::first_day_of_week: return 0; // LCOV_EXCL_LINE
             }
-            return 0;
+            throw std::invalid_argument("Invalid period_mark"); // LCOV_EXCL_LINE
         }
 
         /// Set time zone, empty - use system
