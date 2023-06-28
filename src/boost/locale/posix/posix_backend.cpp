@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2022-2023 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
@@ -20,6 +21,7 @@
 
 #include "boost/locale/posix/all_generator.hpp"
 #include "boost/locale/util/gregorian.hpp"
+#include "boost/locale/util/make_std_unique.hpp"
 
 namespace boost { namespace locale { namespace impl_posix {
 
@@ -144,7 +146,7 @@ namespace boost { namespace locale { namespace impl_posix {
 
     std::unique_ptr<localization_backend> create_localization_backend()
     {
-        return std::unique_ptr<localization_backend>(new posix_localization_backend());
+        return make_std_unique<posix_localization_backend>();
     }
 
 }}} // namespace boost::locale::impl_posix

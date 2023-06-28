@@ -14,6 +14,7 @@
 #ifdef BOOST_LOCALE_WITH_ICONV
 #    include "boost/locale/util/encoding.hpp"
 #    include "boost/locale/util/iconv.hpp"
+#    include "boost/locale/util/make_std_unique.hpp"
 #endif
 
 namespace boost { namespace locale {
@@ -153,7 +154,7 @@ namespace boost { namespace locale {
     std::unique_ptr<util::base_converter> create_iconv_converter(const std::string& encoding)
     {
         try {
-            return std::unique_ptr<util::base_converter>(new mb2_iconv_converter(encoding));
+            return make_std_unique<mb2_iconv_converter>(encoding);
         } catch(const std::exception&) {
             return nullptr;
         }

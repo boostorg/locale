@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2022-2023 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
@@ -11,6 +12,7 @@
 #include <boost/locale/util/locale_data.hpp>
 #include "boost/locale/icu/all_generator.hpp"
 #include "boost/locale/icu/cdata.hpp"
+#include "boost/locale/util/make_std_unique.hpp"
 
 #include <unicode/ucnv.h>
 
@@ -125,7 +127,7 @@ namespace boost { namespace locale { namespace impl_icu {
 
     std::unique_ptr<localization_backend> create_localization_backend()
     {
-        return std::unique_ptr<localization_backend>(new icu_localization_backend());
+        return make_std_unique<icu_localization_backend>();
     }
 
 }}} // namespace boost::locale::impl_icu

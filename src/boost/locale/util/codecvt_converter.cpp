@@ -16,6 +16,7 @@
 #include <cstring>
 
 #include "boost/locale/util/encoding.hpp"
+#include "boost/locale/util/make_std_unique.hpp"
 
 #ifdef BOOST_MSVC
 #    pragma warning(disable : 4244) // loose data
@@ -204,24 +205,20 @@ namespace boost { namespace locale { namespace util {
 
     std::unique_ptr<base_converter> create_simple_converter(const std::string& encoding)
     {
-        return std::unique_ptr<base_converter>(create_simple_converter_new_ptr(encoding));
-    }
-    base_converter* create_simple_converter_new_ptr(const std::string& encoding)
-    {
         if(is_simple_encoding(encoding))
-            return new simple_converter(encoding);
+            return make_std_unique<simple_converter>(encoding);
         return nullptr;
     }
 
     std::unique_ptr<base_converter> create_utf8_converter()
     {
-        return std::unique_ptr<base_converter>(create_utf8_converter_new_ptr());
+        return make_std_unique<utf8_converter>();
     }
 
-    base_converter* create_utf8_converter_new_ptr()
-    {
-        return new utf8_converter();
-    }
+    // clang-format off
+    base_converter* create_simple_converter_new_ptr(const std::string& encoding){ return create_simple_converter(encoding).release(); } // LCOV_EXCL_LINE
+    base_converter* create_utf8_converter_new_ptr(){ return create_utf8_converter().release(); } // LCOV_EXCL_LINE
+    // clang-format on
 
     template<typename CharType>
     class code_converter : public generic_codecvt<CharType, code_converter<CharType>> {

@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2022-2023 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
@@ -11,6 +12,7 @@
 #include <boost/locale/util.hpp>
 #include <boost/locale/util/locale_data.hpp>
 #include "boost/locale/util/gregorian.hpp"
+#include "boost/locale/util/make_std_unique.hpp"
 #include "boost/locale/win32/all_generator.hpp"
 #include "boost/locale/win32/api.hpp"
 #include <algorithm>
@@ -125,7 +127,7 @@ namespace boost { namespace locale { namespace impl_win {
 
     std::unique_ptr<localization_backend> create_localization_backend()
     {
-        return std::unique_ptr<localization_backend>(new winapi_localization_backend());
+        return make_std_unique<winapi_localization_backend>();
     }
 
 }}} // namespace boost::locale::impl_win
