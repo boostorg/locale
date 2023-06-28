@@ -142,9 +142,9 @@ namespace boost { namespace locale { namespace impl_posix {
         std::shared_ptr<locale_t> lc_;
     };
 
-    localization_backend* create_localization_backend()
+    std::unique_ptr<localization_backend> create_localization_backend()
     {
-        return new posix_localization_backend();
+        return std::unique_ptr<localization_backend>(new posix_localization_backend());
     }
 
 }}} // namespace boost::locale::impl_posix

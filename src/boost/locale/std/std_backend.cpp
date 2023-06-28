@@ -221,9 +221,9 @@ namespace boost { namespace locale { namespace impl_std {
         bool use_ansi_encoding_;
     };
 
-    localization_backend* create_localization_backend()
+    std::unique_ptr<localization_backend> create_localization_backend()
     {
-        return new std_localization_backend();
+        return std::unique_ptr<localization_backend>(new std_localization_backend());
     }
 
 }}} // namespace boost::locale::impl_std

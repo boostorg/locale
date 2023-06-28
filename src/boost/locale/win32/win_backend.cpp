@@ -123,9 +123,9 @@ namespace boost { namespace locale { namespace impl_win {
         winlocale lc_;
     };
 
-    localization_backend* create_localization_backend()
+    std::unique_ptr<localization_backend> create_localization_backend()
     {
-        return new winapi_localization_backend();
+        return std::unique_ptr<localization_backend>(new winapi_localization_backend());
     }
 
 }}} // namespace boost::locale::impl_win

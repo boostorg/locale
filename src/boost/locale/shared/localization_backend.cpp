@@ -65,26 +65,24 @@ namespace boost { namespace locale {
             return -1;
         }
 
-        void adopt_backend(const std::string& name, localization_backend* backend_ptr)
+        void add_backend(const std::string& name, std::unique_ptr<localization_backend> ptr)
         {
-            std::unique_ptr<localization_backend> ptr(backend_ptr);
             if(all_backends_.empty())
                 std::fill(default_backends_.begin(), default_backends_.end(), 0);
-            else if(find_backend(name) >= 0)
-                return;
-            all_backends_.push_back(std::make_pair(name, std::move(ptr)));
+            if(BOOST_LIKELY(find_backend(name) < 0))
+                all_backends_.push_back(std::make_pair(name, std::move(ptr)));
         }
 
         void select(const std::string& backend_name, category_t category = all_categories)
         {
             const int id = find_backend(backend_name);
-            if(id < 0)
-                return;
-            category_t flag = category_first;
-            for(int& defBackend : default_backends_) {
-                if(category & flag)
-                    defBackend = id;
-                ++flag;
+            if(id >= 0) {
+                category_t flag = category_first;
+                for(int& defBackend : default_backends_) {
+                    if(category & flag)
+                        defBackend = id;
+                    ++flag;
+                }
             }
         }
 
@@ -174,12 +172,7 @@ namespace boost { namespace locale {
     void localization_backend_manager::add_backend(const std::string& name,
                                                    std::unique_ptr<localization_backend> backend)
     {
-        pimpl_->adopt_backend(name, backend.release());
-    }
-
-    void localization_backend_manager::adopt_backend(const std::string& name, localization_backend* backend)
-    {
-        pimpl_->adopt_backend(name, backend);
+        pimpl_->add_backend(name, std::move(backend));
     }
 
     void localization_backend_manager::remove_all_backends()
@@ -200,19 +193,19 @@ namespace boost { namespace locale {
         {
             localization_backend_manager mgr;
 #ifdef BOOST_LOCALE_WITH_ICU
-            mgr.adopt_backend("icu", impl_icu::create_localization_backend());
+            mgr.add_backend("icu", impl_icu::create_localization_backend());
 #endif
 
 #ifndef BOOST_LOCALE_NO_POSIX_BACKEND
-            mgr.adopt_backend("posix", impl_posix::create_localization_backend());
+            mgr.add_backend("posix", impl_posix::create_localization_backend());
 #endif
 
 #ifndef BOOST_LOCALE_NO_WINAPI_BACKEND
-            mgr.adopt_backend("winapi", impl_win::create_localization_backend());
+            mgr.add_backend("winapi", impl_win::create_localization_backend());
 #endif
 
 #ifndef BOOST_LOCALE_NO_STD_BACKEND
-            mgr.adopt_backend("std", impl_std::create_localization_backend());
+            mgr.add_backend("std", impl_std::create_localization_backend());
 #endif
 
             return mgr;

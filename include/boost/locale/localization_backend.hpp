@@ -82,20 +82,19 @@ namespace boost { namespace locale {
         std::unique_ptr<localization_backend> create() const;
 
         BOOST_DEPRECATED("This function is deprecated, use 'create()' instead")
-        std::unique_ptr<localization_backend> get() const { return create(); }
+        std::unique_ptr<localization_backend> get() const { return create(); } // LCOV_EXCL_LINE
         BOOST_DEPRECATED("This function is deprecated, use 'create()' instead")
-        std::unique_ptr<localization_backend> get_unique_ptr() const { return create(); }
+        std::unique_ptr<localization_backend> get_unique_ptr() const { return create(); } // LCOV_EXCL_LINE
 
         /// Add new backend to the manager, each backend should be uniquely defined by its name.
         ///
         /// This library provides: "icu", "posix", "winapi" and "std" backends.
         void add_backend(const std::string& name, std::unique_ptr<localization_backend> backend);
 
-        /// Add new backend to the manager, each backend should be uniquely defined by its name.
-        /// ownership on backend is transfered
-        ///
-        /// This library provides: "icu", "posix", "winapi" and "std" backends.
-        void adopt_backend(const std::string& name, localization_backend* backend);
+        // clang-format off
+        BOOST_DEPRECATED("This function is deprecated, use 'add_backend' instead")
+        void adopt_backend(const std::string& name, localization_backend* backend) { add_backend(name, std::unique_ptr<localization_backend>(backend)); } // LCOV_EXCL_LINE
+        // clang-format on
 
         /// Clear backend
         void remove_all_backends();

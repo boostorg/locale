@@ -123,9 +123,9 @@ namespace boost { namespace locale { namespace impl_icu {
         bool use_ansi_encoding_;
     };
 
-    localization_backend* create_localization_backend()
+    std::unique_ptr<localization_backend> create_localization_backend()
     {
-        return new icu_localization_backend();
+        return std::unique_ptr<localization_backend>(new icu_localization_backend());
     }
 
 }}} // namespace boost::locale::impl_icu
