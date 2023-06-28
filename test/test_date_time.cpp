@@ -51,7 +51,10 @@ struct mock_calendar : public boost::locale::abstract_calendar {
     int difference(const abstract_calendar&, period_mark) const override { return 0; } // LCOV_EXCL_LINE
     void set_timezone(const std::string&) override {}
     std::string get_timezone() const override { return "mock TZ"; }
-    bool same(const abstract_calendar*) const override { return false; } // LCOV_EXCL_LINE
+    bool same(const abstract_calendar* other) const override
+    {
+        return dynamic_cast<const mock_calendar*>(other) != nullptr;
+    }
 
     static int num_instances;
     double time;
@@ -145,9 +148,32 @@ void test_main(int /*argc*/, char** /*argv*/)
             TEST(calendar() == cal);
             TEST(calendar(loc) == cal);
             TEST(calendar(tz) == cal);
-            TEST(calendar(loc, "GMT+01:00") != cal);
-            TEST(calendar(g("ru_RU.UTF-8")) != cal);
-            TEST(calendar() != *mock_cal);
+            {
+                const std::string tz2 = "GMT+01:00";
+                const std::locale loc2 = g("ru_RU.UTF-8");
+                const calendar cal_tz2(loc, "GMT+01:00");
+                const calendar cal_loc2(loc2);
+                TEST(cal_tz2 != cal);
+                TEST(cal_loc2 != cal);
+                calendar cal_tmp(cal);
+                TEST(cal_tmp == cal);
+                TEST(cal_tmp != cal_tz2);
+                cal_tmp = cal_tz2;
+                TEST(cal_tmp == cal_tz2);
+                TEST_EQ(cal_tmp.get_time_zone(), tz2);
+                TEST(cal_tmp.get_locale() == loc);
+                TEST(cal_tmp != cal_loc2);
+                cal_tmp = cal_loc2;
+                TEST(cal_tmp == cal_loc2);
+                TEST_EQ(cal_tmp.get_time_zone(), tz);
+                TEST(cal_tmp.get_locale() == loc2);
+            }
+            {
+                calendar cal2;
+                TEST(cal2 != *mock_cal);
+                cal2 = *mock_cal;
+                TEST(cal2 == *mock_cal);
+            }
 
             TEST_EQ(cal.minimum(month()), 0);
             TEST_EQ(cal.maximum(month()), 11);
