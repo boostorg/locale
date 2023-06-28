@@ -66,12 +66,12 @@ namespace boost { namespace locale {
         return impl_->get_option(abstract_calendar::is_gregorian) != 0;
     }
 
-    std::string calendar::get_time_zone() const
+    const std::string& calendar::get_time_zone() const
     {
         return tz_;
     }
 
-    std::locale calendar::get_locale() const
+    const std::locale& calendar::get_locale() const
     {
         return locale_;
     }

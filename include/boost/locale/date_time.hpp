@@ -515,9 +515,9 @@ namespace boost { namespace locale {
         int first_day_of_week() const;
 
         /// get calendar's locale
-        std::locale get_locale() const;
+        const std::locale& get_locale() const;
         /// get calendar's time zone
-        std::string get_time_zone() const;
+        const std::string& get_time_zone() const;
 
         /// Check if the calendar is Gregorian
         bool is_gregorian() const;
