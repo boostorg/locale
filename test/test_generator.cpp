@@ -10,6 +10,7 @@
 #include "../src/boost/locale/win32/lcid.hpp"
 #include "boostLocale/test/tools.hpp"
 #include "boostLocale/test/unit_test.hpp"
+#include <boost/assert.hpp>
 #include <boost/core/ignore_unused.hpp>
 #include <algorithm>
 #include <iomanip>
@@ -64,8 +65,10 @@ bool hasLocaleForBackend(const std::string& locale_name, const std::string& back
         return has_std_locale(locale_name.c_str());
     else if(backendName == "posix")
         return has_posix_locale(locale_name);
-    else                                         // ICU
+    else {
+        BOOST_ASSERT(backendName == "icu");
         return BOOST_LOCALE_ICU_VERSION >= 5901; // First version to use (correct) CLDR data
+    }
 }
 
 void test_special_locales()

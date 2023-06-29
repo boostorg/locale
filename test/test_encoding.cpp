@@ -35,12 +35,12 @@ std::ostream& operator<<(std::ostream& s, boost::locale::conv::detail::conv_back
 {
     using boost::locale::conv::detail::conv_backend;
     switch(impl) {
-        case conv_backend::Default: return s << "[Default]";
+        case conv_backend::Default: return s << "[Default]"; // LCOV_EXCL_LINE
         case conv_backend::IConv: return s << "[IConv]";
         case conv_backend::ICU: return s << "[ICU]";
         case conv_backend::WinAPI: return s << "[WinAPI]";
     }
-    return s;
+    return s; // LCOV_EXCL_LINE
 }
 
 #define TEST_FAIL_CONVERSION(X) TEST_THROWS(X, boost::locale::conv::conversion_error)
@@ -61,7 +61,7 @@ void test_to_utf_for_impls(const std::string& source,
               boost::locale::conv::detail::make_utf_encoder<Char>(encoding, boost::locale::conv::skip, impl);
             TEST_EQ(convPtr->convert(source), target);
         } catch(invalid_charset_error&) {
-            continue;
+            continue; // LCOV_EXCL_LINE
         }
         if(!expectSuccess) {
             auto convPtr =
@@ -95,7 +95,7 @@ void test_from_utf_for_impls(const std::basic_string<Char>& source,
               boost::locale::conv::detail::make_utf_decoder<Char>(encoding, boost::locale::conv::skip, impl);
             TEST_EQ(convPtr->convert(source), target);
         } catch(invalid_charset_error&) {
-            continue;
+            continue; // LCOV_EXCL_LINE
         }
         if(!expectSuccess) {
             auto convPtr =
@@ -478,18 +478,17 @@ void test_between_for_impls(const std::string& source,
     boost::locale::conv::narrow_converter conv(from_encoding, to_encoding);
     TEST_EQ(conv(source), target);
     for(const auto impl : all_conv_backends) {
+        using boost::locale::conv::detail::make_narrow_converter;
         std::cout << "----- " << impl << '\n';
         using boost::locale::conv::invalid_charset_error;
         try {
-            auto convPtr =
-              boost::locale::conv::detail::make_narrow_converter(source, target, boost::locale::conv::skip, impl);
+            auto convPtr = make_narrow_converter(from_encoding, to_encoding, boost::locale::conv::skip, impl);
             TEST_EQ(convPtr->convert(source), target);
         } catch(invalid_charset_error&) {
-            continue;
+            continue; // LCOV_EXCL_LINE
         }
         if(!expectSuccess) {
-            auto convPtr =
-              boost::locale::conv::detail::make_narrow_converter(source, target, boost::locale::conv::stop, impl);
+            auto convPtr = make_narrow_converter(from_encoding, to_encoding, boost::locale::conv::stop, impl);
             TEST_FAIL_CONVERSION(convPtr->convert(source));
         }
     }

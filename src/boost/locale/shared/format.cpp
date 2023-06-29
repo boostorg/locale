@@ -63,17 +63,11 @@ namespace boost { namespace locale { namespace detail {
     {
         if(key.empty())
             return;
-        try {
-            int position;
-            if(util::try_to_int(key, position) && position > 0) {
-                static_assert(sizeof(unsigned) <= sizeof(decltype(d->position)), "Possible lossy conversion");
-                d->position = static_cast<unsigned>(position - 1);
-                return;
-            }
-        } catch(const std::logic_error&) { /* No/invalid number */
-        }
-
-        if(key == "num" || key == "number") {
+        int position;
+        if(util::try_to_int(key, position) && position > 0) {
+            static_assert(sizeof(unsigned) <= sizeof(decltype(d->position)), "Possible lossy conversion");
+            d->position = static_cast<unsigned>(position - 1);
+        } else if(key == "num" || key == "number") {
             as::number(ios_);
 
             if(value == "hex")
@@ -155,13 +149,12 @@ namespace boost { namespace locale { namespace detail {
                 d->restore_locale = true;
             }
 
-            std::string encoding = std::use_facet<info>(d->saved_locale).encoding();
             generator gen;
             gen.categories(category_t::formatting);
 
             std::locale new_loc;
             if(value.find('.') == std::string::npos)
-                new_loc = gen(value + "." + encoding);
+                new_loc = gen(value + "." + std::use_facet<info>(d->saved_locale).encoding());
             else
                 new_loc = gen(value);
 

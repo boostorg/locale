@@ -45,7 +45,7 @@ void test_char()
 
     name = "tr_TR.UTF-8";
     if(!has_posix_locale(name))
-        std::cout << "- " << name << " is not supported, skipping" << std::endl;
+        std::cout << "- " << name << " is not supported, skipping" << std::endl; // LCOV_EXCL_LINE
     else {
         std::cout << "Testing " << name << std::endl;
         locale_holder cl(newlocale(LC_ALL_MASK, name.c_str(), nullptr));

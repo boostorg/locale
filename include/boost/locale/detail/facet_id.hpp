@@ -12,7 +12,10 @@
 
 /// \cond INTERNAL
 namespace boost { namespace locale { namespace detail {
-
+#if defined(__clang__)
+#    pragma clang diagnostic push
+#    pragma clang diagnostic ignored "-Wundefined-var-template"
+#endif
     /// CRTP base class to hold the id required for facets
     ///
     /// Required because the id needs to be defined in a CPP file and hence ex/imported for shared libraries.
@@ -22,7 +25,9 @@ namespace boost { namespace locale { namespace detail {
     struct BOOST_LOCALE_DECL facet_id {
         static std::locale::id id;
     };
-
+#if defined(__clang__)
+#    pragma clang diagnostic pop
+#endif
 }}} // namespace boost::locale::detail
 
 /// \endcond

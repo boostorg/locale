@@ -515,9 +515,9 @@ namespace boost { namespace locale {
         int first_day_of_week() const;
 
         /// get calendar's locale
-        std::locale get_locale() const;
+        const std::locale& get_locale() const;
         /// get calendar's time zone
-        std::string get_time_zone() const;
+        const std::string& get_time_zone() const;
 
         /// Check if the calendar is Gregorian
         bool is_gregorian() const;
@@ -671,6 +671,9 @@ namespace boost { namespace locale {
         /// The POSIX time is number of seconds since January 1st, 1970 00:00 UTC, ignoring leap seconds.
         /// This time can be fetched from Operating system clock using C function time, gettimeofday and others.
         void time(double v);
+
+        /// Get the name of the associated timezone
+        std::string timezone() const;
 
         /// compare date_time in the timeline (ignores difference in calendar, timezone etc)
         bool operator==(const date_time& other) const;

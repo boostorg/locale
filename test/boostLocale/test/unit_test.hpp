@@ -211,6 +211,16 @@ std::string to_string(const char32_t c)
     return to_string_char_impl(c);
 }
 
+#if defined(BOOST_CLANG) && BOOST_CLANG_VERSION < 120000 && defined(__cplusplus) && __cplusplus >= 202002L
+// Avoid warning due to comparison-to-spaceship-rewrite, happening e.g. for string comparison
+// see https://github.com/llvm/llvm-project/issues/43670
+#    define BOOST_LOCALE_SPACESHIP_NULLPTR_WARNING 1
+#    pragma clang diagnostic push
+#    pragma clang diagnostic ignored "-Wzero-as-null-pointer-constant"
+#else
+#    define BOOST_LOCALE_SPACESHIP_NULLPTR_WARNING 0
+#endif
+
 template<typename T, typename U>
 void test_impl(bool success, T const& l, U const& r, const char* expr, const char* fail_expr, int line)
 {
@@ -264,6 +274,10 @@ void test_gt_impl(T const& l, U const& r, const char* expr, int line)
 #define TEST_LT(x, y) test_lt_impl(x, y, BOOST_LOCALE_STRINGIZE(x < y), __LINE__)
 #define TEST_GE(x, y) test_ge_impl(x, y, BOOST_LOCALE_STRINGIZE(x >= y), __LINE__)
 #define TEST_GT(x, y) test_gt_impl(x, y, BOOST_LOCALE_STRINGIZE(x > y), __LINE__)
+
+#if BOOST_LOCALE_SPACESHIP_NULLPTR_WARNING
+#    pragma clang diagnostic pop
+#endif
 
 #ifdef BOOST_MSVC
 #    define BOOST_LOCALE_DISABLE_UNREACHABLE_CODE_WARNING __pragma(warning(disable : 4702))

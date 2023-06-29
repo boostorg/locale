@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2022-2023 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
@@ -13,6 +14,7 @@
 #include "boost/locale/icu/icu_util.hpp"
 #include "boost/locale/icu/uconv.hpp"
 #include "boost/locale/util/encoding.hpp"
+#include "boost/locale/util/make_std_unique.hpp"
 #include <unicode/ucnv.h>
 #include <unicode/ucnv_err.h>
 
@@ -79,7 +81,7 @@ namespace boost { namespace locale { namespace impl_icu {
     std::unique_ptr<util::base_converter> create_uconv_converter(const std::string& encoding)
     {
         try {
-            return std::unique_ptr<util::base_converter>(new uconv_converter(encoding));
+            return make_std_unique<uconv_converter>(encoding);
         } catch(const std::exception& /*e*/) {
             return nullptr;
         }

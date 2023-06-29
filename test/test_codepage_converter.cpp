@@ -256,11 +256,10 @@ void test_main(int /*argc*/, char** /*argv*/)
 #endif
     if(cvt)
         test_shiftjis(cvt);
-    else {
 #ifdef BOOST_LOCALE_WITH_ICONV
-        std::cout << "- Shift-JIS is not supported!" << std::endl;
+    else
+        std::cout << "- Shift-JIS is not supported!" << std::endl; // LCOV_EXCL_LINE
 #endif
-    }
 }
 
 // boostinspect:noascii

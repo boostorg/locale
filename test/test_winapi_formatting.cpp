@@ -123,7 +123,7 @@ void test_by_char(const std::locale& l, std::string name, int lcid)
     }
 }
 
-void test_date_time(std::locale l)
+void test_date_time(const std::locale& l) // LCOV_EXCL_LINE
 {
     std::ostringstream ss;
     ss.imbue(l);
@@ -146,7 +146,7 @@ void test_date_time(std::locale l)
         empty_stream(ss) << boost::locale::as::ftime("%" + patternAndResult.first) << a_datetime;
         TEST_EQ(ss.str(), patternAndResult.second);
     }
-}
+} // LCOV_EXCL_LINE
 
 BOOST_LOCALE_DISABLE_UNREACHABLE_CODE_WARNING
 void test_main(int /*argc*/, char** /*argv*/)
@@ -166,15 +166,15 @@ void test_main(int /*argc*/, char** /*argv*/)
     {
         const std::string name = name_lcid.first;
         std::cout << "- " << name << " locale" << std::endl;
-        if(!has_win_locale(name)) {
-            std::cout << "-- not supported, skipping" << std::endl;
-            continue;
+        if(!has_win_locale(name))
+            std::cout << "-- not supported, skipping" << std::endl; // LCOV_EXCL_LINE
+        else {
+            const std::locale l = gen(name);
+            std::cout << "-- UTF-8" << std::endl;
+            test_by_char<char>(l, name, name_lcid.second);
+            std::cout << "-- UTF-16" << std::endl;
+            test_by_char<wchar_t>(l, name, name_lcid.second);
         }
-        std::locale l1 = gen(name);
-        std::cout << "-- UTF-8" << std::endl;
-        test_by_char<char>(l1, name, name_lcid.second);
-        std::cout << "-- UTF-16" << std::endl;
-        test_by_char<wchar_t>(l1, name, name_lcid.second);
     }
     std::cout << "- Testing strftime" << std::endl;
     test_date_time(gen("en_US.UTF-8"));
