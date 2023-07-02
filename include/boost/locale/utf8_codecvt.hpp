@@ -39,7 +39,7 @@ namespace boost { namespace locale {
             return c;
         }
 
-        static utf::code_point from_unicode(state_type&, utf::code_point u, char* begin, const char* end)
+        static utf::len_or_error from_unicode(state_type&, utf::code_point u, char* begin, const char* end)
         {
             if(!utf::is_valid_codepoint(u))
                 return utf::illegal;

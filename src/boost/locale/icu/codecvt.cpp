@@ -46,7 +46,7 @@ namespace boost { namespace locale { namespace impl_icu {
             return c;
         }
 
-        utf::code_point from_unicode(utf::code_point u, char* begin, const char* end) override
+        utf::len_or_error from_unicode(utf::code_point u, char* begin, const char* end) override
         {
             UChar code_point[2] = {0};
             int len;
@@ -62,7 +62,7 @@ namespace boost { namespace locale { namespace impl_icu {
                 len = 2;
             }
             UErrorCode err = U_ZERO_ERROR;
-            int olen = ucnv_fromUChars(cvt_.cvt(), begin, end - begin, code_point, len, &err);
+            const auto olen = ucnv_fromUChars(cvt_.cvt(), begin, end - begin, code_point, len, &err);
             ucnv_reset(cvt_.cvt());
             if(err == U_BUFFER_OVERFLOW_ERROR)
                 return incomplete;

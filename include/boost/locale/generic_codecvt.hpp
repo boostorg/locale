@@ -61,8 +61,8 @@ namespace boost { namespace locale {
     /// point from the text in range [begin,end), in case of success begin would point to the next character sequence to
     /// be encoded to next code point, in case of incomplete sequence - utf::incomplete shell be returned, and in case
     /// of invalid input sequence utf::illegal shell be returned and begin would remain unmodified
-    /// - `utf::code_point from_unicode(state_type &state, utf::code_point u, char* begin, const char* end)` - convert a
-    /// Unicode code point `u` into a character sequence at [begin,end). Return the length of the sequence in case of
+    /// - `utf::len_or_error from_unicode(state_type &state, utf::code_point u, char* begin, const char* end)` - convert
+    /// a Unicode code point `u` into a character sequence at [begin,end). Return the length of the sequence in case of
     /// success, utf::incomplete in case of not enough room to encode the code point, or utf::illegal in case conversion
     /// can not be performed
     ///
@@ -101,8 +101,8 @@ namespace boost { namespace locale {
     ///        return *begin++;
     ///     }
     ///
-    ///     boost::locale::utf::code_point from_unicode(state_type&, boost::locale::utf::code_point u,
-    ///                                                 char* begin, const char* end) const
+    ///     boost::locale::utf::len_or_error from_unicode(state_type&, boost::locale::utf::code_point u,
+    ///                                                   char* begin, const char* end) const
     ///     {
     ///        if(u >= 256)
     ///           return boost::locale::utf::illegal;

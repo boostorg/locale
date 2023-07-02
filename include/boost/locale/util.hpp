@@ -133,7 +133,7 @@ namespace boost { namespace locale {
             /// -# If end - begin >= N, c1, ... cN are written starting at begin and N is returned
             /// -# If end - begin < N, incomplete is returned, it is unspecified what would be
             ///    stored in bytes in range [begin,end)
-            virtual utf::code_point from_unicode(utf::code_point u, char* begin, const char* end)
+            virtual utf::len_or_error from_unicode(utf::code_point u, char* begin, const char* end)
             {
                 if(begin == end)
                     return incomplete;
@@ -145,7 +145,7 @@ namespace boost { namespace locale {
         };
 
         /// This function creates a \a base_converter that can be used for conversion between UTF-8 and
-        /// unicode code points
+        /// Unicode code points
         BOOST_LOCALE_DECL std::unique_ptr<base_converter> create_utf8_converter();
 
         BOOST_DEPRECATED("This function is deprecated, use 'create_utf8_converter()'")

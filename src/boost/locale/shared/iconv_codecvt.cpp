@@ -103,7 +103,7 @@ namespace boost { namespace locale {
             return illegal;
         }
 
-        utf::code_point from_unicode(utf::code_point cp, char* begin, const char* end) override
+        utf::len_or_error from_unicode(utf::code_point cp, char* begin, const char* end) override
         {
             if(cp == 0) {
                 if(begin != end) {

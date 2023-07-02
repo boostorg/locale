@@ -50,7 +50,7 @@ namespace boost { namespace locale { namespace util {
             return c;
         }
 
-        utf::code_point from_unicode(utf::code_point u, char* begin, const char* end) override
+        utf::len_or_error from_unicode(utf::code_point u, char* begin, const char* end) override
         {
             if(!utf::is_valid_codepoint(u))
                 return illegal;
@@ -105,7 +105,7 @@ namespace boost { namespace locale { namespace util {
             unsigned char c = *begin++;
             return to_unicode_tbl_[c];
         }
-        utf::code_point from_unicode(utf::code_point u, char* begin, const char* end) const
+        utf::len_or_error from_unicode(utf::code_point u, char* begin, const char* end) const
         {
             if(begin == end)
                 return utf::incomplete;
@@ -138,7 +138,7 @@ namespace boost { namespace locale { namespace util {
         base_converter* clone() const override { return new simple_converter(*this); }
 
         utf::code_point to_unicode(const char*& begin, const char* end) override { return cvt_.to_unicode(begin, end); }
-        utf::code_point from_unicode(utf::code_point u, char* begin, const char* end) override
+        utf::len_or_error from_unicode(utf::code_point u, char* begin, const char* end) override
         {
             return cvt_.from_unicode(u, begin, end);
         }
@@ -166,7 +166,7 @@ namespace boost { namespace locale { namespace util {
             return cvt_.to_unicode(begin, end);
         }
 
-        utf::code_point from_unicode(state_type&, utf::code_point u, char* begin, const char* end) const
+        utf::len_or_error from_unicode(state_type&, utf::code_point u, char* begin, const char* end) const
         {
             return cvt_.from_unicode(u, begin, end);
         }
@@ -250,7 +250,7 @@ namespace boost { namespace locale { namespace util {
                 return ptr->to_unicode(begin, end);
         }
 
-        utf::code_point from_unicode(base_converter_ptr& ptr, utf::code_point u, char* begin, const char* end) const
+        utf::len_or_error from_unicode(base_converter_ptr& ptr, utf::code_point u, char* begin, const char* end) const
         {
             if(thread_safe_)
                 return cvt_->from_unicode(u, begin, end);
