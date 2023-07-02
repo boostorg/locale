@@ -34,11 +34,11 @@ namespace boost { namespace locale { namespace util {
 
         bool is_thread_safe() const override { return true; }
 
-        uint32_t to_unicode(const char*& begin, const char* end) override
+        utf::code_point to_unicode(const char*& begin, const char* end) override
         {
             const char* p = begin;
 
-            utf::code_point c = utf::utf_traits<char>::decode(p, end);
+            const utf::code_point c = utf::utf_traits<char>::decode(p, end);
 
             if(c == utf::illegal)
                 return illegal;
@@ -50,7 +50,7 @@ namespace boost { namespace locale { namespace util {
             return c;
         }
 
-        uint32_t from_unicode(uint32_t u, char* begin, const char* end) override
+        utf::code_point from_unicode(utf::code_point u, char* begin, const char* end) override
         {
             if(!utf::is_valid_codepoint(u))
                 return illegal;
@@ -98,14 +98,14 @@ namespace boost { namespace locale { namespace util {
             }
         }
 
-        uint32_t to_unicode(const char*& begin, const char* end) const
+        utf::code_point to_unicode(const char*& begin, const char* end) const
         {
             if(begin == end)
                 return utf::incomplete;
             unsigned char c = *begin++;
             return to_unicode_tbl_[c];
         }
-        uint32_t from_unicode(uint32_t u, char* begin, const char* end) const
+        utf::code_point from_unicode(utf::code_point u, char* begin, const char* end) const
         {
             if(begin == end)
                 return utf::incomplete;
@@ -124,7 +124,7 @@ namespace boost { namespace locale { namespace util {
         }
 
     private:
-        uint32_t to_unicode_tbl_[256];
+        utf::code_point to_unicode_tbl_[256];
         unsigned char from_unicode_tbl_[hash_table_size];
     };
 
@@ -137,8 +137,8 @@ namespace boost { namespace locale { namespace util {
         bool is_thread_safe() const override { return true; }
         base_converter* clone() const override { return new simple_converter(*this); }
 
-        uint32_t to_unicode(const char*& begin, const char* end) override { return cvt_.to_unicode(begin, end); }
-        uint32_t from_unicode(uint32_t u, char* begin, const char* end) override
+        utf::code_point to_unicode(const char*& begin, const char* end) override { return cvt_.to_unicode(begin, end); }
+        utf::code_point from_unicode(utf::code_point u, char* begin, const char* end) override
         {
             return cvt_.from_unicode(u, begin, end);
         }

@@ -19,27 +19,29 @@
 constexpr auto illegal = boost::locale::util::base_converter::illegal;
 constexpr auto incomplete = boost::locale::util::base_converter::incomplete;
 
-bool test_to(boost::locale::util::base_converter& cvt, const char* s, unsigned codepoint)
+namespace utf = boost::locale::utf;
+
+bool test_to(boost::locale::util::base_converter& cvt, const char* s, const utf::code_point codepoint)
 {
-    size_t len = strlen(s);
+    const size_t len = strlen(s);
     const char* end = s + len;
     return cvt.to_unicode(s, end) == codepoint;
 }
 
-bool test_from(boost::locale::util::base_converter& cvt, unsigned codepoint, const char* str)
+bool test_from(boost::locale::util::base_converter& cvt, const utf::code_point codepoint, const char* str)
 {
     char buf[32] = {0};
-    unsigned res = cvt.from_unicode(codepoint, buf, buf + sizeof(buf));
+    const auto res = cvt.from_unicode(codepoint, buf, buf + sizeof(buf));
     if(res == boost::locale::util::base_converter::illegal)
         return str == nullptr;
     else
         return str != nullptr && strlen(str) == res && memcmp(str, buf, res) == 0;
 }
 
-bool test_incomplete(boost::locale::util::base_converter& cvt, unsigned codepoint, int len)
+bool test_incomplete(boost::locale::util::base_converter& cvt, const utf::code_point codepoint, const size_t len)
 {
     char buf[32] = {0};
-    unsigned res = cvt.from_unicode(codepoint, buf, buf + len);
+    const auto res = cvt.from_unicode(codepoint, buf, buf + len);
     return res == boost::locale::util::base_converter::incomplete;
 }
 

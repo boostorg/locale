@@ -43,8 +43,8 @@ namespace boost { namespace locale {
         {
             if(!utf::is_valid_codepoint(u))
                 return utf::illegal;
-            int width;
-            if((width = utf::utf_traits<char>::width(u)) > end - begin)
+            const auto width = utf::utf_traits<char>::width(u);
+            if(width > end - begin)
                 return utf::incomplete;
             utf::utf_traits<char>::encode(u, begin);
             return width;

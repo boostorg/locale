@@ -182,11 +182,10 @@ namespace boost { namespace locale {
             bool state = *reinterpret_cast<char*>(&std_state) != 0;
             const char* save_from = from;
 
-            typename CodecvtImpl::state_type cvt_state =
-              implementation().initial_state(generic_codecvt_base::to_unicode_state);
+            auto cvt_state = implementation().initial_state(to_unicode_state);
             while(max > 0 && from < from_end) {
                 const char* prev_from = from;
-                std::uint32_t ch = implementation().to_unicode(cvt_state, from, from_end);
+                const utf::code_point ch = implementation().to_unicode(cvt_state, from, from_end);
                 if(ch == boost::locale::utf::incomplete || ch == boost::locale::utf::illegal) {
                     from = prev_from;
                     break;
@@ -218,12 +217,11 @@ namespace boost { namespace locale {
             // if 0/false no codepoint above >0xFFFF observed, else a codepoint above 0xFFFF was observed
             // and first pair is written, but no input consumed
             bool state = *reinterpret_cast<char*>(&std_state) != 0;
-            typename CodecvtImpl::state_type cvt_state =
-              implementation().initial_state(generic_codecvt_base::to_unicode_state);
+            auto cvt_state = implementation().initial_state(to_unicode_state);
             while(to < to_end && from < from_end) {
                 const char* from_saved = from;
 
-                uint32_t ch = implementation().to_unicode(cvt_state, from, from_end);
+                utf::code_point ch = implementation().to_unicode(cvt_state, from, from_end);
 
                 if(ch == boost::locale::utf::illegal) {
                     from = from_saved;
@@ -283,10 +281,9 @@ namespace boost { namespace locale {
             // State: state!=0 - a first surrogate pair was observed (state = first pair),
             // we expect the second one to come and then zero the state
             std::uint16_t state = detail::read_state(std_state);
-            typename CodecvtImpl::state_type cvt_state =
-              implementation().initial_state(generic_codecvt_base::from_unicode_state);
+            auto cvt_state = implementation().initial_state(from_unicode_state);
             while(to < to_end && from < from_end) {
-                std::uint32_t ch = 0;
+                utf::code_point ch = 0;
                 if(state != 0) {
                     // if the state indicates that 1st surrogate pair was written
                     // we should make sure that the second one that comes is actually
@@ -326,7 +323,7 @@ namespace boost { namespace locale {
                     r = std::codecvt_base::error;
                     break;
                 }
-                std::uint32_t len = implementation().from_unicode(cvt_state, ch, to, to_end);
+                const utf::code_point len = implementation().from_unicode(cvt_state, ch, to, to_end);
                 if(len == boost::locale::utf::incomplete) {
                     r = std::codecvt_base::partial;
                     break;
@@ -375,11 +372,10 @@ namespace boost { namespace locale {
         int do_length(std::mbstate_t& /*state*/, const char* from, const char* from_end, size_t max) const override
         {
             const char* start_from = from;
-            typename CodecvtImpl::state_type cvt_state =
-              implementation().initial_state(generic_codecvt_base::to_unicode_state);
+            auto cvt_state = implementation().initial_state(to_unicode_state);
             while(max > 0 && from < from_end) {
                 const char* save_from = from;
-                std::uint32_t ch = implementation().to_unicode(cvt_state, from, from_end);
+                const utf::code_point ch = implementation().to_unicode(cvt_state, from, from_end);
                 if(ch == boost::locale::utf::incomplete || ch == boost::locale::utf::illegal) {
                     from = save_from;
                     break;
@@ -400,16 +396,11 @@ namespace boost { namespace locale {
         {
             std::codecvt_base::result r = std::codecvt_base::ok;
 
-            // mbstate_t is POD type and should be initialized to 0 (i.a. state = stateT())
-            // according to standard. We use it to keep a flag 0/1 for surrogate pair writing
-            //
-            // if 0 no code above >0xFFFF observed, of 1 a code above 0xFFFF observed
-            // and first pair is written, but no input consumed
-            auto cvt_state = implementation().initial_state(generic_codecvt_base::to_unicode_state);
+            auto cvt_state = implementation().initial_state(to_unicode_state);
             while(to < to_end && from < from_end) {
                 const char* from_saved = from;
 
-                uint32_t ch = implementation().to_unicode(cvt_state, from, from_end);
+                const utf::code_point ch = implementation().to_unicode(cvt_state, from, from_end);
 
                 if(ch == boost::locale::utf::illegal) {
                     r = std::codecvt_base::error;
@@ -439,15 +430,14 @@ namespace boost { namespace locale {
                                          char*& to_next) const override
         {
             std::codecvt_base::result r = std::codecvt_base::ok;
-            auto cvt_state = implementation().initial_state(generic_codecvt_base::from_unicode_state);
+            auto cvt_state = implementation().initial_state(from_unicode_state);
             while(to < to_end && from < from_end) {
-                std::uint32_t ch = 0;
-                ch = *from;
+                const std::uint32_t ch = *from;
                 if(!boost::locale::utf::is_valid_codepoint(ch)) {
                     r = std::codecvt_base::error;
                     break;
                 }
-                std::uint32_t len = implementation().from_unicode(cvt_state, ch, to, to_end);
+                const utf::code_point len = implementation().from_unicode(cvt_state, ch, to, to_end);
                 if(len == boost::locale::utf::incomplete) {
                     r = std::codecvt_base::partial;
                     break;
