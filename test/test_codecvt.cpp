@@ -35,7 +35,7 @@ void test_codecvt_in_n_m(const cvt_type& cvt, int n, int m)
     const char* end = from;
     const char* real_end = utf8_name + u8len;
     const char* from_next = from;
-    std::mbstate_t mb = std::mbstate_t();
+    std::mbstate_t mb{};
     while(from_next < real_end) {
         if(from == end) {
             end = from + n;
@@ -81,7 +81,7 @@ void test_codecvt_out_n_m(const cvt_type& cvt, int n, int m)
     const size_t wlen = wcslen(wide_name);
     const size_t u8len = strlen(utf8_name);
 
-    std::mbstate_t mb = std::mbstate_t();
+    std::mbstate_t mb{};
 
     const wchar_t* from_next = wide_name;
     const wchar_t* real_from_end = wide_name + wlen;
@@ -91,6 +91,10 @@ void test_codecvt_out_n_m(const cvt_type& cvt, int n, int m)
     char* to_next = to;
     char* to_end = to + n;
     char* real_to_end = buf + sizeof(buf);
+
+    // Unshift on initial state does nothing
+    TEST_EQ(cvt.unshift(mb, buf, std::end(buf), to_next), cvt_type::ok);
+    TEST(to_next == buf);
 
     while(from_next < real_from_end) {
         const wchar_t* from = from_next;
@@ -122,6 +126,20 @@ void test_codecvt_out_n_m(const cvt_type& cvt, int n, int m)
     TEST(from_next == real_from_end);
     TEST_EQ(cvt.unshift(mb, to, to + n, to_next), cvt_type::ok);
     TEST(to_next == to);
+
+    // Convert into a to small buffer
+    from_next = wide_name;
+    TEST_EQ(cvt.out(mb, wide_name, real_from_end, from_next, buf, buf + 1, to_next), cvt_type::partial);
+    if(from_next == wide_name) {
+        // Nothing consumed so nothing to do
+        TEST_EQ(cvt.unshift(mb, buf, std::end(buf), to_next), cvt_type::ok);
+        TEST(to_next == buf);
+    } else {
+        TEST(from_next == wide_name + 1);
+        TEST(to_next == buf);
+        // Unshift on non-default state is not possible
+        TEST_EQ(cvt.unshift(mb, buf, std::end(buf), to_next), cvt_type::error);
+    }
 }
 
 void test_codecvt_conv()
@@ -131,7 +149,9 @@ void test_codecvt_conv()
 
     const cvt_type& cvt = std::use_facet<cvt_type>(l);
 
-    TEST_EQ(cvt.max_length(), 4);
+    TEST_EQ(cvt.encoding(), 0);   // Characters have a variable width
+    TEST_EQ(cvt.max_length(), 4); // At most 4 UTF-8 code units are one internal char (one or two UTF-16 code units)
+    TEST(!cvt.always_noconv());   // Always convert
 
     for(int i = 1; i <= (int)strlen(utf8_name) + 1; i++) {
         for(int j = 1; j <= (int)wcslen(wide_name) + 1; j++) {
@@ -161,7 +181,7 @@ void test_codecvt_err()
         wchar_t* to_next = to;
         const char* err_utf = "1\xFF\xFF";
         {
-            std::mbstate_t mb = std::mbstate_t();
+            std::mbstate_t mb{};
             const char* from = err_utf;
             const char* from_end = from + strlen(from);
             const char* from_next = from;
@@ -173,7 +193,7 @@ void test_codecvt_err()
         }
         err_utf++;
         {
-            std::mbstate_t mb = std::mbstate_t();
+            std::mbstate_t mb{};
             const char* from = err_utf;
             const char* from_end = from + strlen(from);
             const char* from_next = from;
@@ -189,7 +209,7 @@ void test_codecvt_err()
         char* const to_end = buf + 4;
         char* to_next = to;
         const wchar_t* err_utf = L"\xD800"; // Trailing UTF-16 surrogate
-        std::mbstate_t mb = std::mbstate_t();
+        std::mbstate_t mb{};
         const wchar_t* from = err_utf;
         const wchar_t* from_end = from + 1;
         const wchar_t* from_next = from;
@@ -218,7 +238,7 @@ void test_codecvt_err()
         wchar_t err_buf[3] = {'1', 0xDC9E, 0}; // second value is invalid for UTF-16 and 32
         const wchar_t* err_utf = err_buf;
         {
-            std::mbstate_t mb = std::mbstate_t();
+            std::mbstate_t mb{};
             const wchar_t* from = err_utf;
             const wchar_t* from_end = from + wcslen(from);
             const wchar_t* from_next = from;
@@ -229,7 +249,7 @@ void test_codecvt_err()
         }
         err_utf++;
         {
-            std::mbstate_t mb = std::mbstate_t();
+            std::mbstate_t mb{};
             const wchar_t* from = err_utf;
             const wchar_t* from_end = from + wcslen(from);
             const wchar_t* from_next = from;
@@ -246,7 +266,7 @@ void test_char_char()
     std::cout << "Char-char specialization" << std::endl;
     std::locale l(std::locale::classic(), new boost::locale::utf8_codecvt<char>());
     const std::codecvt<char, char, std::mbstate_t>& cvt = std::use_facet<std::codecvt<char, char, std::mbstate_t>>(l);
-    std::mbstate_t mb = std::mbstate_t();
+    std::mbstate_t mb{};
     const char* from = "a";
     const char* from_end = from + 1;
     const char* from_next = from;
