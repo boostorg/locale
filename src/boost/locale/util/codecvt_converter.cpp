@@ -220,31 +220,29 @@ namespace boost { namespace locale { namespace util {
     base_converter* create_utf8_converter_new_ptr(){ return create_utf8_converter().release(); } // LCOV_EXCL_LINE
     // clang-format on
 
-    template<typename CharType>
-    class code_converter : public generic_codecvt<CharType, code_converter<CharType>> {
+    template<typename CharType, bool ThreadSafe>
+    class code_converter : public generic_codecvt<CharType, code_converter<CharType, ThreadSafe>> {
     public:
         typedef std::unique_ptr<base_converter> base_converter_ptr;
         typedef base_converter_ptr state_type;
 
         code_converter(base_converter_ptr cvt, size_t refs = 0) :
-            generic_codecvt<CharType, code_converter<CharType>>(refs), cvt_(std::move(cvt))
-        {
-            thread_safe_ = cvt_->is_thread_safe();
-        }
+            generic_codecvt<CharType, code_converter<CharType, ThreadSafe>>(refs), cvt_(std::move(cvt))
+        {}
 
         int max_encoding_length() const { return cvt_->max_len(); }
 
         base_converter_ptr initial_state(generic_codecvt_base::initial_convertion_state /* unused */) const
         {
             base_converter_ptr r;
-            if(!thread_safe_)
+            if(!ThreadSafe)
                 r.reset(cvt_->clone());
             return r;
         }
 
         utf::code_point to_unicode(base_converter_ptr& ptr, const char*& begin, const char* end) const
         {
-            if(thread_safe_)
+            if(ThreadSafe)
                 return cvt_->to_unicode(begin, end);
             else
                 return ptr->to_unicode(begin, end);
@@ -252,7 +250,7 @@ namespace boost { namespace locale { namespace util {
 
         utf::len_or_error from_unicode(base_converter_ptr& ptr, utf::code_point u, char* begin, const char* end) const
         {
-            if(thread_safe_)
+            if(ThreadSafe)
                 return cvt_->from_unicode(u, begin, end);
             else
                 return ptr->from_unicode(u, begin, end);
@@ -260,8 +258,14 @@ namespace boost { namespace locale { namespace util {
 
     private:
         base_converter_ptr cvt_;
-        bool thread_safe_;
     };
+
+    template<typename CharType>
+    static std::locale do_create_codecvt(const std::locale& in, std::unique_ptr<base_converter> cvt)
+    {
+        return cvt->is_thread_safe() ? std::locale(in, new code_converter<CharType, true>(std::move(cvt))) :
+                                       std::locale(in, new code_converter<CharType, false>(std::move(cvt)));
+    }
 
     std::locale create_codecvt(const std::locale& in, std::unique_ptr<base_converter> cvt, char_facet_t type)
     {
@@ -269,13 +273,13 @@ namespace boost { namespace locale { namespace util {
             cvt.reset(new base_converter());
         switch(type) {
             case char_facet_t::nochar: break;
-            case char_facet_t::char_f: return std::locale(in, new code_converter<char>(std::move(cvt)));
-            case char_facet_t::wchar_f: return std::locale(in, new code_converter<wchar_t>(std::move(cvt)));
+            case char_facet_t::char_f: return do_create_codecvt<char>(in, std::move(cvt));
+            case char_facet_t::wchar_f: return do_create_codecvt<wchar_t>(in, std::move(cvt));
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-            case char_facet_t::char16_f: return std::locale(in, new code_converter<char16_t>(std::move(cvt)));
+            case char_facet_t::char16_f: return do_create_codecvt<char16_t>(in, std::move(cvt));
 #endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-            case char_facet_t::char32_f: return std::locale(in, new code_converter<char32_t>(std::move(cvt)));
+            case char_facet_t::char32_f: return do_create_codecvt<char32_t>(in, std::move(cvt));
 #endif
         }
         return in;
