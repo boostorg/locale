@@ -9,6 +9,7 @@
 
 #include <boost/locale/generic_codecvt.hpp>
 #include <boost/locale/utf.hpp>
+#include <boost/assert.hpp>
 #include <cstdint>
 #include <locale>
 
@@ -39,12 +40,11 @@ namespace boost { namespace locale {
             return c;
         }
 
-        static utf::code_point from_unicode(state_type&, utf::code_point u, char* begin, const char* end)
+        static utf::len_or_error from_unicode(state_type&, utf::code_point u, char* begin, const char* end)
         {
-            if(!utf::is_valid_codepoint(u))
-                return utf::illegal;
-            int width;
-            if((width = utf::utf_traits<char>::width(u)) > end - begin)
+            BOOST_ASSERT(utf::is_valid_codepoint(u));
+            const auto width = utf::utf_traits<char>::width(u);
+            if(width > end - begin)
                 return utf::incomplete;
             utf::utf_traits<char>::encode(u, begin);
             return width;

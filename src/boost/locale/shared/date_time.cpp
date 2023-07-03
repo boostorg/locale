@@ -6,6 +6,7 @@
 
 #include <boost/locale/date_time.hpp>
 #include <boost/locale/formatting.hpp>
+#include <boost/core/exchange.hpp>
 #include <boost/thread/locks.hpp>
 #include <boost/thread/mutex.hpp>
 #include <cmath>
@@ -407,15 +408,12 @@ namespace boost { namespace locale {
         std::string global()
         {
             boost::unique_lock<boost::mutex> lock(tz_mutex());
-            std::string id = tz_id();
-            return id;
+            return tz_id();
         }
         std::string global(const std::string& new_id)
         {
             boost::unique_lock<boost::mutex> lock(tz_mutex());
-            std::string id = tz_id();
-            tz_id() = new_id;
-            return id;
+            return boost::exchange(tz_id(), new_id);
         }
     } // namespace time_zone
 
