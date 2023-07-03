@@ -60,7 +60,7 @@ namespace boost { namespace locale {
 
         mb2_iconv_converter* clone() const override { return new mb2_iconv_converter(*this); }
 
-        uint32_t to_unicode(const char*& begin, const char* end) override
+        utf::code_point to_unicode(const char*& begin, const char* end) override
         {
             if(begin == end)
                 return incomplete;
@@ -103,7 +103,7 @@ namespace boost { namespace locale {
             return illegal;
         }
 
-        uint32_t from_unicode(uint32_t cp, char* begin, const char* end) override
+        utf::len_or_error from_unicode(utf::code_point cp, char* begin, const char* end) override
         {
             if(cp == 0) {
                 if(begin != end) {
@@ -113,9 +113,9 @@ namespace boost { namespace locale {
                     return incomplete;
             }
 
-            open(from_utf_, encoding_.c_str(), util::utf_name<uint32_t>());
+            open(from_utf_, encoding_.c_str(), util::utf_name<utf::code_point>());
 
-            const uint32_t inbuf[2] = {cp, 0};
+            const utf::code_point inbuf[2] = {cp, 0};
             size_t insize = sizeof(inbuf);
             char outseq[3] = {0};
             size_t outsize = 3;
@@ -124,13 +124,13 @@ namespace boost { namespace locale {
 
             if(insize != 0 || outsize > 1)
                 return illegal;
-            size_t len = 2 - outsize;
-            size_t reminder = end - begin;
+            const size_t len = 2 - outsize;
+            const size_t reminder = end - begin;
             if(reminder < len)
                 return incomplete;
             for(unsigned i = 0; i < len; i++)
                 *begin++ = outseq[i];
-            return static_cast<uint32_t>(len);
+            return static_cast<utf::code_point>(len);
         }
 
         int max_len() const override

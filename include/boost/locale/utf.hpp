@@ -16,12 +16,15 @@ namespace boost { namespace locale {
     /// All functions defined in this namespace do not require linking with Boost.Locale library
     namespace utf {
         /// \brief The integral type that can hold a Unicode code point
-        typedef uint32_t code_point;
+        using code_point = uint32_t;
 
         /// \brief Special constant that defines illegal code point
         constexpr code_point illegal = 0xFFFFFFFFu;
         /// \brief Special constant that defines incomplete code point
         constexpr code_point incomplete = 0xFFFFFFFEu;
+
+        /// Either a length/size or an error (illegal/incomplete)
+        using len_or_error = code_point;
 
         /// \brief the function checks if \a v is a valid code point
         inline bool is_valid_codepoint(code_point v)
