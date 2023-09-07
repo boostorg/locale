@@ -265,6 +265,11 @@ void test_main(int /*argc*/, char** /*argv*/)
         for(const std::string localeName : {"", "C", "en_US.UTF-8", "en_US.ISO8859-1", "tr_TR.windows1254"}) {
             std::cout << "-- Locale: " << localeName << std::endl;
             const std::locale l = g(localeName);
+#ifdef __cpp_char8_t
+#    define TEST_HAS_FACET_CHAR8(facet, l) TEST(blt::has_facet<facet<char8_t>>(l))
+#else
+#    define TEST_HAS_FACET_CHAR8(facet, l) (void)0
+#endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
 #    define TEST_HAS_FACET_CHAR16(facet, l) TEST(blt::has_facet<facet<char16_t>>(l))
 #else
@@ -285,6 +290,7 @@ void test_main(int /*argc*/, char** /*argv*/)
 
             // Convert
             TEST_HAS_FACETS(bl::converter, l);
+            TEST_HAS_FACET_CHAR8(bl::converter, l);
             TEST_HAS_FACETS(std::collate, l);
             // Formatting
             TEST_HAS_FACETS(std::num_put, l);
@@ -295,11 +301,15 @@ void test_main(int /*argc*/, char** /*argv*/)
             TEST_HAS_FACETS(std::num_get, l);
             // Message
             TEST_HAS_FACETS(bl::message_format, l);
+            TEST_HAS_FACET_CHAR8(bl::message_format, l);
             // Codepage
             TEST_HAS_FACETS(codecvt_by_char_type, l);
+            TEST_HAS_FACET_CHAR8(codecvt_by_char_type, l);
             // Boundary
-            if(backendName == "icu")
+            if(backendName == "icu") {
                 TEST_HAS_FACETS(bl::boundary::boundary_indexing, l);
+                TEST_HAS_FACET_CHAR8(bl::boundary::boundary_indexing, l);
+            }
             // calendar
             TEST(blt::has_facet<bl::calendar_facet>(l));
             // information

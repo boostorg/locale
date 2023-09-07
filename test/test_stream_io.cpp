@@ -155,6 +155,10 @@ void test_wide_io()
     std::cout << "  wchar_t" << std::endl;
     test_for_char<wchar_t>();
 
+#if defined __cpp_char8_t && !defined(BOOST_MSVC) // std::codecvt<char8_t doesn't properly export the id
+    std::cout << "  char8_t" << std::endl;
+    test_for_char<char8_t>();
+#endif
 #if defined BOOST_LOCALE_ENABLE_CHAR16_T
     std::cout << "  char16_t" << std::endl;
     test_for_char<char16_t>();

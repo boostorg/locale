@@ -9,6 +9,11 @@
 
 #include <boost/locale/config.hpp>
 
+#ifdef __cpp_char8_t
+#    define BOOST_LOCALE_FOREACH_CHAR_I_CHAR8_T(F) F(char8_t)
+#else
+#    define BOOST_LOCALE_FOREACH_CHAR_I_CHAR8_T(F)
+#endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
 #    define BOOST_LOCALE_FOREACH_CHAR_I_CHAR16_T(F) F(char16_t)
 #else
@@ -23,6 +28,7 @@
 #define BOOST_LOCALE_FOREACH_CHAR(F)        \
     F(char)                                 \
     F(wchar_t)                              \
+    BOOST_LOCALE_FOREACH_CHAR_I_CHAR8_T(F)  \
     BOOST_LOCALE_FOREACH_CHAR_I_CHAR16_T(F) \
     BOOST_LOCALE_FOREACH_CHAR_I_CHAR32_T(F)
 

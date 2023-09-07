@@ -243,13 +243,25 @@ namespace boost { namespace locale { namespace gnu_gettext {
     template<>
     struct mo_file_use_traits<char> {
         static constexpr bool in_use = true;
-        typedef char CharType;
-        using string_view_type = basic_string_view<CharType>;
+        using string_view_type = basic_string_view<char>;
         static string_view_type use(const mo_file& mo, const char* context, const char* key)
         {
             return mo.find(context, key);
         }
     };
+
+#ifdef __cpp_char8_t
+    template<>
+    struct mo_file_use_traits<char8_t> {
+        static constexpr bool in_use = true;
+        using string_view_type = basic_string_view<char8_t>;
+        static string_view_type use(const mo_file& mo, const char8_t* context, const char8_t* key)
+        {
+            string_view res = mo.find(reinterpret_cast<const char*>(context), reinterpret_cast<const char*>(key));
+            return {reinterpret_cast<const char8_t*>(res.data()), res.size()};
+        }
+    };
+#endif
 
     template<typename CharType>
     class converter : conv::utf_encoder<CharType> {
@@ -468,7 +480,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
                        domain_data_type& data,
                        const messages_info::callback_type& callback)
         {
-            locale_encoding_ = locale_encoding;
+            locale_encoding_ = util::is_char8_t<CharType>::value ? "UTF-8" : locale_encoding;
             key_encoding_ = key_encoding;
 
             key_conversion_required_ =
@@ -608,6 +620,9 @@ namespace boost { namespace locale { namespace detail {
             case char_facet_t::nochar: break;
             case char_facet_t::char_f: return std::locale(in, gnu_gettext::create_messages_facet<char>(minf));
             case char_facet_t::wchar_f: return std::locale(in, gnu_gettext::create_messages_facet<wchar_t>(minf));
+#ifdef __cpp_char8_t
+            case char_facet_t::char8_f: return std::locale(in, gnu_gettext::create_messages_facet<char8_t>(minf));
+#endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
             case char_facet_t::char16_f: return std::locale(in, gnu_gettext::create_messages_facet<char16_t>(minf));
 #endif

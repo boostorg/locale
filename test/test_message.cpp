@@ -84,6 +84,13 @@ std::wstring same_w(std::wstring s)
     return s;
 }
 
+#ifdef __cpp_char8_t
+std::basic_string<char8_t> same_u8(std::basic_string<char8_t> s)
+{
+    return s;
+}
+#endif
+
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
 std::u16string same_u16(std::u16string s)
 {
@@ -343,15 +350,21 @@ void test_cntranslate(const std::string& c,
                       const std::locale& l,
                       const std::string& domain)
 {
+    std::cout << "  char" << std::endl;
     impl::test_cntranslate<char>(c, s, p, n, expected, l, domain);
+    std::cout << "  wchar_t" << std::endl;
     impl::test_cntranslate<wchar_t>(c, s, p, n, expected, l, domain);
+#ifdef __cpp_char8_t
+    std::cout << "  char8_t" << std::endl;
+    impl::test_cntranslate<char8_t>(c, s, p, n, expected, l, domain);
+#endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-    if(backend == "icu" || backend == "std")
-        impl::test_cntranslate<char16_t>(c, s, p, n, expected, l, domain);
+    std::cout << "  char16_t" << std::endl;
+    impl::test_cntranslate<char16_t>(c, s, p, n, expected, l, domain);
 #endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-    if(backend == "icu" || backend == "std")
-        impl::test_cntranslate<char32_t>(c, s, p, n, expected, l, domain);
+    std::cout << "  char32_t" << std::endl;
+    impl::test_cntranslate<char32_t>(c, s, p, n, expected, l, domain);
 #endif
 }
 
@@ -362,15 +375,21 @@ void test_ntranslate(const std::string& s,
                      const std::locale& l,
                      const std::string& domain)
 {
+    std::cout << "  char" << std::endl;
     impl::test_ntranslate<char>(s, p, n, expected, l, domain);
+    std::cout << "  wchar_t" << std::endl;
     impl::test_ntranslate<wchar_t>(s, p, n, expected, l, domain);
+#ifdef __cpp_char8_t
+    std::cout << "  char8_t" << std::endl;
+    impl::test_ntranslate<char8_t>(s, p, n, expected, l, domain);
+#endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-    if(backend == "icu" || backend == "std")
-        impl::test_ntranslate<char16_t>(s, p, n, expected, l, domain);
+    std::cout << "  char16_t" << std::endl;
+    impl::test_ntranslate<char16_t>(s, p, n, expected, l, domain);
 #endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-    if(backend == "icu" || backend == "std")
-        impl::test_ntranslate<char32_t>(s, p, n, expected, l, domain);
+    std::cout << "  char32_t" << std::endl;
+    impl::test_ntranslate<char32_t>(s, p, n, expected, l, domain);
 #endif
 }
 
@@ -380,15 +399,21 @@ void test_ctranslate(const std::string& c,
                      const std::locale& l,
                      const std::string& domain)
 {
+    std::cout << "  char" << std::endl;
     impl::test_ctranslate<char>(c, original, expected, l, domain);
+    std::cout << "  wchar_t" << std::endl;
     impl::test_ctranslate<wchar_t>(c, original, expected, l, domain);
+#ifdef __cpp_char8_t
+    std::cout << "  char8_t" << std::endl;
+    impl::test_ctranslate<char8_t>(c, original, expected, l, domain);
+#endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-    if(backend == "icu" || backend == "std")
-        impl::test_ctranslate<char16_t>(c, original, expected, l, domain);
+    std::cout << "  char16_t" << std::endl;
+    impl::test_ctranslate<char16_t>(c, original, expected, l, domain);
 #endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-    if(backend == "icu" || backend == "std")
-        impl::test_ctranslate<char32_t>(c, original, expected, l, domain);
+    std::cout << "  char32_t" << std::endl;
+    impl::test_ctranslate<char32_t>(c, original, expected, l, domain);
 #endif
 }
 
@@ -397,15 +422,21 @@ void test_translate(const std::string& original,
                     const std::locale& l,
                     const std::string& domain)
 {
+    std::cout << "  char" << std::endl;
     impl::test_translate<char>(original, expected, l, domain);
+    std::cout << "  wchar_t" << std::endl;
     impl::test_translate<wchar_t>(original, expected, l, domain);
+#ifdef __cpp_char8_t
+    std::cout << "  char8_t" << std::endl;
+    impl::test_translate<char8_t>(original, expected, l, domain);
+#endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-    if(backend == "icu" || backend == "std")
-        impl::test_translate<char16_t>(original, expected, l, domain);
+    std::cout << "  char16_t" << std::endl;
+    impl::test_translate<char16_t>(original, expected, l, domain);
 #endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-    if(backend == "icu" || backend == "std")
-        impl::test_translate<char32_t>(original, expected, l, domain);
+    std::cout << "  char32_t" << std::endl;
+    impl::test_translate<char32_t>(original, expected, l, domain);
 #endif
 }
 
@@ -517,11 +548,13 @@ void test_main(int argc, char** argv)
         TEST_EQ(same_s(bl::translate("hello")), "שלום");
         TEST_EQ(same_w(bl::translate(to<wchar_t>("hello"))), to<wchar_t>("שלום"));
 
+#ifdef __cpp_char8_t
+        TEST_EQ(same_u8(bl::translate(to<char8_t>("hello"))), to<char8_t>("שלום"));
+#endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
         if(backend == "icu" || backend == "std")
             TEST_EQ(same_u16(bl::translate(to<char16_t>("hello"))), to<char16_t>("שלום"));
 #endif
-
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
         if(backend == "icu" || backend == "std")
             TEST_EQ(same_u32(bl::translate(to<char32_t>("hello"))), to<char32_t>("שלום"));
