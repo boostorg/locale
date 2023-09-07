@@ -71,7 +71,8 @@ namespace boost { namespace locale { namespace impl_icu {
         typedef std::basic_string<CharType> string_type;
         typedef formatter<CharType> formatter_type;
 
-        num_format(const cdata& d, size_t refs = 0) : std::num_put<CharType>(refs), loc_(d.locale), enc_(d.encoding) {}
+        num_format(const cdata& d, size_t refs = 0) : std::num_put<CharType>(refs), loc_(d.locale()), enc_(d.encoding())
+        {}
 
     protected:
         iter_type do_put(iter_type out, std::ios_base& ios, CharType fill, long val) const override
@@ -148,7 +149,8 @@ namespace boost { namespace locale { namespace impl_icu {
     template<typename CharType>
     class num_parse : public std::num_get<CharType> {
     public:
-        num_parse(const cdata& d, size_t refs = 0) : std::num_get<CharType>(refs), loc_(d.locale), enc_(d.encoding) {}
+        num_parse(const cdata& d, size_t refs = 0) : std::num_get<CharType>(refs), loc_(d.locale()), enc_(d.encoding())
+        {}
 
     protected:
         typedef typename std::num_get<CharType>::iter_type iter_type;
@@ -307,7 +309,7 @@ namespace boost { namespace locale { namespace impl_icu {
     {
         std::locale tmp = std::locale(in, new num_format<CharType>(cd));
         if(!std::has_facet<formatters_cache>(in))
-            tmp = std::locale(tmp, new formatters_cache(cd.locale));
+            tmp = std::locale(tmp, new formatters_cache(cd.locale()));
         return tmp;
     }
 
@@ -316,7 +318,7 @@ namespace boost { namespace locale { namespace impl_icu {
     {
         std::locale tmp = std::locale(in, new num_parse<CharType>(cd));
         if(!std::has_facet<formatters_cache>(in))
-            tmp = std::locale(tmp, new formatters_cache(cd.locale));
+            tmp = std::locale(tmp, new formatters_cache(cd.locale()));
         return tmp;
     }
 

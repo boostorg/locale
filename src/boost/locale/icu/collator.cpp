@@ -124,7 +124,7 @@ namespace boost { namespace locale { namespace impl_icu {
             return gnu_gettext::pj_winberger_hash_function(reinterpret_cast<char*>(tmp.data()));
         }
 
-        collate_impl(const cdata& d) : cvt_(d.encoding), locale_(d.locale), is_utf8_(d.utf8) {}
+        collate_impl(const cdata& d) : cvt_(d.encoding()), locale_(d.locale()), is_utf8_(d.is_utf8()) {}
 
         icu::Collator* get_collator(collate_level level) const
         {

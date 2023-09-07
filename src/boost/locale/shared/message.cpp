@@ -20,6 +20,7 @@
 
 #include <boost/locale/encoding.hpp>
 #include <boost/locale/message.hpp>
+#include "boost/locale/shared/message.hpp"
 #include "boost/locale/shared/mo_hash.hpp"
 #include "boost/locale/shared/mo_lambda.hpp"
 #include "boost/locale/util/encoding.hpp"
@@ -588,3 +589,32 @@ namespace boost { namespace locale { namespace gnu_gettext {
     BOOST_LOCALE_FOREACH_CHAR(BOOST_LOCALE_INSTANTIATE)
 
 }}} // namespace boost::locale::gnu_gettext
+
+namespace boost { namespace locale { namespace detail {
+    std::locale install_message_facet(const std::locale& in,
+                                      const char_facet_t type,
+                                      const util::locale_data& data,
+                                      const std::vector<std::string>& domains,
+                                      const std::vector<std::string>& paths)
+    {
+        gnu_gettext::messages_info minf;
+        minf.language = data.language();
+        minf.country = data.country();
+        minf.variant = data.variant();
+        minf.encoding = data.encoding();
+        minf.domains = gnu_gettext::messages_info::domains_type(domains.begin(), domains.end());
+        minf.paths = paths;
+        switch(type) {
+            case char_facet_t::nochar: break;
+            case char_facet_t::char_f: return std::locale(in, gnu_gettext::create_messages_facet<char>(minf));
+            case char_facet_t::wchar_f: return std::locale(in, gnu_gettext::create_messages_facet<wchar_t>(minf));
+#ifdef BOOST_LOCALE_ENABLE_CHAR16_T
+            case char_facet_t::char16_f: return std::locale(in, gnu_gettext::create_messages_facet<char16_t>(minf));
+#endif
+#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
+            case char_facet_t::char32_f: return std::locale(in, gnu_gettext::create_messages_facet<char32_t>(minf));
+#endif
+        }
+        return in;
+    }
+}}} // namespace boost::locale::detail

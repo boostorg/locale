@@ -46,7 +46,7 @@ namespace boost { namespace locale { namespace impl_icu {
     public:
         typedef std::basic_string<CharType> string_type;
 
-        converter_impl(const cdata& d) : locale_(d.locale), encoding_(d.encoding) {}
+        converter_impl(const cdata& d) : locale_(d.locale()), encoding_(d.encoding()) {}
 
         string_type convert(converter_base::conversion_type how,
                             const CharType* begin,
@@ -130,7 +130,7 @@ namespace boost { namespace locale { namespace impl_icu {
 
     class utf8_converter_impl : public converter<char> {
     public:
-        utf8_converter_impl(const cdata& d) : locale_id_(d.locale.getName()), map_(locale_id_) {}
+        utf8_converter_impl(const cdata& d) : locale_id_(d.locale().getName()), map_(locale_id_) {}
 
         std::string
         convert(converter_base::conversion_type how, const char* begin, const char* end, int flags = 0) const override
@@ -167,7 +167,7 @@ namespace boost { namespace locale { namespace impl_icu {
             case char_facet_t::nochar: break;
             case char_facet_t::char_f:
 #ifdef BOOST_LOCALE_WITH_CASEMAP
-                if(cd.utf8)
+                if(cd.is_utf8())
                     return std::locale(in, new utf8_converter_impl(cd));
 #endif
                 return std::locale(in, new converter_impl<char>(cd));
