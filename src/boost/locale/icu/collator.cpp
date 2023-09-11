@@ -180,6 +180,9 @@ namespace boost { namespace locale { namespace impl_icu {
             case char_facet_t::nochar: break;
             case char_facet_t::char_f: return std::locale(in, new collate_impl<char>(cd));
             case char_facet_t::wchar_f: return std::locale(in, new collate_impl<wchar_t>(cd));
+#ifdef __cpp_char8_t
+            case char_facet_t::char8_f: break; // std-facet not available (yet)
+#endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
             case char_facet_t::char16_f: return std::locale(in, new collate_impl<char16_t>(cd));
 #endif

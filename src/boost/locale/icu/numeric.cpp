@@ -328,6 +328,9 @@ namespace boost { namespace locale { namespace impl_icu {
             case char_facet_t::nochar: break;
             case char_facet_t::char_f: return install_formatting_facets<char>(in, cd);
             case char_facet_t::wchar_f: return install_formatting_facets<wchar_t>(in, cd);
+#ifdef __cpp_char8_t
+            case char_facet_t::char8_f: break; // std-facet not available (yet)
+#endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
             case char_facet_t::char16_f: return install_formatting_facets<char16_t>(in, cd);
 #endif
@@ -344,6 +347,9 @@ namespace boost { namespace locale { namespace impl_icu {
             case char_facet_t::nochar: break;
             case char_facet_t::char_f: return install_parsing_facets<char>(in, cd);
             case char_facet_t::wchar_f: return install_parsing_facets<wchar_t>(in, cd);
+#ifdef __cpp_char8_t
+            case char_facet_t::char8_f: break; // std-facet not available (yet)
+#endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
             case char_facet_t::char16_f: return install_parsing_facets<char16_t>(in, cd);
 #endif
