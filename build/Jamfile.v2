@@ -192,8 +192,6 @@ ICU_OPTS =
 exe has_icu : $(TOP)/build/has_icu_test.cpp : $(ICU_OPTS) ;
 explicit has_icu ;
 
-exe has_utf8_codecvt : $(TOP)/build/has_utf8_codecvt.cpp ;
-explicit has_utf8_codecvt ;
 
 # This function is called whenever the 'boost_locale' metatarget
 # below is generated and figures out what external components we have,
@@ -423,7 +421,6 @@ boost-lib locale
       util/locale_data.cpp
     :
       $(cxx_requirements)
-      [ check-target-builds has_utf8_codecvt "Has std::codecvt<char8_t,..." : <define>BOOST_LOCALE_HAS_UTF8_CODECVT ]
       <define>BOOST_LOCALE_SOURCE
       # Don't link explicitly, not required
       <define>BOOST_THREAD_NO_LIB=1

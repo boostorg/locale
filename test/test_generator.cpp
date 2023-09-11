@@ -304,7 +304,6 @@ void test_main(int /*argc*/, char** /*argv*/)
             TEST_HAS_FACET_CHAR8(bl::message_format, l);
             // Codepage
             TEST_HAS_FACETS(codecvt_by_char_type, l);
-            TEST_HAS_FACET_CHAR8(codecvt_by_char_type, l);
             // Boundary
             if(backendName == "icu") {
                 TEST_HAS_FACETS(bl::boundary::boundary_indexing, l);
