@@ -260,6 +260,12 @@ if(BOOST_LOCALE_ENABLE_CXX11_CHAR_TYPES)
     target_compile_definitions(boost_locale PUBLIC BOOST_LOCALE_ENABLE_CHAR16_T BOOST_LOCALE_ENABLE_CHAR32_T)
 endif()
 
+file(READ ${CMAKE_CURRENT_SOURCE_DIR}/build/has_utf8_codecvt.cpp has_utf8_codecvt_Source)
+check_cxx_source_compiles("${has_utf8_codecvt_Source}" BOOST_LOCALE_HAS_UTF8_CODECVT)
+if(BOOST_LOCALE_HAS_UTF8_CODECVT)
+    target_compile_definitions(boost_locale PRIVATE BOOST_LOCALE_HAS_UTF8_CODECVT)
+endif()
+
 # Testing
 
 if(BUILD_TESTING AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/test/CMakeLists.txt")

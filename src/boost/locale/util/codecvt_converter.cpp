@@ -275,8 +275,10 @@ namespace boost { namespace locale { namespace util {
             case char_facet_t::nochar: break;
             case char_facet_t::char_f: return do_create_codecvt<char>(in, std::move(cvt));
             case char_facet_t::wchar_f: return do_create_codecvt<wchar_t>(in, std::move(cvt));
-#ifdef __cpp_char8_t
+#ifdef BOOST_LOCALE_HAS_UTF8_CODECVT
             case char_facet_t::char8_f: return do_create_codecvt<char8_t>(in, std::move(cvt));
+#elif defined(__cpp_char8_t)
+            case char_facet_t::char8_f: break;
 #endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
             case char_facet_t::char16_f: return do_create_codecvt<char16_t>(in, std::move(cvt));
@@ -296,8 +298,10 @@ namespace boost { namespace locale { namespace util {
             case char_facet_t::nochar: break;
             case char_facet_t::char_f: return std::locale(in, new utf8_codecvt<char>());
             case char_facet_t::wchar_f: return std::locale(in, new utf8_codecvt<wchar_t>());
-#ifdef __cpp_char8_t
+#ifdef BOOST_LOCALE_HAS_UTF8_CODECVT
             case char_facet_t::char8_f: return std::locale(in, new utf8_codecvt<char8_t>());
+#elif defined(__cpp_char8_t)
+            case char_facet_t::char8_f: break;
 #endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
             case char_facet_t::char16_f: return std::locale(in, new utf8_codecvt<char16_t>());
@@ -318,8 +322,10 @@ namespace boost { namespace locale { namespace util {
             case char_facet_t::nochar: break;
             case char_facet_t::char_f: return std::locale(in, new simple_codecvt<char>(encoding));
             case char_facet_t::wchar_f: return std::locale(in, new simple_codecvt<wchar_t>(encoding));
-#ifdef __cpp_char8_t
+#ifdef BOOST_LOCALE_HAS_UTF8_CODECVT
             case char_facet_t::char8_f: return std::locale(in, new simple_codecvt<char8_t>(encoding));
+#elif defined(__cpp_char8_t)
+            case char_facet_t::char8_f: break;
 #endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
             case char_facet_t::char16_f: return std::locale(in, new simple_codecvt<char16_t>(encoding));

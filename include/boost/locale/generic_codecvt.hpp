@@ -456,18 +456,18 @@ namespace boost { namespace locale {
         }
     };
 
-    template<typename CharType, typename CodecvtImpl>
-    class generic_codecvt<CharType, CodecvtImpl, 1> : public std::codecvt<CharType, char, std::mbstate_t>,
-                                                      public generic_codecvt_base {
+    template<typename CodecvtImpl>
+    class generic_codecvt<char, CodecvtImpl, 1> : public std::codecvt<char, char, std::mbstate_t>,
+                                                  public generic_codecvt_base {
     public:
-        typedef CharType uchar;
+        typedef char uchar;
 
         const CodecvtImpl& implementation() const { return *static_cast<const CodecvtImpl*>(this); }
 
-        generic_codecvt(size_t refs = 0) : std::codecvt<CharType, char, std::mbstate_t>(refs) {}
+        generic_codecvt(size_t refs = 0) : std::codecvt<char, char, std::mbstate_t>(refs) {}
     };
 
-#ifdef __cpp_char8_t
+#ifdef BOOST_LOCALE_HAS_UTF8_CODECVT
     /// \brief UTF-8 to/from narrow char codecvt facet to use with char8_t
     ///
     /// Its member functions implement standard virtual functions of basic codecvt.
