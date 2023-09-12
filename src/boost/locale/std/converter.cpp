@@ -104,8 +104,10 @@ namespace boost { namespace locale { namespace impl_std {
                 else
                     return std::locale(in, new std_converter<char>(locale_name));
             case char_facet_t::wchar_f: return std::locale(in, new std_converter<wchar_t>(locale_name));
-#ifdef __cpp_char8_t
+#ifdef __cpp_lib_char8_t
             case char_facet_t::char8_f: return std::locale(in, new utf8_converter<char8_t>(locale_name));
+#elif defined(__cpp_char8_t)
+            case char_facet_t::char8_f: break;
 #endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
             case char_facet_t::char16_f: return std::locale(in, new std_converter<char16_t>(locale_name));

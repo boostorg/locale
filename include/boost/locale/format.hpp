@@ -415,7 +415,7 @@ namespace boost { namespace locale {
     typedef basic_format<char> format;
     /// Definition of wchar_t based format
     typedef basic_format<wchar_t> wformat;
-#ifdef __cpp_char8_t
+#ifdef __cpp_lib_char8_t
     /// Definition of char8_t based format
     typedef basic_format<char8_t> u8format;
 #endif

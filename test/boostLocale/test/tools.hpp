@@ -113,7 +113,7 @@ std::basic_string<Char> to(const std::string& utf8)
     return out;
 }
 
-#ifdef __cpp_char8_t
+#ifdef __cpp_lib_char8_t
 template<>
 std::basic_string<char8_t> to(const std::string& utf8)
 {

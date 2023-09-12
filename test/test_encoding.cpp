@@ -376,7 +376,7 @@ void test_utf_to_utf_for()
     test_from_utf_for_impls(utf<Char>(utf8_string), utf8_string, "UTF-8");
     std::cout << "---- wchar_t\n";
     test_utf_to_utf_for<Char, wchar_t>(utf8_string);
-#ifdef __cpp_char8_t
+#ifdef __cpp_lib_char8_t
     std::cout << "---- char8_t\n";
     test_utf_to_utf_for<Char, char8_t>(utf8_string);
 #endif
@@ -397,7 +397,7 @@ void test_utf_to_utf()
     test_utf_to_utf_for<char>();
     std::cout << "-- wchar_t\n";
     test_utf_to_utf_for<wchar_t>();
-#ifdef __cpp_char8_t
+#ifdef __cpp_lib_char8_t
     std::cout << "-- char8_t\n";
     test_utf_to_utf_for<char8_t>();
 #endif
@@ -467,7 +467,7 @@ void test_latin1_conversions()
     test_latin1_conversions_for<char>();
     std::cout << "-- wchar_t\n";
     test_latin1_conversions_for<wchar_t>();
-#ifdef __cpp_char8_t
+#ifdef __cpp_lib_char8_t
     std::cout << "-- char8_t\n";
     test_latin1_conversions_for<char8_t>();
 #endif
@@ -604,7 +604,7 @@ void test_main(int /*argc*/, char** /*argv*/)
     test_utf_for<char>();
     std::cout << "  wchar_t" << std::endl;
     test_utf_for<wchar_t>();
-#ifdef __cpp_char8_t
+#ifdef __cpp_lib_char8_t
     std::cout << "  char8_t" << std::endl;
     test_utf_for<char8_t>();
 #endif

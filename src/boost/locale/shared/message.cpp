@@ -598,7 +598,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
 #define BOOST_LOCALE_INSTANTIATE(CHARTYPE) \
     template BOOST_LOCALE_DECL message_format<CHARTYPE>* create_messages_facet(const messages_info& info);
 
-    BOOST_LOCALE_FOREACH_CHAR(BOOST_LOCALE_INSTANTIATE)
+    BOOST_LOCALE_FOREACH_CHAR_STRING(BOOST_LOCALE_INSTANTIATE)
 
 }}} // namespace boost::locale::gnu_gettext
 
@@ -620,8 +620,10 @@ namespace boost { namespace locale { namespace detail {
             case char_facet_t::nochar: break;
             case char_facet_t::char_f: return std::locale(in, gnu_gettext::create_messages_facet<char>(minf));
             case char_facet_t::wchar_f: return std::locale(in, gnu_gettext::create_messages_facet<wchar_t>(minf));
-#ifdef __cpp_char8_t
+#ifdef __cpp_lib_char8_t
             case char_facet_t::char8_f: return std::locale(in, gnu_gettext::create_messages_facet<char8_t>(minf));
+#elif defined(__cpp_char8_t)
+            case char_facet_t::char8_f: break;
 #endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
             case char_facet_t::char16_f: return std::locale(in, gnu_gettext::create_messages_facet<char16_t>(minf));

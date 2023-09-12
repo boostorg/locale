@@ -224,7 +224,7 @@ namespace boost { namespace locale { namespace conv {
     BOOST_LOCALE_INSTANTIATE(char);
     BOOST_LOCALE_INSTANTIATE_NO_CHAR(wchar_t);
 
-#ifdef __cpp_char8_t
+#ifdef __cpp_lib_char8_t
     BOOST_LOCALE_INSTANTIATE_NO_CHAR(char8_t);
 #endif
 
