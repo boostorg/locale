@@ -117,6 +117,7 @@ jobs:
           - { compiler: clang-12,  cxxstd: '11,14,17,20',    os: ubuntu-20.04 }
           - { compiler: clang-13,  cxxstd: '11,14,17,20',    os: ubuntu-22.04 }
           - { compiler: clang-14,  cxxstd: '11,14,17,20',    os: ubuntu-22.04 }
+          - { compiler: clang-15,  cxxstd: '11,14,17,20',    os: ubuntu-22.04 }
 
           # libc++
           - { compiler: clang-6.0, cxxstd: '03,11,14',       os: ubuntu-22.04, container: 'ubuntu:18.04', stdlib: libc++, install: 'clang-6.0 libc++-dev libc++abi-dev' }
