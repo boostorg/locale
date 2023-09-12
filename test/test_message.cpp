@@ -107,6 +107,28 @@ std::u32string same_u32(std::u32string s)
 
 namespace impl {
 
+template<class T, std::size_t = sizeof(T)>
+std::true_type is_complete_impl(T*);
+std::false_type is_complete_impl(...);
+
+template<class T>
+using has_ctype = decltype(is_complete_impl(std::declval<std::ctype<T>*>()));
+
+template<typename Char, typename... Ts>
+typename std::enable_if<has_ctype<Char>::value, bool>::type stream_translate(std::basic_ostream<Char>& ss, Ts... args)
+{
+    ss << bl::translate(args...);
+    return true;
+}
+
+// Required for char types not fully supported by the standard library
+// e.g.: error: implicit instantiation of undefined template 'std::ctype<char8_t>'
+template<typename Char, typename... Ts>
+typename std::enable_if<!has_ctype<Char>::value, bool>::type stream_translate(std::basic_ostream<Char>&, Ts...)
+{
+    return false; // LCOV_EXCL_LINE
+}
+
 template<typename Char>
 void test_cntranslate(const std::string& sContext,
                       const std::string& sSingular,
@@ -136,8 +158,8 @@ void test_cntranslate(const std::string& sContext,
 
         std::basic_ostringstream<Char> ss;
         ss.imbue(l);
-        ss << bl::translate(c, s, p, n);
-        TEST_EQ(ss.str(), expected);
+        if(stream_translate(ss, c, s, p, n))
+            TEST_EQ(ss.str(), expected);
 
         // Copyable & movable
         const string_type s2 = ascii_to<Char>("missing Singular");
@@ -185,14 +207,14 @@ void test_cntranslate(const std::string& sContext,
     {
         std::basic_ostringstream<Char> ss;
         ss.imbue(l);
-        ss << bl::as::domain(domain) << bl::translate(c, s, p, n);
-        TEST_EQ(ss.str(), expected);
+        if(stream_translate(ss << bl::as::domain(domain), c, s, p, n))
+            TEST_EQ(ss.str(), expected);
     }
     {
         std::basic_ostringstream<Char> ss;
         ss.imbue(l);
-        ss << bl::as::domain(domain) << bl::translate(c.c_str(), s.c_str(), p.c_str(), n);
-        TEST_EQ(ss.str(), expected);
+        if(stream_translate(ss << bl::as::domain(domain), c.c_str(), s.c_str(), p.c_str(), n))
+            TEST_EQ(ss.str(), expected);
     }
     // Missing facet -> No translation
     {
@@ -229,8 +251,8 @@ void test_ntranslate(const std::string& sSingular,
 
         std::basic_ostringstream<Char> ss;
         ss.imbue(l);
-        ss << bl::translate(s, p, n);
-        TEST_EQ(ss.str(), expected);
+        if(stream_translate(ss, s, p, n))
+            TEST_EQ(ss.str(), expected);
     }
     TEST_EQ(bl::translate(s, p, n).str(l, domain), expected);
     std::locale tmp_locale;
@@ -240,14 +262,14 @@ void test_ntranslate(const std::string& sSingular,
     {
         std::basic_ostringstream<Char> ss;
         ss.imbue(l);
-        ss << bl::as::domain(domain) << bl::translate(s, p, n);
-        TEST_EQ(ss.str(), expected);
+        if(stream_translate(ss << bl::as::domain(domain), s, p, n))
+            TEST_EQ(ss.str(), expected);
     }
     {
         std::basic_ostringstream<Char> ss;
         ss.imbue(l);
-        ss << bl::as::domain(domain) << bl::translate(s.c_str(), p.c_str(), n);
-        TEST_EQ(ss.str(), expected);
+        if(stream_translate(ss << bl::as::domain(domain), s.c_str(), p.c_str(), n))
+            TEST_EQ(ss.str(), expected);
     }
 }
 
@@ -275,8 +297,8 @@ void test_ctranslate(const std::string& sContext,
 
         std::basic_ostringstream<Char> ss;
         ss.imbue(l);
-        ss << bl::translate(c, original);
-        TEST_EQ(ss.str(), expected);
+        if(stream_translate(ss, c, original))
+            TEST_EQ(ss.str(), expected);
     }
     TEST_EQ(bl::translate(c, original).str(l, domain), expected);
     std::locale tmp_locale;
@@ -286,14 +308,14 @@ void test_ctranslate(const std::string& sContext,
     {
         std::basic_ostringstream<Char> ss;
         ss.imbue(l);
-        ss << bl::as::domain(domain) << bl::translate(c, original);
-        TEST_EQ(ss.str(), expected);
+        if(stream_translate(ss << bl::as::domain(domain), c, original))
+            TEST_EQ(ss.str(), expected);
     }
     {
         std::basic_ostringstream<Char> ss;
         ss.imbue(l);
-        ss << bl::as::domain(domain) << bl::translate(c.c_str(), original.c_str());
-        TEST_EQ(ss.str(), expected);
+        if(stream_translate(ss << bl::as::domain(domain), c.c_str(), original.c_str()))
+            TEST_EQ(ss.str(), expected);
     }
 }
 
@@ -319,8 +341,8 @@ void test_translate(const std::string& sOriginal,
 
         std::basic_ostringstream<Char> ss;
         ss.imbue(l);
-        ss << bl::translate(original);
-        TEST_EQ(ss.str(), expected);
+        if(stream_translate(ss, original))
+            TEST_EQ(ss.str(), expected);
     }
     TEST_EQ(bl::translate(original).str(l, domain), expected);
     std::locale tmp_locale;
@@ -330,14 +352,14 @@ void test_translate(const std::string& sOriginal,
     {
         std::basic_ostringstream<Char> ss;
         ss.imbue(l);
-        ss << bl::as::domain(domain) << bl::translate(original);
-        TEST_EQ(ss.str(), expected);
+        if(stream_translate(ss << bl::as::domain(domain), original))
+            TEST_EQ(ss.str(), expected);
     }
     {
         std::basic_ostringstream<Char> ss;
         ss.imbue(l);
-        ss << bl::as::domain(domain) << bl::translate(original.c_str());
-        TEST_EQ(ss.str(), expected);
+        if(stream_translate(ss << bl::as::domain(domain), original.c_str()))
+            TEST_EQ(ss.str(), expected);
     }
 }
 } // namespace impl
