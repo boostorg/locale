@@ -178,7 +178,7 @@ namespace boost { namespace locale { namespace impl_icu {
 #endif
                 return std::locale(in, new converter_impl<char>(cd));
             case char_facet_t::wchar_f: return std::locale(in, new converter_impl<wchar_t>(cd));
-#ifdef __cpp_lib_char8_t
+#ifndef BOOST_LOCALE_NO_CXX20_STRING8
             case char_facet_t::char8_f:
 #    if defined(BOOST_LOCALE_WITH_CASEMAP)
                 return std::locale(in, new utf8_converter_impl<char8_t>(cd));

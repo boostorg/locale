@@ -620,7 +620,7 @@ namespace boost { namespace locale { namespace detail {
             case char_facet_t::nochar: break;
             case char_facet_t::char_f: return std::locale(in, gnu_gettext::create_messages_facet<char>(minf));
             case char_facet_t::wchar_f: return std::locale(in, gnu_gettext::create_messages_facet<wchar_t>(minf));
-#ifdef __cpp_lib_char8_t
+#ifndef BOOST_LOCALE_NO_CXX20_STRING8
             case char_facet_t::char8_f: return std::locale(in, gnu_gettext::create_messages_facet<char8_t>(minf));
 #elif defined(__cpp_char8_t)
             case char_facet_t::char8_f: break;

@@ -8,6 +8,11 @@
 #define BOOST_LOCALE_CONFIG_HPP_INCLUDED
 
 #include <boost/config.hpp>
+#ifdef __has_include
+#    if __has_include(<version>)
+#        include <version>
+#    endif
+#endif
 
 #if defined(BOOST_ALL_DYN_LINK) || defined(BOOST_LOCALE_DYN_LINK)
 #    ifdef BOOST_LOCALE_SOURCE
@@ -82,6 +87,12 @@
 #if !defined(BOOST_LOCALE_NO_SANITIZE)
 #    define BOOST_LOCALE_NO_SANITIZE(what)
 #endif
+
+#ifndef __cpp_lib_char8_t
+// No std::basic_string<char8_t>
+#    define BOOST_LOCALE_NO_CXX20_STRING8
+#endif
+
 /// \endcond
 
 #endif // boost/locale/config.hpp

@@ -113,7 +113,7 @@ std::basic_string<Char> to(const std::string& utf8)
     return out;
 }
 
-#ifdef __cpp_lib_char8_t
+#ifndef BOOST_LOCALE_NO_CXX20_STRING8
 template<>
 std::basic_string<char8_t> to(const std::string& utf8)
 {

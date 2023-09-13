@@ -125,7 +125,7 @@ namespace boost { namespace locale { namespace impl_posix {
                 return std::locale(in, new std_converter<char>(std::move(lc)));
             }
             case char_facet_t::wchar_f: return std::locale(in, new std_converter<wchar_t>(std::move(lc)));
-#ifdef __cpp_lib_char8_t
+#ifndef BOOST_LOCALE_NO_CXX20_STRING8
             case char_facet_t::char8_f: return std::locale(in, new utf8_converter<char8_t>(std::move(lc)));
 #elif defined(__cpp_char8_t)
             case char_facet_t::char8_f: break;

@@ -270,7 +270,7 @@ void test_main(int /*argc*/, char** /*argv*/)
 #else
 #    define TEST_HAS_FACET_CHAR8(facet, l) (void)0
 #endif
-#ifdef __cpp_lib_char8_t
+#ifndef BOOST_LOCALE_NO_CXX20_STRING8
 #    define TEST_HAS_FACET_STRING8(facet, l) TEST(blt::has_facet<facet<char8_t>>(l))
 #else
 #    define TEST_HAS_FACET_STRING8(facet, l) (void)0

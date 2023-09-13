@@ -72,7 +72,7 @@ void test_main(int /*argc*/, char** /*argv*/)
     test_char<char>();
     std::cout << "Testing wchar_t" << std::endl;
     test_char<wchar_t>();
-#ifdef __cpp_lib_char8_t
+#ifndef BOOST_LOCALE_NO_CXX20_STRING8
     std::cout << "Testing char8_t" << std::endl;
     test_char<char8_t>();
 #endif
