@@ -8,6 +8,7 @@
 #define BOOST_LOCALE_CONFIG_HPP_INCLUDED
 
 #include <boost/config.hpp>
+#include <boost/config/workaround.hpp>
 #ifdef __has_include
 #    if __has_include(<version>)
 #        include <version>
@@ -88,8 +89,8 @@
 #    define BOOST_LOCALE_NO_SANITIZE(what)
 #endif
 
-#ifndef __cpp_lib_char8_t
-// No std::basic_string<char8_t>
+#if !defined(__cpp_lib_char8_t) || BOOST_WORKAROUND(BOOST_CLANG_VERSION, < 150000)
+// No std::basic_string<char8_t> or bug in Clang: https://github.com/llvm/llvm-project/issues/55560
 #    define BOOST_LOCALE_NO_CXX20_STRING8
 #endif
 
