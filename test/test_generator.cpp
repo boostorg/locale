@@ -340,22 +340,41 @@ void test_main(int /*argc*/, char** /*argv*/)
         TEST(has_message(l));
 
         l = g("en_US.ISO8859-1");
-        TEST_EQ(std::use_facet<bl::info>(l).language(), "en");
-        TEST_EQ(std::use_facet<bl::info>(l).country(), "US");
-        TEST(!std::use_facet<bl::info>(l).utf8());
-        TEST_EQ(std::use_facet<bl::info>(l).encoding(), "ISO8859-1");
-
+        {
+            const auto& info = std::use_facet<bl::info>(l);
+            TEST_EQ(info.language(), "en");
+            TEST_EQ(info.country(), "US");
+            TEST(!info.utf8());
+            TEST_EQ(info.variant(), "");
+            TEST_EQ(info.encoding(), "ISO8859-1");
+        }
         l = g("en_US.UTF-8");
-        TEST_EQ(std::use_facet<bl::info>(l).language(), "en");
-        TEST_EQ(std::use_facet<bl::info>(l).country(), "US");
-        TEST(std::use_facet<bl::info>(l).utf8());
-        TEST_EQ(std::use_facet<bl::info>(l).encoding(), "UTF-8");
-
+        {
+            const auto& info = std::use_facet<bl::info>(l);
+            TEST_EQ(info.language(), "en");
+            TEST_EQ(info.country(), "US");
+            TEST(info.utf8());
+            TEST_EQ(info.variant(), "");
+            TEST_EQ(info.encoding(), "UTF-8");
+        }
+        l = g("da_DK.ISO8859-15@euro");
+        {
+            const auto& info = std::use_facet<bl::info>(l);
+            TEST_EQ(info.language(), "da");
+            TEST_EQ(info.country(), "DK");
+            TEST(!info.utf8());
+            TEST_EQ(info.variant(), "euro");
+            TEST_EQ(info.encoding(), "ISO8859-15");
+        }
         l = g("en_US.ISO8859-1");
-        TEST_EQ(std::use_facet<bl::info>(l).language(), "en");
-        TEST_EQ(std::use_facet<bl::info>(l).country(), "US");
-        TEST(!std::use_facet<bl::info>(l).utf8());
-        TEST_EQ(std::use_facet<bl::info>(l).encoding(), "ISO8859-1");
+        {
+            const auto& info = std::use_facet<bl::info>(l);
+            TEST_EQ(info.language(), "en");
+            TEST_EQ(info.country(), "US");
+            TEST(!info.utf8());
+            TEST_EQ(info.variant(), "");
+            TEST_EQ(info.encoding(), "ISO8859-1");
+        }
 
         // Check that generate() extends the given locale, not replaces it
         std::locale l_wt(std::locale::classic(), new test_facet);
