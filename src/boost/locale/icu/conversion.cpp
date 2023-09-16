@@ -9,7 +9,6 @@
 #include "boost/locale/icu/cdata.hpp"
 #include "boost/locale/icu/icu_util.hpp"
 #include "boost/locale/icu/uconv.hpp"
-#include <boost/config/pragma_message.hpp>
 #include <limits>
 #include <unicode/locid.h>
 #include <unicode/normlzr.h>
@@ -132,7 +131,6 @@ namespace boost { namespace locale { namespace impl_icu {
     private:
         UCaseMap* map_;
     };
-    BOOST_PRAGMA_MESSAGE("Stdlib: " BOOST_STDLIB)
 
     template<typename U8Char>
     class utf8_converter_impl : public converter<U8Char> {
