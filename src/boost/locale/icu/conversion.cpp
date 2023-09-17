@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2022-2023 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
@@ -94,17 +95,17 @@ namespace boost { namespace locale { namespace impl_icu {
             map_ = ucasemap_open(locale_id.c_str(), 0, &err);
             check_and_throw_icu_error(err);
             if(!map_)
-                throw std::runtime_error("Failed to create UCaseMap");
+                throw std::runtime_error("Failed to create UCaseMap"); // LCOV_EXCL_LINE
         }
         template<typename Conv>
         std::basic_string<U8Char> convert(Conv func, const U8Char* begin, const U8Char* end) const
         {
             using size_type = typename get_casemap_size_type<Conv>::type;
             if((end - begin) >= std::numeric_limits<std::ptrdiff_t>::max() / 11)
-                throw std::range_error("String to long to be converted by ICU");
+                throw std::range_error("String to long to be converted by ICU"); // LCOV_EXCL_LINE
             const auto max_converted_size = (end - begin) * 11 / 10 + 1;
             if(max_converted_size >= std::numeric_limits<size_type>::max())
-                throw std::range_error("String to long to be converted by ICU");
+                throw std::range_error("String to long to be converted by ICU"); // LCOV_EXCL_LINE
             std::vector<U8Char> buf(max_converted_size);
             UErrorCode err = U_ZERO_ERROR;
             auto size = func(map_,
@@ -155,7 +156,7 @@ namespace boost { namespace locale { namespace impl_icu {
                     return cvt.std(str);
                 }
             }
-            return std::basic_string<U8Char>(begin, end - begin);
+            return std::basic_string<U8Char>(begin, end - begin); // LCOV_EXCL_LINE
         }
 
     private:
