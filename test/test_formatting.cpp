@@ -723,6 +723,11 @@ void test_format_class(std::string charset = "UTF-8")
     TEST_EQ(do_format<CharType>(loc, "End}}"), ascii_to<CharType>("End}"));
     // ...and twice when another trailing brace is added
     TEST_EQ(do_format<CharType>(loc, "End}}}"), ascii_to<CharType>("End}}"));
+    // Escaped braces
+    TEST_EQ(do_format<CharType>(loc, "Unexpected {{ in file"), ascii_to<CharType>("Unexpected { in file"));
+    TEST_EQ(do_format<CharType>(loc, "Unexpected {{ in {1}#{2}", "f", 7), ascii_to<CharType>("Unexpected { in f#7"));
+    TEST_EQ(do_format<CharType>(loc, "Unexpected }} in file"), ascii_to<CharType>("Unexpected } in file"));
+    TEST_EQ(do_format<CharType>(loc, "Unexpected }} in {1}#{2}", "f", 9), ascii_to<CharType>("Unexpected } in f#9"));
 
     // format with multiple types
     TEST_EQ(do_format<CharType>(loc, "{1} {2}", "hello", 2), ascii_to<CharType>("hello 2"));
@@ -733,7 +738,11 @@ void test_format_class(std::string charset = "UTF-8")
     // Test different types and modifiers
     TEST_FORMAT_CLS("{1}", 1200.1, "1200.1");
     TEST_FORMAT_CLS("Test {1,num}", 1200.1, "Test 1,200.1");
-    TEST_FORMAT_CLS("{{}} {1,number}", 1200.1, "{} 1,200.1");
+    TEST_FORMAT_CLS("{{1}} {1,number}", 3200.4, "{1} 3,200.4");
+    // placeholder in escaped braces, see issue #194
+    TEST_FORMAT_CLS("{{{1}}}", "num", "{num}");
+    TEST_FORMAT_CLS("{{{1}}}", 1200.1, "{1200.1}");
+
     TEST_FORMAT_CLS("{1,num=sci,p=3}", 13.1, "1.310E1");
     TEST_FORMAT_CLS("{1,num=scientific,p=3}", 13.1, "1.310E1");
     TEST_FORMAT_CLS("{1,num=fix,p=3}", 13.1, "13.100");
