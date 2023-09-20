@@ -295,6 +295,7 @@ namespace boost { namespace locale {
             for(size_t pos = 0; format[pos];) {
                 if(format[pos] != obrk) {
                     if(format[pos] == cbrk && format[pos + 1] == cbrk) {
+                        // Escaped closing brace
                         out << cbrk;
                         pos += 2;
                     } else {
@@ -305,7 +306,9 @@ namespace boost { namespace locale {
                 }
                 pos++;
                 if(format[pos] == obrk) {
+                    // Escaped opening brace
                     out << obrk;
+                    pos++;
                     continue;
                 }
 
