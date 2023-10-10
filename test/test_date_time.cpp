@@ -35,7 +35,7 @@ struct mock_calendar : public boost::locale::abstract_calendar {
     using period_mark = boost::locale::period::marks::period_mark;
 
     mock_calendar() : time(0) { ++num_instances; }
-    mock_calendar(const mock_calendar& other) : time(other.time) { ++num_instances; }
+    mock_calendar(const mock_calendar& other) : time(other.time), is_dst_(other.is_dst_) { ++num_instances; }
     ~mock_calendar() { --num_instances; }
 
     abstract_calendar* clone() const override { return new mock_calendar(*this); }
@@ -45,8 +45,8 @@ struct mock_calendar : public boost::locale::abstract_calendar {
     void set_time(const boost::locale::posix_time&) override {}         // LCOV_EXCL_LINE
     boost::locale::posix_time get_time() const override { return {}; }  // LCOV_EXCL_LINE
     double get_time_ms() const override { return time; }
-    void set_option(calendar_option_type, int) override {}                             // LCOV_EXCL_LINE
-    int get_option(calendar_option_type) const override { return 0; }                  // LCOV_EXCL_LINE
+    void set_option(calendar_option_type, int) override {} // LCOV_EXCL_LINE
+    int get_option(calendar_option_type opt) const override { return opt == is_dst ? is_dst_ : false; }
     void adjust_value(period_mark, update_type, int) override {}                       // LCOV_EXCL_LINE
     int difference(const abstract_calendar&, period_mark) const override { return 0; } // LCOV_EXCL_LINE
     void set_timezone(const std::string&) override {}
@@ -58,6 +58,7 @@ struct mock_calendar : public boost::locale::abstract_calendar {
 
     static int num_instances;
     double time;
+    bool is_dst_;
 };
 int mock_calendar::num_instances = 0;
 struct mock_calendar_facet : boost::locale::calendar_facet {
@@ -76,13 +77,17 @@ void test_main(int /*argc*/, char** /*argv*/)
         mock_calendar::num_instances = 0;
         {
             cal_facet->proto_cal.time = 42 * 1e3;
+            cal_facet->proto_cal.is_dst_ = false;
             date_time t1;
             TEST_EQ(t1.time(), 42);
             TEST_EQ(t1.timezone(), "mock TZ");
+            TEST(!t1.is_in_daylight_saving_time());
             TEST_EQ(mock_calendar::num_instances, 1);
             cal_facet->proto_cal.time = 99 * 1e3;
+            cal_facet->proto_cal.is_dst_ = true;
             date_time t2;
             TEST_EQ(t2.time(), 99);
+            TEST(t2.is_in_daylight_saving_time());
             TEST_EQ(mock_calendar::num_instances, 2);
             // Copy construct
             date_time t3 = t1;
