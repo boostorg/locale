@@ -112,6 +112,18 @@ void test_main(int /*argc*/, char** /*argv*/)
             t2_ref = std::move(t2);
             TEST_EQ(t2.time(), 42);
             TEST_EQ(mock_calendar::num_instances, 2);
+            // Swap
+            t1 = date_time();
+            TEST_EQ(t1.time(), 99);
+            TEST_EQ(t2.time(), 42);
+            using std::swap;
+            swap(t1, t2);
+            TEST_EQ(t1.time(), 42);
+            TEST_EQ(t2.time(), 99);
+            swap(t1, t1);
+            TEST_EQ(t1.time(), 42);
+            swap(t2, t2);
+            TEST_EQ(t2.time(), 99);
         }
         TEST_EQ(mock_calendar::num_instances, 0); // No leaks
         mock_cal.reset(new calendar());

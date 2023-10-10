@@ -707,6 +707,11 @@ namespace boost { namespace locale {
         hold_ptr<abstract_calendar> impl_;
     };
 
+    inline void swap(date_time& left, date_time& right) noexcept
+    {
+        left.swap(right);
+    }
+
     /// Writes date_time \a t to output stream \a out.
     ///
     /// This function uses locale, calendar and time zone of the target stream \a in.
