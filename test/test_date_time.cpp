@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2022-2023 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
@@ -174,6 +175,12 @@ void test_main(int /*argc*/, char** /*argv*/)
             TEST_EQ(t1.time(), 42);
             swap(t2, t2);
             TEST_EQ(t2.time(), 99);
+
+            // Negative times
+            t1 = date_time(-1.25);
+            TEST_EQ(t1.time(), -1.25);
+            t1 = date_time(-0.25);
+            TEST_EQ(t1.time(), -0.25);
         }
         TEST_EQ(mock_calendar::num_instances, 0); // No leaks
         mock_cal.reset(new calendar());
@@ -449,6 +456,16 @@ void test_main(int /*argc*/, char** /*argv*/)
             TEST(!(time_point < time_point - second()));
             TEST(time_point > time_point - second());
             TEST(!(time_point > time_point + second()));
+            // Difference in ns
+            {
+                const double sec = std::trunc(time_point.time()) + 0.5; // Stay inside current second
+                if(backend_name == "icu") {                             // Only ICU supports sub-second times
+                    TEST(date_time(sec - 0.25) < date_time(sec));
+                    TEST(date_time(sec + 0.25) > date_time(sec));
+                }
+                TEST(date_time(sec - 0.25) <= date_time(sec));
+                TEST(date_time(sec + 0.25) >= date_time(sec));
+            }
 
             TEST_EQ(time_point.get(day()), 5);
             TEST_EQ(time_point.get(year()), 1970);
@@ -652,5 +669,3 @@ void test_main(int /*argc*/, char** /*argv*/)
         }
     } // for loop
 }
-
-// boostinspect:noascii
