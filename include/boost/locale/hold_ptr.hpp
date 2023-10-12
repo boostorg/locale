@@ -71,12 +71,7 @@ namespace boost { namespace locale {
         }
 
         /// Swap two pointers
-        void swap(hold_ptr& other) noexcept
-        {
-            T* tmp = other.ptr_;
-            other.ptr_ = ptr_;
-            ptr_ = tmp;
-        }
+        void swap(hold_ptr& other) noexcept { ptr_ = exchange(other.ptr_, ptr_); }
 
     private:
         T* ptr_;
