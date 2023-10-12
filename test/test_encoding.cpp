@@ -305,6 +305,8 @@ void test_utf_for()
     } catch(const invalid_charset_error&) { // LCOV_EXCL_LINE
         std::cout << "--- not supported\n"; // LCOV_EXCL_LINE
     }
+    // Testing a codepage which may crash with IConv on macOS, see issue #196
+    test_to_from_utf<Char>("\xa1\xad\xa1\xad", utf<Char>("……"), "gbk");
 
     std::cout << "- Testing correct invalid bytes skipping\n";
     {
