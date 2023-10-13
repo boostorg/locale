@@ -11,6 +11,7 @@
 #include <boost/locale/formatting.hpp>
 #include <boost/locale/hold_ptr.hpp>
 #include <boost/locale/time_zone.hpp>
+#include <array>
 #include <locale>
 #include <stdexcept>
 #include <vector>
@@ -395,7 +396,7 @@ namespace boost { namespace locale {
     class date_time_period_set {
     public:
         /// Default constructor - empty set
-        date_time_period_set() {}
+        date_time_period_set() = default;
 
         /// Create a set of single period with value 1
         date_time_period_set(period::period_type f) { basic_[0] = date_time_period(f); }
@@ -406,25 +407,21 @@ namespace boost { namespace locale {
         /// Append date_time_period \a f to the set
         void add(date_time_period f)
         {
-            size_t n = size();
-            if(n < 4)
+            const size_t n = size();
+            if(n < basic_.size())
                 basic_[n] = f;
             else
                 periods_.push_back(f);
         }
 
-        /// Get number if items in list
+        /// Get number of items in list
         size_t size() const
         {
-            if(basic_[0].type == period::period_type())
-                return 0;
-            if(basic_[1].type == period::period_type())
-                return 1;
-            if(basic_[2].type == period::period_type())
-                return 2;
-            if(basic_[3].type == period::period_type())
-                return 3;
-            return 4 + periods_.size();
+            for(size_t i = 0; i < basic_.size(); ++i) {
+                if(basic_[i].type == period::period_type())
+                    return i;
+            }
+            return basic_.size() + periods_.size();
         }
 
         /// Get item at position \a n the set, n should be in range [0,size)
@@ -432,14 +429,14 @@ namespace boost { namespace locale {
         {
             if(n >= size())
                 throw std::out_of_range("Invalid index to date_time_period");
-            if(n < 4)
+            if(n < basic_.size())
                 return basic_[n];
             else
-                return periods_[n - 4];
+                return periods_[n - basic_.size()];
         }
 
     private:
-        date_time_period basic_[4];
+        std::array<date_time_period, 4> basic_;
         std::vector<date_time_period> periods_;
     };
 
