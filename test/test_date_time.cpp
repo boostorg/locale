@@ -285,6 +285,23 @@ void test_main(int /*argc*/, char** /*argv*/)
 
             const date_time tp_5_feb_1970_153313 = date_time(a_datetime); // 5th Feb 1970 15:33:13
             TEST_EQ(tp_5_feb_1970_153313.timezone(), tz);
+
+            // Auto-switch the stream when streaming a date-time
+            {
+                empty_stream(ss) << as::datetime << tp_5_feb_1970_153313;
+                const std::string expected = ss.str();
+                empty_stream(ss) << as::posix;
+                TEST_EQ_FMT(tp_5_feb_1970_153313, expected);
+                // And reset to previous
+                TEST_EQ_FMT(123456789, "123456789");
+                // Same with other preset
+                empty_stream(ss) << as::number << 123456789;
+                const std::string expected2 = ss.str();
+                TEST_EQ_FMT(tp_5_feb_1970_153313, expected);
+                // And reset to previous
+                TEST_EQ_FMT(123456789, expected2);
+            }
+
             ss << as::ftime("%Y-%m-%d");
             TEST_EQ_FMT(tp_5_feb_1970_153313, "1970-02-05");
             ss << as::ftime("%Y-%m-%d %H:%M:%S");

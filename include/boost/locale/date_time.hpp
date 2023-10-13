@@ -726,16 +726,15 @@ namespace boost { namespace locale {
     template<typename CharType>
     std::basic_ostream<CharType>& operator<<(std::basic_ostream<CharType>& out, const date_time& t)
     {
-        double time_point = t.time();
-        uint64_t display_flags = ios_info::get(out).display_flags();
-        if(display_flags == flags::date || display_flags == flags::time || display_flags == flags::datetime
-           || display_flags == flags::strftime)
-        {
+        const double time_point = t.time();
+        ios_info& info = ios_info::get(out);
+        const uint64_t display_flags = info.display_flags();
+        if(as::detail::is_datetime_display_flags(display_flags)) {
             out << time_point;
         } else {
-            ios_info::get(out).display_flags(flags::datetime);
+            info.display_flags(flags::datetime);
             out << time_point;
-            ios_info::get(out).display_flags(display_flags);
+            info.display_flags(display_flags);
         }
         return out;
     }
@@ -747,10 +746,8 @@ namespace boost { namespace locale {
     std::basic_istream<CharType>& operator>>(std::basic_istream<CharType>& in, date_time& t)
     {
         double v;
-        uint64_t display_flags = ios_info::get(in).display_flags();
-        if(display_flags == flags::date || display_flags == flags::time || display_flags == flags::datetime
-           || display_flags == flags::strftime)
-        {
+        const uint64_t display_flags = ios_info::get(in).display_flags();
+        if(as::detail::is_datetime_display_flags(display_flags)) {
             in >> v;
         } else {
             ios_info::get(in).display_flags(flags::datetime);
