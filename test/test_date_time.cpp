@@ -373,9 +373,19 @@ void test_main(int /*argc*/, char** /*argv*/)
             time_point = tp_5_feb_1970_153313;
             time_point <<= minute() * 30;
             TEST_EQ_FMT(time_point, "1970-02-05 15:03:13");
+            // Same as repeated roll
+            time_point = tp_5_feb_1970_153313;
+            for(int i = 0; i < 30; i++)
+                time_point <<= minute();
+            TEST_EQ_FMT(time_point, "1970-02-05 15:03:13");
 
             time_point = tp_5_feb_1970_153313;
             time_point >>= minute(40);
+            TEST_EQ_FMT(time_point, "1970-02-05 15:53:13");
+            // Same as repeated roll
+            time_point = tp_5_feb_1970_153313;
+            for(int i = 0; i < 40; i++)
+                time_point >>= minute();
             TEST_EQ_FMT(time_point, "1970-02-05 15:53:13");
 
             time_point = tp_5_feb_1970_153313;
