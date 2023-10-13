@@ -79,10 +79,46 @@ struct scoped_timezone {
     ~scoped_timezone() { boost::locale::time_zone::global(old_tz_); }
 };
 
+static bool equal_period(const boost::locale::date_time_period& lhs, const boost::locale::date_time_period& rhs)
+{
+    return lhs.type == rhs.type && lhs.value == rhs.value;
+}
+
 void test_main(int /*argc*/, char** /*argv*/)
 {
     using namespace boost::locale;
     using namespace boost::locale::period;
+    {
+        date_time_period_set set;
+        TEST_EQ(set.size(), 0u);
+        TEST_THROWS(set[0], std::out_of_range);
+
+        set = day();
+        TEST_EQ(set.size(), 1u);
+        TEST(equal_period(set[0], day(1)));
+        TEST_THROWS(set[1], std::out_of_range);
+        set = day(1);
+        TEST_EQ(set.size(), 1u);
+        TEST(equal_period(set[0], day(1)));
+        set = day(2);
+        TEST_EQ(set.size(), 1u);
+        TEST(equal_period(set[0], day(2)));
+
+        set = day(7) + month(3);
+        TEST_EQ(set.size(), 2u);
+        TEST(equal_period(set[0], day(7)));
+        TEST(equal_period(set[1], month(3)));
+        TEST_THROWS(set[2], std::out_of_range);
+
+        set = year(3) + month(5) + day(7) + hour(13) + minute(17);
+        TEST_EQ(set.size(), 5u);
+        TEST(equal_period(set[0], year(3)));
+        TEST(equal_period(set[1], month(5)));
+        TEST(equal_period(set[2], day(7)));
+        TEST(equal_period(set[3], hour(13)));
+        TEST(equal_period(set[4], minute(17)));
+        TEST_THROWS(set[5], std::out_of_range);
+    }
     std::unique_ptr<calendar> mock_cal;
     {
         auto* cal_facet = new mock_calendar_facet;

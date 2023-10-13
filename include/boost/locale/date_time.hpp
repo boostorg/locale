@@ -388,7 +388,7 @@ namespace boost { namespace locale {
 
     } // namespace period
 
-    /// \brief this class that represents a set of periods,
+    /// \brief This class represents a set of periods.
     ///
     /// It is generally created by operations on periods:
     /// 1995*year + 3*month + 1*day. Note: operations are not commutative.
