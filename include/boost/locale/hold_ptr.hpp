@@ -54,15 +54,10 @@ namespace boost { namespace locale {
         /// Get a mutable pointer to the object
         T* operator->() { return ptr_; }
 
-        /// Transfer an ownership on the pointer to user
-        T* release()
-        {
-            T* tmp = ptr_;
-            ptr_ = nullptr;
-            return tmp;
-        }
+        /// Transfer ownership of the pointer to user
+        T* release() { return exchange(ptr_, nullptr); }
 
-        /// Set new value to pointer, previous object is destroyed, ownership on new object is transferred
+        /// Set new value to pointer, previous object is destroyed, ownership of new object is transferred
         void reset(T* p = nullptr)
         {
             if(ptr_)

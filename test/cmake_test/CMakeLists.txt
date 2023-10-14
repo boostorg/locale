@@ -21,6 +21,7 @@ else()
       iterator
       predef
       thread
+      utility
 
       # Secondary dependencies
       algorithm
@@ -53,7 +54,6 @@ else()
       preprocessor
       range
       ratio
-      rational
       regex
       smart_ptr
       static_assert
@@ -64,7 +64,6 @@ else()
       type_traits
       typeof
       unordered
-      utility
       variant2
       winapi
     )
