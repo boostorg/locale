@@ -187,10 +187,15 @@ jobs:
             SOURCE_KEYS=(${{join(matrix.source_keys, ' ')}})
             SOURCES=(${{join(matrix.sources, ' ')}})
             # Add this by default
+            SOURCE_KEYS+=('http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x1E9377A2BA9EF27F')
             SOURCES+=(ppa:ubuntu-toolchain-r/test)
             for key in "${SOURCE_KEYS[@]}"; do
                 for i in {1..$NET_RETRY_COUNT}; do
-                    keyfilename=$(basename -s .key $key)
+                    if [[ "$key" =~ .*keyserver.*search=0x([A-F0-9]+) ]]; then
+                      keyfilename="${BASH_REMATCH[1]}.key"
+                    else
+                      keyfilename=$(basename -s .key $key)
+                    fi
                     curl -sSL --retry ${NET_RETRY_COUNT:-5} "$key" | sudo gpg --dearmor > /etc/apt/trusted.gpg.d/${keyfilename} && break || sleep 10
                 done
             done
