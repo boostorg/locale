@@ -79,10 +79,46 @@ struct scoped_timezone {
     ~scoped_timezone() { boost::locale::time_zone::global(old_tz_); }
 };
 
+static bool equal_period(const boost::locale::date_time_period& lhs, const boost::locale::date_time_period& rhs)
+{
+    return lhs.type == rhs.type && lhs.value == rhs.value;
+}
+
 void test_main(int /*argc*/, char** /*argv*/)
 {
     using namespace boost::locale;
     using namespace boost::locale::period;
+    {
+        date_time_period_set set;
+        TEST_EQ(set.size(), 0u);
+        TEST_THROWS(set[0], std::out_of_range);
+
+        set = day();
+        TEST_EQ(set.size(), 1u);
+        TEST(equal_period(set[0], day(1)));
+        TEST_THROWS(set[1], std::out_of_range);
+        set = day(1);
+        TEST_EQ(set.size(), 1u);
+        TEST(equal_period(set[0], day(1)));
+        set = day(2);
+        TEST_EQ(set.size(), 1u);
+        TEST(equal_period(set[0], day(2)));
+
+        set = day(7) + month(3);
+        TEST_EQ(set.size(), 2u);
+        TEST(equal_period(set[0], day(7)));
+        TEST(equal_period(set[1], month(3)));
+        TEST_THROWS(set[2], std::out_of_range);
+
+        set = year(3) + month(5) + day(7) + hour(13) + minute(17);
+        TEST_EQ(set.size(), 5u);
+        TEST(equal_period(set[0], year(3)));
+        TEST(equal_period(set[1], month(5)));
+        TEST(equal_period(set[2], day(7)));
+        TEST(equal_period(set[3], hour(13)));
+        TEST(equal_period(set[4], minute(17)));
+        TEST_THROWS(set[5], std::out_of_range);
+    }
     std::unique_ptr<calendar> mock_cal;
     {
         auto* cal_facet = new mock_calendar_facet;
@@ -285,6 +321,23 @@ void test_main(int /*argc*/, char** /*argv*/)
 
             const date_time tp_5_feb_1970_153313 = date_time(a_datetime); // 5th Feb 1970 15:33:13
             TEST_EQ(tp_5_feb_1970_153313.timezone(), tz);
+
+            // Auto-switch the stream when streaming a date-time
+            {
+                empty_stream(ss) << as::datetime << tp_5_feb_1970_153313;
+                const std::string expected = ss.str();
+                empty_stream(ss) << as::posix;
+                TEST_EQ_FMT(tp_5_feb_1970_153313, expected);
+                // And reset to previous
+                TEST_EQ_FMT(123456789, "123456789");
+                // Same with other preset
+                empty_stream(ss) << as::number << 123456789;
+                const std::string expected2 = ss.str();
+                TEST_EQ_FMT(tp_5_feb_1970_153313, expected);
+                // And reset to previous
+                TEST_EQ_FMT(123456789, expected2);
+            }
+
             ss << as::ftime("%Y-%m-%d");
             TEST_EQ_FMT(tp_5_feb_1970_153313, "1970-02-05");
             ss << as::ftime("%Y-%m-%d %H:%M:%S");
@@ -356,9 +409,19 @@ void test_main(int /*argc*/, char** /*argv*/)
             time_point = tp_5_feb_1970_153313;
             time_point <<= minute() * 30;
             TEST_EQ_FMT(time_point, "1970-02-05 15:03:13");
+            // Same as repeated roll
+            time_point = tp_5_feb_1970_153313;
+            for(int i = 0; i < 30; i++)
+                time_point <<= minute();
+            TEST_EQ_FMT(time_point, "1970-02-05 15:03:13");
 
             time_point = tp_5_feb_1970_153313;
             time_point >>= minute(40);
+            TEST_EQ_FMT(time_point, "1970-02-05 15:53:13");
+            // Same as repeated roll
+            time_point = tp_5_feb_1970_153313;
+            for(int i = 0; i < 40; i++)
+                time_point >>= minute();
             TEST_EQ_FMT(time_point, "1970-02-05 15:53:13");
 
             time_point = tp_5_feb_1970_153313;
