@@ -21,25 +21,25 @@ def job(
 
 def main(ctx):
   return [
-    job(compiler='clang-13',  cxxstd='11,14,17,20,2b', os='ubuntu-22.04'),
-    job(compiler='clang-14',  cxxstd='11,14,17,20,2b', os='ubuntu-22.04'),
-    job(compiler='clang-15',  cxxstd='11,14,17,20,2b', os='ubuntu-22.04', add_llvm=True),
+    job(compiler='clang-13',  cxxstd='11,14,17,20,2b', os='ubuntu-22.04', install='libicu-dev'),
+    job(compiler='clang-14',  cxxstd='11,14,17,20,2b', os='ubuntu-22.04', install='libicu-dev'),
+    job(compiler='clang-15',  cxxstd='11,14,17,20,2b', os='ubuntu-22.04', install='libicu-dev', add_llvm=True),
 
-    job(compiler='gcc-11',    cxxstd='11,14,17,20,2b', os='ubuntu-22.04'),
-    job(compiler='gcc-12',    cxxstd='11,14,17,20,2b', os='ubuntu-22.04'),
+    job(compiler='gcc-11',    cxxstd='11,14,17,20,2b', os='ubuntu-22.04', install='libicu-dev'),
+    job(compiler='gcc-12',    cxxstd='11,14,17,20,2b', os='ubuntu-22.04', install='libicu-dev'),
 
     # Sanitizers
     job(name='ASAN',  asan=True,
-        compiler='gcc-12',    cxxstd='11,14,17,20', os='ubuntu-22.04'),
+        compiler='gcc-12',    cxxstd='11,14,17,20', os='ubuntu-22.04', install='libicu-dev'),
     job(name='UBSAN', ubsan=True,
-        compiler='gcc-12',    cxxstd='11,14,17,20', os='ubuntu-22.04'),
+        compiler='gcc-12',    cxxstd='11,14,17,20', os='ubuntu-22.04', install='libicu-dev'),
     job(name='Clang 14 w/ sanitizers', asan=True, ubsan=True,
-        compiler='clang-14',  cxxstd='11,14,17,20', os='ubuntu-22.04'),
+        compiler='clang-14',  cxxstd='11,14,17,20', os='ubuntu-22.04', install='libicu-dev'),
     job(name='Valgrind', valgrind=True,
-        compiler='clang-6.0', cxxstd='11,14,1z',    os='ubuntu-18.04', install='libc6-dbg libc++-dev libstdc++-8-dev'),
+        compiler='clang-6.0', cxxstd='11,14,1z',    os='ubuntu-18.04', install='libicu-dev libc6-dbg libc++-dev libstdc++-8-dev'),
 
     # libc++
-    job(compiler='clang-15',  cxxstd='11,14,17,20', os='ubuntu-22.04', stdlib='libc++', install='libc++-15-dev libc++abi-15-dev', add_llvm=True),
+    job(compiler='clang-15',  cxxstd='11,14,17,20', os='ubuntu-22.04', stdlib='libc++', install='libicu-dev libc++-15-dev libc++abi-15-dev', add_llvm=True),
 
     # FreeBSD
     job(compiler='clang-10',  cxxstd='11,14,17,20', os='freebsd-13.1'),
