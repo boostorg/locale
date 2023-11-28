@@ -307,6 +307,8 @@ void test_utf_for()
     }
     // Testing a codepage which may crash with IConv on macOS, see issue #196
     test_to_from_utf<Char>("\xa1\xad\xa1\xad", utf<Char>("……"), "gbk");
+    // This might cause a bogus E2BIG on macOS, see issue #206
+    test_to_from_utf<Char>("\x1b\x24\x29\x41\x0e\x4a\x35\xf", utf<Char>("实"), "ISO-2022-CN");
 
     std::cout << "- Testing correct invalid bytes skipping\n";
     {
