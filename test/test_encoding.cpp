@@ -49,10 +49,13 @@ template<typename Char>
 void test_to_utf_for_impls(const std::string& source,
                            const std::basic_string<Char>& target,
                            const std::string& encoding,
-                           const bool expectSuccess = true)
+                           const bool expectSuccess = true,
+                           const bool test_default = true)
 {
-    boost::locale::conv::utf_encoder<Char> conv(encoding);
-    TEST_EQ(conv(source), target);
+    if(test_default) {
+        boost::locale::conv::utf_encoder<Char> conv(encoding);
+        TEST_EQ(conv(source), target);
+    }
     for(const auto impl : all_conv_backends) {
         std::cout << "----- " << impl << '\n';
         using boost::locale::conv::invalid_charset_error;
@@ -61,7 +64,8 @@ void test_to_utf_for_impls(const std::string& source,
               boost::locale::conv::detail::make_utf_encoder<Char>(encoding, boost::locale::conv::skip, impl);
             TEST_EQ(convPtr->convert(source), target);
         } catch(invalid_charset_error&) {
-            continue; // LCOV_EXCL_LINE
+            std::cout << "--- Charset not supported\n"; // LCOV_EXCL_LINE
+            continue;                                   // LCOV_EXCL_LINE
         }
         if(!expectSuccess) {
             auto convPtr =
@@ -83,10 +87,13 @@ template<typename Char>
 void test_from_utf_for_impls(const std::basic_string<Char>& source,
                              const std::string& target,
                              const std::string& encoding,
-                             const bool expectSuccess = true)
+                             const bool expectSuccess = true,
+                             const bool test_default = true)
 {
-    boost::locale::conv::utf_decoder<Char> conv(encoding);
-    TEST_EQ(conv(source), target);
+    if(test_default) {
+        boost::locale::conv::utf_decoder<Char> conv(encoding);
+        TEST_EQ(conv(source), target);
+    }
     for(const auto impl : all_conv_backends) {
         std::cout << "----- " << impl << '\n';
         using boost::locale::conv::invalid_charset_error;
@@ -95,7 +102,8 @@ void test_from_utf_for_impls(const std::basic_string<Char>& source,
               boost::locale::conv::detail::make_utf_decoder<Char>(encoding, boost::locale::conv::skip, impl);
             TEST_EQ(convPtr->convert(source), target);
         } catch(invalid_charset_error&) {
-            continue; // LCOV_EXCL_LINE
+            std::cout << "--- Charset not supported\n"; // LCOV_EXCL_LINE
+            continue;                                   // LCOV_EXCL_LINE
         }
         if(!expectSuccess) {
             auto convPtr =
@@ -114,18 +122,23 @@ void test_from_utf_for_impls(const std::basic_string<Char>& source,
 }
 
 template<typename Char>
-void test_to_from_utf(std::string source, std::basic_string<Char> target, std::string encoding)
+void test_to_from_utf(const std::string& source,
+                      const std::basic_string<Char>& target,
+                      const std::string& encoding,
+                      const bool test_default = true)
 {
     std::cout << "-- " << encoding << std::endl;
 
-    TEST_EQ(boost::locale::conv::to_utf<Char>(source, encoding), target);
-    TEST_EQ(boost::locale::conv::from_utf<Char>(target, encoding), source);
-    test_to_utf_for_impls(source, target, encoding);
-    test_from_utf_for_impls(target, source, encoding);
+    if(test_default) {
+        TEST_EQ(boost::locale::conv::to_utf<Char>(source, encoding), target);
+        TEST_EQ(boost::locale::conv::from_utf<Char>(target, encoding), source);
+    }
+    test_to_utf_for_impls(source, target, encoding, true, test_default);
+    test_from_utf_for_impls(target, source, encoding, true, test_default);
 }
 
 template<typename Char>
-void test_error_to_utf(std::string source, std::basic_string<Char> target, std::string encoding)
+void test_error_to_utf(const std::string& source, const std::basic_string<Char>& target, const std::string& encoding)
 {
     using boost::locale::conv::to_utf;
     using boost::locale::conv::stop;
@@ -146,7 +159,7 @@ void test_error_to_utf(std::string source, std::basic_string<Char> target, std::
 }
 
 template<typename Char>
-void test_error_from_utf(std::basic_string<Char> source, std::string target, std::string encoding)
+void test_error_from_utf(const std::basic_string<Char>& source, const std::string& target, const std::string& encoding)
 {
     using boost::locale::conv::from_utf;
     using boost::locale::conv::stop;
@@ -306,9 +319,9 @@ void test_utf_for()
         std::cout << "--- not supported\n"; // LCOV_EXCL_LINE
     }
     // Testing a codepage which may crash with IConv on macOS, see issue #196
-    test_to_from_utf<Char>("\xa1\xad\xa1\xad", utf<Char>("……"), "gbk");
+    test_to_from_utf<Char>("\xa1\xad\xa1\xad", utf<Char>("……"), "gbk", false);
     // This might cause a bogus E2BIG on macOS, see issue #206
-    test_to_from_utf<Char>("\x1b\x24\x29\x41\x0e\x4a\x35\xf", utf<Char>("实"), "ISO-2022-CN");
+    test_to_from_utf<Char>("\x1b\x24\x29\x41\x0e\x4a\x35\xf", utf<Char>("实"), "ISO-2022-CN", false);
 
     std::cout << "- Testing correct invalid bytes skipping\n";
     {
