@@ -36,7 +36,7 @@ def main(ctx):
     job(name='Clang 14 w/ sanitizers', asan=True, ubsan=True,
         compiler='clang-14',  cxxstd='11,14,17,20', os='ubuntu-22.04', install='libicu-dev'),
     job(name='Valgrind', valgrind=True,
-        compiler='clang-6.0', cxxstd='11,14,1z',    os='ubuntu-18.04', install='libicu-dev libc6-dbg libc++-dev libstdc++-8-dev'),
+        compiler='gcc-12',    cxxstd='11,14,17,20', os='ubuntu-22.04', install='libicu-dev libc6-dbg libstdc++-12-dev'),
 
     # libc++
     job(compiler='clang-15',  cxxstd='11,14,17,20', os='ubuntu-22.04', stdlib='libc++', install='libicu-dev libc++-15-dev libc++abi-15-dev', add_llvm=True),
