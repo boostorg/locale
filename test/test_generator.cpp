@@ -37,6 +37,21 @@ namespace boost { namespace locale { namespace test {
     {
         return std::has_facet<Facet>(l) && is_facet<Facet>(&std::use_facet<Facet>(l));
     }
+
+    template<class Facet>
+    bool has_not_facet(const std::locale& l)
+    {
+        const Facet* f;
+        try {
+            f = &std::use_facet<Facet>(l);
+        } catch(const std::bad_cast&) {
+            return !std::has_facet<Facet>(l);
+        }
+        // This mustn't be reached, checks for debugging
+        TEST(is_facet<Facet>(f));        // LCOV_EXCL_LINE
+        TEST(!std::has_facet<Facet>(l)); // LCOV_EXCL_LINE
+        return false;                    // LCOV_EXCL_LINE
+    }
 }}} // namespace boost::locale::test
 namespace blt = boost::locale::test;
 
@@ -266,25 +281,30 @@ void test_main(int /*argc*/, char** /*argv*/)
             std::cout << "-- Locale: " << localeName << std::endl;
             const std::locale l = g(localeName);
 #ifdef __cpp_char8_t
-#    define TEST_HAS_FACET_CHAR8(facet, l) TEST(blt::has_facet<facet<char8_t>>(l))
+#    define TEST_FOR_CHAR8(check) TEST(check)
 #else
-#    define TEST_HAS_FACET_CHAR8(facet, l) (void)0
+#    define TEST_FOR_CHAR8(check) (void)0
 #endif
 #ifndef BOOST_LOCALE_NO_CXX20_STRING8
-#    define TEST_HAS_FACET_STRING8(facet, l) TEST(blt::has_facet<facet<char8_t>>(l))
+#    define TEST_FOR_STRING8(check) TEST(check)
 #else
-#    define TEST_HAS_FACET_STRING8(facet, l) (void)0
+#    define TEST_FOR_STRING8(check) (void)0
 #endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-#    define TEST_HAS_FACET_CHAR16(facet, l) TEST(blt::has_facet<facet<char16_t>>(l))
+#    define TEST_FOR_CHAR16(check) TEST(check)
 #else
-#    define TEST_HAS_FACET_CHAR16(facet, l) (void)0
+#    define TEST_FOR_CHAR16(check) (void)0
 #endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-#    define TEST_HAS_FACET_CHAR32(facet, l) TEST(blt::has_facet<facet<char32_t>>(l))
+#    define TEST_FOR_CHAR32(check) TEST(check)
 #else
-#    define TEST_HAS_FACET_CHAR32(facet, l) (void)0
+#    define TEST_FOR_CHAR32(check) (void)0
 #endif
+#define TEST_HAS_FACET_CHAR8(facet, l) TEST_FOR_CHAR8(blt::has_facet<facet<char8_t>>(l))
+#define TEST_HAS_FACET_CHAR16(facet, l) TEST_FOR_CHAR16(blt::has_facet<facet<char16_t>>(l))
+#define TEST_HAS_FACET_CHAR32(facet, l) TEST_FOR_CHAR32(blt::has_facet<facet<char32_t>>(l))
+#define TEST_HAS_FACET_STRING8(facet, l) TEST_FOR_STRING8(blt::has_facet<facet<char8_t>>(l))
+
 #define TEST_HAS_FACETS(facet, l)                \
     do {                                         \
         TEST(blt::has_facet<facet<char>>(l));    \
@@ -296,7 +316,16 @@ void test_main(int /*argc*/, char** /*argv*/)
             // Convert
             TEST_HAS_FACETS(bl::converter, l);
             TEST_HAS_FACET_STRING8(bl::converter, l);
+            // Collator
             TEST_HAS_FACETS(std::collate, l);
+            if(backendName == "icu" || (backendName == "winapi" && std::use_facet<bl::info>(l).utf8())) {
+                TEST_HAS_FACETS(bl::collator, l);
+            } else {
+                TEST(blt::has_not_facet<bl::collator<char>>(l));
+                TEST(blt::has_not_facet<bl::collator<wchar_t>>(l));
+                TEST_FOR_CHAR16(blt::has_not_facet<bl::collator<char16_t>>(l));
+                TEST_FOR_CHAR32(blt::has_not_facet<bl::collator<char32_t>>(l));
+            }
             // Formatting
             TEST_HAS_FACETS(std::num_put, l);
             TEST_HAS_FACETS(std::time_put, l);
