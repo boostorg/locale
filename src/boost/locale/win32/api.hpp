@@ -48,15 +48,13 @@ namespace boost { namespace locale { namespace impl_win {
         return 0;
     }
 
-    class winlocale {
-    public:
-        winlocale() : lcid(0) {}
-
-        winlocale(const std::string& name) { lcid = locale_to_lcid(name); }
-
-        unsigned lcid;
+    struct winlocale {
+        explicit winlocale(unsigned locale_id = 0) : lcid(locale_id) {}
+        explicit winlocale(const std::string& name) { lcid = locale_to_lcid(name); }
 
         bool is_c() const { return lcid == 0; }
+
+        unsigned lcid;
     };
 
     ////////////////////////////////////////////////////////////////////////
@@ -195,8 +193,7 @@ namespace boost { namespace locale { namespace impl_win {
 
     inline std::wstring wcsfold(const wchar_t* begin, const wchar_t* end)
     {
-        winlocale l;
-        l.lcid = 0x0409; // en-US
+        const winlocale l(0x0409); // en-US
         return win_map_string_l(LCMAP_LOWERCASE, begin, end, l);
     }
 
