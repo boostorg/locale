@@ -27,6 +27,7 @@
 
 #include <boost/locale/collator.hpp>
 #include <boost/locale/conversion.hpp>
+#include <boost/assert.hpp>
 
 namespace boost { namespace locale { namespace impl_win {
 
@@ -147,6 +148,7 @@ namespace boost { namespace locale { namespace impl_win {
                                           static_cast<int>(le - lb),
                                           rb,
                                           static_cast<int>(re - rb));
+        BOOST_ASSERT_MSG(result != 0, "CompareStringW failed");
         return result - 2; // Subtract 2 to get the meaning of <0, ==0, and >0
     }
 
@@ -211,7 +213,7 @@ namespace boost { namespace locale { namespace impl_win {
 
         if(end - begin > std::numeric_limits<int>::max())
             throw std::length_error("String to long for int type");
-        int len = FoldStringW(flags, begin, static_cast<int>(end - begin), 0, 0);
+        int len = FoldStringW(flags, begin, static_cast<int>(end - begin), nullptr, 0);
         if(len == 0)
             return std::wstring();
         if(len == std::numeric_limits<int>::max())
@@ -223,9 +225,7 @@ namespace boost { namespace locale { namespace impl_win {
 
     inline std::wstring wcsxfrm_l(collate_level level, const wchar_t* begin, const wchar_t* end, const winlocale& l)
     {
-        int flag = LCMAP_SORTKEY | collation_level_to_flag(level);
-
-        return win_map_string_l(flag, begin, end, l);
+        return win_map_string_l(LCMAP_SORTKEY | collation_level_to_flag(level), begin, end, l);
     }
 
     inline std::wstring towupper_l(const wchar_t* begin, const wchar_t* end, const winlocale& l)
