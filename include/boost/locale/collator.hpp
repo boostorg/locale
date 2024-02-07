@@ -173,17 +173,18 @@ namespace boost { namespace locale {
         ///
         /// \throws std::bad_cast: \a l does not have \ref collator facet installed
         comparator(const std::locale& l = std::locale(), collate_level level = default_level) :
-            locale_(l), level_(level)
+            locale_(l), collator_(std::use_facet<collator<CharType>>(locale_)), level_(level)
         {}
 
         /// Compare two strings -- equivalent to return left < right according to collation rules
         bool operator()(const std::basic_string<CharType>& left, const std::basic_string<CharType>& right) const
         {
-            return std::use_facet<collator<CharType>>(locale_).compare(level_, left, right) < 0;
+            return collator_.compare(level_, left, right) < 0;
         }
 
     private:
         std::locale locale_;
+        const collator<CharType>& collator_;
         collate_level level_;
     };
 
