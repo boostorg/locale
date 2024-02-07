@@ -53,7 +53,7 @@ namespace boost { namespace locale {
         /// Type of string used with this facet
         typedef std::basic_string<CharType> string_type;
 
-        /// Compare two strings in rage [b1,e1),  [b2,e2) according using a collation level \a level. Calls do_compare
+        /// Compare two strings in range [b1,e1),  [b2,e2) according to collation level \a level. Calls do_compare
         ///
         /// Returns -1 if the first of the two strings sorts before the seconds, returns 1 if sorts after and 0 if
         /// they considered equal.
@@ -107,7 +107,7 @@ namespace boost { namespace locale {
         /// Create a binary string from string \a s, that can be compared to other, useful for collation of multiple
         /// strings.
         ///
-        /// The transformation follows these rules:
+        /// The transformation follows this rule:
         /// \code
         ///   compare(level,s1,s2) == sign( transform(level,s1).compare(transform(level,s2)) );
         /// \endcode
@@ -121,7 +121,7 @@ namespace boost { namespace locale {
         collator(size_t refs = 0) : std::collate<CharType>(refs) {}
 
         /// This function is used to override default collation function that does not take in account collation level.
-        /// Uses primary level
+        /// Uses identical level
         int
         do_compare(const char_type* b1, const char_type* e1, const char_type* b2, const char_type* e2) const override
         {
@@ -129,14 +129,14 @@ namespace boost { namespace locale {
         }
 
         /// This function is used to override default collation function that does not take in account collation level.
-        /// Uses primary level
+        /// Uses identical level
         string_type do_transform(const char_type* b, const char_type* e) const override
         {
             return do_transform(collate_level::identical, b, e);
         }
 
         /// This function is used to override default collation function that does not take in account collation level.
-        /// Uses primary level
+        /// Uses identical level
         long do_hash(const char_type* b, const char_type* e) const override
         {
             return do_hash(collate_level::identical, b, e);
@@ -157,7 +157,7 @@ namespace boost { namespace locale {
     };
 
     /// \brief This class can be used in STL algorithms and containers for comparison of strings
-    /// with a level other than primary
+    /// with a level other than identical
     ///
     /// For example:
     ///
@@ -169,7 +169,7 @@ namespace boost { namespace locale {
     template<typename CharType, collate_level default_level = collate_level::identical>
     struct comparator {
     public:
-        /// Create a comparator class for locale \a l and with collation leval \a level
+        /// Create a comparator class for locale \a l and with collation level \a level
         ///
         /// \throws std::bad_cast: \a l does not have \ref collator facet installed
         comparator(const std::locale& l = std::locale(), collate_level level = default_level) :
