@@ -8,6 +8,7 @@
 #define BOOST_LOCALE_COLLATOR_HPP_INCLUDED
 
 #include <boost/locale/config.hpp>
+#include <boost/locale/detail/facet_id.hpp>
 #include <locale>
 
 #ifdef BOOST_MSVC
@@ -43,10 +44,9 @@ namespace boost { namespace locale {
 
     /// \brief Collation facet.
     ///
-    /// It reimplements standard C++ std::collate,
-    /// allowing usage of std::locale for direct string comparison
+    /// It reimplements standard C++ std::collate with support for collation levels
     template<typename CharType>
-    class collator : public std::collate<CharType> {
+    class BOOST_SYMBOL_VISIBLE collator : public std::locale::facet, public detail::facet_id<collator<CharType>> {
     public:
         /// Type of the underlying character
         typedef CharType char_type;
@@ -66,6 +66,13 @@ namespace boost { namespace locale {
             return do_compare(level, b1, e1, b2, e2);
         }
 
+        /// Default compare function as-in std::collate that does not take collation level into account.
+        /// Uses identical level
+        int compare(const char_type* b1, const char_type* e1, const char_type* b2, const char_type* e2) const
+        {
+            return compare(collate_level::identical, b1, e1, b2, e2);
+        }
+
         /// Create a binary string that can be compared to other in order to get collation order. The string is created
         /// for text in range [b,e). It is useful for collation of multiple strings for text.
         ///
@@ -80,12 +87,23 @@ namespace boost { namespace locale {
             return do_transform(level, b, e);
         }
 
+        /// Default transform function as-in std::collate that does not take collation level into account.
+        /// Uses identical level
+        string_type transform(const char_type* b, const char_type* e) const
+        {
+            return transform(collate_level::identical, b, e);
+        }
+
         /// Calculate a hash of a text in range [b,e). The value can be used for collation sensitive string comparison.
         ///
         /// If compare(level,b1,e1,b2,e2) == 0 then hash(level,b1,e1) == hash(level,b2,e2)
         ///
         /// Calls do_hash
         long hash(collate_level level, const char_type* b, const char_type* e) const { return do_hash(level, b, e); }
+
+        /// Default hash function as-in std::collate that does not take collation level into account.
+        /// Uses identical level
+        long hash(const char_type* b, const char_type* e) const { return hash(collate_level::identical, b, e); }
 
         /// Compare two strings \a l and \a r using collation level \a level
         ///
@@ -118,29 +136,7 @@ namespace boost { namespace locale {
 
     protected:
         /// constructor of the collator object
-        collator(size_t refs = 0) : std::collate<CharType>(refs) {}
-
-        /// This function is used to override default collation function that does not take in account collation level.
-        /// Uses identical level
-        int
-        do_compare(const char_type* b1, const char_type* e1, const char_type* b2, const char_type* e2) const override
-        {
-            return do_compare(collate_level::identical, b1, e1, b2, e2);
-        }
-
-        /// This function is used to override default collation function that does not take in account collation level.
-        /// Uses identical level
-        string_type do_transform(const char_type* b, const char_type* e) const override
-        {
-            return do_transform(collate_level::identical, b, e);
-        }
-
-        /// This function is used to override default collation function that does not take in account collation level.
-        /// Uses identical level
-        long do_hash(const char_type* b, const char_type* e) const override
-        {
-            return do_hash(collate_level::identical, b, e);
-        }
+        collator(size_t refs = 0) : std::locale::facet(refs) {}
 
         /// Actual function that performs comparison between the strings. For details see compare member function. Can
         /// be overridden.
