@@ -13,6 +13,7 @@
 #include "boost/locale/shared/mo_hash.hpp"
 #include <boost/thread.hpp>
 #include <limits>
+#include <memory>
 #include <unicode/coll.h>
 #include <vector>
 #if BOOST_LOCALE_ICU_VERSION >= 402
@@ -51,7 +52,7 @@ namespace boost { namespace locale { namespace impl_icu {
         {
             icu::StringPiece left(b1, e1 - b1);
             icu::StringPiece right(b2, e2 - b2);
-            return get_collator(level)->compareUTF8(left, right, status);
+            return get_collator(level).compareUTF8(left, right, status);
         }
 #endif
 
@@ -64,7 +65,7 @@ namespace boost { namespace locale { namespace impl_icu {
         {
             icu::UnicodeString left = cvt_.icu(b1, e1);
             icu::UnicodeString right = cvt_.icu(b2, e2);
-            return get_collator(level)->compare(left, right, status);
+            return get_collator(level).compare(left, right, status);
         }
 
         int do_real_compare(collate_level level,
@@ -101,11 +102,11 @@ namespace boost { namespace locale { namespace impl_icu {
             icu::UnicodeString str = cvt_.icu(b, e);
             std::vector<uint8_t> tmp;
             tmp.resize(str.length() + 1u);
-            icu::Collator* collate = get_collator(level);
-            const int len = collate->getSortKey(str, tmp.data(), tmp.size());
+            icu::Collator& collate = get_collator(level);
+            const int len = collate.getSortKey(str, tmp.data(), tmp.size());
             if(len > int(tmp.size())) {
                 tmp.resize(len);
-                collate->getSortKey(str, tmp.data(), tmp.size());
+                collate.getSortKey(str, tmp.data(), tmp.size());
             } else
                 tmp.resize(len);
             return tmp;
@@ -126,7 +127,7 @@ namespace boost { namespace locale { namespace impl_icu {
 
         collate_impl(const cdata& d) : cvt_(d.encoding()), locale_(d.locale()), is_utf8_(d.is_utf8()) {}
 
-        icu::Collator* get_collator(collate_level level) const
+        icu::Collator& get_collator(collate_level level) const
         {
             const int lvl_idx = level_to_int(level);
             constexpr icu::Collator::ECollationStrength levels[level_count] = {icu::Collator::PRIMARY,
@@ -136,18 +137,17 @@ namespace boost { namespace locale { namespace impl_icu {
                                                                                icu::Collator::IDENTICAL};
 
             icu::Collator* col = collates_[lvl_idx].get();
-            if(col)
-                return col;
+            if(!col) {
+                UErrorCode status = U_ZERO_ERROR;
+                std::unique_ptr<icu::Collator> tmp_col(icu::Collator::createInstance(locale_, status));
+                if(U_FAILURE(status))
+                    throw std::runtime_error(std::string("Creation of collate failed:") + u_errorName(status));
 
-            UErrorCode status = U_ZERO_ERROR;
-
-            collates_[lvl_idx].reset(icu::Collator::createInstance(locale_, status));
-
-            if(U_FAILURE(status))
-                throw std::runtime_error(std::string("Creation of collate failed:") + u_errorName(status));
-
-            collates_[lvl_idx]->setStrength(levels[lvl_idx]);
-            return collates_[lvl_idx].get();
+                tmp_col->setStrength(levels[lvl_idx]);
+                col = tmp_col.release();
+                collates_[lvl_idx].reset(col);
+            }
+            return *col;
         }
 
     private:
