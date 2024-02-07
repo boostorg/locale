@@ -45,13 +45,15 @@ def main(ctx):
     # ICU is linked against libc++, so either don't use ICU or use libc++. The latter doesn't seem to work well (segfaults)
     job(compiler='gcc-11',    cxxstd='11,14,17,20', os='freebsd-13.1', testflags='boost.locale.icu=off', linkflags='-Wl,-rpath=/usr/local/lib/gcc11'),
     # OSX
-    job(compiler='clang',     cxxstd='11,14,17,2a',    os='osx-xcode-10.1'),
-    job(compiler='clang',     cxxstd='11,14,17,2a',    os='osx-xcode-10.3'),
-    job(compiler='clang',     cxxstd='11,14,17,2a',    os='osx-xcode-12'),
-    job(compiler='clang',     cxxstd='11,14,17,20',    os='osx-xcode-12.5.1'),
-    job(compiler='clang',     cxxstd='11,14,17,20',    os='osx-xcode-13.4.1'),
-    job(compiler='clang',     cxxstd='11,14,17,20,2b', os='osx-xcode-14.3.1'),
-    job(compiler='clang',     cxxstd='11,14,17,20,2b', os='osx-xcode-15.0.1'),
+    job(compiler='clang',     cxxstd='11,14,17,2a', os='osx-xcode-10.1'),
+    job(compiler='clang',     cxxstd='11,14,17,2a', os='osx-xcode-10.3'),
+    job(compiler='clang',     cxxstd='11,14,17,2a', os='osx-xcode-12'),
+    job(compiler='clang',     cxxstd='11,14,17,20', os='osx-xcode-12.5.1'),
+    job(compiler='clang',     cxxstd='11,14,17,20', os='osx-xcode-13.4.1'),
+    job(compiler='clang',     cxxstd='11,14,17',    os='osx-xcode-14.3.1'),
+    job(compiler='clang',     cxxstd='20,2b',       os='osx-xcode-14.3.1'),
+    job(compiler='clang',     cxxstd='11,14,17',    os='osx-xcode-15.0.1'),
+    job(compiler='clang',     cxxstd='20,2b',       os='osx-xcode-15.0.1'),
     # ARM64
     job(compiler='clang-12',  cxxstd='11,14,17,20', os='ubuntu-20.04', arch='arm64', add_llvm=True),
     job(compiler='gcc-11',    cxxstd='11,14,17,20', os='ubuntu-20.04', arch='arm64'),
