@@ -19,6 +19,26 @@ const bool test_iso_8859_8 =
   hasWinCodepage(28598);
 #endif
 
+#if defined(BOOST_LOCALE_WITH_ICONV)
+// Reproduce issue #206 to detect faulty IConv
+static bool isFaultyIconv()
+{
+    namespace blc = boost::locale::conv;
+    auto from_utf = blc::detail::make_utf_decoder<char>("ISO-2022-CN", blc::skip, blc::detail::conv_backend::IConv);
+    try {
+        from_utf->convert("实");
+    } catch(const std::runtime_error& e) {                                         // LCOV_EXCL_LINE
+        return std::string(e.what()).find("IConv is faulty") != std::string::npos; // LCOV_EXCL_LINE
+    }
+    return false;
+}
+#else
+constexpr bool isFaultyIconv()
+{
+    return false;
+}
+#endif
+
 constexpr boost::locale::conv::detail::conv_backend all_conv_backends[] = {
 #ifdef BOOST_LOCALE_WITH_ICONV
   boost::locale::conv::detail::conv_backend::IConv,
@@ -318,10 +338,12 @@ void test_utf_for()
     } catch(const invalid_charset_error&) { // LCOV_EXCL_LINE
         std::cout << "--- not supported\n"; // LCOV_EXCL_LINE
     }
-    // Testing a codepage which may crash with IConv on macOS, see issue #196
-    test_to_from_utf<Char>("\xa1\xad\xa1\xad", utf<Char>("……"), "gbk", false);
-    // This might cause a bogus E2BIG on macOS, see issue #206
-    test_to_from_utf<Char>("\x1b\x24\x29\x41\x0e\x4a\x35\xf", utf<Char>("实"), "ISO-2022-CN", false);
+    if(!isFaultyIconv()) {
+        // Testing a codepage which may crash with IConv on macOS, see issue #196
+        test_to_from_utf<Char>("\xa1\xad\xa1\xad", utf<Char>("……"), "gbk", false);
+        // This might cause a bogus E2BIG on macOS, see issue #206
+        test_to_from_utf<Char>("\x1b\x24\x29\x41\x0e\x4a\x35\xf", utf<Char>("实"), "ISO-2022-CN", false);
+    }
 
     std::cout << "- Testing correct invalid bytes skipping\n";
     {
