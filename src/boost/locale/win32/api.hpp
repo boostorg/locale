@@ -46,7 +46,7 @@ namespace boost { namespace locale { namespace impl_win {
             case collate_level::quaternary:
             case collate_level::identical: return 0;
         }
-        return 0;
+        return 0; // LCOV_EXCL_LINE
     }
 
     struct winlocale {
@@ -86,7 +86,7 @@ namespace boost { namespace locale { namespace impl_win {
            || GetLocaleInfoW(lcid, LOCALE_SDECIMAL, de, de_size) == 0
            || GetLocaleInfoW(lcid, LOCALE_SGROUPING, gr, gr_size) == 0)
         {
-            return res;
+            return res; // LCOV_EXCL_LINE
         }
         res.decimal_point = de;
         res.thousands_sep = th;
@@ -117,7 +117,7 @@ namespace boost { namespace locale { namespace impl_win {
             throw std::length_error("String to long for int type");
         int len = LCMapStringW(l.lcid, flags, begin, static_cast<int>(end - begin), 0, 0);
         if(len == 0)
-            return res;
+            return res; // LCOV_EXCL_LINE
         if(len == std::numeric_limits<int>::max())
             throw std::length_error("String to long for int type");
         std::vector<wchar_t> buf(len + 1);
@@ -215,7 +215,7 @@ namespace boost { namespace locale { namespace impl_win {
             throw std::length_error("String to long for int type");
         int len = FoldStringW(flags, begin, static_cast<int>(end - begin), nullptr, 0);
         if(len == 0)
-            return std::wstring();
+            return std::wstring(); // LCOV_EXCL_LINE
         if(len == std::numeric_limits<int>::max())
             throw std::length_error("String to long for int type");
         std::vector<wchar_t> v(len + 1);
