@@ -185,10 +185,10 @@ namespace boost { namespace locale { namespace impl_icu {
                 return std::locale(in, new collate_impl<char8_t>(cd)); // std-facet not available (yet)
 #endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-            case char_facet_t::char16_f: : return impl::create_collators<char16_t, collate_impl>(in, cd);
+            case char_facet_t::char16_f: return impl::create_collators<char16_t, collate_impl>(in, cd);
 #endif
 #ifdef BOOST_LOCALE_ENABLE_CHAR32_T
-            case char_facet_t::char32_f: : return impl::create_collators<char32_t, collate_impl>(in, cd);
+            case char_facet_t::char32_f: return impl::create_collators<char32_t, collate_impl>(in, cd);
 #endif
         }
         return in;
