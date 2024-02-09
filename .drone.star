@@ -8,7 +8,7 @@
 # As the yaml syntax for Drone CI is rather limited.
 
 # Base environment for all jobs
-globalenv={'B2_CI_VERSION': '1', 'B2_VARIANT': 'release'}
+globalenv={'B2_CI_VERSION': '1', 'B2_VARIANT': 'debug,release'}
 
 # Wrapper function to apply the globalenv to all jobs
 def job(
