@@ -327,14 +327,19 @@ void test_utf_for()
     {
         std::cout << "-- UTF-8" << std::endl;
 
-        // At start
+        std::cout << "--- At start single" << std::endl;
         test_error_to_utf<Char>("\xFFgrüßen", utf<Char>("grüßen"), "UTF-8");
+        std::cout << "--- At start multiple" << std::endl;
         test_error_to_utf<Char>("\xFF\xFFgrüßen", utf<Char>("grüßen"), "UTF-8");
-        // Middle
+
+        std::cout << "--- At middle single" << std::endl;
         test_error_to_utf<Char>("g\xFFrüßen", utf<Char>("grüßen"), "UTF-8");
+        std::cout << "--- At middle multiple" << std::endl;
         test_error_to_utf<Char>("g\xFF\xFF\xFFrüßen", utf<Char>("grüßen"), "UTF-8");
-        // End
+
+        std::cout << "--- At end single" << std::endl;
         test_error_to_utf<Char>("grüßen\xFF", utf<Char>("grüßen"), "UTF-8");
+        std::cout << "--- At end multiple" << std::endl;
         test_error_to_utf<Char>("grüßen\xFF\xFF", utf<Char>("grüßen"), "UTF-8");
 
         try {
@@ -355,16 +360,21 @@ void test_utf_for()
         } catch(const invalid_charset_error&) { // LCOV_EXCL_LINE
             std::cout << "--- not supported\n"; // LCOV_EXCL_LINE
         }
-        std::cout << "-- Error for encoding at start, middle and end" << std::endl;
+        std::cout << "-- Error for encoding at start" << std::endl;
         test_error_from_utf<Char>(utf<Char>("שלום hello"), " hello", "ISO8859-1");
+        std::cout << "-- Error for encoding at  middle and end" << std::endl;
         test_error_from_utf<Char>(utf<Char>("hello שלום world"), "hello  world", "ISO8859-1");
+        std::cout << "-- Error for encoding at end" << std::endl;
         test_error_from_utf<Char>(utf<Char>("hello שלום"), "hello ", "ISO8859-1");
-        std::cout << "-- Error for decoding" << std::endl;
+        std::cout << "-- Error for decoding to UTF-8" << std::endl;
         test_error_from_utf<Char>(utfutf<Char>::bad(), utfutf<char>::ok(), "UTF-8");
+        std::cout << "-- Error for decoding to Latin1" << std::endl;
         test_error_from_utf<Char>(utfutf<Char>::bad(), to<char>(utfutf<char>::ok()), "Latin1");
-        std::cout << "-- Error decoding string of only invalid chars" << std::endl;
+
         const std::basic_string<Char> onlyInvalidUtf(2, utfutf<Char>::bad_char());
+        std::cout << "-- Error decoding string of only invalid chars to UTF-8" << std::endl;
         test_error_from_utf<Char>(onlyInvalidUtf, "", "UTF-8");
+        std::cout << "-- Error decoding string of only invalid chars to Latin1" << std::endl;
         test_error_from_utf<Char>(onlyInvalidUtf, "", "Latin1");
     }
 
