@@ -74,8 +74,9 @@ namespace boost { namespace locale { namespace conv { namespace impl {
                         } else
                             break;
                     } else if(err == E2BIG) {
-                        BOOST_VERIFY_MSG(in_left != old_in_left || output_count != 0, "No progress, IConv is faulty!");
-                        continue;
+                        if(in_left != old_in_left || out_ptr != out_start) // Check to avoid infinite loop
+                            continue;
+                        throw std::runtime_error("No progress, IConv is faulty!"); // LCOV_EXCL_LINE
                     } else                        // Invalid error code, shouldn't ever happen or iconv has a bug
                         throw conversion_error(); // LCOV_EXCL_LINE
                 }
