@@ -110,19 +110,20 @@ namespace boost { namespace locale { namespace impl_icu {
             return v;
         }
 
-        void set_time(const posix_time& p) override
-        {
-            double utime = p.seconds * 1000.0 + p.nanoseconds / 1000000.0;
-            UErrorCode code = U_ZERO_ERROR;
-            calendar_->setTime(utime, code);
-            check_and_throw_dt(code);
-        }
         void normalize() override
         {
             // Can't call complete() explicitly (protected)
             // calling get which calls complete
             UErrorCode code = U_ZERO_ERROR;
             calendar_->get(UCAL_YEAR, code);
+            check_and_throw_dt(code);
+        }
+
+        void set_time(const posix_time& p) override
+        {
+            double utime = p.seconds * 1000.0 + p.nanoseconds / 1000000.0;
+            UErrorCode code = U_ZERO_ERROR;
+            calendar_->setTime(utime, code);
             check_and_throw_dt(code);
         }
         posix_time get_time() const override
@@ -146,6 +147,7 @@ namespace boost { namespace locale { namespace impl_icu {
             check_and_throw_dt(code);
             return result;
         }
+
         void set_option(calendar_option_type opt, int /*v*/) override
         {
             switch(opt) {
