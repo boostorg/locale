@@ -385,6 +385,13 @@ void test_main(int /*argc*/, char** /*argv*/)
             // All at once
             time_point = year(1989) + month(2) + day(5) + hour(7) + minute(9) + second(11);
             TEST_EQ_FMT(time_point, "1989-03-05 07:09:11");
+            {
+                // Construction and setting of a timepoint to a fully specified value must be equal
+                // See issue #221
+                date_time explicit_time_point = year(1989) + month(2) + day(5) + hour(7) + minute(9) + second(11);
+                TEST(time_point == explicit_time_point);
+                TEST_EQ(time_point.time(), explicit_time_point.time());
+            }
             // Partials:
             time_point = year(1970) + february() + day(5);
             TEST_EQ_FMT(time_point, "1970-02-05 07:09:11");
@@ -522,12 +529,20 @@ void test_main(int /*argc*/, char** /*argv*/)
             // Difference in ns
             {
                 const double sec = std::trunc(time_point.time()) + 0.5; // Stay inside current second
-                if(backend_name == "icu") {                             // Only ICU supports sub-second times
-                    TEST(date_time(sec - 0.25) < date_time(sec));
-                    TEST(date_time(sec + 0.25) > date_time(sec));
-                }
                 TEST(date_time(sec - 0.25) <= date_time(sec));
                 TEST(date_time(sec + 0.25) >= date_time(sec));
+                // See issue #221: Supporting subseconds is confusing,
+                // especially as it is/was only support by ICU
+                {
+                    date_time var0, var1;
+                    const auto floorTime = std::floor(sec);
+                    var0.time(floorTime + 0.9);
+                    var1.time(floorTime + 0.2);
+                    TEST_EQ((var0 - var1) / second(), 0);
+                    // Adding a seconds should lead to a second difference
+                    var1 += second(1);
+                    TEST_EQ((var1 - var0) / second(), 1);
+                }
             }
 
             TEST_EQ(time_point.get(day()), 5);
