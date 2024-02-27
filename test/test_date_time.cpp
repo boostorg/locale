@@ -48,7 +48,11 @@ struct mock_calendar : public boost::locale::abstract_calendar {
     void normalize() override {}                                        // LCOV_EXCL_LINE
     int get_value(period_mark, value_type) const override { return 0; } // LCOV_EXCL_LINE
     void set_time(const boost::locale::posix_time& t) override { time = t.seconds * 1e3 + t.nanoseconds / 1e6; }
-    boost::locale::posix_time get_time() const override { return {}; } // LCOV_EXCL_LINE
+    boost::locale::posix_time get_time() const override
+    {
+        const auto seconds = static_cast<int64_t>(time / 1e3);
+        return {seconds, static_cast<uint32_t>((time - seconds * 1e3) * 1e6)};
+    }
     double get_time_ms() const override { return time; }
     void set_option(calendar_option_type, int) override {} // LCOV_EXCL_LINE
     int get_option(calendar_option_type opt) const override { return opt == is_dst ? is_dst_ : false; }
@@ -217,6 +221,19 @@ void test_main(int /*argc*/, char** /*argv*/)
             TEST_EQ(t1.time(), -1.25);
             t1 = date_time(-0.25);
             TEST_EQ(t1.time(), -0.25);
+
+            // Comparison in subsecond differences (only if backend supports it)
+            t1.time(42.5);
+            t2.time(42.25);
+            TEST(t1 >= t2);
+            TEST(t1 > t2);
+            t1.time(t2.time() - 0.1);
+            TEST(t1 <= t2);
+            TEST(t1 < t2);
+            t1.time(t2.time());
+            TEST(t1 <= t2);
+            TEST(t1 >= t2);
+            TEST(t1 == t2);
         }
         TEST_EQ(mock_calendar::num_instances, 0); // No leaks
         mock_cal.reset(new calendar());
