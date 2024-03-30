@@ -7,12 +7,12 @@ import project ;
 
 project /boost/locale
     : common-requirements
-        <source>/boost/assert//boost_assert
-        <source>/boost/config//boost_config
-        <source>/boost/core//boost_core
-        <source>/boost/iterator//boost_iterator
-        <source>/boost/predef//boost_predef
-        <source>/boost/thread//boost_thread
+        <library>/boost/assert//boost_assert
+        <library>/boost/config//boost_config
+        <library>/boost/core//boost_core
+        <library>/boost/iterator//boost_iterator
+        <library>/boost/predef//boost_predef
+        <library>/boost/thread//boost_thread
         <include>include
     ;
 
