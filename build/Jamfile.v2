@@ -441,8 +441,6 @@ lib boost_locale
     :
       $(cxx_requirements)
       <define>BOOST_LOCALE_SOURCE
-      # Don't link explicitly, not required
-      <define>BOOST_THREAD_NO_LIB=1
       <include>$(TOP)/src
       <threading>multi
       <target-os>windows:<define>_CRT_SECURE_NO_WARNINGS
@@ -450,4 +448,5 @@ lib boost_locale
       # Meanwhile remove this
       <conditional>@configure
     : : $(cxx_requirements)
+        <define>BOOST_LOCALE_NO_LIB=1
     ;
