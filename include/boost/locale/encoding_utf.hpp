@@ -11,6 +11,7 @@
 #include <boost/locale/utf.hpp>
 #include <boost/locale/util/string.hpp>
 #include <iterator>
+#include <memory>
 
 #ifdef BOOST_MSVC
 #    pragma warning(push)
@@ -25,12 +26,12 @@ namespace boost { namespace locale { namespace conv {
     /// Convert a Unicode text in range [begin,end) to other Unicode encoding
     ///
     /// \throws conversion_error: Conversion failed (e.g. \a how is \c stop and any character cannot be decoded)
-    template<typename CharOut, typename CharIn>
-    std::basic_string<CharOut> utf_to_utf(const CharIn* begin, const CharIn* end, method_type how = default_method)
+    template<typename CharOut, typename CharIn, typename TAlloc = std::allocator<CharOut>>
+    std::basic_string<CharOut, std::char_traits<CharOut>, TAlloc> utf_to_utf(const CharIn* begin, const CharIn* end, method_type how = default_method)
     {
-        std::basic_string<CharOut> result;
+        std::basic_string<CharOut, std::char_traits<CharOut>, TAlloc> result;
         result.reserve(end - begin);
-        std::back_insert_iterator<std::basic_string<CharOut>> inserter(result);
+        std::back_insert_iterator<std::basic_string<CharOut, std::char_traits<CharOut>, TAlloc>> inserter(result);
         while(begin != end) {
             const utf::code_point c = utf::utf_traits<CharIn>::decode(begin, end);
             if(c == utf::illegal || c == utf::incomplete) {
@@ -45,19 +46,19 @@ namespace boost { namespace locale { namespace conv {
     /// Convert a Unicode NULL terminated string \a str other Unicode encoding
     ///
     /// \throws conversion_error: Conversion failed (e.g. \a how is \c stop and any character cannot be decoded)
-    template<typename CharOut, typename CharIn>
+    template<typename CharOut, typename CharIn, typename TAlloc = std::allocator<CharOut>>
     std::basic_string<CharOut> utf_to_utf(const CharIn* str, method_type how = default_method)
     {
-        return utf_to_utf<CharOut, CharIn>(str, util::str_end(str), how);
+        return utf_to_utf<CharOut, CharIn, TAlloc>(str, util::str_end(str), how);
     }
 
     /// Convert a Unicode string \a str other Unicode encoding
     ///
     /// \throws conversion_error: Conversion failed (e.g. \a how is \c stop and any character cannot be decoded)
-    template<typename CharOut, typename CharIn>
+    template<typename CharOut, typename CharIn, typename TAlloc = std::allocator<CharOut>>
     std::basic_string<CharOut> utf_to_utf(const std::basic_string<CharIn>& str, method_type how = default_method)
     {
-        return utf_to_utf<CharOut, CharIn>(str.c_str(), str.c_str() + str.size(), how);
+        return utf_to_utf<CharOut, CharIn, TAlloc>(str.c_str(), str.c_str() + str.size(), how);
     }
 
     /// @}
