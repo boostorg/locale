@@ -29,11 +29,11 @@ namespace boost { namespace locale { namespace conv {
     /// Convert a Unicode text in range [begin,end) to other Unicode encoding
     ///
     /// \throws conversion_error: Conversion failed (e.g. \a how is \c stop and any character cannot be decoded)
-    template<typename CharOut, typename CharIn, typename TAlloc = std::allocator<CharOut>>
-    std::basic_string<CharOut, std::char_traits<CharOut>, TAlloc>
-    utf_to_utf(const CharIn* begin, const CharIn* end, method_type how = default_method, const TAlloc& alloc = TAlloc())
+    template<typename CharOut, typename CharIn, class Alloc = std::allocator<CharOut>>
+    std::basic_string<CharOut, std::char_traits<CharOut>, Alloc>
+    utf_to_utf(const CharIn* begin, const CharIn* end, method_type how = default_method, const Alloc& alloc = Alloc())
     {
-        std::basic_string<CharOut, std::char_traits<CharOut>, TAlloc> result(alloc);
+        std::basic_string<CharOut, std::char_traits<CharOut>, Alloc> result(alloc);
         result.reserve(end - begin);
         auto inserter = std::back_inserter(result);
         while(begin != end) {
@@ -50,9 +50,9 @@ namespace boost { namespace locale { namespace conv {
     /// Convert a Unicode NULL terminated string \a str other Unicode encoding
     ///
     /// \throws conversion_error: Conversion failed (e.g. \a how is \c stop and any character cannot be decoded)
-    template<typename CharOut, typename CharIn, typename TAlloc = std::allocator<CharOut>>
-    std::basic_string<CharOut, std::char_traits<CharOut>, TAlloc>
-    utf_to_utf(const CharIn* str, method_type how = default_method, const TAlloc& alloc = TAlloc())
+    template<typename CharOut, typename CharIn, class Alloc = std::allocator<CharOut>>
+    std::basic_string<CharOut, std::char_traits<CharOut>, Alloc>
+    utf_to_utf(const CharIn* str, method_type how = default_method, const Alloc& alloc = Alloc())
     {
         return utf_to_utf<CharOut>(str, util::str_end(str), how, alloc);
     }
@@ -60,17 +60,17 @@ namespace boost { namespace locale { namespace conv {
     /// Convert a Unicode string \a str other Unicode encoding
     ///
     /// \throws conversion_error: Conversion failed (e.g. \a how is \c stop and any character cannot be decoded)
-    template<typename CharOut, typename CharIn, typename TAlloc>
+    template<typename CharOut, typename CharIn, class Alloc>
     detail::enable_if_allocator_for<
-      TAlloc,
+      Alloc,
       CharIn,
-      std::basic_string<CharOut, std::char_traits<CharOut>, detail::rebind_alloc<TAlloc, CharOut>>>
-    utf_to_utf(const std::basic_string<CharIn, std::char_traits<CharIn>, TAlloc>& str, method_type how = default_method)
+      std::basic_string<CharOut, std::char_traits<CharOut>, detail::rebind_alloc<Alloc, CharOut>>>
+    utf_to_utf(const std::basic_string<CharIn, std::char_traits<CharIn>, Alloc>& str, method_type how = default_method)
     {
         return utf_to_utf<CharOut>(str.c_str(),
                                    str.c_str() + str.size(),
                                    how,
-                                   detail::rebind_alloc<TAlloc, CharOut>(str.get_allocator()));
+                                   detail::rebind_alloc<Alloc, CharOut>(str.get_allocator()));
     }
 
     /// @}
