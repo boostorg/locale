@@ -47,7 +47,7 @@ namespace boost { namespace locale { namespace conv {
         return result;
     }
 
-    /// Convert a Unicode NULL terminated string \a str other Unicode encoding
+    /// Convert a Unicode NULL terminated string \a str to other Unicode encoding
     ///
     /// \throws conversion_error: Conversion failed (e.g. \a how is \c stop and any character cannot be decoded)
     template<typename CharOut, typename CharIn, class Alloc = std::allocator<CharOut>>
@@ -57,7 +57,7 @@ namespace boost { namespace locale { namespace conv {
         return utf_to_utf<CharOut>(str, util::str_end(str), how, alloc);
     }
 
-    /// Convert a Unicode string \a str other Unicode encoding
+    /// Convert a Unicode string \a str to other Unicode encoding
     ///
     /// \throws conversion_error: Conversion failed (e.g. \a how is \c stop and any character cannot be decoded)
     template<typename CharOut, typename CharIn, class Alloc>
@@ -78,7 +78,7 @@ namespace boost { namespace locale { namespace conv {
                                    detail::rebind_alloc<Alloc, CharOut>(str.get_allocator()));
     }
 
-    /// Convert a Unicode string \a str other Unicode encoding
+    /// Convert a Unicode string \a str to other Unicode encoding
     ///
     /// \throws conversion_error: Conversion failed (e.g. \a how is \c stop and any character cannot be decoded)
     template<typename CharOut, typename CharIn, class AllocOut, class AllocIn>
