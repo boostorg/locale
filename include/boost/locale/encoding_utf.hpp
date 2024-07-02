@@ -61,10 +61,15 @@ namespace boost { namespace locale { namespace conv {
     ///
     /// \throws conversion_error: Conversion failed (e.g. \a how is \c stop and any character cannot be decoded)
     template<typename CharOut, typename CharIn, class Alloc>
+#ifndef BOOST_LOCALE_DOXYGEN
     detail::enable_if_allocator_for<
       Alloc,
       CharIn,
-      std::basic_string<CharOut, std::char_traits<CharOut>, detail::rebind_alloc<Alloc, CharOut>>>
+#endif
+      std::basic_string<CharOut, std::char_traits<CharOut>, detail::rebind_alloc<Alloc, CharOut>>
+#ifndef BOOST_LOCALE_DOXYGEN
+      >
+#endif
     utf_to_utf(const std::basic_string<CharIn, std::char_traits<CharIn>, Alloc>& str, method_type how = default_method)
     {
         return utf_to_utf<CharOut>(str.c_str(),
@@ -77,7 +82,14 @@ namespace boost { namespace locale { namespace conv {
     ///
     /// \throws conversion_error: Conversion failed (e.g. \a how is \c stop and any character cannot be decoded)
     template<typename CharOut, typename CharIn, class AllocOut, class AllocIn>
-    detail::enable_if_allocator_for<AllocIn, CharIn, std::basic_string<CharOut, std::char_traits<CharOut>, AllocOut>>
+#ifndef BOOST_LOCALE_DOXYGEN
+    detail::enable_if_allocator_for<AllocIn,
+                                    CharIn,
+#endif
+                                    std::basic_string<CharOut, std::char_traits<CharOut>, AllocOut>
+#ifndef BOOST_LOCALE_DOXYGEN
+                                    >
+#endif
     utf_to_utf(const std::basic_string<CharIn, std::char_traits<CharIn>, AllocIn>& str,
                method_type how = default_method,
                const AllocOut& alloc = AllocOut())
