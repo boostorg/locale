@@ -517,12 +517,18 @@ void test_utf_to_utf_allocator_support()
     Alloc::usedId = 0;
     TEST_EQ(utf_to_utf<wchar_t>(sBegin, sEnd, method, Alloc(2)), output);
     TEST_EQ(Alloc::usedId, 2);
-    Alloc::usedId = 0;
     TEST_EQ(utf_to_utf<wchar_t>(sBegin, method, Alloc(3)), output);
-    TEST_EQ(Alloc::usedId, 3);
-    Alloc::usedId = 0;
+    TEST_EQ(Alloc::usedId, 5);
     TEST_EQ(utf_to_utf<wchar_t>(inputWithAlloc, method, Alloc(4)), output);
-    TEST_EQ(Alloc::usedId, 4);
+    TEST_EQ(Alloc::usedId, 9);
+    // Same with using the default method
+    Alloc::usedId = 0;
+    TEST_EQ(utf_to_utf<wchar_t>(sBegin, sEnd, Alloc(2)), output);
+    TEST_EQ(Alloc::usedId, 2);
+    TEST_EQ(utf_to_utf<wchar_t>(sBegin, Alloc(3)), output);
+    TEST_EQ(Alloc::usedId, 5);
+    TEST_EQ(utf_to_utf<wchar_t>(inputWithAlloc, Alloc(4)), output);
+    TEST_EQ(Alloc::usedId, 9);
 
     // Use allocator from input
     Alloc::usedId = 0;

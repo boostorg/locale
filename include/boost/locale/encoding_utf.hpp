@@ -47,6 +47,15 @@ namespace boost { namespace locale { namespace conv {
         return result;
     }
 
+    /// Convert a Unicode string \a str to other Unicode encoding.
+    /// Invalid characters are skipped.
+    template<typename CharOut, typename CharIn, class Alloc>
+    std::basic_string<CharOut, std::char_traits<CharOut>, Alloc>
+    utf_to_utf(const CharIn* begin, const CharIn* end, const Alloc& alloc)
+    {
+        return utf_to_utf<CharOut>(begin, end, skip, alloc);
+    }
+
     /// Convert a Unicode NULL terminated string \a str to other Unicode encoding
     ///
     /// \throws conversion_error: Conversion failed (e.g. \a how is \c stop and any character cannot be decoded)
@@ -55,6 +64,14 @@ namespace boost { namespace locale { namespace conv {
     utf_to_utf(const CharIn* str, method_type how = default_method, const Alloc& alloc = Alloc())
     {
         return utf_to_utf<CharOut>(str, util::str_end(str), how, alloc);
+    }
+
+    /// Convert a Unicode string \a str to other Unicode encoding.
+    /// Invalid characters are skipped.
+    template<typename CharOut, typename CharIn, class Alloc>
+    std::basic_string<CharOut, std::char_traits<CharOut>, Alloc> utf_to_utf(const CharIn* str, const Alloc& alloc)
+    {
+        return utf_to_utf<CharOut>(str, skip, alloc);
     }
 
     /// Convert a Unicode string \a str to other Unicode encoding
@@ -95,6 +112,22 @@ namespace boost { namespace locale { namespace conv {
                const AllocOut& alloc = AllocOut())
     {
         return utf_to_utf<CharOut>(str.c_str(), str.c_str() + str.size(), how, alloc);
+    }
+
+    /// Convert a Unicode string \a str to other Unicode encoding.
+    /// Invalid characters are skipped.
+    template<typename CharOut, typename CharIn, class AllocOut, class AllocIn>
+#ifndef BOOST_LOCALE_DOXYGEN
+    detail::enable_if_allocator_for<AllocIn,
+                                    CharIn,
+#endif
+                                    std::basic_string<CharOut, std::char_traits<CharOut>, AllocOut>
+#ifndef BOOST_LOCALE_DOXYGEN
+                                    >
+#endif
+    utf_to_utf(const std::basic_string<CharIn, std::char_traits<CharIn>, AllocIn>& str, const AllocOut& alloc)
+    {
+        return utf_to_utf<CharOut>(str, skip, alloc);
     }
 
     /// @}
