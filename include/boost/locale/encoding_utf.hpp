@@ -69,7 +69,15 @@ namespace boost { namespace locale { namespace conv {
     /// Convert a Unicode string \a str to other Unicode encoding.
     /// Invalid characters are skipped.
     template<typename CharOut, typename CharIn, class Alloc>
-    std::basic_string<CharOut, std::char_traits<CharOut>, Alloc> utf_to_utf(const CharIn* str, const Alloc& alloc)
+#ifndef BOOST_LOCALE_DOXYGEN
+    detail::enable_if_allocator_for<Alloc,
+                                    CharOut,
+#endif
+                                    std::basic_string<CharOut, std::char_traits<CharOut>, Alloc>
+#ifndef BOOST_LOCALE_DOXYGEN
+                                    >
+#endif
+    utf_to_utf(const CharIn* str, const Alloc& alloc)
     {
         return utf_to_utf<CharOut>(str, skip, alloc);
     }
@@ -118,12 +126,14 @@ namespace boost { namespace locale { namespace conv {
     /// Invalid characters are skipped.
     template<typename CharOut, typename CharIn, class AllocOut, class AllocIn>
 #ifndef BOOST_LOCALE_DOXYGEN
-    detail::enable_if_allocator_for<AllocIn,
-                                    CharIn,
+    detail::enable_if_allocator_for2<AllocIn,
+                                     CharIn,
+                                     AllocOut,
+                                     CharOut,
 #endif
-                                    std::basic_string<CharOut, std::char_traits<CharOut>, AllocOut>
+                                     std::basic_string<CharOut, std::char_traits<CharOut>, AllocOut>
 #ifndef BOOST_LOCALE_DOXYGEN
-                                    >
+                                     >
 #endif
     utf_to_utf(const std::basic_string<CharIn, std::char_traits<CharIn>, AllocIn>& str, const AllocOut& alloc)
     {
