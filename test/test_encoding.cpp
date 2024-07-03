@@ -526,6 +526,41 @@ void test_utf_to_utf_allocator_support()
     const char* sBegin = input.data();
     const char* sEnd = sBegin + input.size();
 
+    std::cout << "Size: " << sizeof(inputWithAlloc) << " " << sizeof(output) << std::endl;
+    {
+        Alloc::usedId = 0;
+        std::basic_string<wchar_t, std::char_traits<wchar_t>, Alloc> tmp;
+        for(const auto c : input)
+            tmp.push_back(c);
+        std::cout << "Append: " << Alloc::usedId << std::endl;
+    }
+
+    {
+        Alloc::usedId = 0;
+        std::basic_string<wchar_t, std::char_traits<wchar_t>, Alloc> tmp;
+        tmp.reserve(input.size());
+        for(const auto c : input)
+            tmp.push_back(c);
+        std::cout << "Reserve: " << Alloc::usedId << std::endl;
+    }
+
+    {
+        for(size_t i = 16; i < 512; i += 16) {
+            Alloc::usedId = 0;
+            std::basic_string<wchar_t, std::char_traits<wchar_t>, Alloc> tmp;
+            tmp.append(i, 'c');
+            std::cout << "Append with " << i << ": " << Alloc::usedId << std::endl;
+        }
+    }
+
+    {
+        for(size_t i = 16; i < 512; i += 16) {
+            Alloc::usedId = 0;
+            std::basic_string<wchar_t, std::char_traits<wchar_t>, Alloc> tmp(i, '0');
+            std::cout << "Construct with " << i << ": " << Alloc::usedId << std::endl;
+        }
+    }
+
     // Allocator via template param
     Alloc::usedId = 0;
     TEST_EQ((utf_to_utf<wchar_t, char, Alloc>(sBegin, sEnd)), output);
