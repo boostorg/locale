@@ -20,8 +20,16 @@ namespace boost { namespace locale { namespace conv { namespace impl {
     public:
         bool do_open(const char* to, const char* from, method_type how)
         {
-            cvt_ = iconv_open(to, from);
             how_ = how;
+            if(how == skip) {
+                std::string tmp_to(to);
+                tmp_to += "//IGNORE";
+                cvt_ = iconv_open(tmp_to.c_str(), from);
+                if(cvt_)
+                    return true;
+                // Else try regular and handle invalids in convert
+            }
+            cvt_ = iconv_open(to, from);
             return static_cast<bool>(cvt_);
         }
 
