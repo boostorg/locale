@@ -18,8 +18,10 @@
 #    include <unicode/uversion.h>
 #endif
 
+#include "../src/util/encoding.hpp"
 #include "boostLocale/test/tools.hpp"
 #include "boostLocale/test/unit_test.hpp"
+#include <iconv.h>
 
 const char* env(const char* s)
 {
@@ -152,6 +154,29 @@ void test_main(int /*argc*/, char** /*argv*/)
     std::locale l = gen("");
     std::cout << (std::has_facet<boost::locale::info>(l) ? std::use_facet<boost::locale::info>(l).name() : "Unknown")
               << std::endl;
+
+    const std::basic_string<wchar_t> invalid(2, static_cast<wchar_t>(0x100DC01));
+    auto cd = iconv_open("UTF-8", boost::locale::util::utf_name<wchar_t>());
+    char* inputbuffer = reinterpret_cast<char*>(const_cast<wchar_t*>(invalid.data()));
+    char* inbuf = inputbuffer;
+    size_t inbytesleft = invalid.size();
+    char outbuffer[64];
+    char* outbuf = outbuffer;
+    size_t outbytesleft = sizeof(outbuffer);
+    size_t inleft_save, outleft_save, res;
+
+    inleft_save = inbytesleft;
+    outleft_save = outbytesleft;
+    res = iconv(cd, &inbuf, &inbytesleft, &outbuf, &outbytesleft);
+    std::cout << "Result: " << std::ptrdiff_t(res) << " consumed: " << (inleft_save - inbytesleft)
+              << " written: " << (outleft_save - outbytesleft) << std::endl;
+    inbuf = inputbuffer + sizeof(wchar_t);
+    outbuf = outbuffer;
+    inbytesleft = inleft_save;
+    outbytesleft = outleft_save;
+    res = iconv(cd, &inbuf, &inbytesleft, &outbuf, &outbytesleft);
+    std::cout << "Result: " << std::ptrdiff_t(res) << " consumed: " << (inleft_save - inbytesleft)
+              << " written: " << (outleft_save - outbytesleft) << std::endl;
 }
 
 // boostinspect:noascii
