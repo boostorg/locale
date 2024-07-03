@@ -462,7 +462,13 @@ void test_utf_to_utf()
 
 /// Allocator that reports when it has been used in a static variable
 template<typename T>
-struct CustomAllocator : std::allocator<T> {
+struct CustomAllocator {
+    using value_type = T;
+    template<typename U>
+    struct rebind {
+        typedef CustomAllocator<U> other;
+    };
+
     CustomAllocator(const int id = 1) : id(id) {}
     template<typename U>
     CustomAllocator(const CustomAllocator<U>& other) : id(other.id)
@@ -471,16 +477,28 @@ struct CustomAllocator : std::allocator<T> {
     T* allocate(size_t n)
     {
         usedId += id;
-        return std::allocator<T>::allocate(n);
+        return base.allocate(n);
     }
-    template<typename U>
-    struct rebind {
-        typedef CustomAllocator<U> other;
-    };
 
-    int id;
+    void deallocate(T* p, size_t n) { return base.deallocate(p, n); }
+
     static int usedId;
+    int id;
+
+private:
+    std::allocator<T> base;
 };
+template<class T, class U>
+bool operator==(const CustomAllocator<T>&, const CustomAllocator<U>&)
+{
+    return true;
+}
+
+template<class T, class U>
+bool operator!=(const CustomAllocator<T>&, const CustomAllocator<U>&)
+{
+    return false;
+}
 template<typename T>
 int CustomAllocator<T>::usedId = 0;
 
