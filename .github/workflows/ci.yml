@@ -191,7 +191,7 @@ jobs:
             SOURCE_KEYS=(${{join(matrix.source_keys, ' ')}})
             SOURCES=(${{join(matrix.sources, ' ')}})
             # Add this by default
-            SOURCE_KEYS+=('http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x1E9377A2BA9EF27F')
+            SOURCE_KEYS+=('http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x60C317803A41BA51845E371A1E9377A2BA9EF27F')
             SOURCES+=(ppa:ubuntu-toolchain-r/test)
 
             ci/add-apt-keys.sh "${SOURCE_KEYS[@]}"
