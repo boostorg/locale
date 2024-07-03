@@ -195,6 +195,8 @@ jobs:
             SOURCES+=(ppa:ubuntu-toolchain-r/test)
 
             ci/add-apt-keys.sh "${SOURCE_KEYS[@]}"
+            # Initial update before adding sources required to get e.g. keys
+            sudo apt-get -o Acquire::Retries=$NET_RETRY_COUNT update
             ci/add-apt-repositories.sh "${SOURCES[@]}"
 
             sudo apt-get -o Acquire::Retries=$NET_RETRY_COUNT update
