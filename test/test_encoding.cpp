@@ -464,6 +464,15 @@ void test_utf_to_utf()
 template<typename T>
 struct CustomAllocator {
     using value_type = T;
+    using pointer = T*;
+    using const_pointer = const T*;
+    using reference = T&;
+    using const_reference = const T&;
+    using size_type = std::size_t;
+    using difference_type = std::ptrdiff_t;
+    using propagate_on_container_move_assignment = std::true_type;
+    using is_always_equal = std::false_type;
+
     template<typename U>
     struct rebind {
         typedef CustomAllocator<U> other;
