@@ -486,6 +486,7 @@ struct CustomAllocator {
 
     T* allocate(size_t n)
     {
+        std::cout << __PRETTY_FUNCTION__ << std::endl;
         usedId += id;
         return base.allocate(n);
     }
