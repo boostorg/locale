@@ -486,7 +486,11 @@ struct CustomAllocator {
 
     T* allocate(size_t n)
     {
-        usedId += id;
+        // Only count allocations of (w)chars, not e.g. internal proxy instances
+        BOOST_LOCALE_START_CONST_CONDITION
+        if(std::is_same<T, char>::value || std::is_same<T, wchar_t>::value)
+            usedId += id;
+        BOOST_LOCALE_END_CONST_CONDITION
         return base.allocate(n);
     }
 
@@ -550,25 +554,30 @@ void test_utf_to_utf_allocator_support()
     Alloc::usedId = 0;
     TEST_EQ(utf_to_utf<wchar_t>(sBegin, sEnd, method, Alloc(2)), output);
     TEST_EQ(Alloc::usedId, 2);
+    Alloc::usedId = 0;
     TEST_EQ(utf_to_utf<wchar_t>(sBegin, method, Alloc(3)), output);
-    TEST_EQ(Alloc::usedId, 5);
+    TEST_EQ(Alloc::usedId, 3);
+    Alloc::usedId = 0;
     TEST_EQ(utf_to_utf<wchar_t>(inputWithAlloc, method, Alloc(4)), output);
-    TEST_EQ(Alloc::usedId, 9);
+    TEST_EQ(Alloc::usedId, 4);
     // Same with using the default method
     Alloc::usedId = 0;
     TEST_EQ(utf_to_utf<wchar_t>(sBegin, sEnd, Alloc(2)), output);
     TEST_EQ(Alloc::usedId, 2);
+    Alloc::usedId = 0;
     TEST_EQ(utf_to_utf<wchar_t>(sBegin, Alloc(3)), output);
-    TEST_EQ(Alloc::usedId, 5);
+    TEST_EQ(Alloc::usedId, 3);
+    Alloc::usedId = 0;
     TEST_EQ(utf_to_utf<wchar_t>(inputWithAlloc, Alloc(4)), output);
-    TEST_EQ(Alloc::usedId, 9);
+    TEST_EQ(Alloc::usedId, 4);
 
     // Use allocator from input
     Alloc::usedId = 0;
     TEST_EQ(utf_to_utf<wchar_t>(inputWithAlloc), output);
     TEST_EQ(Alloc::usedId, inputAllocator.id);
+    Alloc::usedId = 0;
     TEST_EQ(utf_to_utf<wchar_t>(inputWithAlloc, method), output);
-    TEST_EQ(Alloc::usedId, inputAllocator.id * 2);
+    TEST_EQ(Alloc::usedId, inputAllocator.id);
 
     // Unchanged allocator for string overloads to check for ambiguous overloads
     AllocIn::usedId = 0;
