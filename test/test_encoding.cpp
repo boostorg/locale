@@ -461,6 +461,7 @@ void test_utf_to_utf()
 }
 
 /// Allocator that reports when it has been used in a static variable
+int globalUsedId = 0;
 template<typename T>
 struct CustomAllocator {
     using value_type = T;
@@ -491,7 +492,7 @@ struct CustomAllocator {
 
     void deallocate(T* p, size_t n) { return base.deallocate(p, n); }
 
-    static int usedId;
+    static int& usedId;
     int id;
 
 private:
@@ -508,8 +509,13 @@ bool operator!=(const CustomAllocator<T>&, const CustomAllocator<U>&)
 {
     return false;
 }
+
+namespace detail {
+// Note that using a static class variable does not work due to possible rebinds
+int allocUsedId = 0;
+} // namespace detail
 template<typename T>
-int CustomAllocator<T>::usedId = 0;
+int& CustomAllocator<T>::usedId = detail::allocUsedId;
 
 void test_utf_to_utf_allocator_support()
 {
