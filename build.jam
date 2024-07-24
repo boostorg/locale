@@ -5,14 +5,16 @@
 
 require-b2 5.2 ;
 
+constant boost_dependencies :
+    /boost/assert//boost_assert
+    /boost/config//boost_config
+    /boost/core//boost_core
+    /boost/iterator//boost_iterator
+    /boost/predef//boost_predef
+    /boost/thread//boost_thread ;
+
 project /boost/locale
     : common-requirements
-        <library>/boost/assert//boost_assert
-        <library>/boost/config//boost_config
-        <library>/boost/core//boost_core
-        <library>/boost/iterator//boost_iterator
-        <library>/boost/predef//boost_predef
-        <library>/boost/thread//boost_thread
         <include>include
     ;
 
@@ -24,3 +26,4 @@ explicit
 call-if : boost-library locale
     : install boost_locale
     ;
+
