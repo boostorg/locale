@@ -18,6 +18,7 @@ path-constant TOP : .. ;
 
 project
     : source-location $(TOP)/src/boost/locale
+    : common-requirements <library>$(boost_dependencies)
     ;
 
 # Features
