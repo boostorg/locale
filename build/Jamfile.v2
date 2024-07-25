@@ -442,6 +442,7 @@ lib boost_locale
       util/locale_data.cpp
     :
       $(cxx_requirements)
+      <link>shared:<define>BOOST_LOCALE_DYN_LINK=1
       <define>BOOST_LOCALE_SOURCE
       <include>$(TOP)/src
       <threading>multi
