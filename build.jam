@@ -10,8 +10,7 @@ constant boost_dependencies :
     /boost/config//boost_config
     /boost/core//boost_core
     /boost/iterator//boost_iterator
-    /boost/predef//boost_predef
-    /boost/thread//boost_thread ;
+    /boost/utility//boost_utility ;
 
 project /boost/locale
     : common-requirements
