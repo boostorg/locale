@@ -12,7 +12,7 @@ import config : requires ;
 import predef : check : predef-check ;
 
 project : requirements
-    <library>/boost/locale//boost_locale/<link>static
+    <library>/boost/locale//boost_locale
     <warnings>extra
     <toolset>msvc:<warnings-as-errors>on
     <toolset>gcc:<cxxflags>-Wzero-as-null-pointer-constant
