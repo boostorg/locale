@@ -16,9 +16,15 @@ import toolset ;
 
 path-constant TOP : .. ;
 
+constant boost_dependencies_private :
+    /boost/predef//boost_predef
+    /boost/thread//boost_thread
+    ;
+
 project
     : source-location $(TOP)/src/boost/locale
     : common-requirements <library>$(boost_dependencies)
+    : requirements <library>$(boost_dependencies_private)
     ;
 
 # Features
