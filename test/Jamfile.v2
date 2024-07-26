@@ -5,8 +5,11 @@
 # Distributed under the Boost Software License, Version 1.0.
 # https://www.boost.org/LICENSE_1_0.txt
 
+import-search /boost/config/checks ;
+import-search /boost/predef/tools/check ;
+
 import config : requires ;
-import ../../predef/tools/check/predef : check : predef-check ;
+import predef : check : predef-check ;
 
 project : requirements
     <library>/boost/locale//boost_locale
