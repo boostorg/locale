@@ -186,6 +186,7 @@ void test_main(int /*argc*/, char** /*argv*/)
             TEST(v == "12345,45" || v == "12 345,45" || v == "12.345,45");
         }
     }
+    test_format_large_number();
     test_parse_multi_number();
 }
 

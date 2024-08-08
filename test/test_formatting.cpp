@@ -891,6 +891,7 @@ void test_main(int argc, char** argv)
     test_format_class<char32_t>();
 #endif
 
+    test_format_large_number();
     test_parse_multi_number();
 }
 
