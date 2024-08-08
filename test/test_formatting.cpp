@@ -21,6 +21,7 @@
 
 #include "boostLocale/test/tools.hpp"
 #include "boostLocale/test/unit_test.hpp"
+#include "formatting_common.hpp"
 
 const std::string test_locale_name = "en_US";
 std::string message_path = "./";
@@ -928,6 +929,8 @@ void test_main(int argc, char** argv)
     test_manip<char32_t>();
     test_format_class<char32_t>();
 #endif
+
+    test_format_large_number();
 }
 
 // boostinspect:noascii

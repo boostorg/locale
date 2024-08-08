@@ -19,6 +19,7 @@
 #endif
 #include "boostLocale/test/tools.hpp"
 #include "boostLocale/test/unit_test.hpp"
+#include "formatting_common.hpp"
 
 #ifdef BOOST_LOCALE_NO_POSIX_BACKEND
 // Dummy just to make it compile
@@ -185,6 +186,7 @@ void test_main(int /*argc*/, char** /*argv*/)
             TEST(v == "12345,45" || v == "12 345,45" || v == "12.345,45");
         }
     }
+    test_format_large_number();
 }
 
 // boostinspect:noascii

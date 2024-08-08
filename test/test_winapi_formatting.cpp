@@ -23,6 +23,7 @@
 #include "../src/boost/locale/win32/lcid.hpp"
 #include "boostLocale/test/tools.hpp"
 #include "boostLocale/test/unit_test.hpp"
+#include "formatting_common.hpp"
 
 template<typename CharType>
 void test_by_char(const std::locale& l, std::string name, int lcid)
@@ -176,6 +177,7 @@ void test_main(int /*argc*/, char** /*argv*/)
             test_by_char<wchar_t>(l, name, name_lcid.second);
         }
     }
+    test_format_large_number();
     std::cout << "- Testing strftime" << std::endl;
     test_date_time(gen("en_US.UTF-8"));
 }
