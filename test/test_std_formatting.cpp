@@ -14,6 +14,7 @@
 
 #include "boostLocale/test/tools.hpp"
 #include "boostLocale/test/unit_test.hpp"
+#include "formatting_common.hpp"
 
 template<typename CharType, typename RefCharType>
 void test_by_char(const std::locale& l, const std::locale& lreal)
@@ -230,6 +231,7 @@ void test_main(int /*argc*/, char** /*argv*/)
             }
         }
     }
+    test_format_large_number();
 }
 
 // boostinspect:noascii
