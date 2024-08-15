@@ -205,7 +205,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
 
         size_t size() const { return size_; }
 
-        bool empty() { return size_ == 0; }
+        bool empty() const { return size_ == 0; }
 
     private:
         uint32_t get(unsigned offset) const
