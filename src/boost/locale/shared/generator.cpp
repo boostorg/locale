@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2024 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
@@ -93,9 +94,7 @@ namespace boost { namespace locale {
 
     std::locale generator::generate(const std::string& id) const
     {
-        std::locale base = std::locale::classic();
-
-        return generate(base, id);
+        return generate(std::locale::classic(), id);
     }
 
     std::locale generator::generate(const std::locale& base, const std::string& id) const
@@ -110,8 +109,8 @@ namespace boost { namespace locale {
         set_all_options(*backend, id);
 
         std::locale result = base;
-        category_t facets = d->cats;
-        char_facet_t chars = d->chars;
+        const category_t facets = d->cats;
+        const char_facet_t chars = d->chars;
 
         for(category_t facet = per_character_facet_first; facet <= per_character_facet_last; ++facet) {
             if(!(facets & facet))
