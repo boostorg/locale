@@ -9,7 +9,6 @@ import-search /boost/config/checks ;
 import config : requires ;
 import configure ;
 import errors ;
-import feature ;
 import os ;
 import path ;
 import toolset ;
@@ -26,14 +25,6 @@ project
     : common-requirements <library>$(boost_dependencies)
     : requirements <library>$(boost_dependencies_private)
     ;
-
-# Features
-
-feature.feature boost.locale.iconv : on off : optional propagated ;
-feature.feature boost.locale.icu : on off :  optional propagated ;
-feature.feature boost.locale.posix : on off : optional propagated ;
-feature.feature boost.locale.std : on off : optional propagated ;
-feature.feature boost.locale.winapi : on off : optional propagated ;
 
 local rule debug-message ( message * )
 {
