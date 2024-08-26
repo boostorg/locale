@@ -437,7 +437,7 @@ lib boost_locale
       util/encoding.cpp
       util/info.cpp
       util/locale_data.cpp
-    :
+    : # requirements
       $(cxx_requirements)
       <link>shared:<define>BOOST_LOCALE_DYN_LINK=1
       <define>BOOST_LOCALE_SOURCE
@@ -447,6 +447,8 @@ lib boost_locale
       <target-os>windows:<define>_SCL_SECURE_NO_WARNINGS
       # Meanwhile remove this
       <conditional>@configure
-    : : $(cxx_requirements)
-        <define>BOOST_LOCALE_NO_LIB=1
+    : : # usage-requirements
+      $(cxx_requirements)
+      <link>shared:<define>BOOST_LOCALE_DYN_LINK=1
+      <define>BOOST_LOCALE_NO_LIB=1
     ;
