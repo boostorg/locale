@@ -54,7 +54,9 @@ namespace boost { namespace locale { namespace impl_icu {
     public:
         typedef std::basic_string<CharType> string_type;
 
-        number_format(icu::NumberFormat& fmt, std::string codepage) : cvt_(codepage), icu_fmt_(fmt) {}
+        number_format(icu::NumberFormat& fmt, const std::string& codepage, bool isNumberOnly = false) :
+            cvt_(codepage), icu_fmt_(fmt), isNumberOnly_(isNumberOnly)
+        {}
 
         string_type format(double value, size_t& code_points) const override { return do_format(value, code_points); }
         string_type format(int64_t value, size_t& code_points) const override { return do_format(value, code_points); }
@@ -107,6 +109,9 @@ namespace boost { namespace locale { namespace impl_icu {
             icu::ParsePosition pp;
             icu::UnicodeString tmp = cvt_.icu(str.data(), str.data() + str.size());
 
+            // For the plain number parsing (no currency etc) parse "123.456" as 2 ints
+            // not a float later converted to int
+            icu_fmt_.setParseIntegerOnly(std::is_integral<ValueType>::value && isNumberOnly_);
             icu_fmt_.parse(tmp, val, pp);
 
             ValueType tmp_v;
@@ -122,6 +127,7 @@ namespace boost { namespace locale { namespace impl_icu {
 
         icu_std_converter<CharType> cvt_;
         icu::NumberFormat& icu_fmt_;
+        const bool isNumberOnly_;
     };
 
     template<typename CharType>
@@ -355,7 +361,7 @@ namespace boost { namespace locale { namespace impl_icu {
                 icu::NumberFormat& nf =
                   cache.number_format((how == std::ios_base::scientific) ? num_fmt_type::sci : num_fmt_type::number);
                 set_fraction_digits(nf, how, ios.precision());
-                return ptr_type(new number_format<CharType>(nf, encoding));
+                return ptr_type(new number_format<CharType>(nf, encoding, true));
             }
             case currency: {
                 icu::NumberFormat& nf = cache.number_format(

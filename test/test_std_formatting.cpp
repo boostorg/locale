@@ -14,6 +14,7 @@
 
 #include "boostLocale/test/tools.hpp"
 #include "boostLocale/test/unit_test.hpp"
+#include "formatting_common.hpp"
 
 template<typename CharType, typename RefCharType>
 void test_by_char(const std::locale& l, const std::locale& lreal)
@@ -230,6 +231,10 @@ void test_main(int /*argc*/, char** /*argv*/)
             }
         }
     }
+    // Std backend silently falls back to the C locale when the locale is not supported
+    // which breaks the test assumptions
+    if(has_std_locale("en_US.UTF-8"))
+        test_parse_multi_number();
 }
 
 // boostinspect:noascii
