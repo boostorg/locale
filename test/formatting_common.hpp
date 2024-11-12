@@ -17,9 +17,17 @@
 template<typename CharType, typename IntType>
 void test_parse_multi_number_by_char(const std::locale& locale)
 {
+    // thousandsNum will mostly be 12,345 but some systems
+    // don't have the thousand separator for the POSIX locale.
+    // So use the formatted output.
+    const IntType expectedInt = 12345;
+    std::basic_ostringstream<CharType> thousandsNum;
+    thousandsNum.imbue(locale);
+    thousandsNum << boost::locale::as::number << expectedInt;
+
     std::basic_istringstream<CharType> stream;
     stream.imbue(locale);
-    stream.str(ascii_to<CharType>("42.12,345"));
+    stream.str(ascii_to<CharType>("42.") + thousandsNum.str());
     stream >> boost::locale::as::number;
 
     IntType value;
@@ -27,7 +35,7 @@ void test_parse_multi_number_by_char(const std::locale& locale)
     TEST_EQ(value, IntType(42));
     TEST_EQ(static_cast<char>(stream.get()), '.');
     TEST_REQUIRE(stream >> value);
-    TEST_EQ(value, IntType(12345));
+    TEST_EQ(value, expectedInt);
     TEST_REQUIRE(!(stream >> value));
     TEST(stream.eof());
 
