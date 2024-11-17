@@ -108,19 +108,20 @@ namespace boost { namespace locale { namespace impl_icu {
             if(detail::use_parent(ios, val))
                 return std::num_put<CharType>::do_put(out, ios, fill, val);
 
-            const auto formatter = formatter_type::create(ios, loc_, enc_);
+            const std::unique_ptr<formatter_type> formatter = formatter_type::create(ios, loc_, enc_);
 
             if(!formatter)
                 return std::num_put<CharType>::do_put(out, ios, fill, val);
 
+            using icu_type = typename detail::icu_format_type<ValueType>::type;
             size_t code_points;
-            typedef typename detail::icu_format_type<ValueType>::type icu_type;
-            const string_type& str = formatter->format(static_cast<icu_type>(val), code_points);
+            const string_type str = formatter->format(static_cast<icu_type>(val), code_points);
+
             std::streamsize on_left = 0, on_right = 0, points = code_points;
             if(points < ios.width()) {
-                std::streamsize n = ios.width() - points;
+                const std::streamsize n = ios.width() - points;
 
-                std::ios_base::fmtflags flags = ios.flags() & std::ios_base::adjustfield;
+                const std::ios_base::fmtflags flags = ios.flags() & std::ios_base::adjustfield;
 
                 // We do not really know internal point, so we assume that it does not
                 // exist. So according to the standard field should be right aligned
@@ -242,7 +243,7 @@ namespace boost { namespace locale { namespace impl_icu {
             if(!stream_ptr || detail::use_parent(ios, ValueType(0)))
                 return std::num_get<CharType>::do_get(in, end, ios, err, val);
 
-            const auto formatter = formatter_type::create(ios, loc_, enc_);
+            const std::unique_ptr<formatter_type> formatter = formatter_type::create(ios, loc_, enc_);
             if(!formatter)
                 return std::num_get<CharType>::do_get(in, end, ios, err, val);
 
@@ -256,7 +257,7 @@ namespace boost { namespace locale { namespace impl_icu {
             while(tmp.size() < 4096 && in != end && *in != '\n')
                 tmp += *in++;
 
-            typedef typename detail::icu_format_type<ValueType>::type icu_type;
+            using icu_type = typename detail::icu_format_type<ValueType>::type;
             icu_type value;
             size_t parsed_chars;
 
