@@ -8,6 +8,8 @@
 /*!
 \page changelog Changelog
 
+- 1.88.0
+    - Fix parsing of numbers in floating point format to integers
 - 1.86.0
     - Make ICU implementation of `to_title` threadsafe
     - Add allocator support to `utf_to_utf`
