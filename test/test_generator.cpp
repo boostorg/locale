@@ -375,6 +375,7 @@ void test_main(int /*argc*/, char** /*argv*/)
             TEST_HAS_FACETS(std::num_put, l);
             TEST_HAS_FACETS(std::time_put, l);
             TEST_HAS_FACETS(std::numpunct, l);
+            TEST_HAS_FACETS(bl::numpunct, l);
             TEST_HAS_FACETS(std::moneypunct, l);
             // Parsing
             TEST_HAS_FACETS(std::num_get, l);

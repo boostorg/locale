@@ -10,6 +10,7 @@
 #include <boost/locale/encoding.hpp>
 #include <boost/locale/formatting.hpp>
 #include <boost/locale/generator.hpp>
+#include <boost/locale/numpunct.hpp>
 #include <boost/predef/os.h>
 #include <algorithm>
 #include <cctype>
@@ -341,38 +342,24 @@ namespace boost { namespace locale { namespace impl_posix {
     };
 
     template<typename CharType>
-    class num_punct_posix : public std::numpunct<CharType> {
+    class num_punct_posix : public numpunct<CharType> {
     public:
         typedef std::basic_string<CharType> string_type;
-        num_punct_posix(locale_t lc, size_t refs = 0) : std::numpunct<CharType>(refs)
+        num_punct_posix(locale_t lc, size_t refs = 0) : numpunct<CharType>(refs)
         {
             basic_numpunct np(lc);
             to_str(np.thousands_sep, thousands_sep_, lc);
             to_str(np.decimal_point, decimal_point_, lc);
             grouping_ = np.grouping;
-            if(thousands_sep_.size() > 1)
-                grouping_ = std::string();
-            if(decimal_point_.size() > 1)
-                decimal_point_ = CharType('.');
         }
         void to_str(std::string& s1, std::string& s2, locale_t /*lc*/) { s2.swap(s1); }
         void to_str(std::string& s1, std::wstring& s2, locale_t lc)
         {
             s2 = conv::to_utf<wchar_t>(s1, nl_langinfo_l(CODESET, lc));
         }
-        CharType do_decimal_point() const override { return *decimal_point_.c_str(); }
-        CharType do_thousands_sep() const override { return *thousands_sep_.c_str(); }
+        string_type do_decimal_point_str() const override { return decimal_point_; }
+        string_type do_thousands_sep_str() const override { return thousands_sep_; }
         std::string do_grouping() const override { return grouping_; }
-        string_type do_truename() const override
-        {
-            static const char t[] = "true";
-            return string_type(t, t + sizeof(t) - 1);
-        }
-        string_type do_falsename() const override
-        {
-            static const char t[] = "false";
-            return string_type(t, t + sizeof(t) - 1);
-        }
 
     private:
         string_type decimal_point_;
