@@ -31,10 +31,8 @@ void test_plural_expr_rand(const T& ref, const char* expr)
         const auto n = getRandValue(minVal, maxVal);
         const auto result = ptr(n);
         const auto refResult = ref(n);
-        if(result != refResult) {
-            std::cerr << "Expression: " << expr << "; n=" << n << '\n'; // LCOV_EXCL_LINE
-            TEST_EQ(result, refResult);                                 // LCOV_EXCL_LINE
-        }
+        TEST_CONTEXT("Expression: " << expr << "; n=" << n);
+        TEST_EQ(result, refResult);
     }
 }
 

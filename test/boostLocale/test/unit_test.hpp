@@ -10,6 +10,7 @@
 #define BOOST_LOCALE_UNIT_TEST_HPP
 
 #include <boost/locale/config.hpp>
+#include <boost/config/helper_macros.hpp>
 #include <cstdlib>
 #include <iomanip>
 #include <iostream>
@@ -33,8 +34,10 @@ namespace boost { namespace locale { namespace test {
     /// Name/path of current executable
     std::string exe_name;
 
+    class test_context;
+
     struct test_result {
-        test_result() : error_counter(0), test_counter(0)
+        test_result()
         {
 #if defined(_MSC_VER) && (_MSC_VER > 1310)
             // disable message boxes on assert(), abort()
@@ -46,8 +49,9 @@ namespace boost { namespace locale { namespace test {
             _CrtSetReportFile(_CRT_ASSERT, _CRTDBG_FILE_STDERR);
 #endif
         }
-        int error_counter;
-        int test_counter;
+        int error_counter = 0;
+        int test_counter = 0;
+        const test_context* context = nullptr;
     };
     inline test_result& results()
     {
@@ -55,9 +59,32 @@ namespace boost { namespace locale { namespace test {
         return instance;
     }
 
+    class test_context {
+        const test_context* oldCtx_;
+        const std::string msg_;
+
+    public:
+        test_context(std::string ctx) : oldCtx_(results().context), msg_(std::move(ctx)) { results().context = this; }
+        ~test_context() { results().context = oldCtx_; }
+        friend std::ostream& operator<<(std::ostream& os, const test_context& c)
+        {
+            const test_context* current = &c;
+            os << "CONTEXT: ";
+            std::string indent = "\n\t";
+            do {
+                os << indent << current->msg_;
+                indent += '\t';
+            } while((current = current->oldCtx_) != nullptr);
+            return os;
+        }
+    };
+
     inline void report_error(const char* expr, const char* file, int line)
     {
         std::cerr << "Error at " << file << '#' << line << ": " << expr << std::endl;
+        const auto* context = results().context;
+        if(context)
+            std::cerr << ' ' << *context << std::endl;
         if(++boost::locale::test::results().error_counter > BOOST_LOCALE_ERROR_LIMIT)
             throw std::runtime_error("Error limits reached, stopping unit test");
     }
@@ -96,6 +123,10 @@ namespace boost { namespace locale { namespace test {
         BOOST_LOCALE_TEST_REPORT_ERROR(#X);            \
         BOOST_LOCALE_START_CONST_CONDITION             \
     } while(0) BOOST_LOCALE_END_CONST_CONDITION
+
+#define TEST_CONTEXT(expr)                                                    \
+    boost::locale::test::test_context BOOST_JOIN(test_context_, __COUNTER__)( \
+      static_cast<const std::stringstream&>(std::stringstream{} << expr).str())
 
 void test_main(int argc, char** argv);
 

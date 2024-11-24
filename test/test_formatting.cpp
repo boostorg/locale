@@ -300,6 +300,7 @@ void test_parse_fail_impl(std::basic_istringstream<CharType>& ss, int line)
 
 #define TEST_MIN_MAX_POSIX(type)                                                      \
     do {                                                                              \
+        TEST_CONTEXT(#type);                                                          \
         const std::string minval = as_posix_string(std::numeric_limits<type>::min()); \
         const std::string maxval = as_posix_string(std::numeric_limits<type>::max()); \
         TEST_MIN_MAX_FMT(as::posix, type, minval, maxval);                            \
@@ -340,6 +341,7 @@ void test_as_posix(const std::string& e_charset = "UTF-8")
         localization_backend_manager::global(backend);
         for(const std::string name : {"en_US", "ru_RU", "de_DE"}) {
             const std::locale loc = boost::locale::generator{}(name + "." + e_charset);
+            TEST_CONTEXT("Locale " << (name + "." + e_charset));
             TEST_MIN_MAX_POSIX(int16_t);
             TEST_MIN_MAX_POSIX(uint16_t);
 
