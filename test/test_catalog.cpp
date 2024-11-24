@@ -47,7 +47,7 @@ void test_plural_expr()
         TEST(ptr);                \
         return ptr;               \
     }()
-#define TEST_EQ_EXPR(expr, rhs) test_eq_impl(COMPILE_PLURAL_EXPR(expr)(0), rhs, expr, __LINE__)
+#define TEST_EQ_EXPR(expr, rhs) test_eq_impl(COMPILE_PLURAL_EXPR(expr)(0), rhs, expr, __FILE__, __LINE__)
     // Number only
     TEST_EQ_EXPR("0", 0);
     TEST_EQ_EXPR("42", 42);

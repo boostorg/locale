@@ -159,17 +159,17 @@ void test_fmt_impl(std::basic_ostringstream<CharType>& ss,
                    const std::basic_string<CharType>& expected,
                    int line)
 {
-    ss << value;
-    test_eq_impl(ss.str(), expected, "", line);
+    test_impl(!!(ss << value), "Formatting failed", __FILE__, line);
+    test_eq_impl(ss.str(), expected, "", __FILE__, line);
 }
 
 template<typename T, typename CharType>
 void test_parse_impl(std::basic_istringstream<CharType>& ss, const T& expected, int line)
 {
     T v;
-    ss >> v >> std::ws;
-    test_eq_impl(v, expected, "v == expected", line);
-    test_eq_impl(ss.eof(), true, "ss.eof()", line);
+    test_impl(!!(ss >> v), "Parsing failed", __FILE__, line);
+    test_eq_impl(v, expected, "v == expected", __FILE__, line);
+    test_eq_impl((ss >> std::ws).eof(), true, "ss.eof()", __FILE__, line);
 }
 
 template<typename T, typename CharType>
@@ -178,8 +178,9 @@ void test_parse_at_impl(std::basic_istringstream<CharType>& ss, const T& expecte
     T v;
     CharType c_at;
     ss >> v >> std::skipws >> c_at;
-    test_eq_impl(v, expected, "v == expected", line);
-    test_eq_impl(c_at, '@', "c_at == @", line);
+    test_impl(!!ss, "Parsing failed", __FILE__, line);
+    test_eq_impl(v, expected, "v == expected", __FILE__, line);
+    test_eq_impl(c_at, '@', "c_at == @", __FILE__, line);
 }
 
 template<typename T, typename CharType>
@@ -187,7 +188,7 @@ void test_parse_fail_impl(std::basic_istringstream<CharType>& ss, int line)
 {
     T v;
     ss >> v;
-    test_eq_impl(ss.fail(), true, "ss.fail()", line);
+    test_eq_impl(ss.fail(), true, "ss.fail()", __FILE__, line);
 }
 
 #define TEST_FMT(manip, value, expected)                                                  \
@@ -641,7 +642,7 @@ void test_format_class_impl(const std::string& fmt_string,
     format_type fmt(std::basic_string<CharType>(fmt_string.begin(), fmt_string.end()));
     fmt % value;
     std::basic_string<CharType> expected_str_loc(to_correct_string<CharType>(expected_str, loc));
-    test_eq_impl(fmt.str(loc), expected_str_loc, ("Format: " + fmt_string).c_str(), line);
+    test_eq_impl(fmt.str(loc), expected_str_loc, ("Format: " + fmt_string).c_str(), __FILE__, line);
 }
 
 template<typename CharType>
