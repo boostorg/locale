@@ -31,10 +31,8 @@ void test_plural_expr_rand(const T& ref, const char* expr)
         const auto n = getRandValue(minVal, maxVal);
         const auto result = ptr(n);
         const auto refResult = ref(n);
-        if(result != refResult) {
-            std::cerr << "Expression: " << expr << "; n=" << n << '\n'; // LCOV_EXCL_LINE
-            TEST_EQ(result, refResult);                                 // LCOV_EXCL_LINE
-        }
+        TEST_CONTEXT("Expression: " << expr << "; n=" << n);
+        TEST_EQ(result, refResult);
     }
 }
 
@@ -47,7 +45,7 @@ void test_plural_expr()
         TEST(ptr);                \
         return ptr;               \
     }()
-#define TEST_EQ_EXPR(expr, rhs) test_eq_impl(COMPILE_PLURAL_EXPR(expr)(0), rhs, expr, __LINE__)
+#define TEST_EQ_EXPR(expr, rhs) test_eq_impl(COMPILE_PLURAL_EXPR(expr)(0), rhs, expr, __FILE__, __LINE__)
     // Number only
     TEST_EQ_EXPR("0", 0);
     TEST_EQ_EXPR("42", 42);
