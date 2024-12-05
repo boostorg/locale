@@ -1,6 +1,6 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
-// Copyright (c) 2021-2023 Alexander Grund
+// Copyright (c) 2021-2024 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
@@ -13,8 +13,12 @@
 #include "icu_util.hpp"
 #include "time_zone.hpp"
 #include "uconv.hpp"
+#include <boost/assert.hpp>
+#include <boost/charconv/from_chars.hpp>
+#include <boost/charconv/to_chars.hpp>
 #include <limits>
 #include <memory>
+#include <sstream>
 #ifdef BOOST_MSVC
 #    pragma warning(push)
 #    pragma warning(disable : 4251) // "identifier" : class "type" needs to have dll-interface...
@@ -62,35 +66,69 @@ namespace boost { namespace locale { namespace impl_icu {
         string_type format(int64_t value, size_t& code_points) const override { return do_format(value, code_points); }
         string_type format(int32_t value, size_t& code_points) const override { return do_format(value, code_points); }
         size_t parse(const string_type& str, double& value) const override { return do_parse(str, value); }
+        size_t parse(const string_type& str, uint64_t& value) const override { return do_parse(str, value); }
         size_t parse(const string_type& str, int64_t& value) const override { return do_parse(str, value); }
         size_t parse(const string_type& str, int32_t& value) const override { return do_parse(str, value); }
+
+        string_type format(const uint64_t value, size_t& code_points) const override
+        {
+            // ICU only supports int64_t as the largest integer type
+            if(value <= static_cast<uint64_t>(std::numeric_limits<int64_t>::max()))
+                return format(static_cast<int64_t>(value), code_points);
+
+            // Fallback to using a StringPiece (decimal number) as input
+            char buffer[std::numeric_limits<uint64_t>::digits10 + 2];
+            auto res = boost::charconv::to_chars(buffer, std::end(buffer), value);
+            BOOST_ASSERT(res);
+            *res.ptr = '\0'; // ICU expects a NULL-terminated string even for the StringPiece
+            icu::UnicodeString tmp;
+            UErrorCode err = U_ZERO_ERROR;
+            icu_fmt_.format(icu::StringPiece(buffer, res.ptr - buffer), tmp, nullptr, err);
+            check_and_throw_icu_error(err);
+            code_points = tmp.countChar32();
+            return cvt_.std(tmp);
+        }
 
     private:
         bool get_value(double& v, icu::Formattable& fmt) const
         {
             UErrorCode err = U_ZERO_ERROR;
             v = fmt.getDouble(err);
-            if(U_FAILURE(err))
-                return false;
-            return true;
+            return U_SUCCESS(err);
         }
 
         bool get_value(int64_t& v, icu::Formattable& fmt) const
         {
             UErrorCode err = U_ZERO_ERROR;
             v = fmt.getInt64(err);
+            return U_SUCCESS(err);
+        }
+
+        bool get_value(uint64_t& v, icu::Formattable& fmt) const
+        {
+            UErrorCode err = U_ZERO_ERROR;
+            // ICU only supports int64_t as the largest integer type
+            const int64_t tmp = fmt.getInt64(err);
+            if(U_SUCCESS(err)) {
+                if(tmp < 0)
+                    return false;
+                v = static_cast<uint64_t>(tmp);
+                return true;
+            }
+            // Get value as a decimal number and parse that
+            err = U_ZERO_ERROR;
+            const auto decimals = fmt.getDecimalNumber(err);
             if(U_FAILURE(err))
-                return false;
-            return true;
+                return false; // Not a number
+            const auto res = boost::charconv::from_chars({decimals.data(), static_cast<size_t>(decimals.length())}, v);
+            return static_cast<bool>(res);
         }
 
         bool get_value(int32_t& v, icu::Formattable& fmt) const
         {
             UErrorCode err = U_ZERO_ERROR;
             v = fmt.getLong(err);
-            if(U_FAILURE(err))
-                return false;
-            return true;
+            return U_SUCCESS(err);
         }
 
         template<typename ValueType>
@@ -114,14 +152,11 @@ namespace boost { namespace locale { namespace impl_icu {
             icu_fmt_.setParseIntegerOnly(std::is_integral<ValueType>::value && isNumberOnly_);
             icu_fmt_.parse(tmp, val, pp);
 
-            ValueType tmp_v;
-
-            if(pp.getIndex() == 0 || !get_value(tmp_v, val))
+            if(pp.getIndex() == 0 || !get_value(v, val))
                 return 0;
             size_t cut = cvt_.cut(tmp, str.data(), str.data() + str.size(), pp.getIndex());
             if(cut == 0)
                 return 0;
-            v = tmp_v;
             return cut;
         }
 
@@ -136,11 +171,11 @@ namespace boost { namespace locale { namespace impl_icu {
         typedef std::basic_string<CharType> string_type;
 
         string_type format(double value, size_t& code_points) const override { return do_format(value, code_points); }
+        string_type format(uint64_t value, size_t& code_points) const override { return do_format(value, code_points); }
         string_type format(int64_t value, size_t& code_points) const override { return do_format(value, code_points); }
-
         string_type format(int32_t value, size_t& code_points) const override { return do_format(value, code_points); }
-
         size_t parse(const string_type& str, double& value) const override { return do_parse(str, value); }
+        size_t parse(const string_type& str, uint64_t& value) const override { return do_parse(str, value); }
         size_t parse(const string_type& str, int64_t& value) const override { return do_parse(str, value); }
         size_t parse(const string_type& str, int32_t& value) const override { return do_parse(str, value); }
 

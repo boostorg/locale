@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2024 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
@@ -31,6 +32,8 @@ namespace boost { namespace locale { namespace impl_icu {
         /// Format the value and return the number of Unicode code points
         virtual string_type format(double value, size_t& code_points) const = 0;
         /// Format the value and return the number of Unicode code points
+        virtual string_type format(uint64_t value, size_t& code_points) const = 0;
+        /// Format the value and return the number of Unicode code points
         virtual string_type format(int64_t value, size_t& code_points) const = 0;
         /// Format the value and return the number of Unicode code points
         virtual string_type format(int32_t value, size_t& code_points) const = 0;
@@ -38,6 +41,9 @@ namespace boost { namespace locale { namespace impl_icu {
         /// Parse the string and return the number of used characters. If it returns 0
         /// then parsing failed.
         virtual size_t parse(const string_type& str, double& value) const = 0;
+        /// Parse the string and return the number of used characters. If it returns 0
+        /// then parsing failed.
+        virtual size_t parse(const string_type& str, uint64_t& value) const = 0;
         /// Parse the string and return the number of used characters. If it returns 0
         /// then parsing failed.
         virtual size_t parse(const string_type& str, int64_t& value) const = 0;
