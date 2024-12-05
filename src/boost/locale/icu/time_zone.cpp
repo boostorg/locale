@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2022-2024 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
@@ -13,14 +14,13 @@
 // Bug - when ICU tries to find a file that is equivalent to /etc/localtime it finds /usr/share/zoneinfo/localtime
 // that is just a symbolic link to /etc/localtime.
 //
-// It started in 4.0 and was fixed in version 4.6, also the fix was backported to the 4.4 branch so it should be
+// It was fixed in version 4.6, also the fix was backported to the 4.4 branch so it should be
 // available from 4.4.3... So we test if the workaround is required
 //
 // It is also relevant only for Linux, BSD and Apple (as I see in ICU code)
 //
 
-#if BOOST_LOCALE_ICU_VERSION >= 400 && BOOST_LOCALE_ICU_VERSION <= 406 \
-  && (BOOST_LOCALE_ICU_VERSION != 404 || U_ICU_VERSION_PATCHLEVEL_NUM >= 3)
+#if BOOST_LOCALE_ICU_VERSION <= 406 && (BOOST_LOCALE_ICU_VERSION != 404 || U_ICU_VERSION_PATCHLEVEL_NUM >= 3)
 #    if BOOST_OS_LINUX || BOOST_OS_BSD_FREE || defined(__APPLE__)
 #        define BOOST_LOCALE_WORKAROUND_ICU_BUG
 #    endif
