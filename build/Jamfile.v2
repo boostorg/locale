@@ -1,6 +1,6 @@
 # Copyright 2003 John Maddock
 # Copyright 2010 Artyom Beilis
-# Copyright 2021 - 2022 Alexander Grund
+# Copyright 2021-2024 Alexander Grund
 #
 # Distributed under the Boost Software License, Version 1.0.
 # https://www.boost.org/LICENSE_1_0.txt.
@@ -248,6 +248,9 @@ rule configure-full ( properties * : flags-only )
             # ICU might introduce an own iconv, so check for that.
             internal_iconv_target = has_iconv_with_icu ;
             external_iconv_target = has_external_iconv_with_icu ;
+        } else if <boost.locale.icu>on in $(properties)
+        {
+            errors.user-error : "ICU support was requested but not found" ;
         }
     }
 
@@ -263,6 +266,9 @@ rule configure-full ( properties * : flags-only )
         {
             found-iconv = true ;
             result += <library>iconv ;
+        } else if <boost.locale.iconv>on in $(properties)
+        {
+            errors.user-error : "Iconv support was requested but not found" ;
         }
     }
     if $(found-iconv)
