@@ -95,7 +95,7 @@ if $(.icu-path)
     debug-message ICU path set to "$(.icu-path)" ;
 }
 
-rule path_options ( properties * )
+rule icu_search_paths ( properties * )
 {
     local result ;
     if <address-model>64 in $(properties) && <toolset>msvc in $(properties)
@@ -126,53 +126,53 @@ if [ modules.peek : ICU_ICUIN_NAME ]
 
 if $(ICU_ICUUC_NAME)
 {
-    searched-lib icuuc : : <name>$(ICU_ICUUC_NAME) <conditional>@path_options ;
+    searched-lib icuuc : : <name>$(ICU_ICUUC_NAME) <conditional>@icu_search_paths ;
     debug-message Using "$(ICU_ICUUC_NAME)" for library "icuuc" ;
 }
 else
 {
-    searched-lib icuuc : :                                                               <runtime-link>shared <conditional>@path_options ;
-    searched-lib icuuc : : <toolset>msvc                     <variant>debug <name>icuucd <runtime-link>shared <conditional>@path_options ;
-    searched-lib icuuc : : <toolset>intel <target-os>windows <variant>debug <name>icuucd <runtime-link>shared <conditional>@path_options ;
-    searched-lib icuuc : :                                                  <name>sicuuc <runtime-link>static <conditional>@path_options ;
-    searched-lib icuuc : : <toolset>msvc                     <variant>debug <name>sicuucd <runtime-link>static <conditional>@path_options ;
-    searched-lib icuuc : : <toolset>intel <target-os>windows <variant>debug <name>sicuucd <runtime-link>static <conditional>@path_options ;
+    searched-lib icuuc : :                                                  <name>icuuc   <runtime-link>shared <conditional>@icu_search_paths ;
+    searched-lib icuuc : : <toolset>msvc                     <variant>debug <name>icuucd  <runtime-link>shared <conditional>@icu_search_paths ;
+    searched-lib icuuc : : <toolset>intel <target-os>windows <variant>debug <name>icuucd  <runtime-link>shared <conditional>@icu_search_paths ;
+    searched-lib icuuc : :                                                  <name>sicuuc  <runtime-link>static <conditional>@icu_search_paths ;
+    searched-lib icuuc : : <toolset>msvc                     <variant>debug <name>sicuucd <runtime-link>static <conditional>@icu_search_paths ;
+    searched-lib icuuc : : <toolset>intel <target-os>windows <variant>debug <name>sicuucd <runtime-link>static <conditional>@icu_search_paths ;
     searched-lib icuuc : : <name>this_is_an_invalid_library_name ;
 }
 
 if $(ICU_ICUDT_NAME)
 {
-    searched-lib icudt : : <name>$(ICU_ICUDT_NAME) <conditional>@path_options ;
+    searched-lib icudt : : <name>$(ICU_ICUDT_NAME) <conditional>@icu_search_paths ;
     debug-message Using "$(ICU_ICUDT_NAME)" for library "icudt" ;
 }
 else
 {
-    searched-lib icudt : : <name>icudata                                   <runtime-link>shared <conditional>@path_options ;
-    searched-lib icudt : : <name>icudt   <toolset>msvc                     <runtime-link>shared <conditional>@path_options ;
-    searched-lib icudt : : <name>icudt   <toolset>intel <target-os>windows <runtime-link>shared <conditional>@path_options ;
-    searched-lib icudt : : <name>sicudata                                   <runtime-link>static <conditional>@path_options ;
-    searched-lib icudt : : <name>sicudt   <toolset>msvc                     <runtime-link>static <conditional>@path_options ;
-    searched-lib icudt : : <name>sicudt   <toolset>intel <target-os>windows <runtime-link>static <conditional>@path_options ;
+    searched-lib icudt : :                                                  <name>icudata  <runtime-link>shared <conditional>@icu_search_paths ;
+    searched-lib icudt : : <toolset>msvc                                    <name>icudt    <runtime-link>shared <conditional>@icu_search_paths ;
+    searched-lib icudt : : <toolset>intel <target-os>windows                <name>icudt    <runtime-link>shared <conditional>@icu_search_paths ;
+    searched-lib icudt : :                                                  <name>sicudata <runtime-link>static <conditional>@icu_search_paths ;
+    searched-lib icudt : : <toolset>msvc                                    <name>sicudt   <runtime-link>static <conditional>@icu_search_paths ;
+    searched-lib icudt : : <toolset>intel <target-os>windows                <name>sicudt   <runtime-link>static <conditional>@icu_search_paths ;
     searched-lib icudt : : <name>this_is_an_invalid_library_name ;
 }
 
 if $(ICU_ICUIN_NAME)
 {
-    searched-lib icuin : : <name>$(ICU_ICUIN_NAME) <conditional>@path_options ;
+    searched-lib icuin : : <name>$(ICU_ICUIN_NAME) <conditional>@icu_search_paths ;
     debug-message Using "$(ICU_ICUIN_NAME)" for library "icuin" ;
 }
 else
 {
-    searched-lib icuin : :                                                    <name>icui18n <runtime-link>shared <conditional>@path_options ;
-    searched-lib icuin : : <toolset>msvc                     <variant>debug   <name>icuind  <runtime-link>shared <conditional>@path_options ;
-    searched-lib icuin : : <toolset>msvc                                      <name>icuin   <runtime-link>shared <conditional>@path_options ;
-    searched-lib icuin : : <toolset>intel <target-os>windows <variant>debug   <name>icuind  <runtime-link>shared <conditional>@path_options ;
-    searched-lib icuin : : <toolset>intel <target-os>windows                  <name>icuin   <runtime-link>shared <conditional>@path_options ;
-    searched-lib icuin : :                                                    <name>sicui18n <runtime-link>static <conditional>@path_options ;
-    searched-lib icuin : : <toolset>msvc                     <variant>debug   <name>sicuind  <runtime-link>static <conditional>@path_options ;
-    searched-lib icuin : : <toolset>msvc                                      <name>sicuin   <runtime-link>static <conditional>@path_options ;
-    searched-lib icuin : : <toolset>intel <target-os>windows <variant>debug   <name>sicuind  <runtime-link>static <conditional>@path_options ;
-    searched-lib icuin : : <toolset>intel <target-os>windows                  <name>sicuin   <runtime-link>static <conditional>@path_options ;
+    searched-lib icuin : :                                                  <name>icui18n  <runtime-link>shared <conditional>@icu_search_paths ;
+    searched-lib icuin : : <toolset>msvc                     <variant>debug <name>icuind   <runtime-link>shared <conditional>@icu_search_paths ;
+    searched-lib icuin : : <toolset>msvc                                    <name>icuin    <runtime-link>shared <conditional>@icu_search_paths ;
+    searched-lib icuin : : <toolset>intel <target-os>windows <variant>debug <name>icuind   <runtime-link>shared <conditional>@icu_search_paths ;
+    searched-lib icuin : : <toolset>intel <target-os>windows                <name>icuin    <runtime-link>shared <conditional>@icu_search_paths ;
+    searched-lib icuin : :                                                  <name>sicui18n <runtime-link>static <conditional>@icu_search_paths ;
+    searched-lib icuin : : <toolset>msvc                     <variant>debug <name>sicuind  <runtime-link>static <conditional>@icu_search_paths ;
+    searched-lib icuin : : <toolset>msvc                                    <name>sicuin   <runtime-link>static <conditional>@icu_search_paths ;
+    searched-lib icuin : : <toolset>intel <target-os>windows <variant>debug <name>sicuind  <runtime-link>static <conditional>@icu_search_paths ;
+    searched-lib icuin : : <toolset>intel <target-os>windows                <name>sicuin   <runtime-link>static <conditional>@icu_search_paths ;
     searched-lib icuin : : <name>this_is_an_invalid_library_name ;
 }
 
