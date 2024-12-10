@@ -90,8 +90,8 @@ jobs:
           - { compiler: gcc-5,     cxxstd: '03,11,14,1z',    os: ubuntu-latest, container: 'ubuntu:18.04' }
           - { compiler: gcc-6,     cxxstd: '11,14,17',       os: ubuntu-latest, container: 'ubuntu:18.04' }
             # GCC 7 & 8 on Ubuntu 20 show failures in basic_filebuf::_M_convert_to_external conversion
-          - { compiler: gcc-7,     cxxstd: '11,14,17',       os: ubuntu-latest, container: 'ubuntu:18.04' }
-          - { compiler: gcc-8,     cxxstd: '11,14,17,2a',    os: ubuntu-latest, container: 'ubuntu:18.04' }
+          - { compiler: gcc-7,     cxxstd: '11,14,17',       os: ubuntu-20.04 }
+          - { compiler: gcc-8,     cxxstd: '11,14,17,2a',    os: ubuntu-20.04 }
           - { compiler: gcc-9,     cxxstd: '11,14,17,2a',    os: ubuntu-20.04 }
           - { compiler: gcc-10,    cxxstd: '11,14,17,20',    os: ubuntu-22.04 }
           - { compiler: gcc-11,    cxxstd: '11,14,17,20',    os: ubuntu-22.04 }
