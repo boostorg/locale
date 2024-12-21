@@ -10,7 +10,6 @@
 #include <limits>
 #include <sstream>
 
-#include "../src/boost/locale/util/foreach_char.hpp"
 #include "boostLocale/test/tools.hpp"
 #include "boostLocale/test/unit_test.hpp"
 

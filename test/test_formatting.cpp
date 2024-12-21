@@ -1,6 +1,6 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
-// Copyright (c) 2021-2022 Alexander Grund
+// Copyright (c) 2021-2024 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
@@ -26,82 +26,70 @@
 const std::string test_locale_name = "en_US";
 std::string message_path = "./";
 
-#ifdef BOOST_LOCALE_WITH_ICU
+#ifndef BOOST_LOCALE_WITH_ICU
+#    define BOOST_LOCALE_ICU_VERSION 0
+#    define BOOST_LOCALE_ICU_VERSION_EXACT 0
+#else
 #    include <unicode/datefmt.h>
 #    include <unicode/numfmt.h>
 #    include <unicode/timezone.h>
 #    include <unicode/uversion.h>
 #    define BOOST_LOCALE_ICU_VERSION (U_ICU_VERSION_MAJOR_NUM * 100 + U_ICU_VERSION_MINOR_NUM)
 #    define BOOST_LOCALE_ICU_VERSION_EXACT (BOOST_LOCALE_ICU_VERSION * 100 + U_ICU_VERSION_PATCHLEVEL_NUM)
+#endif
 
-const icu::Locale& get_icu_test_locale()
+using format_style_t = std::ios_base&(std::ios_base&);
+
+namespace {
+#ifndef BOOST_LOCALE_WITH_ICU
+const std::string icu_full_gmt_name;
+// clang-format off
+#if BOOST_LOCALE_ICU_VERSION >= 402
+std::string get_ICU_currency_iso(...){ return ""; } // LCOV_EXCL_LINE
+#endif
+std::string get_ICU_date(...){ return ""; } // LCOV_EXCL_LINE
+std::string get_ICU_datetime(...){ return ""; } // LCOV_EXCL_LINE
+std::string get_ICU_time(...){ return ""; } // LCOV_EXCL_LINE
+// clang-format on
+#else
+const icu::Locale& get_ICU_test_locale()
 {
     static icu::Locale locale = icu::Locale::createCanonical(test_locale_name.c_str());
     return locale;
 }
 
-std::string from_icu_string(const icu::UnicodeString& str)
+std::string from_ICU_string(const icu::UnicodeString& str)
 {
     return boost::locale::conv::utf_to_utf<char>(str.getBuffer(), str.getBuffer() + str.length());
 }
-#else
-#    define BOOST_LOCALE_ICU_VERSION 0
-#    define BOOST_LOCALE_ICU_VERSION_EXACT 0
-#endif
 
 // Currency style changes between ICU versions, so get "real" value from ICU
-#if BOOST_LOCALE_ICU_VERSION >= 402
+#    if BOOST_LOCALE_ICU_VERSION >= 402
 
-std::string get_icu_currency_iso(const double value)
+std::string get_ICU_currency_iso(const double value)
 {
-#    if BOOST_LOCALE_ICU_VERSION >= 408
+#        if BOOST_LOCALE_ICU_VERSION >= 408
     auto styleIso = UNUM_CURRENCY_ISO;
-#    else
+#        else
     auto styleIso = icu::NumberFormat::kIsoCurrencyStyle;
-#    endif
+#        endif
     UErrorCode err = U_ZERO_ERROR;
-    std::unique_ptr<icu::NumberFormat> fmt(icu::NumberFormat::createInstance(get_icu_test_locale(), styleIso, err));
+    std::unique_ptr<icu::NumberFormat> fmt(icu::NumberFormat::createInstance(get_ICU_test_locale(), styleIso, err));
     TEST_REQUIRE(U_SUCCESS(err) && fmt.get());
 
     icu::UnicodeString tmp;
-    return from_icu_string(fmt->format(value, tmp));
+    return from_ICU_string(fmt->format(value, tmp));
 }
 
-#endif
-
-using format_style_t = std::ios_base&(std::ios_base&);
-
-#ifdef BOOST_LOCALE_WITH_ICU
-std::string get_icu_gmt_name(icu::TimeZone::EDisplayType style)
+#    endif
+std::string get_ICU_gmt_name(icu::TimeZone::EDisplayType style)
 {
     icu::UnicodeString tmp;
-    return from_icu_string(icu::TimeZone::getGMT()->getDisplayName(false, style, get_icu_test_locale(), tmp));
+    return from_ICU_string(icu::TimeZone::getGMT()->getDisplayName(false, style, get_ICU_test_locale(), tmp));
 }
 
 // This changes between ICU versions, e.g. "GMT" or "Greenwich Mean Time"
-const std::string icu_full_gmt_name = get_icu_gmt_name(icu::TimeZone::EDisplayType::LONG);
-
-std::string get_ICU_time(format_style_t style, const time_t ts, const char* tz = nullptr)
-{
-    using icu::DateFormat;
-    DateFormat::EStyle icu_style = DateFormat::kDefault;
-    namespace as = boost::locale::as;
-    if(style == as::time_short)
-        icu_style = DateFormat::kShort;
-    else if(style == as::time_medium)
-        icu_style = DateFormat::kMedium;
-    else if(style == as::time_long)
-        icu_style = DateFormat::kLong;
-    else if(style == as::time_full)
-        icu_style = DateFormat::kFull;
-    std::unique_ptr<icu::DateFormat> fmt(icu::DateFormat::createTimeInstance(icu_style, get_icu_test_locale()));
-    if(!tz)
-        fmt->setTimeZone(*icu::TimeZone::getGMT());
-    else
-        fmt->adoptTimeZone(icu::TimeZone::createTimeZone(icu::UnicodeString::fromUTF8(tz)));
-    icu::UnicodeString s;
-    return from_icu_string(fmt->format(ts * 1000., s));
-}
+const std::string icu_full_gmt_name = get_ICU_gmt_name(icu::TimeZone::EDisplayType::LONG);
 
 std::string get_ICU_date(format_style_t style, const time_t ts)
 {
@@ -116,10 +104,10 @@ std::string get_ICU_date(format_style_t style, const time_t ts)
         icu_style = DateFormat::kLong;
     else if(style == as::date_full)
         icu_style = DateFormat::kFull;
-    std::unique_ptr<icu::DateFormat> fmt(icu::DateFormat::createDateInstance(icu_style, get_icu_test_locale()));
+    std::unique_ptr<icu::DateFormat> fmt(icu::DateFormat::createDateInstance(icu_style, get_ICU_test_locale()));
     fmt->setTimeZone(*icu::TimeZone::getGMT());
     icu::UnicodeString s;
-    return from_icu_string(fmt->format(ts * 1000., s));
+    return from_ICU_string(fmt->format(ts * 1000., s));
 }
 
 std::string get_ICU_datetime(format_style_t style, const time_t ts)
@@ -136,20 +124,35 @@ std::string get_ICU_datetime(format_style_t style, const time_t ts)
     else if(style == as::time_full)
         icu_style = DateFormat::kFull;
     std::unique_ptr<icu::DateFormat> fmt(
-      icu::DateFormat::createDateTimeInstance(icu_style, icu_style, get_icu_test_locale()));
+      icu::DateFormat::createDateTimeInstance(icu_style, icu_style, get_ICU_test_locale()));
     fmt->setTimeZone(*icu::TimeZone::getGMT());
     icu::UnicodeString s;
-    return from_icu_string(fmt->format(ts * 1000., s));
+    return from_ICU_string(fmt->format(ts * 1000., s));
 }
 
-#else
-const std::string icu_full_gmt_name;
-// clang-format off
-std::string get_ICU_time(...){ return ""; } // LCOV_EXCL_LINE
-std::string get_ICU_datetime(...){ return ""; } // LCOV_EXCL_LINE
-std::string get_ICU_date(...){ return ""; } // LCOV_EXCL_LINE
-// clang-format on
+std::string get_ICU_time(format_style_t style, const time_t ts, const char* tz = nullptr)
+{
+    using icu::DateFormat;
+    DateFormat::EStyle icu_style = DateFormat::kDefault;
+    namespace as = boost::locale::as;
+    if(style == as::time_short)
+        icu_style = DateFormat::kShort;
+    else if(style == as::time_medium)
+        icu_style = DateFormat::kMedium;
+    else if(style == as::time_long)
+        icu_style = DateFormat::kLong;
+    else if(style == as::time_full)
+        icu_style = DateFormat::kFull;
+    std::unique_ptr<icu::DateFormat> fmt(icu::DateFormat::createTimeInstance(icu_style, get_ICU_test_locale()));
+    if(!tz)
+        fmt->setTimeZone(*icu::TimeZone::getGMT());
+    else
+        fmt->adoptTimeZone(icu::TimeZone::createTimeZone(icu::UnicodeString::fromUTF8(tz)));
+    icu::UnicodeString s;
+    return from_ICU_string(fmt->format(ts * 1000., s));
+}
 #endif
+} // namespace
 
 using namespace boost::locale;
 
@@ -427,8 +430,8 @@ void test_manip(std::string e_charset = "UTF-8")
 #if BOOST_LOCALE_ICU_VERSION >= 402
     TEST_FMT_PARSE_2(as::currency, as::currency_national, 1345, "$1,345.00");
     TEST_FMT_PARSE_2(as::currency, as::currency_national, 1345.34, "$1,345.34");
-    TEST_FMT_PARSE_2(as::currency, as::currency_iso, 1345, get_icu_currency_iso(1345));
-    TEST_FMT_PARSE_2(as::currency, as::currency_iso, 1345.34, get_icu_currency_iso(1345.34));
+    TEST_FMT_PARSE_2(as::currency, as::currency_iso, 1345, get_ICU_currency_iso(1345));
+    TEST_FMT_PARSE_2(as::currency, as::currency_iso, 1345.34, get_ICU_currency_iso(1345.34));
 #endif
     TEST_FMT_PARSE_1(as::spellout, 10, "ten");
 #if 402 <= BOOST_LOCALE_ICU_VERSION && BOOST_LOCALE_ICU_VERSION < 408
@@ -800,7 +803,7 @@ void test_format_class(std::string charset = "UTF-8")
 #if BOOST_LOCALE_ICU_VERSION >= 402
     TEST_FORMAT_CLS("{1,cur=nat}", 1234, "$1,234.00");
     TEST_FORMAT_CLS("{1,cur=national}", 1234, "$1,234.00");
-    TEST_FORMAT_CLS("{1,cur=iso}", 1234, get_icu_currency_iso(1234));
+    TEST_FORMAT_CLS("{1,cur=iso}", 1234, get_ICU_currency_iso(1234));
 #endif
     TEST_FORMAT_CLS("{1,spell}", 10, "ten");
     TEST_FORMAT_CLS("{1,spellout}", 10, "ten");
