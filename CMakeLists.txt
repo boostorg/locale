@@ -1,4 +1,5 @@
 # Copyright 2020, 2021 Peter Dimov
+# Copyright 2022-2024 Alexander Grund
 # Distributed under the Boost Software License, Version 1.0.
 # https://www.boost.org/LICENSE_1_0.txt
 
@@ -123,7 +124,10 @@ endif()
 if(BOOST_LOCALE_ENABLE_ICU)
 
   find_package(ICU COMPONENTS data i18n uc REQUIRED)
-
+  if(ICU_VERSION VERSION_GREATER_EQUAL "50.1" AND ICU_VERSION VERSION_LESS "50.1.1")
+    # https://unicode-org.atlassian.net/browse/ICU-9780
+    message(FATAL_ERROR "ICU 50.1.0 has a bug with integer parsing and cannot be used reliably")
+  endif()
   target_compile_definitions(boost_locale PRIVATE BOOST_LOCALE_WITH_ICU=1)
   target_link_libraries(boost_locale PRIVATE ICU::data ICU::i18n ICU::uc)
 

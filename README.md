@@ -35,9 +35,10 @@ Sacrificing some less important features, Boost.Locale becomes less powerful but
 
 Distributed under the [Boost Software License, Version 1.0](https://www.boost.org/LICENSE_1_0.txt).
 
-### Properties
+### Properties / Requirements
 
 * C++11
+* ICU for full feature support. ICU 50.1 is not supported, please use a newer version.
 * Formatted with clang-format, see [`tools/format_sources.sh`](https://github.com/boostorg/locale/blob/develop/tools/format_sources.sh)
 
 ### Build Status
