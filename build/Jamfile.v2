@@ -229,7 +229,7 @@ rule configure-full ( properties * : flags-only )
             found-icu = true ;
             flags-result += <define>BOOST_LOCALE_WITH_ICU=1 $(ICU_OPTS) ;
 
-            ICU_SOURCES =
+            local ICU_SOURCES =
                 boundary
                 codecvt
                 collator
@@ -292,7 +292,7 @@ rule configure-full ( properties * : flags-only )
         flags-result += <define>BOOST_LOCALE_NO_STD_BACKEND=1 ;
     } else
     {
-        STD_SOURCES =
+        local STD_SOURCES =
           codecvt
           collate
           converter
@@ -329,7 +329,7 @@ rule configure-full ( properties * : flags-only )
         flags-result += <define>BOOST_LOCALE_NO_WINAPI_BACKEND=1 ;
     } else
     {
-        WINAPI_SOURCES =
+        local WINAPI_SOURCES =
             collate
             converter
             numeric
@@ -362,7 +362,7 @@ rule configure-full ( properties * : flags-only )
         flags-result += <define>BOOST_LOCALE_NO_POSIX_BACKEND=1 ;
     } else
     {
-        POSIX_SOURCES =
+        local POSIX_SOURCES =
           collate
           converter
           numeric
@@ -395,8 +395,7 @@ rule configure ( properties * )
 
 rule configure-flags ( properties * )
 {
-    local result ;
-    result = [ configure-full $(properties) : "flags" ] ;
+    local result = [ configure-full $(properties) : "flags" ] ;
     return $(result) ;
 }
 
