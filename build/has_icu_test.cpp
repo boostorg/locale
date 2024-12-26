@@ -6,6 +6,7 @@
 
 #include <unicode/coll.h>
 #include <unicode/locid.h>
+#include <unicode/numfmt.h>
 #include <unicode/stringpiece.h>
 #include <unicode/uchar.h>
 #include <unicode/utypes.h>
@@ -22,7 +23,15 @@
 #    error "U_ICU_VERSION_PATCHLEVEL_NUM is missing"
 #endif
 
-#if(U_ICU_VERSION_MAJOR_NUM == 50) && (U_ICU_VERSION_MINOR_NUM == 1) && (U_ICU_VERSION_PATCHLEVEL_NUM < 1)
+#define BOOST_LOCALE_MAKE_VERSION(maj, min, patch) (((maj)*100 + (min)) * 100 + patch)
+#define BOOST_LOCALE_ICU_VERSION \
+    BOOST_LOCALE_MAKE_VERSION(U_ICU_VERSION_MAJOR_NUM, U_ICU_VERSION_MAJOR_NUM, U_ICU_VERSION_MINOR_NUM)
+
+#if BOOST_LOCALE_ICU_VERSION < BOOST_LOCALE_MAKE_VERSION(4, 8, 1)
+// 4.8.0 fails parsing "GMT" as a full time zone if followed by unrelated text
+#    error "ICU 4.8.1 or higher is required"
+#endif
+#if BOOST_LOCALE_ICU_VERSION == BOOST_LOCALE_MAKE_VERSION(50, 1, 0)
 // https://unicode-org.atlassian.net/browse/ICU-9780
 #    error "ICU 50.1.0 has a bug with integer parsing and cannot be used reliably"
 #endif
@@ -32,6 +41,7 @@ int main()
     icu::Locale loc;
     UErrorCode err = U_ZERO_ERROR;
     UChar32 c = ::u_charFromName(U_UNICODE_CHAR_NAME, "GREEK SMALL LETTER ALPHA", &err);
+    delete icu::NumberFormat::createInstance(loc, UNUM_CURRENCY_ISO, err);
     icu::StringPiece sp;
     return U_SUCCESS(err) && sp.empty() && (c != 0u);
 }

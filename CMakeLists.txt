@@ -73,7 +73,7 @@ endif()
 
 # Build Options
 
-find_package(ICU COMPONENTS data i18n uc QUIET)
+find_package(ICU 4.8.1 COMPONENTS data i18n uc QUIET)
 option(BOOST_LOCALE_ENABLE_ICU "Boost.Locale: enable ICU backend" ${ICU_FOUND})
 
 # Workaround for an issue e.g. on FreeBSD where including ICU may change the used libiconv
@@ -123,7 +123,7 @@ endif()
 
 if(BOOST_LOCALE_ENABLE_ICU)
 
-  find_package(ICU COMPONENTS data i18n uc REQUIRED)
+  find_package(ICU 4.8.1 COMPONENTS data i18n uc REQUIRED)
   if(ICU_VERSION VERSION_GREATER_EQUAL "50.1" AND ICU_VERSION VERSION_LESS "50.1.1")
     # https://unicode-org.atlassian.net/browse/ICU-9780
     message(FATAL_ERROR "ICU 50.1.0 has a bug with integer parsing and cannot be used reliably")
@@ -148,7 +148,6 @@ if(BOOST_LOCALE_ENABLE_ICU)
     src/boost/locale/icu/icu_backend.hpp
     src/boost/locale/icu/icu_util.hpp
     src/boost/locale/icu/numeric.cpp
-    src/boost/locale/icu/time_zone.cpp
     src/boost/locale/icu/time_zone.hpp
     src/boost/locale/icu/uconv.hpp
   )

@@ -239,7 +239,6 @@ rule configure-full ( properties * : flags-only )
                 formatters_cache
                 icu_backend
                 numeric
-                time_zone
                 ;
 
             result += <source>icu/$(ICU_SOURCES).cpp

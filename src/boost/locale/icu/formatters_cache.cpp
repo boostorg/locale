@@ -87,19 +87,10 @@ namespace boost { namespace locale { namespace impl_icu {
         switch(type) {
             case num_fmt_type::number: return icu::NumberFormat::createInstance(locale_, err); break;
             case num_fmt_type::sci: return icu::NumberFormat::createScientificInstance(locale_, err); break;
-#if BOOST_LOCALE_ICU_VERSION >= 408
             case num_fmt_type::curr_nat: return icu::NumberFormat::createInstance(locale_, UNUM_CURRENCY, err); break;
             case num_fmt_type::curr_iso:
                 return icu::NumberFormat::createInstance(locale_, UNUM_CURRENCY_ISO, err);
                 break;
-#else
-            case num_fmt_type::curr_nat:
-                return icu::NumberFormat::createInstance(locale_, icu::NumberFormat::kCurrencyStyle, err);
-                break;
-            case num_fmt_type::curr_iso:
-                return icu::NumberFormat::createInstance(locale_, icu::NumberFormat::kIsoCurrencyStyle, err);
-                break;
-#endif
             case num_fmt_type::percent: return icu::NumberFormat::createPercentInstance(locale_, err); break;
             case num_fmt_type::spell: return new icu::RuleBasedNumberFormat(icu::URBNF_SPELLOUT, locale_, err); break;
             case num_fmt_type::ordinal: return new icu::RuleBasedNumberFormat(icu::URBNF_ORDINAL, locale_, err); break;
