@@ -1,6 +1,6 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
-// Copyright (c) 2022-2023 Alexander Grund
+// Copyright (c) 2022-2024 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
@@ -13,11 +13,8 @@
 #include <limits>
 #include <unicode/locid.h>
 #include <unicode/normlzr.h>
+#include <unicode/ucasemap.h>
 #include <unicode/ustring.h>
-#if BOOST_LOCALE_ICU_VERSION >= 308
-#    include <unicode/ucasemap.h>
-#    define BOOST_LOCALE_WITH_CASEMAP
-#endif
 #include <vector>
 
 namespace boost { namespace locale { namespace impl_icu {
@@ -72,7 +69,6 @@ namespace boost { namespace locale { namespace impl_icu {
         std::string encoding_;
     }; // converter_impl
 
-#ifdef BOOST_LOCALE_WITH_CASEMAP
     template<typename T>
     struct get_casemap_size_type;
 
@@ -193,26 +189,17 @@ namespace boost { namespace locale { namespace impl_icu {
         raii_casemap<U8Char> map_;
     }; // converter_impl
 
-#endif // BOOST_LOCALE_WITH_CASEMAP
-
     std::locale create_convert(const std::locale& in, const cdata& cd, char_facet_t type)
     {
         switch(type) {
             case char_facet_t::nochar: break;
             case char_facet_t::char_f:
-#ifdef BOOST_LOCALE_WITH_CASEMAP
                 if(cd.is_utf8())
                     return std::locale(in, new utf8_converter_impl<char>(cd));
-#endif
                 return std::locale(in, new converter_impl<char>(cd));
             case char_facet_t::wchar_f: return std::locale(in, new converter_impl<wchar_t>(cd));
 #ifndef BOOST_LOCALE_NO_CXX20_STRING8
-            case char_facet_t::char8_f:
-#    if defined(BOOST_LOCALE_WITH_CASEMAP)
-                return std::locale(in, new utf8_converter_impl<char8_t>(cd));
-#    else
-                return std::locale(in, new converter_impl<char8_t>(cd));
-#    endif
+            case char_facet_t::char8_f: return std::locale(in, new utf8_converter_impl<char8_t>(cd));
 #elif defined(__cpp_char8_t)
             case char_facet_t::char8_f: break;
 #endif

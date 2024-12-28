@@ -82,7 +82,8 @@ bool hasLocaleForBackend(const std::string& locale_name, const std::string& back
         return has_posix_locale(locale_name);
     else {
         BOOST_ASSERT(backendName == "icu");
-        return BOOST_LOCALE_ICU_VERSION >= 5901; // First version to use (correct) CLDR data
+        return (locale_name.substr(0, 3) != "en_")
+               || (BOOST_LOCALE_ICU_VERSION >= 5901); // First version to use (correct) CLDR data for en_* locales
     }
 }
 

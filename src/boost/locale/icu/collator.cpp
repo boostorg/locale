@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2022-2024 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
@@ -16,13 +17,8 @@
 #include <limits>
 #include <memory>
 #include <unicode/coll.h>
+#include <unicode/stringpiece.h>
 #include <vector>
-#if BOOST_LOCALE_ICU_VERSION >= 402
-#    define BOOST_LOCALE_WITH_STRINGPIECE 1
-#    include <unicode/stringpiece.h>
-#else
-#    define BOOST_LOCALE_WITH_STRINGPIECE 0
-#endif
 
 #ifdef BOOST_MSVC
 #    pragma warning(disable : 4244) // 'argument' : conversion from 'int'
@@ -43,7 +39,6 @@ namespace boost { namespace locale { namespace impl_icu {
             return res;
         }
 
-#if BOOST_LOCALE_WITH_STRINGPIECE
         int do_utf8_compare(collate_level level,
                             const char* b1,
                             const char* e1,
@@ -55,7 +50,6 @@ namespace boost { namespace locale { namespace impl_icu {
             icu::StringPiece right(b2, e2 - b2);
             return get_collator(level).compareUTF8(left, right, status);
         }
-#endif
 
         int do_ustring_compare(collate_level level,
                                const CharType* b1,
@@ -159,7 +153,6 @@ namespace boost { namespace locale { namespace impl_icu {
         bool is_utf8_;
     };
 
-#if BOOST_LOCALE_WITH_STRINGPIECE
     template<>
     int collate_impl<char>::do_real_compare(collate_level level,
                                             const char* b1,
@@ -173,7 +166,7 @@ namespace boost { namespace locale { namespace impl_icu {
         else
             return do_ustring_compare(level, b1, e1, b2, e2, status);
     }
-#endif
+
     std::locale create_collate(const std::locale& in, const cdata& cd, char_facet_t type)
     {
         switch(type) {

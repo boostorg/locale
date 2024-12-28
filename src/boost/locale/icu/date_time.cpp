@@ -1,6 +1,6 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
-// Copyright (c) 2021-2022 Alexander Grund
+// Copyright (c) 2021-2024 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
@@ -67,10 +67,6 @@ namespace boost { namespace locale { namespace impl_icu {
             const double rounded_time = std::floor(calendar_->getTime(err) / U_MILLIS_PER_SECOND) * U_MILLIS_PER_SECOND;
             calendar_->setTime(rounded_time, err);
             check_and_throw_dt(err);
-#if BOOST_LOCALE_ICU_VERSION < 402
-            // workaround old/invalid data, it should be 4 in general
-            calendar_->setMinimalDaysInFirstWeek(4);
-#endif
             encoding_ = dat.encoding();
         }
         calendar_impl(const calendar_impl& other)
@@ -79,15 +75,9 @@ namespace boost { namespace locale { namespace impl_icu {
             encoding_ = other.encoding_;
         }
 
-        calendar_impl* clone() const override
-        {
-            return new calendar_impl(*this);
-        }
+        calendar_impl* clone() const override { return new calendar_impl(*this); }
 
-        void set_value(period::marks::period_mark p, int value) override
-        {
-            calendar_->set(to_icu(p), int32_t(value));
-        }
+        void set_value(period::marks::period_mark p, int value) override { calendar_->set(to_icu(p), int32_t(value)); }
 
         int get_value(period::marks::period_mark p, value_type type) const override
         {
@@ -202,10 +192,7 @@ namespace boost { namespace locale { namespace impl_icu {
             check_and_throw_dt(err);
             return diff;
         }
-        void set_timezone(const std::string& tz) override
-        {
-            calendar_->adoptTimeZone(get_time_zone(tz));
-        }
+        void set_timezone(const std::string& tz) override { calendar_->adoptTimeZone(get_time_zone(tz)); }
         std::string get_timezone() const override
         {
             icu::UnicodeString tz;
