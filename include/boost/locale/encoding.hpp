@@ -240,11 +240,11 @@ namespace boost { namespace locale {
             /// Convert \a text to UTF
             ///
             /// \throws conversion_error: Conversion failed
-            string_type convert(const boost::string_view& text) const { return impl_->convert(text); }
+            string_type convert(const boost::string_view text) const { return impl_->convert(text); }
             /// Convert \a text to UTF
             ///
             /// \throws conversion_error: Conversion failed
-            string_type operator()(const boost::string_view& text) const { return convert(text); }
+            string_type operator()(const boost::string_view text) const { return convert(text); }
         };
 
         /// Converter class to decode an UTF string and encode it using a local encoding
@@ -298,11 +298,11 @@ namespace boost { namespace locale {
             /// Convert \a text
             ///
             /// \throws conversion_error: Conversion failed
-            std::string convert(const boost::string_view& text) const { return impl_->convert(text); }
+            std::string convert(const boost::string_view text) const { return impl_->convert(text); }
             /// Convert \a text
             ///
             /// \throws conversion_error: Conversion failed
-            std::string operator()(const boost::string_view& text) const { return convert(text); }
+            std::string operator()(const boost::string_view text) const { return convert(text); }
         };
     } // namespace conv
 }}    // namespace boost::locale

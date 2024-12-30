@@ -24,7 +24,7 @@ namespace boost { namespace locale { namespace conv { namespace detail {
 
         virtual ~charset_converter() = default;
         virtual string_type convert(const CharIn* begin, const CharIn* end) = 0;
-        string_type convert(const boost::basic_string_view<CharIn>& text)
+        string_type convert(const boost::basic_string_view<CharIn> text)
         {
             return convert(text.data(), text.data() + text.length());
         }
