@@ -9,23 +9,21 @@
 #include <boost/locale/formatting.hpp>
 #include <boost/locale/info.hpp>
 #include "../util/foreach_char.hpp"
+#include "../util/numeric_conversion.hpp"
 #include "formatters_cache.hpp"
 #include "icu_util.hpp"
 #include "time_zone.hpp"
 #include "uconv.hpp"
 #include <boost/assert.hpp>
-#include <boost/charconv/detail/parser.hpp>
+#include <boost/charconv/limits.hpp>
 #include <boost/charconv/to_chars.hpp>
-#include <array>
 #include <limits>
 #include <memory>
-#include <sstream>
 #ifdef BOOST_MSVC
 #    pragma warning(push)
 #    pragma warning(disable : 4251) // "identifier" : class "type" needs to have dll-interface...
 #endif
 #include <unicode/datefmt.h>
-#include <unicode/decimfmt.h>
 #include <unicode/numfmt.h>
 #include <unicode/rbnf.h>
 #include <unicode/smpdtfmt.h>
@@ -38,30 +36,6 @@
 namespace boost { namespace locale { namespace impl_icu {
 
     namespace {
-
-        // Create lookup table where: powers_of_10[i] == 10**i
-        constexpr uint64_t pow10(unsigned exponent)
-        {
-            return (exponent == 0) ? 1 : pow10(exponent - 1) * 10u;
-        }
-        template<bool condition, std::size_t Length>
-        using array_if_true = typename std::enable_if<condition, std::array<uint64_t, Length>>::type;
-
-        template<std::size_t Length, typename... Values>
-        constexpr array_if_true<sizeof...(Values) == Length, Length> make_powers_of_10(Values... values)
-        {
-            return {values...};
-        }
-        template<std::size_t Length, typename... Values>
-        constexpr array_if_true<sizeof...(Values) < Length, Length> make_powers_of_10(Values... values)
-        {
-            return make_powers_of_10<Length>(values..., pow10(sizeof...(Values)));
-        }
-        constexpr auto powers_of_10 = make_powers_of_10<std::numeric_limits<uint64_t>::digits10 + 1>();
-        static_assert(powers_of_10[0] == 1u, "!");
-        static_assert(powers_of_10[1] == 10u, "!");
-        static_assert(powers_of_10[5] == 100000u, "!");
-
         // Set the min/max fraction digits for the NumberFormat
         void set_fraction_digits(icu::NumberFormat& nf, const std::ios_base::fmtflags how, std::streamsize precision)
         {
@@ -102,7 +76,7 @@ namespace boost { namespace locale { namespace impl_icu {
                 return format(static_cast<int64_t>(value), code_points);
 
             // Fallback to using a StringPiece (decimal number) as input
-            char buffer[std::numeric_limits<uint64_t>::digits10 + 2];
+            char buffer[boost::charconv::limits<uint64_t>::max_chars10 + 1];
             auto res = boost::charconv::to_chars(buffer, std::end(buffer), value);
             BOOST_ASSERT(res);
             BOOST_ASSERT(res.ptr < std::end(buffer));
@@ -141,31 +115,7 @@ namespace boost { namespace locale { namespace impl_icu {
                 v = static_cast<uint64_t>(tmp);
                 return true;
             }
-            // Get value as a decimal number and parse that
-            err = U_ZERO_ERROR;
-            const auto decimals = fmt.getDecimalNumber(err);
-            if(U_FAILURE(err))
-                return false; // Not a number
-
-            // Parse raw value as ICU might return 9223372036854775810 as 9.22337203685477581E+18
-            uint64_t sig;
-            int32_t exp;
-            bool sign;
-            const char* end_decimal = decimals.data() + decimals.length();
-            const auto res = boost::charconv::detail::parser(decimals.data(), end_decimal, sign, sig, exp);
-            // The ICU value should always be valid
-            BOOST_ASSERT_MSG(res, "Failed to parse integer representation of ICU");
-            BOOST_ASSERT_MSG(res.ptr == end_decimal, "Did not fully parse integer representation of ICU");
-            BOOST_ASSERT_MSG(exp >= 0, "ICU truncated parsed integer");
-            // Gracefully handle if it is not the case, i.e. likely a bug in ICU
-            if(BOOST_UNLIKELY(!res || res.ptr != end_decimal || exp < 0))
-                return false; // LCOV_EXCL_LINE
-            if(sign)          // Negative value
-                return false;
-            if(exp >= powers_of_10.size())
-                return false; // Out of range
-            v = sig * powers_of_10[exp];
-            return true;
+            return util::try_parse_icu(fmt, v);
         }
 
         bool get_value(int32_t& v, icu::Formattable& fmt) const
