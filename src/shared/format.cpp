@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2024 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
@@ -7,7 +8,7 @@
 #include <boost/locale/format.hpp>
 #include <boost/locale/generator.hpp>
 #include <boost/locale/info.hpp>
-#include "../util/numeric.hpp"
+#include "../util/numeric_conversion.hpp"
 #include <algorithm>
 #include <iostream>
 #include <limits>

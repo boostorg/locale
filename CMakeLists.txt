@@ -35,6 +35,7 @@ add_library(boost_locale
   src/util/locale_data.cpp
   src/util/make_std_unique.hpp
   src/util/numeric.hpp
+  src/util/numeric_conversion.hpp
   src/util/timezone.hpp
   ${headers}
 )

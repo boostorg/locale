@@ -10,11 +10,8 @@
 #include <boost/locale/info.hpp>
 #include <boost/predef/os.h>
 #include <algorithm>
-#include <cerrno>
-#include <cstdlib>
 #include <ctime>
 #include <ios>
-#include <limits>
 #include <locale>
 #include <sstream>
 #include <string>
@@ -23,22 +20,6 @@
 #include "timezone.hpp"
 
 namespace boost { namespace locale { namespace util {
-
-    inline bool try_to_int(const std::string& s, int& res)
-    {
-        if(s.empty())
-            return false;
-        errno = 0;
-        char* end_char{};
-        const auto v = std::strtol(s.c_str(), &end_char, 10);
-        if(errno == ERANGE || end_char != s.c_str() + s.size())
-            return false;
-        if(v < std::numeric_limits<int>::min() || v > std::numeric_limits<int>::max())
-            return false;
-        res = v;
-        return true;
-    }
-
     template<typename CharType>
     struct formatting_size_traits {
         static size_t size(const std::basic_string<CharType>& s, const std::locale& /*l*/) { return s.size(); }
