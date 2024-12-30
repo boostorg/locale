@@ -64,10 +64,9 @@ namespace boost { namespace locale { namespace detail {
     {
         if(key.empty())
             return;
-        int position;
-        if(util::try_to_int(key, position) && position > 0) {
-            static_assert(sizeof(unsigned) <= sizeof(decltype(d->position)), "Possible lossy conversion");
-            d->position = static_cast<unsigned>(position - 1);
+        decltype(d->position) position;
+        if(util::try_to_int(key, position) && position > 0u) {
+            d->position = position - 1u;
         } else if(key == "num" || key == "number") {
             as::number(ios_);
 

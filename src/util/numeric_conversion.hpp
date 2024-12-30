@@ -13,7 +13,8 @@
 
 namespace boost { namespace locale { namespace util {
 
-    bool try_to_int(const string_view s, int value)
+    template<typename Integer>
+    bool try_to_int(const string_view s, Integer& value)
     {
         if(s.empty())
             return false;
