@@ -15,23 +15,23 @@ void test_try_to_int()
     using boost::locale::util::try_to_int;
 
     int v = 1337;
-    TEST(try_to_int("0", v));
-    TEST_EQ(v, 0);
+    if TEST(try_to_int("0", v))
+        TEST_EQ(v, 0);
 
-    TEST(try_to_int("42", v));
-    TEST_EQ(v, 42);
+    if TEST(try_to_int("42", v))
+        TEST_EQ(v, 42);
 
-    TEST(try_to_int("-1337", v));
-    TEST_EQ(v, -1337);
+    if TEST(try_to_int("-1337", v))
+        TEST_EQ(v, -1337);
 
     std::ostringstream ss;
     ss.imbue(std::locale::classic());
     empty_stream(ss) << std::numeric_limits<int>::min();
-    TEST(try_to_int(ss.str(), v));
-    TEST_EQ(v, std::numeric_limits<int>::min());
+    if TEST(try_to_int(ss.str(), v))
+        TEST_EQ(v, std::numeric_limits<int>::min());
     empty_stream(ss) << std::numeric_limits<int>::max();
-    TEST(try_to_int(ss.str(), v));
-    TEST_EQ(v, std::numeric_limits<int>::max());
+    if TEST(try_to_int(ss.str(), v))
+        TEST_EQ(v, std::numeric_limits<int>::max());
 
     TEST(!try_to_int("", v));
     TEST(!try_to_int("a", v));

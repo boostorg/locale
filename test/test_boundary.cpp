@@ -37,9 +37,10 @@ void run_segment_iterator_test(const lb::segment_index<Iterator>& map,
         unsigned i = 0;
         typename lb::segment_index<Iterator>::iterator p;
         for(p = map.begin(); p != map.end(); ++p, i++) {
-            TEST_REQUIRE(i < masks.size());
-            TEST_EQ(p->str(), chunks[i]);
-            TEST_EQ(p->rule(), masks[i]);
+            if TEST(i < masks.size()) {
+                TEST_EQ(p->str(), chunks[i]);
+                TEST_EQ(p->rule(), masks[i]);
+            }
         }
         TEST_EQ(i, chunks.size());
 
@@ -88,9 +89,10 @@ void run_break_iterator_test(const lb::boundary_point_index<Iterator>& map,
     unsigned i = 0;
     typename lb::boundary_point_index<Iterator>::iterator p;
     for(p = map.begin(); p != map.end(); ++p, i++) {
-        TEST_REQUIRE(i < masks.size());
-        TEST(p->iterator() == iters[i]);
-        TEST_EQ(p->rule(), masks[i]);
+        if TEST(i < masks.size()) {
+            TEST(p->iterator() == iters[i]);
+            TEST_EQ(p->rule(), masks[i]);
+        }
     }
 
     TEST_EQ(i, iters.size());
@@ -117,12 +119,13 @@ void verify_index(const lb::boundary_point_index<Iterator>& map,
                   const masks_t& masks)
 {
     BOOST_ASSERT(iters.size() == masks.size());
-    TEST_REQUIRE(static_cast<size_t>(std::distance(map.begin(), map.end())) == masks.size());
-    size_t i = 0;
-    for(const auto& b_point : map) {
-        TEST(b_point.iterator() == iters[i]);
-        TEST_EQ(b_point.rule(), masks[i]);
-        ++i;
+    if TEST(static_cast<size_t>(std::distance(map.begin(), map.end())) == masks.size()) {
+        size_t i = 0;
+        for(const auto& b_point : map) {
+            TEST(b_point.iterator() == iters[i]);
+            TEST_EQ(b_point.rule(), masks[i]);
+            ++i;
+        }
     }
 }
 
@@ -130,12 +133,13 @@ template<typename Iterator, typename Char>
 void verify_index(const lb::segment_index<Iterator>& map, const chunks_t<Char>& chunks, const masks_t& masks)
 {
     BOOST_ASSERT(chunks.size() == masks.size());
-    TEST_REQUIRE(static_cast<size_t>(std::distance(map.begin(), map.end())) == masks.size());
-    size_t i = 0;
-    for(const auto& seg : map) {
-        TEST_EQ(seg.str(), chunks[i]);
-        TEST_EQ(seg.rule(), masks[i]);
-        ++i;
+    if TEST(static_cast<size_t>(std::distance(map.begin(), map.end())) == masks.size()) {
+        size_t i = 0;
+        for(const auto& seg : map) {
+            TEST_EQ(seg.str(), chunks[i]);
+            TEST_EQ(seg.rule(), masks[i]);
+            ++i;
+        }
     }
 }
 

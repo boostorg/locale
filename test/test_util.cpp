@@ -37,31 +37,33 @@ void test_hold_ptr()
         auto* raw = new Dummy(42);
         boost::locale::hold_ptr<Dummy> ptr(raw);
         const boost::locale::hold_ptr<Dummy>& const_ptr = ptr;
-        TEST_REQUIRE(ptr);
-        TEST(ptr.get() == raw);
-        TEST(const_ptr.get() == raw);
-        // const propagation
-        TEST_EQ((*ptr).foo(), raw->i_);
-        TEST_EQ((*const_ptr).foo(), -raw->i_);
-        TEST_EQ(ptr->foo(), raw->i_);
-        TEST_EQ(const_ptr->foo(), -raw->i_);
-        TEST_EQ(ptr.get()->foo(), raw->i_);
-        TEST_EQ(const_ptr.get()->foo(), -raw->i_);
-        // move construct
-        boost::locale::hold_ptr<Dummy> ptr2 = std::move(ptr);
-        TEST(!ptr);
-        TEST_REQUIRE(ptr2);
-        TEST(ptr2.get() == raw);
-        // move assign
-        ptr = std::move(ptr2);
-        TEST(ptr);
-        TEST_REQUIRE(!ptr2);
-        TEST(ptr.get() == raw);
-        // Swap
-        boost::locale::hold_ptr<Dummy> ptr3(new Dummy(1337));
-        ptr.swap(ptr3);
-        TEST_EQ(ptr->foo(), 1337);
-        TEST_EQ(ptr3->foo(), 42);
+        if TEST(ptr) {
+            TEST(ptr.get() == raw);
+            TEST(const_ptr.get() == raw);
+            // const propagation
+            TEST_EQ((*ptr).foo(), raw->i_);
+            TEST_EQ((*const_ptr).foo(), -raw->i_);
+            TEST_EQ(ptr->foo(), raw->i_);
+            TEST_EQ(const_ptr->foo(), -raw->i_);
+            TEST_EQ(ptr.get()->foo(), raw->i_);
+            TEST_EQ(const_ptr.get()->foo(), -raw->i_);
+            // move construct
+            boost::locale::hold_ptr<Dummy> ptr2 = std::move(ptr);
+            TEST(!ptr);
+            if TEST(ptr2) {
+                TEST(ptr2.get() == raw);
+                // move assign
+                ptr = std::move(ptr2);
+                TEST(ptr);
+                TEST(!ptr2);
+                TEST(ptr.get() == raw);
+                // Swap
+                boost::locale::hold_ptr<Dummy> ptr3(new Dummy(1337));
+                ptr.swap(ptr3);
+                TEST_EQ(ptr->foo(), 1337);
+                TEST_EQ(ptr3->foo(), 42);
+            }
+        }
     }
     TEST_EQ(Dummy::ctr, 0);
     auto* raw = new Dummy(42);
