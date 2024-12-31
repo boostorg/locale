@@ -53,6 +53,7 @@ target_link_libraries(boost_locale
     Boost::iterator
     Boost::utility
   PRIVATE
+    Boost::charconv
     Boost::predef
     Boost::thread
 )
