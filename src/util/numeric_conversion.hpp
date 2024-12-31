@@ -14,10 +14,13 @@
 namespace boost { namespace locale { namespace util {
 
     template<typename Integer>
-    bool try_to_int(const string_view s, Integer& value)
+    bool try_to_int(string_view s, Integer& value)
     {
-        if(s.empty())
-            return false;
+        if(s.size() >= 2 && s[0] == '+') {
+            if(s[1] == '-') // "+-" is not allowed, invalid "+<number>" is detected by parser
+                return false;
+            s.remove_prefix(1);
+        }
         const auto res = boost::charconv::from_chars(s, value);
         return res && res.ptr == (s.data() + s.size());
     }

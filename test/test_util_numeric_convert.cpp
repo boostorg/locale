@@ -24,6 +24,9 @@ void test_try_to_int()
     if TEST(try_to_int("-1337", v))
         TEST_EQ(v, -1337);
 
+    if TEST(try_to_int("+1337", v))
+        TEST_EQ(v, +1337);
+
     std::ostringstream ss;
     ss.imbue(std::locale::classic());
     empty_stream(ss) << std::numeric_limits<int>::min();
@@ -34,6 +37,12 @@ void test_try_to_int()
         TEST_EQ(v, std::numeric_limits<int>::max());
 
     TEST(!try_to_int("", v));
+    TEST(!try_to_int("+", v));
+    TEST(!try_to_int("-", v));
+    TEST(!try_to_int("++", v));
+    TEST(!try_to_int("+-", v));
+    TEST(!try_to_int("++1", v));
+    TEST(!try_to_int("+-1", v));
     TEST(!try_to_int("a", v));
     TEST(!try_to_int("1.", v));
     TEST(!try_to_int("1a", v));
