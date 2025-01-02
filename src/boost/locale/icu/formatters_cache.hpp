@@ -9,7 +9,7 @@
 #define BOOST_LOCALE_PREDEFINED_FORMATTERS_HPP_INCLUDED
 
 #include <boost/locale/config.hpp>
-#include "boost/locale/icu/icu_util.hpp"
+#include "icu_util.hpp"
 #include <boost/thread/tss.hpp>
 #include <locale>
 

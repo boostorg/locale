@@ -4,11 +4,11 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#include "boost/locale/util/gregorian.hpp"
+#include "gregorian.hpp"
 #include <boost/locale/date_time.hpp>
 #include <boost/locale/date_time_facet.hpp>
 #include <boost/locale/hold_ptr.hpp>
-#include "boost/locale/util/timezone.hpp"
+#include "timezone.hpp"
 #include <boost/assert.hpp>
 #include <algorithm>
 #include <cstdlib>

@@ -11,7 +11,7 @@
 #    define NOMINMAX
 #endif
 #include <boost/locale/encoding.hpp>
-#include "boost/locale/util/encoding.hpp"
+#include "../util/encoding.hpp"
 #include <algorithm>
 #include <cstddef>
 #include <cstring>

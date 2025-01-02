@@ -7,12 +7,12 @@
 
 #include <boost/locale/collator.hpp>
 #include <boost/locale/generator.hpp>
-#include "boost/locale/icu/all_generator.hpp"
-#include "boost/locale/icu/cdata.hpp"
-#include "boost/locale/icu/icu_util.hpp"
-#include "boost/locale/icu/uconv.hpp"
-#include "boost/locale/shared/mo_hash.hpp"
-#include "boost/locale/shared/std_collate_adapter.hpp"
+#include "../shared/mo_hash.hpp"
+#include "../shared/std_collate_adapter.hpp"
+#include "all_generator.hpp"
+#include "cdata.hpp"
+#include "icu_util.hpp"
+#include "uconv.hpp"
 #include <boost/thread.hpp>
 #include <limits>
 #include <memory>

@@ -6,7 +6,7 @@
 
 #include <boost/locale/date_time.hpp>
 #include <boost/locale/formatting.hpp>
-#include "boost/locale/shared/ios_prop.hpp"
+#include "ios_prop.hpp"
 
 namespace boost { namespace locale {
     ios_info::ios_info() : flags_(0), domain_id_(0), time_zone_(time_zone::global()) {}

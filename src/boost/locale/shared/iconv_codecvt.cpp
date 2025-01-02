@@ -12,9 +12,9 @@
 #include <limits>
 #include <vector>
 #ifdef BOOST_LOCALE_WITH_ICONV
-#    include "boost/locale/util/encoding.hpp"
-#    include "boost/locale/util/iconv.hpp"
-#    include "boost/locale/util/make_std_unique.hpp"
+#    include "../util/encoding.hpp"
+#    include "../util/iconv.hpp"
+#    include "../util/make_std_unique.hpp"
 #endif
 
 namespace boost { namespace locale {

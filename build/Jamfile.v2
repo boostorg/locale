@@ -427,7 +427,6 @@ lib boost_locale
       $(cxx_requirements)
       <link>shared:<define>BOOST_LOCALE_DYN_LINK=1
       <define>BOOST_LOCALE_SOURCE
-      <include>$(TOP)/src
       <threading>multi
       <target-os>windows:<define>_CRT_SECURE_NO_WARNINGS
       <target-os>windows:<define>_SCL_SECURE_NO_WARNINGS

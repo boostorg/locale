@@ -12,19 +12,19 @@
 #include <vector>
 
 #ifdef BOOST_LOCALE_WITH_ICU
-#    include "boost/locale/icu/icu_backend.hpp"
+#    include "../icu/icu_backend.hpp"
 #endif
 
 #ifndef BOOST_LOCALE_NO_POSIX_BACKEND
-#    include "boost/locale/posix/posix_backend.hpp"
+#    include "../posix/posix_backend.hpp"
 #endif
 
 #ifndef BOOST_LOCALE_NO_STD_BACKEND
-#    include "boost/locale/std/std_backend.hpp"
+#    include "../std/std_backend.hpp"
 #endif
 
 #ifndef BOOST_LOCALE_NO_WINAPI_BACKEND
-#    include "boost/locale/win32/win_backend.hpp"
+#    include "../win32/win_backend.hpp"
 #endif
 
 namespace boost { namespace locale {

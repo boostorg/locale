@@ -8,7 +8,7 @@
 #    define NOMINMAX
 #endif
 
-#include "boost/locale/win32/lcid.hpp"
+#include "lcid.hpp"
 #include <boost/locale/util/locale_data.hpp>
 #include <boost/thread/locks.hpp>
 #include <boost/thread/mutex.hpp>

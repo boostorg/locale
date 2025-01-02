@@ -8,8 +8,8 @@
 #define BOOST_LOCALE_TEST_TOOLS_HPP
 
 #include <boost/locale/encoding.hpp>
-#include "boostLocale/test/posix_tools.hpp"
-#include "boostLocale/test/unit_test.hpp"
+#include "posix_tools.hpp"
+#include "unit_test.hpp"
 #include <cstdio>
 #include <ctime>
 #include <fstream>

@@ -1,17 +1,17 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
-// Copyright (c) 2021-2022 Alexander Grund
+// Copyright (c) 2021-2025 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
 #include <boost/locale/boundary.hpp>
 #include <boost/locale/generator.hpp>
-#include "boost/locale/icu/all_generator.hpp"
-#include "boost/locale/icu/cdata.hpp"
-#include "boost/locale/icu/icu_util.hpp"
-#include "boost/locale/icu/uconv.hpp"
-#include "boost/locale/util/encoding.hpp"
+#include "../util/encoding.hpp"
+#include "all_generator.hpp"
+#include "cdata.hpp"
+#include "icu_util.hpp"
+#include "uconv.hpp"
 #if BOOST_LOCALE_ICU_VERSION >= 5502
 #    include <unicode/utext.h>
 #endif

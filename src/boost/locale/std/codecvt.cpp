@@ -5,7 +5,7 @@
 // https://www.boost.org/LICENSE_1_0.txt
 
 #include <boost/locale/util.hpp>
-#include "boost/locale/std/all_generator.hpp"
+#include "all_generator.hpp"
 #include <locale>
 
 namespace boost { namespace locale { namespace impl_std {

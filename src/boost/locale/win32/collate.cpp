@@ -6,9 +6,9 @@
 
 #include <boost/locale/encoding.hpp>
 #include <boost/locale/generator.hpp>
-#include "boost/locale/shared/mo_hash.hpp"
-#include "boost/locale/shared/std_collate_adapter.hpp"
-#include "boost/locale/win32/api.hpp"
+#include "../shared/mo_hash.hpp"
+#include "../shared/std_collate_adapter.hpp"
+#include "api.hpp"
 #include <ios>
 #include <locale>
 #include <string>

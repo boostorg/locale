@@ -5,10 +5,10 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#include "boost/locale/util/encoding.hpp"
-#include "boost/locale/util/string.hpp"
+#include "encoding.hpp"
+#include <boost/locale/util/string.hpp>
 #if BOOST_LOCALE_USE_WIN32_API
-#    include "boost/locale/util/win_codepages.hpp"
+#    include "win_codepages.hpp"
 #    ifndef NOMINMAX
 #        define NOMINMAX
 #    endif

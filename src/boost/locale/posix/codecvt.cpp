@@ -6,9 +6,9 @@
 // https://www.boost.org/LICENSE_1_0.txt
 
 #include <boost/locale/encoding_errors.hpp>
-#include "boost/locale/posix/all_generator.hpp"
-#include "boost/locale/shared/iconv_codecvt.hpp"
-#include "boost/locale/util/encoding.hpp"
+#include "../shared/iconv_codecvt.hpp"
+#include "../util/encoding.hpp"
+#include "all_generator.hpp"
 #include <stdexcept>
 
 namespace boost { namespace locale { namespace impl_posix {

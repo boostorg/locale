@@ -5,7 +5,7 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#include "boost/locale/icu/formatters_cache.hpp"
+#include "formatters_cache.hpp"
 #include <boost/assert.hpp>
 #include <boost/core/ignore_unused.hpp>
 #include <memory>

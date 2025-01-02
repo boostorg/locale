@@ -15,8 +15,8 @@
 #include <cstddef>
 #include <cstring>
 
-#include "boost/locale/util/encoding.hpp"
-#include "boost/locale/util/make_std_unique.hpp"
+#include "encoding.hpp"
+#include "make_std_unique.hpp"
 
 #ifdef BOOST_MSVC
 #    pragma warning(disable : 4244) // loose data

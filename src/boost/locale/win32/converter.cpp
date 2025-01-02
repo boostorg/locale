@@ -7,8 +7,8 @@
 #include <boost/locale/conversion.hpp>
 #include <boost/locale/encoding.hpp>
 #include <boost/locale/generator.hpp>
-#include "boost/locale/win32/all_generator.hpp"
-#include "boost/locale/win32/api.hpp"
+#include "all_generator.hpp"
+#include "api.hpp"
 #include <cstring>
 #include <locale>
 #include <stdexcept>

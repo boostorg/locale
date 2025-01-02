@@ -1,20 +1,20 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
-// Copyright (c) 2022-2023 Alexander Grund
+// Copyright (c) 2022-2025 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#include "boost/locale/icu/codecvt.hpp"
+#include "codecvt.hpp"
 #include <boost/locale/encoding.hpp>
 #include <boost/locale/encoding_errors.hpp>
 #include <boost/locale/hold_ptr.hpp>
 #include <boost/locale/util.hpp>
-#include "boost/locale/icu/all_generator.hpp"
-#include "boost/locale/icu/icu_util.hpp"
-#include "boost/locale/icu/uconv.hpp"
-#include "boost/locale/util/encoding.hpp"
-#include "boost/locale/util/make_std_unique.hpp"
+#include "../util/encoding.hpp"
+#include "../util/make_std_unique.hpp"
+#include "all_generator.hpp"
+#include "icu_util.hpp"
+#include "uconv.hpp"
 #include <unicode/ucnv.h>
 #include <unicode/ucnv_err.h>
 

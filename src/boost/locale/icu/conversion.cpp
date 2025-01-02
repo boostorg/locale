@@ -6,10 +6,10 @@
 // https://www.boost.org/LICENSE_1_0.txt
 
 #include <boost/locale/conversion.hpp>
-#include "boost/locale/icu/all_generator.hpp"
-#include "boost/locale/icu/cdata.hpp"
-#include "boost/locale/icu/icu_util.hpp"
-#include "boost/locale/icu/uconv.hpp"
+#include "all_generator.hpp"
+#include "cdata.hpp"
+#include "icu_util.hpp"
+#include "uconv.hpp"
 #include <limits>
 #include <unicode/locid.h>
 #include <unicode/normlzr.h>
