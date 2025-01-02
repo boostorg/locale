@@ -1,6 +1,6 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
-// Copyright (c) 2022-2023 Alexander Grund
+// Copyright (c) 2022-2025 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
@@ -18,7 +18,7 @@
 #include <cstring>
 
 namespace boost { namespace locale { namespace util {
-    std::string normalize_encoding(const string_view encoding)
+    std::string normalize_encoding(const core::string_view encoding)
     {
         std::string result;
         result.reserve(encoding.length());
@@ -51,7 +51,7 @@ namespace boost { namespace locale { namespace util {
         return -1;
     }
 
-    int encoding_to_windows_codepage(const string_view encoding)
+    int encoding_to_windows_codepage(const core::string_view encoding)
     {
         return normalized_encoding_to_windows_codepage(normalize_encoding(encoding));
     }

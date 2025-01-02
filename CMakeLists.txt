@@ -1,5 +1,5 @@
 # Copyright 2020, 2021 Peter Dimov
-# Copyright 2022-2024 Alexander Grund
+# Copyright 2022-2025 Alexander Grund
 # Distributed under the Boost Software License, Version 1.0.
 # https://www.boost.org/LICENSE_1_0.txt
 
@@ -51,7 +51,6 @@ target_link_libraries(boost_locale
     Boost::config
     Boost::core
     Boost::iterator
-    Boost::utility
   PRIVATE
     Boost::charconv
     Boost::predef

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2024 Alexander Grund
+// Copyright (c) 2024-2025 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
@@ -9,12 +9,12 @@
 
 #include <boost/locale/config.hpp>
 #include <boost/charconv/from_chars.hpp>
-#include <boost/utility/string_view.hpp>
+#include <boost/core/detail/string_view.hpp>
 
 namespace boost { namespace locale { namespace util {
 
     template<typename Integer>
-    bool try_to_int(string_view s, Integer& value)
+    bool try_to_int(core::string_view s, Integer& value)
     {
         if(s.size() >= 2 && s[0] == '+') {
             if(s[1] == '-') // "+-" is not allowed, invalid "+<number>" is detected by parser

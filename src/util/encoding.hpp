@@ -1,6 +1,6 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
-// Copyright (c) 2022-2023 Alexander Grund
+// Copyright (c) 2022-2025 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
@@ -9,7 +9,7 @@
 #define BOOST_LOCALE_UTIL_ENCODING_HPP
 
 #include <boost/locale/config.hpp>
-#include <boost/utility/string_view.hpp>
+#include <boost/core/detail/string_view.hpp>
 #include <cstdint>
 #include <string>
 #include <type_traits>
@@ -48,7 +48,7 @@ namespace boost { namespace locale { namespace util {
 #endif
 
     /// Make encoding lowercase and remove all non-alphanumeric characters
-    BOOST_LOCALE_DECL std::string normalize_encoding(string_view encoding);
+    BOOST_LOCALE_DECL std::string normalize_encoding(core::string_view encoding);
     /// True if the normalized encodings are equal
     inline bool are_encodings_equal(const std::string& l, const std::string& r)
     {
@@ -58,10 +58,10 @@ namespace boost { namespace locale { namespace util {
     BOOST_LOCALE_DECL std::vector<std::string> get_simple_encodings();
 
 #if BOOST_LOCALE_USE_WIN32_API
-    int encoding_to_windows_codepage(string_view encoding);
+    int encoding_to_windows_codepage(core::string_view encoding);
 #else
     // Requires WinAPI -> Dummy returning invalid
-    inline int encoding_to_windows_codepage(string_view) // LCOV_EXCL_LINE
+    inline int encoding_to_windows_codepage(core::string_view) // LCOV_EXCL_LINE
     {
         return -1; // LCOV_EXCL_LINE
     }
