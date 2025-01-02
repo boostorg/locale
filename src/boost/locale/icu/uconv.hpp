@@ -9,7 +9,7 @@
 #define BOOST_SRC_LOCALE_ICU_UCONV_HPP
 
 #include <boost/locale/encoding.hpp>
-#include "boost/locale/icu/icu_util.hpp"
+#include "icu_util.hpp"
 #include <boost/core/exchange.hpp>
 
 #include <memory>

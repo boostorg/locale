@@ -4,13 +4,8 @@
 
 include(BoostTestJamfile)
 
-add_library(boost_locale_test INTERFACE)
-# Add test folder to include directories, especially for systems
-# where the current folder is not automatically added to the search path
-target_include_directories(boost_locale_test INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}")
-
 set(BOOST_TEST_COMPILE_DEFINITIONS "")
-set(BOOST_TEST_LINK_LIBRARIES Boost::locale boost_locale_test)
+set(BOOST_TEST_LINK_LIBRARIES Boost::locale)
 set(BOOST_TEST_COMPILE_OPTIONS ${BOOST_LOCALE_WARNING_OPTIONS})
 if(MSVC OR
   (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 11)

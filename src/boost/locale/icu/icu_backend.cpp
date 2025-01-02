@@ -5,14 +5,14 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#include "boost/locale/icu/icu_backend.hpp"
+#include "icu_backend.hpp"
 #include <boost/locale/gnu_gettext.hpp>
 #include <boost/locale/localization_backend.hpp>
 #include <boost/locale/util.hpp>
-#include "boost/locale/icu/all_generator.hpp"
-#include "boost/locale/icu/cdata.hpp"
-#include "boost/locale/shared/message.hpp"
-#include "boost/locale/util/make_std_unique.hpp"
+#include "../shared/message.hpp"
+#include "../util/make_std_unique.hpp"
+#include "all_generator.hpp"
+#include "cdata.hpp"
 
 #include <unicode/ucnv.h>
 

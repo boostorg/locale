@@ -1,24 +1,24 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
-// Copyright (c) 2022-2023 Alexander Grund
+// Copyright (c) 2022-2025 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
 #include <boost/locale/encoding.hpp>
-#include "boost/locale/util/make_std_unique.hpp"
+#include "../util/make_std_unique.hpp"
 
 #if BOOST_LOCALE_USE_WIN32_API
 #    define BOOST_LOCALE_WITH_WCONV
 #endif
 #ifdef BOOST_LOCALE_WITH_ICONV
-#    include "boost/locale/encoding/iconv_converter.hpp"
+#    include "iconv_converter.hpp"
 #endif
 #ifdef BOOST_LOCALE_WITH_ICU
-#    include "boost/locale/encoding/uconv_converter.hpp"
+#    include "uconv_converter.hpp"
 #endif
 #ifdef BOOST_LOCALE_WITH_WCONV
-#    include "boost/locale/encoding/wconv_converter.hpp"
+#    include "wconv_converter.hpp"
 #endif
 
 namespace boost { namespace locale { namespace conv {

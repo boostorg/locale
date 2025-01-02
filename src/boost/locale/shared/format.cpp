@@ -7,7 +7,7 @@
 #include <boost/locale/format.hpp>
 #include <boost/locale/generator.hpp>
 #include <boost/locale/info.hpp>
-#include "boost/locale/util/numeric.hpp"
+#include "../util/numeric.hpp"
 #include <algorithm>
 #include <iostream>
 #include <limits>

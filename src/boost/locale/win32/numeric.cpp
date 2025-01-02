@@ -4,12 +4,12 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#include "boost/locale/util/numeric.hpp"
+#include "../util/numeric.hpp"
 #include <boost/locale/encoding.hpp>
 #include <boost/locale/formatting.hpp>
 #include <boost/locale/generator.hpp>
-#include "boost/locale/win32/all_generator.hpp"
-#include "boost/locale/win32/api.hpp"
+#include "all_generator.hpp"
+#include "api.hpp"
 #include <algorithm>
 #include <cctype>
 #include <cstdlib>

@@ -5,7 +5,7 @@
 // https://www.boost.org/LICENSE_1_0.txt
 
 #include <boost/locale/encoding.hpp>
-#include "boost/locale/std/all_generator.hpp"
+#include "all_generator.hpp"
 #include <boost/assert.hpp>
 #include <ios>
 #include <locale>

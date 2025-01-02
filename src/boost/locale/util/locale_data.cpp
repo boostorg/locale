@@ -6,8 +6,8 @@
 // https://www.boost.org/LICENSE_1_0.txt
 
 #include <boost/locale/util/locale_data.hpp>
-#include "boost/locale/util/encoding.hpp"
-#include "boost/locale/util/string.hpp"
+#include <boost/locale/util/string.hpp>
+#include "encoding.hpp"
 #include <boost/assert.hpp>
 #include <algorithm>
 #include <stdexcept>

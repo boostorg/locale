@@ -5,10 +5,10 @@
 // https://www.boost.org/LICENSE_1_0.txt
 
 #include <boost/locale/formatting.hpp>
-#include "boost/locale/icu/all_generator.hpp"
-#include "boost/locale/icu/cdata.hpp"
-#include "boost/locale/icu/formatter.hpp"
-#include "boost/locale/icu/formatters_cache.hpp"
+#include "all_generator.hpp"
+#include "cdata.hpp"
+#include "formatter.hpp"
+#include "formatters_cache.hpp"
 #include <algorithm>
 #include <ios>
 #include <limits>

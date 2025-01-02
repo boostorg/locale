@@ -5,7 +5,7 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#include "boost/locale/std/std_backend.hpp"
+#include "std_backend.hpp"
 #include <boost/locale/gnu_gettext.hpp>
 #include <boost/locale/localization_backend.hpp>
 #include <boost/locale/util.hpp>
@@ -20,15 +20,15 @@
 #    ifndef NOMINMAX
 #        define NOMINMAX
 #    endif
-#    include "boost/locale/win32/lcid.hpp"
+#    include "../win32/lcid.hpp"
 #    include <windows.h>
 #endif
-#include "boost/locale/shared/message.hpp"
-#include "boost/locale/std/all_generator.hpp"
-#include "boost/locale/util/encoding.hpp"
-#include "boost/locale/util/gregorian.hpp"
-#include "boost/locale/util/make_std_unique.hpp"
-#include "boost/locale/util/numeric.hpp"
+#include "../shared/message.hpp"
+#include "../util/encoding.hpp"
+#include "../util/gregorian.hpp"
+#include "../util/make_std_unique.hpp"
+#include "../util/numeric.hpp"
+#include "all_generator.hpp"
 
 namespace {
 struct windows_name {

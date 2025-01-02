@@ -9,11 +9,11 @@
 #include <boost/locale/date_time_facet.hpp>
 #include <boost/locale/formatting.hpp>
 #include <boost/locale/hold_ptr.hpp>
-#include "boost/locale/icu/all_generator.hpp"
-#include "boost/locale/icu/cdata.hpp"
-#include "boost/locale/icu/icu_util.hpp"
-#include "boost/locale/icu/time_zone.hpp"
-#include "boost/locale/icu/uconv.hpp"
+#include "all_generator.hpp"
+#include "cdata.hpp"
+#include "icu_util.hpp"
+#include "time_zone.hpp"
+#include "uconv.hpp"
 #include <boost/thread.hpp>
 #include <cmath>
 #include <memory>

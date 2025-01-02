@@ -8,8 +8,8 @@
 #define BOOST_LOCALE_IMPL_UCONV_CODEPAGE_HPP
 #include <boost/locale/encoding.hpp>
 #include <boost/locale/hold_ptr.hpp>
-#include "boost/locale/icu/icu_util.hpp"
-#include "boost/locale/icu/uconv.hpp"
+#include "../icu/icu_util.hpp"
+#include "../icu/uconv.hpp"
 #include <unicode/ucnv.h>
 #include <unicode/ucnv_err.h>
 

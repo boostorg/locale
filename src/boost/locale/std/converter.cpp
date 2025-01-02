@@ -11,7 +11,7 @@
 #include <stdexcept>
 #include <vector>
 
-#include "boost/locale/std/all_generator.hpp"
+#include "all_generator.hpp"
 
 namespace boost { namespace locale { namespace impl_std {
 

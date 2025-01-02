@@ -8,6 +8,8 @@
 #if defined(__FreeBSD__)
 #    include <xlocale.h>
 #endif
+#include "../shared/mo_hash.hpp"
+#include "all_generator.hpp"
 #include <clocale>
 #include <cstring>
 #include <ios>
@@ -16,9 +18,6 @@
 #include <string>
 #include <vector>
 #include <wchar.h>
-
-#include "boost/locale/posix/all_generator.hpp"
-#include "boost/locale/shared/mo_hash.hpp"
 
 namespace boost { namespace locale { namespace impl_posix {
 
