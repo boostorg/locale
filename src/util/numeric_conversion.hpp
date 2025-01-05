@@ -8,16 +8,45 @@
 #define BOOST_LOCALE_IMPL_UTIL_NUMERIC_CONVERSIONS_HPP
 
 #include <boost/locale/config.hpp>
+#include <boost/assert.hpp>
 #include <boost/charconv/from_chars.hpp>
 #include <boost/core/detail/string_view.hpp>
 #include <algorithm>
 #include <array>
+#include <limits>
 #include <type_traits>
 #ifdef BOOST_LOCALE_WITH_ICU
 #    include <unicode/fmtable.h>
 #endif
 
 namespace boost { namespace locale { namespace util {
+    namespace {
+
+        // Create lookup table where: powers_of_10[i] == 10**i
+        constexpr uint64_t pow10(unsigned exponent)
+        {
+            return (exponent == 0) ? 1 : pow10(exponent - 1) * 10u;
+        }
+        template<bool condition, std::size_t Length>
+        using array_if_true = typename std::enable_if<condition, std::array<uint64_t, Length>>::type;
+
+        template<std::size_t Length, typename... Values>
+        constexpr array_if_true<sizeof...(Values) == Length, Length> make_powers_of_10(Values... values)
+        {
+            return {{values...}};
+        }
+        template<std::size_t Length, typename... Values>
+        constexpr array_if_true<sizeof...(Values) < Length, Length> make_powers_of_10(Values... values)
+        {
+            return make_powers_of_10<Length>(values..., pow10(sizeof...(Values)));
+        }
+        constexpr auto powers_of_10 = make_powers_of_10<std::numeric_limits<uint64_t>::digits10 + 1>();
+#ifndef BOOST_NO_CXX14_CONSTEXPR
+        static_assert(powers_of_10[0] == 1u, "!");
+        static_assert(powers_of_10[1] == 10u, "!");
+        static_assert(powers_of_10[5] == 100000u, "!");
+#endif
+    } // namespace
 
     template<typename Integer>
     bool try_to_int(core::string_view s, Integer& value)
@@ -45,50 +74,57 @@ namespace boost { namespace locale { namespace util {
         if(s[0] == '-')
             return false;
         constexpr auto maxDigits = std::numeric_limits<Integer>::digits10 + 1;
-        std::array<char, maxDigits> buffer;
-        // Convert to a regular integer string without exponent or fractional
-        core::string_view string_value;
 
         const auto expPos = s.find('E', 1);
-        if(s[1] == '.') { // "Shift" the dot to right according to exponent
-            int8_t exponent;
-            if(BOOST_UNLIKELY(expPos == core::string_view::npos || !try_to_int(s.substr(expPos + 1), exponent)))
-                return false;
-            const auto numSignificantDigits = expPos - 1; // Exclude dot
-            const auto numDigits = exponent + 1u;         // E0 -> 1 digit
-            if(BOOST_UNLIKELY(exponent < 0 || numDigits < numSignificantDigits))
+        if(expPos == core::string_view::npos)
+            return (s[1] != '.') && try_to_int(s, value); // Shortcut: Regular integer
+        uint8_t exponent;                                 // Negative exponent would be a fractional
+        if(BOOST_UNLIKELY(!try_to_int(s.substr(expPos + 1), exponent)))
+            return false;
+
+        core::string_view significant = s.substr(0, expPos);
+        Integer significant_value;
+        if(s[1] == '.') {
+            const auto numSignificantDigits = significant.size() - 1u; // Exclude dot
+            const auto numDigits = exponent + 1u;                      // E0 -> 1 digit
+            if(BOOST_UNLIKELY(numDigits < numSignificantDigits))
                 return false; // Fractional
             else if(BOOST_UNLIKELY(numDigits > maxDigits))
                 return false; // Too large
+            // Factor to get from the fractional number to an integer
+            BOOST_ASSERT(numSignificantDigits - 1u < powers_of_10.size());
+            const auto factor = static_cast<Integer>(powers_of_10[numSignificantDigits - 1]);
+            exponent = static_cast<uint8_t>(numDigits - numSignificantDigits);
 
-            // Copy to buffer excluding dot
-            buffer[0] = s[0];
-            const auto bufPos = std::copy(s.begin() + 2, s.begin() + expPos, buffer.begin() + 1);
-            std::fill(bufPos, buffer.begin() + numDigits, '0');
-            string_value = core::string_view(buffer.data(), numDigits);
-        } else { // Pad with zeros according to exponent
-            if(expPos == core::string_view::npos)
-                return try_to_int(s, value); // Shortcut: Regular integer
-            const core::string_view significant = s.substr(0, expPos);
-            int8_t exponent;
-            if(BOOST_UNLIKELY(!try_to_int(s.substr(expPos + 1), exponent)))
-                return false;
-            else if(BOOST_UNLIKELY(exponent < 0))
-                return false; // Fractional
-            else if(BOOST_UNLIKELY(exponent == 0))
-                string_value = significant;
-            else {
-                const auto numDigits = significant.size() + exponent;
-                if(BOOST_UNLIKELY(numDigits > maxDigits))
-                    return false; // Too large
-                else {
-                    const auto bufPos = std::copy(significant.begin(), significant.end(), buffer.begin());
-                    std::fill(bufPos, buffer.begin() + numDigits, '0');
-                    string_value = core::string_view(buffer.data(), numDigits);
-                }
+            const unsigned firstDigit = significant[0] - '0';
+            if(firstDigit > 9u)
+                return false; // Not a digit
+            if(numSignificantDigits == maxDigits) {
+                const auto maxFirstDigit = std::numeric_limits<Integer>::max() / powers_of_10[maxDigits - 1];
+                if(firstDigit > maxFirstDigit)
+                    return false;
             }
-        }
-        return try_to_int(string_value, value);
+            significant.remove_prefix(2);
+            if(BOOST_UNLIKELY(!try_to_int(significant, significant_value)))
+                return false;
+            // firstDigit * factor + significant_value <= max
+            if(static_cast<Integer>(firstDigit) > (std::numeric_limits<Integer>::max() - significant_value) / factor)
+                return false;
+            significant_value += static_cast<Integer>(firstDigit * factor);
+        } else if(BOOST_UNLIKELY(significant.size() + exponent > maxDigits))
+            return false;
+        else if(BOOST_UNLIKELY(!try_to_int(significant, significant_value)))
+            return false;
+        // Add zeros if necessary
+        if(exponent > 0u) {
+            BOOST_ASSERT(exponent < powers_of_10.size());
+            const auto factor = static_cast<Integer>(powers_of_10[exponent]);
+            if(significant_value > std::numeric_limits<Integer>::max() / factor)
+                return false;
+            value = significant_value * factor;
+        } else
+            value = significant_value;
+        return true;
     }
 
 #ifdef BOOST_LOCALE_WITH_ICU
