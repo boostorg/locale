@@ -307,6 +307,26 @@ jobs:
           B2_TARGETS="libs/$SELF/test//show_config --verbose-test" ci/build.sh
           ci/build.sh
 
+      - name: Show config.log
+        if: '!matrix.coverity && always()'
+        run: cat "$BOOST_ROOT/bin.v2/config.log"
+
+      - name: Test output
+        if: '!matrix.coverity && always()'
+        run: |
+          for f in $(find "$BOOST_ROOT/bin.v2/libs/$SELF/test" -type f -name 'test_*.run'); do
+              name=$(basename "$f")
+              name=${name%.run}
+              config=$(dirname "$f")
+              config=${config#*.test/*/}
+              config=${config/\/visibility-hidden/}
+              echo "::group::$name"
+              echo "$config"
+              echo ""
+              cat "$f"
+              echo "::endgroup::"
+          done
+
       - name: Run tests with iconv only
         if: '!matrix.coverity'
         run: ci/build.sh
