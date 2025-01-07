@@ -207,6 +207,8 @@ jobs:
             SOURCE_KEYS=(${{join(matrix.source_keys, ' ')}})
             SOURCES=(${{join(matrix.sources, ' ')}})
 
+            [[ "${{matrix.address-model}}" != *32* ]] || sudo dpkg --add-architecture i386
+
             ci/add-apt-keys.sh "${SOURCE_KEYS[@]}"
             # Initial update before adding sources required to get e.g. keys
             sudo apt-get -o Acquire::Retries=$NET_RETRY_COUNT update
@@ -220,6 +222,7 @@ jobs:
             else
                 pkgs="${{matrix.install}}"
             fi
+            [[ "${{matrix.address-model}}" != *32* ]] || pkgs+=" libicu-dev:i386"
             sudo apt-get -o Acquire::Retries=$NET_RETRY_COUNT install -y $pkgs libicu-dev
 
       - name: Setup GCC Toolchain
