@@ -317,6 +317,12 @@ jobs:
         if: '!matrix.coverity'
         run: ci/build.sh
         env: {B2_FLAGS: -a boost.locale.icu=off boost.locale.iconv=on}
+      - name: Check ICU
+        if: '!matrix.coverity'
+        run: 'ci/build.sh || true'
+        env:
+          B2_FLAGS: -a boost.locale.icu=on  boost.locale.iconv=off --debug-configuration
+          B2_TARGETS: libs/locale/build//has_icu
       - name: Run tests with ICU only
         if: '!matrix.coverity'
         run: ci/build.sh
@@ -405,6 +411,18 @@ jobs:
           B2_TOOLSET: ${{matrix.toolset}}
           B2_CXXSTD: ${{matrix.cxxstd}}
           B2_ADDRESS_MODEL: ${{matrix.addrmd}}
+
+      - name: Check ICU
+        if: '!matrix.coverage'
+        run: |
+          set B2_FLAGS=boost.locale.icu=on boost.locale.iconv=off boost.locale.std=off boost.locale.winapi=off --debug-configuration
+          ci\build.bat
+          rmdir /s /q bin.v2
+        env:
+          B2_TOOLSET: ${{matrix.toolset}}
+          B2_CXXSTD: ${{matrix.cxxstd}}
+          B2_ADDRESS_MODEL: ${{matrix.addrmd}}
+          B2_TARGETS: libs/locale/build//has_icu
 
       - name: Run tests (ICU, without coverage)
         if: '!matrix.coverage'
