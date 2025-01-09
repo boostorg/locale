@@ -370,7 +370,7 @@ void test_locale_data()
     verify_against_icu();
 }
 
-#include "../src/boost/locale/util/numeric.hpp"
+#include "../src/util/numeric.hpp"
 #include <limits>
 #include <locale>
 #include <sstream>

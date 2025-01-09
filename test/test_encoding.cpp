@@ -813,8 +813,8 @@ bool isLittleEndian()
     return reinterpret_cast<const char*>(&endianMark)[0] == 1;
 }
 
-#include "../src/boost/locale/util/encoding.hpp"
-#include "../src/boost/locale/util/win_codepages.hpp"
+#include "../src/util/encoding.hpp"
+#include "../src/util/win_codepages.hpp"
 
 void test_utf_name()
 {

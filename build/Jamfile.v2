@@ -21,7 +21,7 @@ constant boost_dependencies_private :
     ;
 
 project
-    : source-location $(TOP)/src/boost/locale
+    : source-location $(TOP)/src
     : common-requirements <library>$(boost_dependencies)
     : requirements <library>$(boost_dependencies_private)
     ;
