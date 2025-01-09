@@ -330,18 +330,25 @@ jobs:
               echo "::endgroup::"
           done
 
+      - name: Collect coverage
+        if: matrix.coverage
+        run: ci/codecov.sh "collect" && mv coverage.info coverage.all.info
+
       - name: Run tests with iconv only
         if: '!matrix.coverity'
         run: ci/build.sh
         env: {B2_FLAGS: -a boost.locale.icu=off boost.locale.iconv=on}
+      - name: Collect coverage
+        if: matrix.coverage
+        run: ci/codecov.sh "collect" && mv coverage.info coverage.iconv.info
+
       - name: Run tests with ICU only
         if: '!matrix.coverity'
         run: ci/build.sh
         env: {B2_FLAGS: -a boost.locale.icu=on  boost.locale.iconv=off}
-
       - name: Collect coverage
         if: matrix.coverage
-        run: ci/codecov.sh "collect"
+        run: ci/codecov.sh "collect" && mv coverage.info coverage.icu.info
 
       - name: Upload coverage
         if: matrix.coverage
@@ -349,7 +356,7 @@ jobs:
         with:
           fail_ci_if_error: true
           disable_search: true
-          files: coverage.info
+          files: coverage.all.info,coverage.iconv.info,coverage.icu.info
           name: Github Actions
           token: ${{secrets.CODECOV_TOKEN}}
           verbose: true
