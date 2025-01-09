@@ -1,6 +1,6 @@
 # Copyright 2020-2021 Peter Dimov
 # Copyright 2021 Andrey Semashev
-# Copyright 2021-2024 Alexander Grund
+# Copyright 2021-2025 Alexander Grund
 # Copyright 2022 James E. King III
 #
 # Distributed under the Boost Software License, Version 1.0.
@@ -115,15 +115,15 @@ jobs:
           - { compiler: clang-6.0, cxxstd: '11,14,17',       os: ubuntu-20.04 }
           - { compiler: clang-7,   cxxstd: '11,14,17',       os: ubuntu-20.04 }
           # Note: clang-8 does not fully support C++20, so it is not compatible with some libstdc++ versions in this mode
-          - { compiler: clang-8,   cxxstd: '11,14,17,2a',    os: ubuntu-20.04 , install: 'clang-8 g++-7', gcc_toolchain: 7 }
+          - { compiler: clang-8,   cxxstd: '11,14,17,2a',    os: ubuntu-20.04 , gcc_toolchain: 7 }
           - { compiler: clang-9,   cxxstd: '11,14,17,2a',    os: ubuntu-20.04 }
           - { compiler: clang-10,  cxxstd: '11,14,17,20',    os: ubuntu-20.04 }
           - { compiler: clang-11,  cxxstd: '11,14,17,20',    os: ubuntu-20.04 }
           - { compiler: clang-12,  cxxstd: '11,14,17,20',    os: ubuntu-20.04 }
           # Clang isn't compatible with libstdc++-13, so use the slightly older one
-          - { compiler: clang-13,  cxxstd: '11,14,17,20',    os: ubuntu-22.04, install: 'clang-13 g++-12', gcc_toolchain: 12 }
-          - { compiler: clang-14,  cxxstd: '11,14,17,20',    os: ubuntu-22.04, install: 'clang-14 g++-12', gcc_toolchain: 12 }
-          - { compiler: clang-15,  cxxstd: '11,14,17,20',    os: ubuntu-22.04, install: 'clang-15 g++-12', gcc_toolchain: 12 }
+          - { compiler: clang-13,  cxxstd: '11,14,17,20',    os: ubuntu-22.04, gcc_toolchain: 11 }
+          - { compiler: clang-14,  cxxstd: '11,14,17,20',    os: ubuntu-22.04, gcc_toolchain: 11 }
+          - { compiler: clang-15,  cxxstd: '11,14,17,20',    os: ubuntu-22.04, gcc_toolchain: 12 }
           - { compiler: clang-16,  cxxstd: '11,14,17,20,2b', os: ubuntu-24.04 }
           # https://github.com/llvm/llvm-project/issues/59827: disabled 2b/23 for clang-17 with libstdc++13 in 24.04
           - { compiler: clang-17,  cxxstd: '11,14,17,20',    os: ubuntu-24.04 }
@@ -206,13 +206,8 @@ jobs:
         run: |
             SOURCE_KEYS=(${{join(matrix.source_keys, ' ')}})
             SOURCES=(${{join(matrix.sources, ' ')}})
-            # Add these by default
-            SOURCE_KEYS+=(
-                'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x1E9377A2BA9EF27F'
-                'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x40976EAF437D05B5'
-                'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3B4FE6ACC0B21F32'
-            )
-            SOURCES+=(ppa:ubuntu-toolchain-r/test)
+
+            [[ "${{matrix.address-model}}" != *32* ]] || sudo dpkg --add-architecture i386
 
             ci/add-apt-keys.sh "${SOURCE_KEYS[@]}"
             # Initial update before adding sources required to get e.g. keys
@@ -223,9 +218,11 @@ jobs:
             if [[ -z "${{matrix.install}}" ]]; then
                 pkgs="${{matrix.compiler}}"
                 pkgs="${pkgs/gcc-/g++-}"
+                [[ -z "${{matrix.gcc_toolchain}}" ]] || pkgs+=" g++-${{matrix.gcc_toolchain}}"
             else
                 pkgs="${{matrix.install}}"
             fi
+            [[ "${{matrix.address-model}}" != *32* ]] || pkgs+=" libicu-dev:i386"
             sudo apt-get -o Acquire::Retries=$NET_RETRY_COUNT install -y $pkgs libicu-dev
 
       - name: Setup GCC Toolchain
@@ -313,27 +310,53 @@ jobs:
           B2_TARGETS="libs/$SELF/test//show_config --verbose-test" ci/build.sh
           ci/build.sh
 
+      - name: Show config.log
+        if: '!matrix.coverity && always()'
+        run: cat "$BOOST_ROOT/bin.v2/config.log"
+
+      - name: Test output
+        if: '!matrix.coverity && always()'
+        run: |
+          for f in $(find "$BOOST_ROOT/bin.v2/libs/$SELF/test" -type f -name 'test_*.run'); do
+              name=$(basename "$f")
+              name=${name%.run}
+              config=$(dirname "$f")
+              config=${config#*.test/*/}
+              config=${config/\/visibility-hidden/}
+              echo "::group::$name"
+              echo "$config"
+              echo ""
+              cat "$f"
+              echo "::endgroup::"
+          done
+
+      - name: Collect coverage
+        if: matrix.coverage
+        run: ci/codecov.sh "collect" && mv coverage.info coverage.all.info
+
       - name: Run tests with iconv only
         if: '!matrix.coverity'
         run: ci/build.sh
         env: {B2_FLAGS: -a boost.locale.icu=off boost.locale.iconv=on}
+      - name: Collect coverage
+        if: matrix.coverage
+        run: ci/codecov.sh "collect" && mv coverage.info coverage.iconv.info
+
       - name: Run tests with ICU only
         if: '!matrix.coverity'
         run: ci/build.sh
         env: {B2_FLAGS: -a boost.locale.icu=on  boost.locale.iconv=off}
-
       - name: Collect coverage
         if: matrix.coverage
-        run: ci/codecov.sh "upload"
-        env:
-          BOOST_CI_CODECOV_IO_UPLOAD: skip
+        run: ci/codecov.sh "collect" && mv coverage.info coverage.icu.info
 
       - name: Upload coverage
         if: matrix.coverage
         uses: codecov/codecov-action@v5
         with:
+          fail_ci_if_error: true
           disable_search: true
-          files: coverage.info
+          files: coverage.all.info,coverage.iconv.info,coverage.icu.info
           name: Github Actions
           token: ${{secrets.CODECOV_TOKEN}}
           verbose: true
