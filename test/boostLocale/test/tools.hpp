@@ -16,7 +16,7 @@
 #include <sstream>
 #include <string>
 #ifndef BOOST_LOCALE_NO_WINAPI_BACKEND
-#    include "../src/boost/locale/win32/lcid.hpp"
+#    include "../src/win32/lcid.hpp"
 #else
 #    include <boost/core/ignore_unused.hpp>
 #endif

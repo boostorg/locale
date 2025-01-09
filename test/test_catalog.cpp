@@ -5,7 +5,7 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-#include "../src/boost/locale/shared/mo_lambda.hpp"
+#include "../src/shared/mo_lambda.hpp"
 #include "boostLocale/test/unit_test.hpp"
 #include <iostream>
 #include <limits>

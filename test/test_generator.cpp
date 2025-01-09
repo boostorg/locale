@@ -7,7 +7,7 @@
 
 #include <boost/locale.hpp>
 #include <boost/locale/conversion.hpp>
-#include "../src/boost/locale/win32/lcid.hpp"
+#include "../src/win32/lcid.hpp"
 #include "boostLocale/test/tools.hpp"
 #include "boostLocale/test/unit_test.hpp"
 #include <boost/assert.hpp>

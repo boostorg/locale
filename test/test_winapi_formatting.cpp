@@ -20,7 +20,7 @@
 #    endif
 #    include <windows.h>
 #endif
-#include "../src/boost/locale/win32/lcid.hpp"
+#include "../src/win32/lcid.hpp"
 #include "boostLocale/test/tools.hpp"
 #include "boostLocale/test/unit_test.hpp"
 #include "formatting_common.hpp"

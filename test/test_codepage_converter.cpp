@@ -6,9 +6,9 @@
 
 #include <boost/locale/util.hpp>
 #ifdef BOOST_LOCALE_WITH_ICU
-#    include "../src/boost/locale/icu/codecvt.hpp"
+#    include "../src/icu/codecvt.hpp"
 #endif
-#include "../src/boost/locale/shared/iconv_codecvt.hpp"
+#include "../src/shared/iconv_codecvt.hpp"
 
 #include <cstring>
 #include <iostream>
