@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2024 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
@@ -7,7 +8,7 @@
 #include <boost/locale/format.hpp>
 #include <boost/locale/generator.hpp>
 #include <boost/locale/info.hpp>
-#include "../util/numeric.hpp"
+#include "../util/numeric_conversion.hpp"
 #include <algorithm>
 #include <iostream>
 #include <limits>
@@ -63,10 +64,9 @@ namespace boost { namespace locale { namespace detail {
     {
         if(key.empty())
             return;
-        int position;
-        if(util::try_to_int(key, position) && position > 0) {
-            static_assert(sizeof(unsigned) <= sizeof(decltype(d->position)), "Possible lossy conversion");
-            d->position = static_cast<unsigned>(position - 1);
+        decltype(d->position) position;
+        if(util::try_to_int(key, position) && position > 0u) {
+            d->position = position - 1u;
         } else if(key == "num" || key == "number") {
             as::number(ios_);
 

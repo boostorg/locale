@@ -30,37 +30,43 @@ void test_parse_multi_number_by_char(const std::locale& locale)
     stream >> boost::locale::as::number;
 
     IntType value;
-    TEST_REQUIRE(stream >> value);
-    TEST_EQ(value, IntType(42));
-    TEST_EQ(static_cast<char>(stream.get()), '.');
-    TEST_REQUIRE(stream >> value);
-    TEST_EQ(value, expectedInt);
-    TEST_REQUIRE(!(stream >> value));
-    TEST(stream.eof());
+    if TEST(stream >> value) {
+        TEST_EQ(value, IntType(42));
+        TEST_EQ(static_cast<char>(stream.get()), '.');
+        if TEST(stream >> value) {
+            TEST_EQ(value, expectedInt);
+            if TEST(!(stream >> value))
+                TEST(stream.eof());
+        }
+    }
 
     stream.str(ascii_to<CharType>("42.25,678"));
     stream.clear();
     float fValue;
-    TEST_REQUIRE(stream >> fValue);
-    TEST_EQ(fValue, 42.25);
-    TEST_EQ(static_cast<char>(stream.get()), ',');
-    TEST_REQUIRE(stream >> value);
-    TEST_EQ(value, IntType(678));
-    TEST_REQUIRE(!(stream >> value));
-    TEST(stream.eof());
+    if TEST(stream >> fValue) {
+        TEST_EQ(fValue, 42.25);
+        TEST_EQ(static_cast<char>(stream.get()), ',');
+        if TEST(stream >> value) {
+            TEST_EQ(value, IntType(678));
+            if TEST(!(stream >> value))
+                TEST(stream.eof());
+        }
+    }
 
     // Parsing a floating point currency to integer truncates the floating point value but fully parses it
     stream.str(ascii_to<CharType>("USD1,234.55,67.89"));
     stream.clear();
-    TEST_REQUIRE(!(stream >> value));
-    stream.clear();
-    stream >> boost::locale::as::currency >> boost::locale::as::currency_iso;
-    if(stream >> value) { // Parsing currencies not fully supported by WinAPI backend
-        TEST_EQ(value, IntType(1234));
-        TEST_EQ(static_cast<char>(stream.get()), ',');
-        TEST_REQUIRE(stream >> boost::locale::as::number >> value);
-        TEST_EQ(value, IntType(67));
-        TEST(!stream.eof());
+    if TEST(!(stream >> value)) {
+        stream.clear();
+        stream >> boost::locale::as::currency >> boost::locale::as::currency_iso;
+        if(stream >> value) { // Parsing currencies not fully supported by WinAPI backend
+            TEST_EQ(value, IntType(1234));
+            TEST_EQ(static_cast<char>(stream.get()), ',');
+            if TEST(stream >> boost::locale::as::number >> value) {
+                TEST_EQ(value, IntType(67));
+                TEST(!stream.eof());
+            }
+        }
     }
 }
 

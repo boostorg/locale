@@ -164,13 +164,13 @@ void test_main(int /*argc*/, char** /*argv*/)
         else {
             std::locale generated_locale = gen(locale_name);
             locale_holder real_locale(newlocale(LC_ALL_MASK, locale_name.c_str(), nullptr));
-            TEST_REQUIRE(real_locale);
+            if TEST(real_locale) {
+                std::cout << "UTF-8" << std::endl;
+                test_by_char<char>(generated_locale, real_locale);
 
-            std::cout << "UTF-8" << std::endl;
-            test_by_char<char>(generated_locale, real_locale);
-
-            std::cout << "Wide UTF-" << sizeof(wchar_t) * 8 << std::endl;
-            test_by_char<wchar_t>(generated_locale, real_locale);
+                std::cout << "Wide UTF-" << sizeof(wchar_t) * 8 << std::endl;
+                test_by_char<wchar_t>(generated_locale, real_locale);
+            }
         }
     }
     {

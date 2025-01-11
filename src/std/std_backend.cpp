@@ -27,7 +27,7 @@
 #include "../util/encoding.hpp"
 #include "../util/gregorian.hpp"
 #include "../util/make_std_unique.hpp"
-#include "../util/numeric.hpp"
+#include "../util/numeric_conversion.hpp"
 #include "all_generator.hpp"
 
 namespace {

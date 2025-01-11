@@ -62,7 +62,7 @@ namespace boost { namespace locale { namespace impl_win {
             case char_facet_t::nochar: break;
             case char_facet_t::char_f: return std::locale(in, new utf8_converter<char>(lc));
             case char_facet_t::wchar_f: return std::locale(in, new wide_converter(lc));
-#ifndef BOOST_LOCALE_NO_CXX20_STRING8
+#ifdef __cpp_lib_char8_t
             case char_facet_t::char8_f: return std::locale(in, new utf8_converter<char8_t>(lc));
 #elif defined(__cpp_char8_t)
             case char_facet_t::char8_f: break;

@@ -9,7 +9,7 @@
 
 #include <boost/locale/config.hpp>
 
-#ifndef BOOST_LOCALE_NO_CXX20_STRING8
+#ifdef __cpp_lib_char8_t
 #    define BOOST_LOCALE_FOREACH_CHAR_I_CHAR8_T(F) F(char8_t)
 #    define BOOST_LOCALE_FOREACH_CHAR_I2_CHAR8_T(F) F(char8_t)
 #elif defined(__cpp_char8_t)

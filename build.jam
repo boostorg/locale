@@ -1,4 +1,5 @@
 # Copyright René Ferdinand Rivera Morell 2023-2024
+# Copyright(c) 2025 Alexander Grund
 # Distributed under the Boost Software License, Version 1.0.
 # (See accompanying file LICENSE_1_0.txt or copy at
 # http://www.boost.org/LICENSE_1_0.txt)
@@ -20,7 +21,7 @@ constant boost_dependencies :
     /boost/config//boost_config
     /boost/core//boost_core
     /boost/iterator//boost_iterator
-    /boost/utility//boost_utility ;
+    ;
 
 project /boost/locale
     : common-requirements

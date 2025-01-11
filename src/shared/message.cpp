@@ -1,6 +1,6 @@
 //
 // Copyright (c) 2009-2015 Artyom Beilis (Tonkikh)
-// Copyright (c) 2021-2023 Alexander Grund
+// Copyright (c) 2021-2025 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
@@ -26,7 +26,7 @@
 #include "mo_hash.hpp"
 #include "mo_lambda.hpp"
 #include <boost/assert.hpp>
-#include <boost/utility/string_view.hpp>
+#include <boost/core/detail/string_view.hpp>
 #include <cstdio>
 #include <map>
 #include <memory>
@@ -141,7 +141,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
             hash_offset_ = get(24);
         }
 
-        string_view find(const char* context_in, const char* key_in) const
+        core::string_view find(const char* context_in, const char* key_in) const
         {
             if(!has_hash())
                 return {};
@@ -192,13 +192,13 @@ namespace boost { namespace locale { namespace gnu_gettext {
             return data_.data() + off;
         }
 
-        string_view value(unsigned id) const
+        core::string_view value(unsigned id) const
         {
             const uint32_t len = get(translations_offset_ + id * 8);
             const uint32_t off = get(translations_offset_ + id * 8 + 4);
             if(len > data_.size() || off > data_.size() - len)
                 throw std::runtime_error("Bad mo-file format");
-            return string_view(&data_[off], len);
+            return core::string_view(&data_[off], len);
         }
 
         bool has_hash() const { return hash_size_ != 0; }
@@ -233,7 +233,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
     template<typename CharType>
     struct mo_file_use_traits {
         static constexpr bool in_use = false;
-        using string_view_type = basic_string_view<CharType>;
+        using string_view_type = core::basic_string_view<CharType>;
         static string_view_type use(const mo_file&, const CharType*, const CharType*)
         {
             throw std::logic_error("Unexpected call"); // LCOV_EXCL_LINE
@@ -243,7 +243,7 @@ namespace boost { namespace locale { namespace gnu_gettext {
     template<>
     struct mo_file_use_traits<char> {
         static constexpr bool in_use = true;
-        using string_view_type = basic_string_view<char>;
+        using string_view_type = core::basic_string_view<char>;
         static string_view_type use(const mo_file& mo, const char* context, const char* key)
         {
             return mo.find(context, key);
@@ -254,10 +254,10 @@ namespace boost { namespace locale { namespace gnu_gettext {
     template<>
     struct mo_file_use_traits<char8_t> {
         static constexpr bool in_use = true;
-        using string_view_type = basic_string_view<char8_t>;
+        using string_view_type = core::basic_string_view<char8_t>;
         static string_view_type use(const mo_file& mo, const char8_t* context, const char8_t* key)
         {
-            string_view res = mo.find(reinterpret_cast<const char*>(context), reinterpret_cast<const char*>(key));
+            core::string_view res = mo.find(reinterpret_cast<const char*>(context), reinterpret_cast<const char*>(key));
             return {reinterpret_cast<const char8_t*>(res.data()), res.size()};
         }
     };
@@ -551,10 +551,10 @@ namespace boost { namespace locale { namespace gnu_gettext {
             return true;
         }
 
-        static std::string extract(boost::string_view meta, const std::string& key, const boost::string_view separators)
+        static std::string extract(core::string_view meta, const std::string& key, const core::string_view separators)
         {
             const size_t pos = meta.find(key);
-            if(pos == boost::string_view::npos)
+            if(pos == core::string_view::npos)
                 return "";
             meta.remove_prefix(pos + key.size());
             const size_t end_pos = meta.find_first_of(separators);
@@ -620,7 +620,7 @@ namespace boost { namespace locale { namespace detail {
             case char_facet_t::nochar: break;
             case char_facet_t::char_f: return std::locale(in, gnu_gettext::create_messages_facet<char>(minf));
             case char_facet_t::wchar_f: return std::locale(in, gnu_gettext::create_messages_facet<wchar_t>(minf));
-#ifndef BOOST_LOCALE_NO_CXX20_STRING8
+#ifdef __cpp_lib_char8_t
             case char_facet_t::char8_f: return std::locale(in, gnu_gettext::create_messages_facet<char8_t>(minf));
 #elif defined(__cpp_char8_t)
             case char_facet_t::char8_f: break;

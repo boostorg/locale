@@ -88,28 +88,24 @@ namespace boost { namespace locale { namespace test {
         if(++boost::locale::test::results().error_counter > BOOST_LOCALE_ERROR_LIMIT)
             throw std::runtime_error("Error limits reached, stopping unit test");
     }
+
+    template<bool require = false>
+    bool test_impl(const char* expr, const char* file, int line, const bool v)
+    {
+        boost::locale::test::results().test_counter++;
+        if(!v) {
+            boost::locale::test::report_error(expr, file, line);
+            throw std::runtime_error("Critical test " + std::string(expr) + " failed");
+        }
+        return v;
+    }
 }}} // namespace boost::locale::test
 
 #define BOOST_LOCALE_TEST_REPORT_ERROR(expr) boost::locale::test::report_error(expr, __FILE__, __LINE__)
 
-#define TEST(X)                                        \
-    do {                                               \
-        boost::locale::test::results().test_counter++; \
-        if(X)                                          \
-            break;                                     \
-        BOOST_LOCALE_TEST_REPORT_ERROR(#X);            \
-        BOOST_LOCALE_START_CONST_CONDITION             \
-    } while(0) BOOST_LOCALE_END_CONST_CONDITION
+#define TEST(X) (::boost::locale::test::test_impl(#X, __FILE__, __LINE__, (X) ? true : false))
 
-#define TEST_REQUIRE(X)                                          \
-    do {                                                         \
-        boost::locale::test::results().test_counter++;           \
-        if(X)                                                    \
-            break;                                               \
-        BOOST_LOCALE_TEST_REPORT_ERROR(#X);                      \
-        throw std::runtime_error("Critical test " #X " failed"); \
-        BOOST_LOCALE_START_CONST_CONDITION                       \
-    } while(0) BOOST_LOCALE_END_CONST_CONDITION
+#define TEST_REQUIRE(X) (::boost::locale::test::test_impl<true>(#X, __FILE__, __LINE__, (X) ? true : false))
 
 #define TEST_THROWS(X, E)                              \
     do {                                               \

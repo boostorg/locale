@@ -1,4 +1,4 @@
-# Copyright 2022 Alexander Grund
+# Copyright 2022-2024 Alexander Grund
 # Distributed under the Boost Software License, Version 1.0.
 # https://www.boost.org/LICENSE_1_0.txt
 
@@ -32,6 +32,7 @@ if(NOT BOOST_LOCALE_ENABLE_POSIX)
 endif()
 
 boost_test_jamfile(FILE Jamfile.v2)
+target_link_libraries(boost_locale-test_util_numeric_convert Boost::charconv)
 
 # Those require to be run in the test directory
 foreach(name test_formatting test_message)

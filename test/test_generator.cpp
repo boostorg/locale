@@ -329,7 +329,7 @@ void test_main(int /*argc*/, char** /*argv*/)
 #else
 #    define TEST_FOR_CHAR8(check) (void)0
 #endif
-#ifndef BOOST_LOCALE_NO_CXX20_STRING8
+#ifdef __cpp_lib_char8_t
 #    define TEST_FOR_STRING8(check) TEST(check)
 #else
 #    define TEST_FOR_STRING8(check) (void)0

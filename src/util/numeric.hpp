@@ -10,11 +10,8 @@
 #include <boost/locale/info.hpp>
 #include <boost/predef/os.h>
 #include <algorithm>
-#include <cerrno>
-#include <cstdlib>
 #include <ctime>
 #include <ios>
-#include <limits>
 #include <locale>
 #include <sstream>
 #include <string>
@@ -23,22 +20,6 @@
 #include "timezone.hpp"
 
 namespace boost { namespace locale { namespace util {
-
-    inline bool try_to_int(const std::string& s, int& res)
-    {
-        if(s.empty())
-            return false;
-        errno = 0;
-        char* end_char{};
-        const auto v = std::strtol(s.c_str(), &end_char, 10);
-        if(errno == ERANGE || end_char != s.c_str() + s.size())
-            return false;
-        if(v < std::numeric_limits<int>::min() || v > std::numeric_limits<int>::max())
-            return false;
-        res = v;
-        return true;
-    }
-
     template<typename CharType>
     struct formatting_size_traits {
         static size_t size(const std::basic_string<CharType>& s, const std::locale& /*l*/) { return s.size(); }
@@ -175,11 +156,11 @@ namespace boost { namespace locale { namespace util {
         iter_type
         format_time(iter_type out, std::ios_base& ios, CharType fill, std::time_t time, const string_type& format) const
         {
-            std::string tz = ios_info::get(ios).time_zone();
-            std::tm tm;
-#if BOOST_OS_LINUX || BOOST_OS_BSD_FREE || defined(__APPLE__)
-            std::vector<char> tmp_buf(tz.c_str(), tz.c_str() + tz.size() + 1);
+            const std::string& tz = ios_info::get(ios).time_zone();
+#if BOOST_OS_BSD_FREE || defined(__APPLE__)
+            std::vector<char> tz_nonconst;
 #endif
+            std::tm tm;
             if(tz.empty()) {
 #ifdef BOOST_WINDOWS
                 // Windows uses TLS
@@ -200,8 +181,13 @@ namespace boost { namespace locale { namespace util {
 #if BOOST_OS_LINUX || BOOST_OS_BSD_FREE || defined(__APPLE__)
                 // These have extra fields to specify timezone
                 if(gmtoff != 0) {
+#    if BOOST_OS_BSD_FREE || defined(__APPLE__)
                     // bsd and apple want tm_zone be non-const
-                    tm.tm_zone = tmp_buf.data();
+                    tz_nonconst.assign(tz.begin(), tz.end());
+                    tm.tm_zone = tz_nonconst.data();
+#    else
+                    tm.tm_zone = tz.data();
+#    endif
                     tm.tm_gmtoff = gmtoff;
                 }
 #endif

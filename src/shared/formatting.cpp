@@ -65,7 +65,7 @@ namespace boost { namespace locale {
     {
         time_zone_ = tz;
     }
-    std::string ios_info::time_zone() const
+    const std::string& ios_info::time_zone() const
     {
         return time_zone_;
     }

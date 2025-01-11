@@ -1,5 +1,5 @@
 # Copyright 2020, 2021 Peter Dimov
-# Copyright 2022-2024 Alexander Grund
+# Copyright 2022-2025 Alexander Grund
 # Distributed under the Boost Software License, Version 1.0.
 # https://www.boost.org/LICENSE_1_0.txt
 
@@ -35,6 +35,7 @@ add_library(boost_locale
   src/util/locale_data.cpp
   src/util/make_std_unique.hpp
   src/util/numeric.hpp
+  src/util/numeric_conversion.hpp
   src/util/timezone.hpp
   ${headers}
 )
@@ -50,8 +51,8 @@ target_link_libraries(boost_locale
     Boost::config
     Boost::core
     Boost::iterator
-    Boost::utility
   PRIVATE
+    Boost::charconv
     Boost::predef
     Boost::thread
 )

@@ -16,6 +16,7 @@ import toolset ;
 path-constant TOP : .. ;
 
 constant boost_dependencies_private :
+    /boost/charconv//boost_charconv
     /boost/predef//boost_predef
     /boost/thread//boost_thread
     ;
