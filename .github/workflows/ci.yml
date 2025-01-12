@@ -317,7 +317,7 @@ jobs:
       - name: Test output
         if: '!matrix.coverity && always()'
         run: |
-          for f in $(find "$BOOST_ROOT/bin.v2/libs/$SELF/test" -type f -name 'test_*.run'); do
+          for f in $(find "$BOOST_ROOT/bin.v2/libs/$SELF/test" -type f -name '*.run'); do
               name=$(basename "$f")
               name=${name%.run}
               config=$(dirname "$f")
