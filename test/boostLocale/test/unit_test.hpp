@@ -1,6 +1,6 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
-// Copyright (c) 2021-2022 Alexander Grund
+// Copyright (c) 2021-2025 Alexander Grund
 //  Copyright (c) 2002, 2009, 2014 Peter Dimov
 //
 // Distributed under the Boost Software License, Version 1.0.
@@ -95,7 +95,8 @@ namespace boost { namespace locale { namespace test {
         boost::locale::test::results().test_counter++;
         if(!v) {
             boost::locale::test::report_error(expr, file, line);
-            throw std::runtime_error("Critical test " + std::string(expr) + " failed");
+            if(require)
+                throw std::runtime_error("Critical test " + std::string(expr) + " failed");
         }
         return v;
     }
