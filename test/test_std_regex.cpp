@@ -12,17 +12,50 @@
 
 /// Smoke test that std::regex works with generated locales
 template<typename CharType>
-void test_by_char(const std::locale& l)
+void test_by_char_impl(const std::locale& l)
 {
     using string_type = std::basic_string<CharType>;
-    std::basic_regex<CharType> pattern;
-    pattern.imbue(l);
-    pattern = ascii_to<CharType>("[[:alnum:]]+");
-    const string_type text = ascii_to<CharType>("ab12cd");
+
+    // Needs at least a '\s' and '=' to reproduce issue #249
+    const string_type s_pattern = ascii_to<CharType>(R"([[:alnum:]]+\s*= \d+)");
+    const string_type text = ascii_to<CharType>("a2b2 = 42");
     std::match_results<typename string_type::const_iterator> pieces;
+
+    // Sanity check using default locale
+    std::basic_regex<CharType> pattern{s_pattern};
     if TEST(std::regex_match(text, pieces, pattern)) {
         TEST_EQ(pieces.size(), 1u);
         TEST_EQ(pieces[0].str(), text);
+
+        pattern.imbue(l);
+        pattern = s_pattern;
+        if TEST(std::regex_match(text, pieces, pattern)) {
+            TEST_EQ(pieces.size(), 1u);
+            TEST_EQ(pieces[0].str(), text);
+        }
+
+        // Set via global locale
+        const std::locale oldLoc = std::locale::global(l);
+        std::basic_regex<CharType> globalPattern{s_pattern};
+        if TEST(std::regex_match(text, pieces, globalPattern)) {
+            TEST_EQ(pieces.size(), 1u);
+            TEST_EQ(pieces[0].str(), text);
+        }
+        std::locale::global(oldLoc);
+    }
+}
+
+template<typename CharType>
+void test_by_char(const std::locale& loc, const std::locale& loc_collation, const std::locale& loc_no_collation)
+{
+    test_by_char_impl<CharType>(loc);
+    {
+        TEST_CONTEXT("without collation");
+        test_by_char_impl<CharType>(loc_no_collation);
+    }
+    {
+        TEST_CONTEXT("just collation");
+        test_by_char_impl<CharType>(loc_collation);
     }
 }
 
@@ -42,19 +75,11 @@ void test_main(int /*argc*/, char** /*argv*/)
         const std::locale loc_collation = gen("en_US.UTF-8");
         {
             TEST_CONTEXT("char");
-            test_by_char<char>(loc);
-            {
-                TEST_CONTEXT("without collation");
-                test_by_char<char>(loc_no_collation);
-            }
-            {
-                TEST_CONTEXT("just collation");
-                test_by_char<char>(loc_collation);
-            }
+            test_by_char<char>(loc, loc_collation, loc_no_collation);
         }
         {
             TEST_CONTEXT("wchar_t");
-            test_by_char<wchar_t>(loc);
+            test_by_char<wchar_t>(loc, loc_collation, loc_no_collation);
         }
     }
 }
