@@ -75,18 +75,19 @@ void test_parse_multi_number()
 {
     const auto locale = boost::locale::generator{}("en_US.UTF-8");
 
-#define BOOST_LOCALE_CALL_I(T, I)      \
-    std::cout << "\t" #I << std::endl; \
-    test_parse_multi_number_by_char<T, I>(locale);
+#define BOOST_LOCALE_CALL_I(T, I)                      \
+    {                                                  \
+        TEST_CONTEXT("type" #T << ':' << #I);          \
+        test_parse_multi_number_by_char<T, I>(locale); \
+    }
 
-#define BOOST_LOCALE_CALL(T)                                 \
-    std::cout << "test_parse_multi_number " #T << std::endl; \
-    BOOST_LOCALE_CALL_I(T, int16_t);                         \
-    BOOST_LOCALE_CALL_I(T, uint16_t);                        \
-    BOOST_LOCALE_CALL_I(T, int32_t);                         \
-    BOOST_LOCALE_CALL_I(T, uint32_t);                        \
-    BOOST_LOCALE_CALL_I(T, int64_t);                         \
-    BOOST_LOCALE_CALL_I(T, uint64_t);
+#define BOOST_LOCALE_CALL(T)         \
+    BOOST_LOCALE_CALL_I(T, int16_t)  \
+    BOOST_LOCALE_CALL_I(T, uint16_t) \
+    BOOST_LOCALE_CALL_I(T, int32_t)  \
+    BOOST_LOCALE_CALL_I(T, uint32_t) \
+    BOOST_LOCALE_CALL_I(T, int64_t)  \
+    BOOST_LOCALE_CALL_I(T, uint64_t)
 
     BOOST_LOCALE_CALL(char);
     BOOST_LOCALE_CALL(wchar_t);
@@ -118,14 +119,19 @@ void test_format_large_number()
 {
     const auto locale = boost::locale::generator{}("en_US.UTF-8");
 
-    std::cout << "Testing char" << std::endl;
-    test_format_large_number_by_char<char>(locale);
+#define BOOST_LOCALE_CALL(T)                         \
+    {                                                \
+        TEST_CONTEXT("type " << #T);                 \
+        test_format_large_number_by_char<T>(locale); \
+    }
 
-    std::cout << "Testing wchar_t" << std::endl;
-    test_format_large_number_by_char<wchar_t>(locale);
-
+    BOOST_LOCALE_CALL(char);
+    BOOST_LOCALE_CALL(wchar_t);
 #ifdef BOOST_LOCALE_ENABLE_CHAR16_T
-    std::cout << "Testing char16_t" << std::endl;
-    test_format_large_number_by_char<char16_t>(locale);
+    BOOST_LOCALE_CALL(char16_t);
 #endif
+#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
+    BOOST_LOCALE_CALL(char32_t);
+#endif
+#undef BOOST_LOCALE_CALL
 }
