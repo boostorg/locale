@@ -128,6 +128,8 @@ jobs:
           # https://github.com/llvm/llvm-project/issues/59827: disabled 2b/23 for clang-17 with libstdc++13 in 24.04
           - { compiler: clang-17,  cxxstd: '11,14,17,20',    os: ubuntu-24.04 }
           - { compiler: clang-18,  cxxstd: '11,14,17,20,23,2c', os: ubuntu-24.04 }
+          - { name: Run code fuzzer, fuzzing: yes,
+              compiler: clang-18,  cxxstd: '20',             os: ubuntu-24.04, variant: debug, link: static }
 
           # libc++
           - { compiler: clang-6.0, cxxstd: '11,14',       os: ubuntu-22.04, container: 'ubuntu:18.04', stdlib: libc++, install: 'clang-6.0 libc++-dev libc++abi-dev' }
@@ -296,7 +298,8 @@ jobs:
           # More entries can be added in the same way, see the B2_ARGS assignment in ci/enforce.sh for the possible keys.
           # B2_DEFINES: ${{matrix.defines}}
           # Variables set here (to non-empty) will override the top-level environment variables, e.g.
-          # B2_VARIANT: ${{matrix.variant}}
+          B2_VARIANT: ${{matrix.variant}}
+          B2_LINK: ${{matrix.link}}
           B2_UBSAN: ${{matrix.ubsan}}
         run: source ci/github/install.sh
 
@@ -367,6 +370,11 @@ jobs:
         env:
           COVERITY_SCAN_NOTIFICATION_EMAIL: ${{ secrets.COVERITY_SCAN_NOTIFICATION_EMAIL }}
           COVERITY_SCAN_TOKEN: ${{ secrets.COVERITY_SCAN_TOKEN }}
+
+      - name: Run fuzzing
+        if: matrix.fuzzing
+        run: B2_TARGETS="libs/$SELF/fuzzing" ci/build.sh
+        env: {B2_FLAGS: -a}
 
   windows:
     defaults:
