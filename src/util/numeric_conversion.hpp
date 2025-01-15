@@ -131,11 +131,13 @@ namespace boost { namespace locale { namespace util {
     template<typename Integer>
     bool try_parse_icu(icu::Formattable& fmt, Integer& value)
     {
+        if(!fmt.isNumeric())
+            return false;
         // Get value as a decimal number and parse that
         UErrorCode err = U_ZERO_ERROR;
         const auto decimals = fmt.getDecimalNumber(err);
         if(U_FAILURE(err))
-            return false; // Not a number
+            return false; // Memory error LCOV_EXCL_LINE
         const core::string_view s(decimals.data(), decimals.length());
         return try_scientific_to_int(s, value);
     }

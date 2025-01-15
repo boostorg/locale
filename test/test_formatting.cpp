@@ -412,6 +412,7 @@ void test_manip(std::string e_charset = "UTF-8")
     TEST_PARSE_FAILS(as::percent, "1", double);
 
     TEST_FMT_PARSE_1(as::currency, 1345, "$1,345.00");
+    TEST_FMT_PARSE_1(as::currency, uint64_t(1345), "$1,345.00");
     TEST_FMT_PARSE_1(as::currency, 1345.34, "$1,345.34");
 
     TEST_PARSE_FAILS(as::currency, "$", double);
@@ -434,6 +435,7 @@ void test_manip(std::string e_charset = "UTF-8")
     TEST_FMT_PARSE_3_2(as::date, as::date_medium, as::gmt, a_datetime, "Feb 5, 1970", a_date);
     TEST_FMT_PARSE_3_2(as::date, as::date_long, as::gmt, a_datetime, "February 5, 1970", a_date);
     TEST_FMT_PARSE_3_2(as::date, as::date_full, as::gmt, a_datetime, "Thursday, February 5, 1970", a_date);
+    TEST_FMT_PARSE_2_2(as::date, as::gmt, uint64_t(a_datetime), "Feb 5, 1970", uint64_t(a_date));
 
     TEST_PARSE_FAILS(as::date >> as::date_short, "aa/bb/cc", double);
 
@@ -886,7 +888,7 @@ void test_uint64_format()
         icu::UnicodeString s;
         fmt->format(short_value, s, nullptr, err);
         if(U_FAILURE(err))
-            continue;
+            continue; // LCOV_EXCL_LINE
         const std::string icu_value = boost::locale::conv::utf_to_utf<char>(s.getBuffer(), s.getBuffer() + s.length());
         std::stringstream ss;
         ss.imbue(g(cur_locale->getName() + utf8));
@@ -897,9 +899,10 @@ void test_uint64_format()
 
         // Assumption: Either both the int32 and uint64 values are in POSIX format, or neither are
         // This is the case if separators are used and/or numbers are not ASCII
+        // All languages likely use separators so not running into the POSIX case is OK.
         empty_stream(ss) << value;
         if(icu_value == posix_short_value)
-            TEST_EQ(ss.str(), posix_value);
+            TEST_EQ(ss.str(), posix_value); // LCOV_EXCL_LINE
         else
             TEST_NE(ss.str(), posix_value);
 

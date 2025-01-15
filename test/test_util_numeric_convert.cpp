@@ -91,7 +91,7 @@ void test_try_scientific_to_int()
           // clang-format off
             "-1.1E1",
             // Too large
-            "256", "256E0", "2.56E2", "3.0E2",
+            "256", "256E0", "2.56E2", "3.0E2", "3.00E2", "300", "399", "3.99E2", "999", "9.99E2",
             "1000","1000E0", "100E1", "10E2", "1E3","1.0E3",
             // negative
             "-1", "-1.1E1",
@@ -171,6 +171,11 @@ void test_try_parse_icu()
             uint64_t parsedVal{};
             TEST(!boost::locale::util::try_parse_icu(parsedByICU, parsedVal));
         }
+    }
+    {
+        icu::Formattable invalidNumber{"Str"};
+        uint64_t parsedVal{};
+        TEST(!boost::locale::util::try_parse_icu(invalidNumber, parsedVal));
     }
     // Test some numbers randomly to find missed cases
     std::mt19937_64 mt{std::random_device{}()};
