@@ -30,7 +30,7 @@ rule make-corpus ( target : sources + : properties * )
 }
 actions make-corpus
 {
-    "$(PYTHON:E=python)" "$(RUNNER)" $(<) $(>)
+    "$(PYTHON:E=python)" "$(RUNNER)" "$(<)" "$(>)"
 }
 toolset.flags $(__name__).make-corpus PYTHON <python.interpreter> ;
 
@@ -43,7 +43,7 @@ for local fuzzer in $(all_fuzzers)
     local seed_files = [ glob "$(seed_corpus)/*" ] ;
 
     # Create the output corpus directories
-    make $(corpus) : $(seed_files) : make-corpus ;
+    make $(corpus) : $(seed_files) : make-corpus : <dependency>$(.make-corpus-script) ;
     make $(min_corpus) : : common.MkDir ;
 
     # Build the fuzzer
