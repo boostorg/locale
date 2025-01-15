@@ -13,10 +13,9 @@
 
 extern "C" int LLVMFuzzerTestOneInput(const std::uint8_t* data, std::size_t size)
 {
+    const boost::core::string_view sv{reinterpret_cast<const char*>(data), size};
     using boost::locale::util::try_scientific_to_int;
     try {
-        const boost::core::string_view sv{reinterpret_cast<const char*>(data), size};
-
         uint8_t u8{};
         try_scientific_to_int(sv, u8);
 
@@ -29,7 +28,7 @@ extern "C" int LLVMFuzzerTestOneInput(const std::uint8_t* data, std::size_t size
         uint8_t u64{};
         try_scientific_to_int(sv, u64);
     } catch(...) {
-        std::cerr << "Error with '" << data << "' (size " << size << ')' << std::endl;
+        std::cerr << "Error with '" << sv << "' (size " << size << ')' << std::endl;
         std::terminate();
     }
 
