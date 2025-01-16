@@ -380,18 +380,22 @@ void test_manip(std::string e_charset = "UTF-8")
     TEST_MIN_MAX(int16_t, "-32,768", "32,767");
     TEST_MIN_MAX(uint16_t, "0", "65,535");
     TEST_PARSE_FAILS(as::number, "-1", uint16_t);
+    TEST_PARSE_FAILS(as::number, "-32,767", uint16_t);
     if(stdlib_correctly_errors_on_out_of_range_int16())
         TEST_PARSE_FAILS(as::number, "65,535", int16_t);
 
     TEST_MIN_MAX(int32_t, "-2,147,483,648", "2,147,483,647");
     TEST_MIN_MAX(uint32_t, "0", "4,294,967,295");
     TEST_PARSE_FAILS(as::number, "-1", uint32_t);
+    TEST_PARSE_FAILS(as::number, "-2,147,483,647", uint32_t);
     TEST_PARSE_FAILS(as::number, "4,294,967,295", int32_t);
 
     TEST_MIN_MAX(int64_t, "-9,223,372,036,854,775,808", "9,223,372,036,854,775,807");
-    // ICU does not support uint64, but we have a fallback to format it at least
-    TEST_MIN_MAX_FMT(as::number, uint64_t, "0", "18446744073709551615");
+    TEST_MIN_MAX(uint64_t, "0", "18,446,744,073,709,551,615");
     TEST_PARSE_FAILS(as::number, "-1", uint64_t);
+    TEST_PARSE_FAILS(as::number, "-9,223,372,036,854,775,807", uint64_t);
+    TEST_PARSE_FAILS(as::number, "18,446,744,073,709,551,615", int64_t);
+    TEST_PARSE_FAILS(as::number, "18,446,744,073,709,551,616", uint64_t);
 
     TEST_FMT_PARSE_3(as::number, std::left, std::setw(3), 15, "15 ");
     TEST_FMT_PARSE_3(as::number, std::right, std::setw(3), 15, " 15");
@@ -408,6 +412,7 @@ void test_manip(std::string e_charset = "UTF-8")
     TEST_PARSE_FAILS(as::percent, "1", double);
 
     TEST_FMT_PARSE_1(as::currency, 1345, "$1,345.00");
+    TEST_FMT_PARSE_1(as::currency, uint64_t(1345), "$1,345.00");
     TEST_FMT_PARSE_1(as::currency, 1345.34, "$1,345.34");
 
     TEST_PARSE_FAILS(as::currency, "$", double);
@@ -430,6 +435,7 @@ void test_manip(std::string e_charset = "UTF-8")
     TEST_FMT_PARSE_3_2(as::date, as::date_medium, as::gmt, a_datetime, "Feb 5, 1970", a_date);
     TEST_FMT_PARSE_3_2(as::date, as::date_long, as::gmt, a_datetime, "February 5, 1970", a_date);
     TEST_FMT_PARSE_3_2(as::date, as::date_full, as::gmt, a_datetime, "Thursday, February 5, 1970", a_date);
+    TEST_FMT_PARSE_2_2(as::date, as::gmt, uint64_t(a_datetime), "Feb 5, 1970", uint64_t(a_date));
 
     TEST_PARSE_FAILS(as::date >> as::date_short, "aa/bb/cc", double);
 
@@ -857,6 +863,56 @@ void test_format_class(std::string charset = "UTF-8")
     TEST_FORMAT_CLS("{1,gmt,ftime='%D'}", a_datetime, "12/31/13");
 }
 
+/// Test formatting and parsing of uint64_t values that are not natively supported by ICU.
+/// They use a custom code path which gets exercised by this.
+void test_uint64_format()
+{
+#ifdef BOOST_LOCALE_WITH_ICU
+    std::set<std::string> tested_langs;
+    int32_t count;
+    auto* cur_locale = icu::Locale::getAvailableLocales(count);
+    constexpr uint64_t value = std::numeric_limits<int64_t>::max() + uint64_t(3);
+    const std::string posix_value = as_posix_string(value);
+    constexpr int32_t short_value = std::numeric_limits<int32_t>::max();
+    const std::string posix_short_value = as_posix_string(short_value);
+    boost::locale::generator g;
+    const std::string utf8 = ".UTF-8";
+    // Test with each language supported by ICU to ensure the implementation really
+    // is independent of the language and doesn't fail e.g. for different separators.
+    for(int i = 0; i < count; i++, cur_locale++) {
+        if(!tested_langs.insert(cur_locale->getLanguage()).second)
+            continue;
+        TEST_CONTEXT(cur_locale->getName());
+        UErrorCode err{};
+        std::unique_ptr<icu::NumberFormat> fmt{icu::NumberFormat::createInstance(*cur_locale, err)};
+        icu::UnicodeString s;
+        fmt->format(short_value, s, nullptr, err);
+        if(U_FAILURE(err))
+            continue; // LCOV_EXCL_LINE
+        const std::string icu_value = boost::locale::conv::utf_to_utf<char>(s.getBuffer(), s.getBuffer() + s.length());
+        std::stringstream ss;
+        ss.imbue(g(cur_locale->getName() + utf8));
+        ss << boost::locale::as::number;
+        // Sanity check
+        ss << short_value;
+        TEST_EQ(ss.str(), icu_value);
+
+        // Assumption: Either both the int32 and uint64 values are in POSIX format, or neither are
+        // This is the case if separators are used and/or numbers are not ASCII
+        // All languages likely use separators so not running into the POSIX case is OK.
+        empty_stream(ss) << value;
+        if(icu_value == posix_short_value)
+            TEST_EQ(ss.str(), posix_value); // LCOV_EXCL_LINE
+        else
+            TEST_NE(ss.str(), posix_value);
+
+        uint64_t parsed_value{};
+        TEST(ss >> parsed_value);
+        TEST_EQ(parsed_value, value);
+    }
+#endif
+}
+
 BOOST_LOCALE_DISABLE_UNREACHABLE_CODE_WARNING
 void test_main(int argc, char** argv)
 {
@@ -867,6 +923,8 @@ void test_main(int argc, char** argv)
     std::cout << "ICU is not build... Skipping\n";
     return;
 #endif
+    test_uint64_format();
+
     boost::locale::time_zone::global("GMT+4:00");
     std::cout << "Testing char, UTF-8" << std::endl;
     test_manip<char>();
@@ -891,6 +949,7 @@ void test_main(int argc, char** argv)
     test_format_class<char32_t>();
 #endif
 
+    test_format_large_number();
     test_parse_multi_number();
 }
 

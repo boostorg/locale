@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2009-2011 Artyom Beilis (Tonkikh)
+// Copyright (c) 2024 Alexander Grund
 //
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
@@ -19,40 +20,30 @@
 namespace boost { namespace locale { namespace impl_icu {
 
     namespace detail {
-        template<typename T, bool integer = std::numeric_limits<T>::is_integer>
-        struct icu_format_type;
+        template<typename T, typename PreferredType, typename AlternativeType>
+        struct choose_type_by_digits
+            : std::conditional<std::numeric_limits<T>::digits <= std::numeric_limits<PreferredType>::digits,
+                               PreferredType,
+                               AlternativeType> {};
 
-        template<typename T>
-        struct icu_format_type<T, true> {
-            // ICU supports 32 and 64 bit ints, use the former as long as it fits, else the latter
-            typedef typename std::conditional<std::numeric_limits<T>::digits <= 31, int32_t, int64_t>::type type;
+        template<typename T, bool integer = std::numeric_limits<T>::is_integer>
+        struct icu_format_type {
+            static_assert(sizeof(T) <= sizeof(int64_t), "Only up to 64 bit integer types are supported by ICU");
+            // ICU supports (only) int32_t and int64_t, use the former as long as it fits, else the latter
+            using large_type = typename choose_type_by_digits<T, int64_t, uint64_t>::type;
+            using type = typename choose_type_by_digits<T, int32_t, large_type>::type;
         };
         template<typename T>
         struct icu_format_type<T, false> {
             // Only float type ICU supports is double
-            typedef double type;
-        };
-
-        // ICU does not support uint64_t values so fall back to the parent/std formatting
-        // if the number is to large to fit into an int64_t
-        template<typename T,
-                 bool BigUInt = !std::numeric_limits<T>::is_signed && std::numeric_limits<T>::is_integer
-                                && (sizeof(T) >= sizeof(uint64_t))>
-        struct use_parent_traits {
-            static bool use(T /*v*/) { return false; }
-        };
-        template<typename T>
-        struct use_parent_traits<T, true> {
-            static bool use(T v) { return v > static_cast<T>(std::numeric_limits<int64_t>::max()); }
+            using type = double;
         };
 
         template<typename ValueType>
-        static bool use_parent(std::ios_base& ios, ValueType v)
+        static bool use_parent(std::ios_base& ios)
         {
             const uint64_t flg = ios_info::get(ios).display_flags();
             if(flg == flags::posix)
-                return true;
-            if(use_parent_traits<ValueType>::use(v))
                 return true;
 
             if(!std::numeric_limits<ValueType>::is_integer)
@@ -105,7 +96,7 @@ namespace boost { namespace locale { namespace impl_icu {
         template<typename ValueType>
         iter_type do_real_put(iter_type out, std::ios_base& ios, CharType fill, ValueType val) const
         {
-            if(detail::use_parent(ios, val))
+            if(detail::use_parent<ValueType>(ios))
                 return std::num_put<CharType>::do_put(out, ios, fill, val);
 
             const std::unique_ptr<formatter_type> formatter = formatter_type::create(ios, loc_, enc_);
@@ -240,7 +231,7 @@ namespace boost { namespace locale { namespace impl_icu {
         do_real_get(iter_type in, iter_type end, std::ios_base& ios, std::ios_base::iostate& err, ValueType& val) const
         {
             stream_type* stream_ptr = dynamic_cast<stream_type*>(&ios);
-            if(!stream_ptr || detail::use_parent(ios, ValueType(0)))
+            if(!stream_ptr || detail::use_parent<ValueType>(ios))
                 return std::num_get<CharType>::do_get(in, end, ios, err, val);
 
             const std::unique_ptr<formatter_type> formatter = formatter_type::create(ios, loc_, enc_);

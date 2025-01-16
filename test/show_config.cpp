@@ -67,8 +67,6 @@ void test_main(int /*argc*/, char** /*argv*/)
     std::cout << "- std::basic_string<char8_t>: ";
 #ifdef __cpp_lib_char8_t
     std::cout << "yes\n";
-#elif defined(__cpp_lib_char8_t)
-    std::cout << "partial\n";
 #else
     std::cout << "no\n";
 #endif

@@ -75,21 +75,63 @@ void test_parse_multi_number()
 {
     const auto locale = boost::locale::generator{}("en_US.UTF-8");
 
-#define BOOST_LOCALE_CALL_I(T, I)      \
-    std::cout << "\t" #I << std::endl; \
-    test_parse_multi_number_by_char<T, I>(locale);
+#define BOOST_LOCALE_CALL_I(T, I)                      \
+    {                                                  \
+        TEST_CONTEXT("type" #T << ':' << #I);          \
+        test_parse_multi_number_by_char<T, I>(locale); \
+    }
 
-#define BOOST_LOCALE_CALL(T)                                 \
-    std::cout << "test_parse_multi_number " #T << std::endl; \
-    BOOST_LOCALE_CALL_I(T, int16_t);                         \
-    BOOST_LOCALE_CALL_I(T, uint16_t);                        \
-    BOOST_LOCALE_CALL_I(T, int32_t);                         \
-    BOOST_LOCALE_CALL_I(T, uint32_t);                        \
-    BOOST_LOCALE_CALL_I(T, int64_t);                         \
-    BOOST_LOCALE_CALL_I(T, uint64_t);
+#define BOOST_LOCALE_CALL(T)         \
+    BOOST_LOCALE_CALL_I(T, int16_t)  \
+    BOOST_LOCALE_CALL_I(T, uint16_t) \
+    BOOST_LOCALE_CALL_I(T, int32_t)  \
+    BOOST_LOCALE_CALL_I(T, uint32_t) \
+    BOOST_LOCALE_CALL_I(T, int64_t)  \
+    BOOST_LOCALE_CALL_I(T, uint64_t)
 
     BOOST_LOCALE_CALL(char);
     BOOST_LOCALE_CALL(wchar_t);
 #undef BOOST_LOCALE_CALL
 #undef BOOST_LOCALE_CALL_I
+}
+
+template<typename CharType>
+void test_format_large_number_by_char(const std::locale& locale)
+{
+    std::basic_ostringstream<CharType> output;
+    output.imbue(locale);
+    output << boost::locale::as::number;
+
+    constexpr int64_t high_signed64 = 9223372036854775807;
+    static_assert(high_signed64 == std::numeric_limits<int64_t>::max(), "Value must match");
+
+    empty_stream(output) << high_signed64;
+    TEST_EQ(output.str(), ascii_to<CharType>("9,223,372,036,854,775,807"));
+    empty_stream(output) << static_cast<uint64_t>(high_signed64);
+    TEST_EQ(output.str(), ascii_to<CharType>("9,223,372,036,854,775,807"));
+    empty_stream(output) << (static_cast<uint64_t>(high_signed64) + 1u);
+    TEST_EQ(output.str(), ascii_to<CharType>("9,223,372,036,854,775,808"));
+    empty_stream(output) << (static_cast<uint64_t>(high_signed64) + 579u);
+    TEST_EQ(output.str(), ascii_to<CharType>("9,223,372,036,854,776,386"));
+}
+
+void test_format_large_number()
+{
+    const auto locale = boost::locale::generator{}("en_US.UTF-8");
+
+#define BOOST_LOCALE_CALL(T)                         \
+    {                                                \
+        TEST_CONTEXT("type " << #T);                 \
+        test_format_large_number_by_char<T>(locale); \
+    }
+
+    BOOST_LOCALE_CALL(char);
+    BOOST_LOCALE_CALL(wchar_t);
+#ifdef BOOST_LOCALE_ENABLE_CHAR16_T
+    BOOST_LOCALE_CALL(char16_t);
+#endif
+#ifdef BOOST_LOCALE_ENABLE_CHAR32_T
+    BOOST_LOCALE_CALL(char32_t);
+#endif
+#undef BOOST_LOCALE_CALL
 }

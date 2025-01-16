@@ -186,7 +186,10 @@ void test_main(int /*argc*/, char** /*argv*/)
             TEST(v == "12345,45" || v == "12 345,45" || v == "12.345,45");
         }
     }
-    test_parse_multi_number();
+    if(has_posix_locale("en_US.UTF-8")) {
+        test_format_large_number();
+        test_parse_multi_number();
+    }
 }
 
 // boostinspect:noascii
