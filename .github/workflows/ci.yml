@@ -165,7 +165,15 @@ jobs:
                 curl -sSL --retry ${NET_RETRY_COUNT:-5} 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0xE1DD270288B4E6030699E45FA1715D88E1DF1F24' | sudo gpg --dearmor > /etc/apt/trusted.gpg.d/git-core_ubuntu_ppa.gpg
                 for i in {1..${NET_RETRY_COUNT:-3}}; do sudo -E add-apt-repository -y ppa:git-core/ppa && break || sleep 10; done
                 apt-get -o Acquire::Retries=$NET_RETRY_COUNT update
-                apt-get -o Acquire::Retries=$NET_RETRY_COUNT install -y g++ python libpython-dev git locales
+                osver=$(lsb_release -sr | cut -f1 -d.)
+                pkgs="g++ git xz-utils"
+                # Ubuntu 22+ has only Python 3 in the repos
+                if [ -n "$osver" ] && [ "$osver" -ge "20" ]; then
+                  pkgs+=" python-is-python3 libpython3-dev"
+                else
+                  pkgs+=" python libpython-dev"
+                fi
+                apt-get -o Acquire::Retries=$NET_RETRY_COUNT -y -q --no-install-suggests --no-install-recommends install $pkgs
             fi
             # For jobs not compatible with ccache, use "ccache: no" in the matrix
             if [[ "${{ matrix.ccache }}" == "no" ]]; then
