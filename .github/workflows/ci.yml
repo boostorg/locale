@@ -267,6 +267,7 @@ jobs:
       - name: Install locales
         if: startsWith(matrix.os, 'ubuntu')
         run: |
+          command -v locale-gen || sudo apt-get -o Acquire::Retries=$NET_RETRY_COUNT install --no-install-recommends -y locales
           locales=$(locale -a)
           echo "Installed locales: $locales"
           function gen_locale() {
