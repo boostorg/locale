@@ -364,17 +364,24 @@ jobs:
         if: matrix.coverage
         run: ci/codecov.sh "collect" && mv coverage.info coverage.icu.info
 
+      - name: Debug coverage
+        run: |
+          echo "PWD: $PWD -- $(pwd)"
+          echo "WD: ${{github.workspace}}"
+          echo "Canonical: ${{github.workspace}} $GITHUB_WORKSPACE $(readlink -f ${{github.workspace}})"
+          echo "Canonical: $(readlink -f $PWD)"
+
       - name: Upload coverage
         if: matrix.coverage
         uses: codecov/codecov-action@v5
         with:
+          disable_safe_directory: true
           fail_ci_if_error: true
           disable_search: true
           files: coverage.all.info,coverage.iconv.info,coverage.icu.info
           name: Github Actions
           token: ${{secrets.CODECOV_TOKEN}}
           verbose: true
-          working-directory: ${{github.workspace}}
 
       - name: Run coverity
         if: matrix.coverity && github.event_name == 'push' && (github.ref_name == 'develop' || github.ref_name == 'master')
