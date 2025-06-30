@@ -137,8 +137,7 @@ jobs:
           # OSX, clang
           - { name: MacOS w/ clang and sanitizers,
               compiler: clang,     cxxstd: '11,14,17,20,2b', os: macos-13, ubsan: yes }
-          # TODO: Iconv issue
-          #- { compiler: clang,     cxxstd: '11,14,17,20,2b', os: macos-14 }
+          - { compiler: clang,     cxxstd: '11,14,17,20,2b', os: macos-14 }
 
     timeout-minutes: 120
     runs-on: ${{matrix.os}}
