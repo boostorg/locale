@@ -400,10 +400,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { toolset: msvc-14.2, cxxstd: '14,17,20',       addrmd: '32,64', os: windows-2019 }
           - { name: Collect coverage, coverage: yes,
               toolset: msvc-14.3, cxxstd: '14,17,20',       addrmd: '32,64', os: windows-2022 }
-          - { toolset: gcc,       cxxstd: '03,11,14,17,2a', addrmd: '64',    os: windows-2019 }
+          - { toolset: msvc-14.4, cxxstd: '14,17,20',       addrmd: '32,64', os: windows-2025 }
+          - { toolset: gcc,       cxxstd: '03,11,14,17,2a', addrmd: '64',    os: windows-2022 }
 
     runs-on: ${{matrix.os}}
     env: {ICU_VERSION: '71.1'}
@@ -576,8 +576,8 @@ jobs:
           - { os: ubuntu-latest, build_shared: OFF, build_type: Debug, generator: 'Unix Makefiles', icu: '71.1' }
           - { os: ubuntu-22.04,  build_shared: OFF, build_type: Debug, generator: 'Unix Makefiles', icu: '72.1' }
           - { os: ubuntu-22.04,  build_shared: OFF, build_type: Debug, generator: 'Unix Makefiles', icu: '73.1' }
-          - { os: windows-2019,  build_shared: ON,  build_type: Debug, generator: 'Visual Studio 16 2019', icu: '71.1' }
-          - { os: windows-2019,  build_shared: OFF, build_type: Debug, generator: 'Visual Studio 16 2019', icu: '73.1' }
+          - { os: windows-2022,  build_shared: ON,  build_type: Debug, generator: 'Visual Studio 17 2022', icu: '71.1' }
+          - { os: windows-2022,  build_shared: OFF, build_type: Debug, generator: 'Visual Studio 17 2022', icu: '73.1' }
 
     timeout-minutes: 120
     runs-on: ${{matrix.os}}
