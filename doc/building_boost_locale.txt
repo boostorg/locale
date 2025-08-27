@@ -38,15 +38,15 @@
 
 \subsection bb_building_proc Building Process
 
-Now all you need to do is to invoke bjam:
+Now all you need to do is to invoke b2:
 
 \verbatim
-./bjam --with-locale stage
+./b2 --with-locale stage
 \endverbatim
 
 Or on Windows
 \verbatim
-.\bjam --with-locale stage
+.\b2 --with-locale stage
 \endverbatim
 
 If you are using a custom ICU build or you are using Microsoft Windows,
@@ -63,7 +63,7 @@ For example:
     \c ... \n
     then you need to provide an option \c -sICU_PATH=/opt/icu46
     \verbatim
-    ./bjam --with-locale -sICU_PATH=/opt/icu46  stage
+    ./b2 --with-locale -sICU_PATH=/opt/icu46  stage
     \endverbatim
 -   If your icu build is placed at <tt>c:\\icu46</tt> such that the files are placed like \n
     <tt>c:\\icu46\\include\\unicode\\uversion.h</tt>  \n
@@ -77,7 +77,7 @@ For example:
     <tt>...</tt> \n
     then you need to provide an option \c -sICU_PATH=c:\\icu46
     \verbatim
-    .\bjam --with-locale -sICU_PATH=c:\icu46  stage
+    .\b2 --with-locale -sICU_PATH=c:\icu46  stage
     \endverbatim
 
 \note Don't forget to put both debug and release versions of ICU libraries in this path
@@ -106,18 +106,18 @@ For example:
 
 -   Build the library on Windows with the ICU backend only:
     \verbatim
-    .\bjam boost.locale.winapi=off boost.locale.std=off -sICU_PATH=c:\icu46 --with-locale stage
+    .\b2 boost.locale.winapi=off boost.locale.std=off -sICU_PATH=C:\icu46 --with-locale stage
     \endverbatim
 -   Build the library on Linux with the std backend only
     \verbatim
-    .\bjam boost.locale.posix=off boost.locale.icu=off --with-locale stage
+    .\b2 boost.locale.posix=off boost.locale.icu=off --with-locale stage
     \endverbatim
 
 \section bb_build_test Running Unit Tests
 
-You can run unit tests by invoking \c bjam with the \c libs/locale/test project parameter
+You can run unit tests by invoking \c b2 with the \c libs/locale/test project parameter
 \verbatim
-./bjam libs/locale/test
+./b2 libs/locale/test
 \endverbatim
 
 \section binary_compatibility Binary Compatibility
