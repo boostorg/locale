@@ -108,7 +108,7 @@ For example:
     \endverbatim
 -   Build the library on Linux with the std backend only
     \verbatim
-    .\b2 boost.locale.posix=off boost.locale.icu=off --with-locale stage
+    ./b2 boost.locale.posix=off boost.locale.icu=off --with-locale stage
     \endverbatim
 
 \section bb_build_test Running Unit Tests
