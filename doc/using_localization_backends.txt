@@ -78,7 +78,6 @@ provides good localization support even on the MinGW and Cygwin platforms, which
 problems with this.
 
 \note
-
 - If you using GCC compiler under Windows you need GCC-4.x series to use it, GCC-3.4 is not supported
 - Only UTF-8 as narrow locale encoding and UTF-16 as wide encoding are supported.
 
