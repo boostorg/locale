@@ -79,6 +79,7 @@ jobs:
         run: |
             sudo apt-get install -y doxygen
             B2_TARGETS=libs/$SELF/doc ci/build.sh
+            find $BOOST_ROOT/libs/$SELF/doc/html
 
   posix:
     defaults:
