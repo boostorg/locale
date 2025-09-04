@@ -86,7 +86,7 @@ problems with this.
 <table border="1" cellpadding="5" cellspacing="3">
 <tr>
   <th>Backend</th>
-  <th>icu</th><th>posix</th><th>winapi</th><th>std</th>
+  <th>ICU</th><th>posix</th><th>winapi</th><th>std</th>
 </tr>
 <tr>
   <th>Message Formatting</th>
