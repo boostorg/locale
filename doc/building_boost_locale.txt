@@ -52,7 +52,7 @@ you need to provide a path to the location of the ICU library using the \c -sICU
 
 For example:
 
--   If your icu build is placed at \c /opt/icu48 such that the files are placed like\n
+-   If your ICU build is placed at \c /opt/icu48 such that the files are placed like\n
     \c /opt/icu48/include/unicode/uversion.h\n
     \c /opt/icu48/include/unicode/calendar.h\n
     \c ... \n
@@ -63,7 +63,7 @@ For example:
     \verbatim
     ./b2 --with-locale -sICU_PATH=/opt/icu48  stage
     \endverbatim
--   If your icu build is placed at <tt>C:\\icu48</tt> such that the files are placed like \n
+-   If your ICU build is placed at <tt>C:\\icu48</tt> such that the files are placed like \n
     <tt>C:\\icu48\\include\\unicode\\uversion.h</tt>  \n
     <tt>C:\\icu48\\include\\unicode\\calendar.h</tt> \n
     <tt>...</tt> \n
