@@ -421,8 +421,8 @@ lib boost_locale
       util/info.cpp
       util/locale_data.cpp
     : requirements
-      <library>$(boost_dependencies_private)
-      <library>$(boost_dependencies)
+      <library>$(boost_dependencies_private)/<warnings-as-errors>off
+      <library>$(boost_dependencies)/<warnings-as-errors>off
       $(cxx_requirements)
       <link>shared:<define>BOOST_LOCALE_DYN_LINK=1
       <define>BOOST_LOCALE_SOURCE
@@ -432,7 +432,7 @@ lib boost_locale
       # Meanwhile remove this
       <conditional>@configure
     : usage-requirements
-      <library>$(boost_dependencies)
+      <library>$(boost_dependencies)/<warnings-as-errors>off
       $(cxx_requirements)
       <link>shared:<define>BOOST_LOCALE_DYN_LINK=1
       <define>BOOST_LOCALE_NO_LIB=1
