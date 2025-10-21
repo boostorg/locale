@@ -31,8 +31,8 @@ void test_by_char(const std::locale& l, const std::locale& lreal)
 
         TEST(ss << 1045.45);
         double n;
-        TEST(ss >> n);
-        TEST_EQ(n, 1045.45);
+        if TEST(ss >> n)
+            TEST_EQ(n, 1045.45);
         TEST_EQ(ss.str(), ascii_to<CharType>("1045.45"));
         ss_ref_type ss_ref;
         ss_ref.imbue(std::locale::classic());
@@ -51,8 +51,8 @@ void test_by_char(const std::locale& l, const std::locale& lreal)
         TEST(ss << as::number);
         TEST(ss << 1045.45);
         double n;
-        TEST(ss >> n);
-        TEST_EQ(n, 1045.45);
+        if TEST(ss >> n)
+            TEST_EQ(n, 1045.45);
 
         ss_ref_type ss_ref;
         ss_ref.imbue(lreal);
@@ -88,8 +88,8 @@ void test_by_char(const std::locale& l, const std::locale& lreal)
         TEST(ss << 1043.34);
         if(!bad_parsing) {
             double v1;
-            TEST(ss >> v1);
-            TEST_EQ(v1, 1043.34);
+            if TEST(ss >> v1)
+                TEST_EQ(v1, 1043.34);
         }
 
         TEST_EQ(to_utf8(ss.str()), to_utf8(ss_ref.str()));
@@ -103,8 +103,8 @@ void test_by_char(const std::locale& l, const std::locale& lreal)
         ss << as::currency << as::currency_iso;
         TEST(ss << 1043.34);
         double v1;
-        TEST(ss >> v1);
-        TEST_EQ(v1, 1043.34);
+        if TEST(ss >> v1)
+            TEST_EQ(v1, 1043.34);
 
         ss_ref_type ss_ref;
         ss_ref.imbue(lreal);
