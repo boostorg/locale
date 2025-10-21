@@ -214,7 +214,7 @@ void test_error_to_utf(const std::string& source, const std::basic_string<Char>&
     using boost::locale::conv::to_utf;
     using boost::locale::conv::stop;
 
-    // Default: Replace, no error
+    // Default: Skip, no error
     TEST_EQ(to_utf<Char>(source, encoding), target);
     // Test all overloads with method=stop -> error
     // source as string, C-String, range
@@ -236,7 +236,7 @@ void test_error_from_utf(const std::basic_string<Char>& source, const std::strin
     using boost::locale::conv::from_utf;
     using boost::locale::conv::stop;
 
-    // Default: Replace, no error
+    // Default: Skip, no error
     TEST_EQ(from_utf<Char>(source, encoding), target);
     // Test all overloads with method=stop -> error
     // source as string, C-String, range
