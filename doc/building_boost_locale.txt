@@ -32,7 +32,8 @@
     so you need to either use GNU iconv or link with the ICU library.
 -   If the iconv library is not found on Darwin/Mac OS X builds make sure there
     are not multiple iconv installations and provide the -sICONV_PATH build option
-    to point to the correct location of the iconv library.
+    to point to the correct location of the iconv library.  
+    Using the HomeBrew installed GNU IConv is highly recommended!
 
 \subsection bb_building_proc Building Process
 
