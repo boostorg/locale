@@ -43,10 +43,39 @@ static MacOSIconvIssue isFaultyIconv()
     }
     return MacOSIconvIssue::None;
 }
+#    include "../src/util/encoding.hpp"
+#    include <cerrno>
+#    include <iconv.h>
+static bool iConvUsesWTF8()
+{
+    // The test uses a 4-byte value
+    if(sizeof(wchar_t) != 4)
+        return false;
+    iconv_t cd = iconv_open("UTF-8", boost::locale::util::utf_name<wchar_t>());
+    if(cd == (iconv_t)-1)
+        throw std::runtime_error("iconv_open failed for encoding: ");
+
+    char outbuf[16];
+    // In WTF-8 this is \F9\80\80\80\80
+    wchar_t input(0x1000000);
+    char* inbuf = reinterpret_cast<char*>(&input);
+    size_t inbytesleft = sizeof(input);
+    char* outptr = outbuf;
+    size_t outbytesleft = sizeof(outbuf);
+    errno = 0;
+    size_t result = iconv(cd, &inbuf, &inbytesleft, &outptr, &outbytesleft);
+    iconv_close(cd);
+    return (result != size_t(-1)) && (errno == 0) && (inbytesleft == 0) && (outbytesleft <= sizeof(outbuf) - 5)
+           && (outbuf[0] = 0xF9);
+}
 #else
-constexpr MacOSIconvIssue isFaultyIconv()
+static MacOSIconvIssue isFaultyIconv()
 {
     return MacOSIconvIssue::None;
+}
+static bool iConvUsesWTF8()
+{
+    return false;
 }
 #endif
 
@@ -260,11 +289,13 @@ struct utfutf<U8Char, 1> {
     static const U8Char* ok() { return reinterpret_cast<const U8Char*>("grüßen"); }
     static const U8Char* bad()
     {
+        // split into 2 to make SunCC happy
         return reinterpret_cast<const U8Char*>("gr\xFF"
                                                "üßen");
-        // split into 2 to make SunCC happy
     }
+    static const char* bad_decoded_to_utf8() { return utfutf<char>::ok(); }
     static U8Char bad_char() { return static_cast<U8Char>(0xFF); }
+    static std::string bad_char_decoded_to_utf8() { return ""; }
 };
 
 template<>
@@ -273,12 +304,15 @@ struct utfutf<wchar_t, 2> {
     static const wchar_t* bad()
     {
         static wchar_t buf[256] = L"\x67\x72\xFF\xfc\xFE\xFD\xdf\x65\x6e";
-        buf[2] = 0xDC01; // second surrogate must not be
-        buf[4] = 0xD801; // First
-        buf[5] = 0xD801; // Must be surrogate trail
+        buf[2] = 0xDC01; // second surrogate w/o leading first surrogate
+        // 2 first surrogates
+        buf[4] = 0xD801;
+        buf[5] = 0xD801; // should be surrogate trail
         return buf;
     }
+    static const char* bad_decoded_to_utf8() { return utfutf<char>::ok(); }
     static wchar_t bad_char() { return static_cast<wchar_t>(0xDC01); }
+    static std::string bad_char_decoded_to_utf8() { return ""; }
 };
 
 template<>
@@ -290,7 +324,18 @@ struct utfutf<wchar_t, 4> {
         buf[2] = static_cast<wchar_t>(0x1000000); // > 10FFFF
         return buf;
     }
+    static const char* bad_decoded_to_utf8()
+    {
+        if(iConvUsesWTF8()) {
+            static char buf[16] = "\x67\x72\xF9\x80\x80\x80\x80"
+                                  "üßen";
+            return buf;
+        } else {
+            return utfutf<char>::ok();
+        }
+    }
     static wchar_t bad_char() { return static_cast<wchar_t>(0x1000000); }
+    static std::string bad_char_decoded_to_utf8() { return iConvUsesWTF8() ? "\xF9\x80\x80\x80\x80" : ""; }
 };
 #ifdef BOOST_MSVC
 #    pragma warning(pop)
@@ -403,13 +448,24 @@ void test_utf_for()
         std::cout << "-- Error for encoding at end" << std::endl;
         test_error_from_utf<Char>(utf<Char>("hello שלום"), "hello ", "ISO8859-1");
         std::cout << "-- Error for decoding to UTF-8" << std::endl;
-        test_error_from_utf<Char>(utfutf<Char>::bad(), utfutf<char>::ok(), "UTF-8");
+        if(iConvUsesWTF8() && utfutf<Char>::bad_decoded_to_utf8() != utfutf<char>::ok()) {
+            // Run just this one test, as there won't be an error reported so the "stop" tests will fail.
+            // Other backends might do it correctly but we can't pass multiple expected results here.
+            TEST_EQ(boost::locale::conv::from_utf<Char>(utfutf<Char>::bad(), "UTF-8"),
+                    utfutf<Char>::bad_decoded_to_utf8());
+        } else
+            test_error_from_utf<Char>(utfutf<Char>::bad(), utfutf<Char>::bad_decoded_to_utf8(), "UTF-8");
         std::cout << "-- Error for decoding to Latin1" << std::endl;
         test_error_from_utf<Char>(utfutf<Char>::bad(), to<char>(utfutf<char>::ok()), "Latin1");
 
         const std::basic_string<Char> onlyInvalidUtf(2, utfutf<Char>::bad_char());
         std::cout << "-- Error decoding string of only invalid chars to UTF-8" << std::endl;
-        test_error_from_utf<Char>(onlyInvalidUtf, "", "UTF-8");
+        std::string expected = utfutf<Char>::bad_char_decoded_to_utf8();
+        expected += expected; // 2 bad chars
+        if(iConvUsesWTF8() && utfutf<Char>::bad_decoded_to_utf8() != utfutf<char>::ok())
+            TEST_EQ(boost::locale::conv::from_utf<Char>(onlyInvalidUtf, "UTF-8"), expected);
+        else
+            test_error_from_utf<Char>(onlyInvalidUtf, expected, "UTF-8");
         std::cout << "-- Error decoding string of only invalid chars to Latin1" << std::endl;
         test_error_from_utf<Char>(onlyInvalidUtf, "", "Latin1");
     }
