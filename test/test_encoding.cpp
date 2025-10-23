@@ -43,30 +43,15 @@ static MacOSIconvIssue isFaultyIconv()
     }
     return MacOSIconvIssue::None;
 }
-#    include "../src/util/encoding.hpp"
-#    include <cerrno>
-#    include <iconv.h>
 static bool iConvUsesWTF8()
 {
     // The test uses a 4-byte value
     if(sizeof(wchar_t) != 4)
         return false;
-    iconv_t cd = iconv_open("UTF-8", boost::locale::util::utf_name<wchar_t>());
-    if(cd == (iconv_t)-1)
-        throw std::runtime_error("iconv_open failed for encoding: ");
-
-    char outbuf[16];
+    namespace blc = boost::locale::conv;
+    auto from_utf = blc::detail::make_utf_decoder<wchar_t>("UTF-8", blc::skip, blc::detail::conv_backend::IConv);
     // In WTF-8 this is \F9\80\80\80\80
-    wchar_t input(0x1000000);
-    char* inbuf = reinterpret_cast<char*>(&input);
-    size_t inbytesleft = sizeof(input);
-    char* outptr = outbuf;
-    size_t outbytesleft = sizeof(outbuf);
-    errno = 0;
-    size_t result = iconv(cd, &inbuf, &inbytesleft, &outptr, &outbytesleft);
-    iconv_close(cd);
-    return (result != size_t(-1)) && (errno == 0) && (inbytesleft == 0) && (outbytesleft <= sizeof(outbuf) - 5)
-           && (outbuf[0] = 0xF9);
+    return from_utf->convert(std::wstring(1, wchar_t(0x1000000))) == "\xF9\x80\x80\x80\x80";
 }
 #else
 static MacOSIconvIssue isFaultyIconv()
