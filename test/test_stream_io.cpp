@@ -33,6 +33,7 @@ std::basic_string<Char> read_file(std::basic_istream<Char>& in)
     Char c;
     while(in.get(c))
         res += c;
+    TEST(in.eof());
     return res;
 }
 
@@ -45,6 +46,7 @@ void test_ok(const std::string& content, const std::locale& l, std::basic_string
 
     {
         const std::string file_path = boost::locale::test::exe_name + "-test_read.txt";
+        TEST_CONTEXT("File: " << file_path);
         remove_file_on_exit _(file_path);
         {
             std::ofstream out_file(file_path, std::ios::binary);
@@ -57,6 +59,7 @@ void test_ok(const std::string& content, const std::locale& l, std::basic_string
 
     {
         const std::string file_path = boost::locale::test::exe_name + "-test_write.txt";
+        TEST_CONTEXT("File: " << file_path);
         remove_file_on_exit _(file_path);
         {
             stream_type out_file(file_path, stream_type::out);
