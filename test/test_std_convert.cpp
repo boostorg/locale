@@ -28,17 +28,20 @@ void test_char()
 
     std::string name, real_name;
 
-    name = get_std_name("en_US.UTF-8", &real_name);
-    if(!name.empty()) {
+    name = "en_US.UTF-8";
+    if(get_std_name(name, &real_name).empty())
+        std::cout << "- " << name << " is not supported, skipping" << std::endl; // LCOV_EXCL_LINE
+    else {
         std::cout << "- Testing " << name << std::endl;
         l = gen(name);
         test_one<CharType>(l, "Façade", "façade", "FAÇADE");
         boost::locale::case_convert_test::test_no_op_title_case<CharType>(l, "Hello world i");
-    } else
-        std::cout << "- en_US.UTF-8 is not supported, skipping" << std::endl; // LCOV_EXCL_LINE
+    }
 
-    name = get_std_name("en_US.ISO8859-1", &real_name);
-    if(!name.empty()) {
+    name = "en_US.ISO8859-1";
+    if(get_std_name(name, &real_name).empty())
+        std::cout << "- " << name << " is not supported, skipping" << std::endl; // LCOV_EXCL_LINE
+    else {
         std::cout << "- Testing " << name << std::endl;
         l = gen(name);
         test_one<CharType>(l, "Hello World", "hello world", "HELLO WORLD");
@@ -46,23 +49,25 @@ void test_char()
         if(std::toupper('\xe7', std::locale(real_name)) == '\xc7')
             test_one<CharType>(l, "Façade", "façade", "FAÇADE");
         else {
-            std::cout << "- " << name << " (" << real_name << ") not well supported. "; // LCOV_EXCL_LINE
-            std::cout << "  Skipping conv test" << std::endl;                           // LCOV_EXCL_LINE
+            std::cout << "- " << name << " (" << real_name << ") is not well supported. "; // LCOV_EXCL_LINE
+            std::cout << "  Skipping conv test" << std::endl;                              // LCOV_EXCL_LINE
         }
         boost::locale::case_convert_test::test_no_op_title_case<CharType>(l, "Hello world i");
-    } else
-        std::cout << "- en_US.ISO8859-1 is not supported, skipping" << std::endl; // LCOV_EXCL_LINE
+    }
 
-    name = get_std_name("tr_TR.UTF-8", &real_name);
-    if(!name.empty()) {
+    name = "tr_TR.UTF-8";
+    if(get_std_name(name, &real_name).empty())
+        std::cout << "- " << name << " is not supported, skipping" << std::endl; // LCOV_EXCL_LINE
+    else {
         std::cout << "- Testing " << name << std::endl;
         if(std::use_facet<std::ctype<wchar_t>>(std::locale(real_name)).toupper(L'i') != L'I') {
             l = gen(name);
             test_one<CharType>(l, "i", "i", "İ");
-        } else
-            std::cout << "- Standard library does not support this locale's case conversion correctly" << std::endl;
-    } else
-        std::cout << "- tr_TR.UTF-8 is not supported, skipping" << std::endl; // LCOV_EXCL_LINE
+        } else {
+            std::cout << "- " << name << " (" << real_name << ") is not well supported. "; // LCOV_EXCL_LINE
+            std::cout << "  Skipping conv test" << std::endl;                              // LCOV_EXCL_LINE
+        }
+    }
 }
 
 BOOST_LOCALE_DISABLE_UNREACHABLE_CODE_WARNING
