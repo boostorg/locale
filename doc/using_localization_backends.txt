@@ -94,7 +94,7 @@ problems with this.
 </tr>
 <tr>
   <th>Non UTF-8 encodings</th>
-  <td>Yes</td><td>Yes</td><td>No</td><td>Yes</td>
+  <td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td>
 </tr>
 <tr>
   <th>Date/Time Formatting/Parsing</th>
@@ -131,10 +131,6 @@ problems with this.
 <tr>
   <th>Unicode Normalization</th>
   <td>Yes</td><td>No</td><td>Vista and above</td><td>No</td>
-</tr>
-<tr>
-  <th>C++11 characters</th>
-  <td>Yes</td><td>No</td><td>No</td><td>Yes</td>
 </tr>
 <tr>
   <th>OS Support</th>
