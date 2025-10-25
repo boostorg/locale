@@ -142,7 +142,7 @@ jobs:
 
           # OSX, clang
           - { name: MacOS w/ clang and sanitizers,
-              compiler: clang,     cxxstd: '11,14,17,20,2b', os: macos-13, ubsan: yes }
+              compiler: clang,     cxxstd: '11,14,17,20,2b', os: macos-15, ubsan: yes }
           # TODO: Iconv issue
           #- { compiler: clang,     cxxstd: '11,14,17,20,2b', os: macos-14 }
 
