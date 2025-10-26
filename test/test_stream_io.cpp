@@ -120,20 +120,23 @@ void test_for_char()
 {
     boost::locale::generator g;
     if(test_utf) {
+        auto l = g("en_US.UTF-8");
         std::cout << "    UTF-8" << std::endl;
-        test_ok<Char>("grüße\nn i", g("en_US.UTF-8"));
-        test_read_fail<Char>("abc\xFF\xFF", g("en_US.UTF-8"), 3);
+        test_ok<Char>("grüße\nn i", l);
+        test_read_fail<Char>("abc\xFF\xFF", l, 3);
         std::cout << "    Testing codepoints above 0xFFFF" << std::endl;
         std::cout << "      Single U+2008A" << std::endl;
-        test_ok<Char>("\xf0\xa0\x82\x8a", g("en_US.UTF-8")); // U+2008A
+        test_ok<Char>("\xf0\xa0\x82\x8a", l); // U+2008A
         std::cout << "      Single U+2008A within text" << std::endl;
-        test_ok<Char>("abc\"\xf0\xa0\x82\x8a\"", g("en_US.UTF-8")); // U+2008A
+        test_ok<Char>("abc\"\xf0\xa0\x82\x8a\"", l); // U+2008A
+        constexpr auto repeats = 1000;
         std::string one = "\xf0\xa0\x82\x8a";
         std::string res;
-        for(unsigned i = 0; i < 1000; i++)
+        res.reserve(one.size() * repeats);
+        for(unsigned i = 0; i < repeats; i++)
             res += one;
-        std::cout << "      U+2008A x 1000" << std::endl;
-        test_ok<Char>(res.c_str(), g("en_US.UTF-8")); // U+2008A
+        std::cout << "      U+2008A x " << repeats << std::endl;
+        test_ok<Char>(res, l); // U+2008A
     }
 
     if(test_iso) {
