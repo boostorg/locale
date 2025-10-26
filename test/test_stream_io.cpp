@@ -50,7 +50,7 @@ void test_ok(const std::string& content, const std::locale& l, std::basic_string
         remove_file_on_exit _(file_path);
         {
             std::ofstream out_file(file_path, std::ios::binary);
-            out_file << content;
+            TEST(out_file << content);
         }
         stream_type in_file(file_path, stream_type::in);
         in_file.imbue(l);
@@ -64,7 +64,7 @@ void test_ok(const std::string& content, const std::locale& l, std::basic_string
         {
             stream_type out_file(file_path, stream_type::out);
             out_file.imbue(l);
-            out_file << cmp;
+            TEST(out_file << cmp);
         }
         std::ifstream in_file(file_path);
         TEST_EQ(read_file<char>(in_file), content);
