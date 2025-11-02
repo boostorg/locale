@@ -341,7 +341,7 @@ struct utfutf<wchar_t, 4> {
         if(iConvUsesWTF8()) {
             static char buf[16] = "\x67\x72\xF9\x80\x80\x80\x80"
                                   "üßen";
-            return buf;
+            return buf; // LCOV_EXCL_LINE
         } else {
             return utfutf<char>::ok();
         }
@@ -464,8 +464,8 @@ void test_utf_for()
         if(iConvUsesWTF8() && utfutf<Char>::bad_decoded_to_utf8() != utfutf<char>::ok()) {
             // Run just this one test, as there won't be an error reported so the "stop" tests will fail.
             // Other backends might do it correctly but we can't pass multiple expected results here.
-            TEST_EQ(boost::locale::conv::from_utf<Char>(utfutf<Char>::bad(), "UTF-8"),
-                    utfutf<Char>::bad_decoded_to_utf8());
+            TEST_EQ(boost::locale::conv::from_utf<Char>(utfutf<Char>::bad(), "UTF-8"), // LCOV_EXCL_LINE
+                    utfutf<Char>::bad_decoded_to_utf8());                              // LCOV_EXCL_LINE
         } else
             test_error_from_utf<Char>(utfutf<Char>::bad(), utfutf<Char>::bad_decoded_to_utf8(), "UTF-8");
         std::cout << "-- Error for decoding to Latin1" << std::endl;
@@ -476,7 +476,7 @@ void test_utf_for()
         std::string expected = utfutf<Char>::bad_char_decoded_to_utf8();
         expected += expected; // 2 bad chars
         if(iConvUsesWTF8() && utfutf<Char>::bad_decoded_to_utf8() != utfutf<char>::ok())
-            TEST_EQ(boost::locale::conv::from_utf<Char>(onlyInvalidUtf, "UTF-8"), expected);
+            TEST_EQ(boost::locale::conv::from_utf<Char>(onlyInvalidUtf, "UTF-8"), expected); // LCOV_EXCL_LINE
         else
             test_error_from_utf<Char>(onlyInvalidUtf, expected, "UTF-8");
         std::cout << "-- Error decoding string of only invalid chars to Latin1" << std::endl;
