@@ -440,9 +440,7 @@ jobs:
       - name: Setup ICU
         shell: pwsh
         run: |
-          $icuPath = Join-Path $pwd.Path "ICU"
-          Write-Host "ICU path to be added: $icuPath"
-          Write-Host ""
+          $icuPath = (Join-Path $pwd "ICU") -replace '\\', '/'
 
           if (-not (Test-Path $icuPath)) {
             Write-Error "ICU directory not found at $icuPath"
