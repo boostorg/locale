@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.5)
 
 if(NOT ICU_VERSION)
     message(FATAL_ERROR "ICU_VERSION not set")
