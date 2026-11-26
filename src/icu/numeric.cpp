@@ -300,7 +300,7 @@ namespace boost { namespace locale { namespace impl_icu {
     std::locale install_formatting_facets(const std::locale& in, const cdata& cd)
     {
         std::locale tmp = std::locale(in, new num_format<CharType>(cd));
-        if(!std::has_facet<formatters_cache>(in))
+        if(!std::has_facet<formatters_cache>(in) || !std::use_facet<formatters_cache>(in).matches_locale(cd.locale()))
             tmp = std::locale(tmp, new formatters_cache(cd.locale()));
         return tmp;
     }
@@ -309,7 +309,7 @@ namespace boost { namespace locale { namespace impl_icu {
     std::locale install_parsing_facets(const std::locale& in, const cdata& cd)
     {
         std::locale tmp = std::locale(in, new num_parse<CharType>(cd));
-        if(!std::has_facet<formatters_cache>(in))
+        if(!std::has_facet<formatters_cache>(in) || !std::use_facet<formatters_cache>(in).matches_locale(cd.locale()))
             tmp = std::locale(tmp, new formatters_cache(cd.locale()));
         return tmp;
     }

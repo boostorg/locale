@@ -57,7 +57,11 @@ namespace boost { namespace locale { namespace impl_icu {
     public:
         typedef std::basic_string<CharType> string_type;
 
-        number_format(icu::NumberFormat& fmt, const std::string& codepage, bool isNumberOnly = false) :
+        number_format(icu::NumberFormat& fmt,
+                      const std::string& codepage,
+                      bool isNumberOnly = false,
+                      std::shared_ptr<const formatters_cache> cache = {}) :
+            cache_(std::move(cache)),
             cvt_(codepage), icu_fmt_(fmt), isNumberOnly_(isNumberOnly)
         {}
 
@@ -154,6 +158,7 @@ namespace boost { namespace locale { namespace impl_icu {
             return cut;
         }
 
+        std::shared_ptr<const formatters_cache> cache_;
         icu_std_converter<CharType> cvt_;
         icu::NumberFormat& icu_fmt_;
         const bool isNumberOnly_;
@@ -173,7 +178,12 @@ namespace boost { namespace locale { namespace impl_icu {
         size_t parse(const string_type& str, int64_t& value) const override { return do_parse(str, value); }
         size_t parse(const string_type& str, int32_t& value) const override { return do_parse(str, value); }
 
-        date_format(icu::DateFormat& fmt, const std::string& encoding) : cvt_(encoding), icu_fmt_(fmt) {}
+        date_format(icu::DateFormat& fmt,
+                    const std::string& encoding,
+                    std::shared_ptr<const formatters_cache> cache = {}) :
+            cache_(std::move(cache)),
+            cvt_(encoding), icu_fmt_(fmt)
+        {}
         date_format(std::unique_ptr<icu::DateFormat> fmt, const std::string& encoding) :
             cvt_(encoding), icu_fmt_holder_(std::move(fmt)), icu_fmt_(*icu_fmt_holder_)
         {}
@@ -216,6 +226,7 @@ namespace boost { namespace locale { namespace impl_icu {
             return cvt_.std(tmp);
         }
 
+        std::shared_ptr<const formatters_cache> cache_;
         icu_std_converter<CharType> cvt_;
         std::unique_ptr<icu::DateFormat> icu_fmt_holder_;
         icu::DateFormat& icu_fmt_;
@@ -377,7 +388,18 @@ namespace boost { namespace locale { namespace impl_icu {
         using ptr_type = std::unique_ptr<formatter<CharType>>;
 
         const ios_info& info = ios_info::get(ios);
-        const formatters_cache& cache = std::use_facet<formatters_cache>(ios.getloc());
+        const formatters_cache& streamCache = std::use_facet<formatters_cache>(ios.getloc());
+        // The cache of the stream locale may be for a different locale, e.g. when facets of
+        // different locales were combined via std::locale. In that case don't use it but create
+        // a cache for the locale the formatter is created for. The returned formatter may hold
+        // references to objects owned by the cache, so it must be kept alive by the formatter.
+        std::shared_ptr<const formatters_cache> localeCache;
+        const formatters_cache* cachePtr = &streamCache;
+        if(!streamCache.matches_locale(locale)) {
+            localeCache = std::make_shared<formatters_cache>(locale);
+            cachePtr = localeCache.get();
+        }
+        const formatters_cache& cache = *cachePtr;
 
         const uint64_t disp = info.display_flags();
         switch(disp) {
@@ -390,22 +412,26 @@ namespace boost { namespace locale { namespace impl_icu {
                 icu::NumberFormat& nf =
                   cache.number_format((how == std::ios_base::scientific) ? num_fmt_type::sci : num_fmt_type::number);
                 set_fraction_digits(nf, how, ios.precision());
-                return ptr_type(new number_format<CharType>(nf, encoding, true));
+                return ptr_type(new number_format<CharType>(nf, encoding, true, localeCache));
             }
             case currency: {
                 icu::NumberFormat& nf = cache.number_format(
                   (info.currency_flags() == currency_iso) ? num_fmt_type::curr_iso : num_fmt_type::curr_nat);
-                return ptr_type(new number_format<CharType>(nf, encoding));
+                return ptr_type(new number_format<CharType>(nf, encoding, false, localeCache));
             }
             case percent: {
                 icu::NumberFormat& nf = cache.number_format(num_fmt_type::percent);
                 set_fraction_digits(nf, ios.flags() & std::ios_base::floatfield, ios.precision());
-                return ptr_type(new number_format<CharType>(nf, encoding));
+                return ptr_type(new number_format<CharType>(nf, encoding, false, localeCache));
             }
             case spellout:
-                return ptr_type(new number_format<CharType>(cache.number_format(num_fmt_type::spell), encoding));
+                return ptr_type(
+                  new number_format<CharType>(cache.number_format(num_fmt_type::spell), encoding, false, localeCache));
             case ordinal:
-                return ptr_type(new number_format<CharType>(cache.number_format(num_fmt_type::ordinal), encoding));
+                return ptr_type(new number_format<CharType>(cache.number_format(num_fmt_type::ordinal),
+                                                            encoding,
+                                                            false,
+                                                            localeCache));
             case date:
             case time:
             case datetime:
@@ -428,7 +454,7 @@ namespace boost { namespace locale { namespace impl_icu {
                             case strftime: {
                                 icu_std_converter<CharType> cvt_(encoding);
                                 const std::basic_string<CharType> f = info.date_time_pattern<CharType>();
-                                pattern = strftime_to_icu(cvt_.icu(f.c_str(), f.c_str() + f.size()), locale);
+                                pattern = strftime_to_icu(cvt_.icu(f.c_str(), f.c_str() + f.size()), cache);
                             } break;
                         }
                         if(!pattern.isEmpty()) {
@@ -458,7 +484,7 @@ namespace boost { namespace locale { namespace impl_icu {
                             icu_std_converter<CharType> cvt_(encoding);
                             const std::basic_string<CharType> f = info.date_time_pattern<CharType>();
                             icu::UnicodeString pattern =
-                              strftime_to_icu(cvt_.icu(f.data(), f.data() + f.size()), locale);
+                              strftime_to_icu(cvt_.icu(f.data(), f.data() + f.size()), cache);
                             UErrorCode err = U_ZERO_ERROR;
                             new_df.reset(new icu::SimpleDateFormat(pattern, locale, err));
                             if(U_FAILURE(err))
@@ -475,7 +501,7 @@ namespace boost { namespace locale { namespace impl_icu {
                 if(new_df)
                     return ptr_type(new date_format<CharType>(std::move(new_df), encoding));
                 else
-                    return ptr_type(new date_format<CharType>(*df, encoding));
+                    return ptr_type(new date_format<CharType>(*df, encoding, localeCache));
             } break;
         }
 

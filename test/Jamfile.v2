@@ -51,6 +51,7 @@ run test_collate.cpp ;
 run test_convert.cpp ;
 run test_boundary.cpp ;
 run test_formatting.cpp : $(BOOST_ROOT)/libs/locale/test ;
+run test_formatter_cache.cpp ;
 run test_icu_vs_os_timezone.cpp ;
 # winapi
 run test_winapi_collate.cpp ;
