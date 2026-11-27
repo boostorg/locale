@@ -428,7 +428,7 @@ namespace boost { namespace locale { namespace impl_icu {
                             case strftime: {
                                 icu_std_converter<CharType> cvt_(encoding);
                                 const std::basic_string<CharType> f = info.date_time_pattern<CharType>();
-                                pattern = strftime_to_icu(cvt_.icu(f.c_str(), f.c_str() + f.size()), locale);
+                                pattern = strftime_to_icu(cvt_.icu(f.c_str(), f.c_str() + f.size()), cache);
                             } break;
                         }
                         if(!pattern.isEmpty()) {
@@ -458,7 +458,7 @@ namespace boost { namespace locale { namespace impl_icu {
                             icu_std_converter<CharType> cvt_(encoding);
                             const std::basic_string<CharType> f = info.date_time_pattern<CharType>();
                             icu::UnicodeString pattern =
-                              strftime_to_icu(cvt_.icu(f.data(), f.data() + f.size()), locale);
+                              strftime_to_icu(cvt_.icu(f.data(), f.data() + f.size()), cache);
                             UErrorCode err = U_ZERO_ERROR;
                             new_df.reset(new icu::SimpleDateFormat(pattern, locale, err));
                             if(U_FAILURE(err))

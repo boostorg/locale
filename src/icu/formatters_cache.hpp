@@ -39,7 +39,7 @@ namespace boost { namespace locale { namespace impl_icu {
     public:
         static std::locale::id id;
 
-        formatters_cache(const icu::Locale& locale);
+        explicit formatters_cache(const icu::Locale& locale);
 
         icu::NumberFormat& number_format(num_fmt_type type) const;
 
